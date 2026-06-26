@@ -15,12 +15,12 @@
   },
   "scripts": {
     "build": "tsdown",
-    "test": "npm run build && vitest run",
-    "test:watch": "vitest",
-    "prepack": "npm run build"
+    "test": "pnpm build && vp test",
+    "test:watch": "vp test --watch",
+    "prepack": "pnpm build"
   },
   "dependencies": {
-    "@oxlint/plugins": "^1.71.0"
+    "@oxlint/plugins": "latest"
   },
   "devDependencies": {},
   "peerDependencies": {

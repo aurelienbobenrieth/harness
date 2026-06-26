@@ -8,24 +8,25 @@
   ],
   "type": "module",
   "scripts": {
-    "build": "npm run build --workspaces --if-present",
-    "check": "npm run build && npm run lint && npm run fmt:check && npm test",
-    "lint": "oxlint",
-    "fmt": "oxfmt --write",
-    "fmt:check": "oxfmt --check",
-    "test": "npm run test --workspaces --if-present",
-    "test:watch": "npm run test:watch --workspaces --if-present",
+    "build": "pnpm --recursive --if-present build",
+    "check": "pnpm build && pnpm lint && pnpm fmt:check && pnpm test",
+    "lint": "vp lint",
+    "fmt": "vp fmt",
+    "fmt:check": "vp fmt --check",
+    "test": "pnpm --recursive --if-present test",
+    "test:watch": "pnpm --recursive --if-present test:watch",
     "changeset": "changeset",
     "version-packages": "changeset version",
-    "release": "npm run build && changeset publish"
+    "release": "pnpm build && changeset publish"
   },
   "devDependencies": {
-    "@changesets/cli": "^2.31.0",
-    "oxfmt": "^0.56.0",
-    "oxlint": "^1.71.0",
-    "tsdown": "^0.22.3",
-    "typescript": "^6.0.3",
-    "vitest": "^4.1.9"
+    "@changesets/cli": "latest",
+    "@voidzero-dev/vite-plus-core": "latest",
+    "oxfmt": "latest",
+    "oxlint": "latest",
+    "tsdown": "latest",
+    "typescript": "latest",
+    "vite-plus": "latest"
   },
-  "packageManager": "npm@11.13.0"
+  "packageManager": "pnpm@11.9.0"
 }

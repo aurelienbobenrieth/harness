@@ -15,3 +15,7 @@ This repository is the source of truth for reusable lint rules, lint configs, an
 - `*-plugin`: defines new rule implementations.
 
 Rules should live in the narrowest reusable domain that fits them, for example `effect` for Effect-specific rules and `core` for technology-agnostic rules.
+
+## Rule implementation policy
+
+Rules that have one safe mechanical rewrite must provide an autofix and test it. Rules whose fix requires project knowledge, such as choosing an Effect Schema decoder or encoder, should report only and leave the change to the developer.
