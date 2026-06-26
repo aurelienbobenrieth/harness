@@ -1,34 +1,18 @@
-import { defineRule, type ESTree } from "@oxlint/plugins";
+import type { ESTree, Rule } from "@oxlint/plugins";
+import { isIdentifier, isImmediateFunctionCallWithArgument, isJsonMethodCall } from "./ast.js";
 
 const message =
-  "Parse JSON through an Effect Schema decoder, such as Schema.fromJsonString(...), before using the value.";
+  "Parse JSON through an Effect Schema JSON decoder, such as Schema.fromJsonString(...), before using the value.";
 
-type IdentifierLike = ESTree.Node & {
-  readonly type: "Identifier";
-  readonly name: string;
-};
-
-function isIdentifier(node: ESTree.Node | undefined, name?: string): node is IdentifierLike {
-  return node?.type === "Identifier" && "name" in node && (name === undefined || node.name === name);
-}
-
-function isJsonParse(node: ESTree.Node | undefined): node is ESTree.CallExpression {
-  return (
-    node?.type === "CallExpression" &&
-    node.callee.type === "MemberExpression" &&
-    isIdentifier(node.callee.object, "JSON") &&
-    isIdentifier(node.callee.property, "parse")
+function isEffectSchemaDecoderCall(node: ESTree.Node | undefined, jsonParseNode: ESTree.CallExpression): boolean {
+  return isImmediateFunctionCallWithArgument(
+    node,
+    jsonParseNode,
+    (callee) => isIdentifier(callee) && callee.name.endsWith("Decoder"),
   );
 }
 
-function isEffectSchemaDecoderCall(node: ESTree.Node | undefined, jsonParseNode: ESTree.CallExpression): boolean {
-  if (node?.type !== "CallExpression") return false;
-  if (!node.arguments.includes(jsonParseNode)) return false;
-
-  return isIdentifier(node.callee) && node.callee.name.endsWith("Decoder");
-}
-
-export const noRawJsonParse = defineRule({
+export const noRawJsonParse: Rule = {
   meta: {
     type: "problem",
     docs: {
@@ -41,7 +25,7 @@ export const noRawJsonParse = defineRule({
   createOnce(context) {
     return {
       CallExpression(node) {
-        if (!isJsonParse(node)) return;
+        if (!isJsonMethodCall(node, "parse")) return;
         if (isEffectSchemaDecoderCall(node.parent, node)) return;
 
         context.report({
@@ -51,4 +35,4 @@ export const noRawJsonParse = defineRule({
       },
     };
   },
-});
+};
