@@ -13,25 +13,25 @@ importers:
   .:
     devDependencies:
       '@changesets/cli':
-        specifier: latest
+        specifier: 2.31.0
         version: 2.31.0
       '@voidzero-dev/vite-plus-core':
-        specifier: latest
+        specifier: 0.2.1
         version: 0.2.1(typescript@6.0.3)
       oxfmt:
-        specifier: latest
+        specifier: 0.56.0
         version: 0.56.0(vite-plus@0.2.1(typescript@6.0.3)(vite@8.1.0))
       oxlint:
-        specifier: latest
+        specifier: 1.71.0
         version: 1.71.0(oxlint-tsgolint@0.23.0)(vite-plus@0.2.1(typescript@6.0.3)(vite@8.1.0))
       tsdown:
-        specifier: latest
+        specifier: 0.22.3
         version: 0.22.3(typescript@6.0.3)
       typescript:
-        specifier: latest
+        specifier: 6.0.3
         version: 6.0.3
       vite-plus:
-        specifier: latest
+        specifier: 0.2.1
         version: 0.2.1(typescript@6.0.3)(vite@8.1.0)
 
   packages/oxlint-config:
@@ -43,7 +43,7 @@ importers:
   packages/oxlint-plugin-effect:
     dependencies:
       '@oxlint/plugins':
-        specifier: latest
+        specifier: 1.71.0
         version: 1.71.0
       oxlint:
         specifier: '>=1.71.0'

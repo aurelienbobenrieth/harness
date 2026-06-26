@@ -20,7 +20,7 @@
     "prepack": "pnpm build"
   },
   "dependencies": {
-    "@oxlint/plugins": "latest"
+    "@oxlint/plugins": "1.71.0"
   },
   "devDependencies": {},
   "peerDependencies": {
