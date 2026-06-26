@@ -1,5 +1,5 @@
 import type { ESTree, Rule } from "@oxlint/plugins";
-import { isIdentifier, isImmediateFunctionCallWithArgument, isJsonMethodCall } from "./ast.js";
+import { isIdentifier, isImmediateFunctionCallWithArgument, isJsonMethodCall } from "../ast.js";
 
 const message =
   "Parse JSON through an Effect Schema JSON decoder, such as Schema.fromJsonString(...), before using the value.";

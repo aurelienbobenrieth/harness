@@ -1,5 +1,5 @@
 import type { Rule } from "@oxlint/plugins";
-import { isJsonMethodCall } from "./ast.js";
+import { isJsonMethodCall } from "../ast.js";
 
 const message =
   "Stringify JSON through an Effect Schema JSON encoder, such as Schema.encodeUnknownSync(Schema.fromJsonString(...))(value), before emitting the value.";

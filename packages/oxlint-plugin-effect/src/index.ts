@@ -1,6 +1,6 @@
 import { eslintCompatPlugin } from "@oxlint/plugins";
-import { noRawJsonParse } from "./rules/no-raw-json-parse.js";
-import { noRawJsonStringify } from "./rules/no-raw-json-stringify.js";
+import { noRawJsonParse } from "./rules/no-raw-json-parse/rule.js";
+import { noRawJsonStringify } from "./rules/no-raw-json-stringify/rule.js";
 
 export default eslintCompatPlugin({
   meta: {

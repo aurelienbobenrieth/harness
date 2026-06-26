@@ -10,8 +10,9 @@
   ],
   "scripts": {
     "build": "npm run build --workspaces --if-present",
-    "check": "npm run build && npm run lint",
+    "check": "npm run build && npm run lint && npm test",
     "lint": "oxlint",
+    "test": "npm run test --workspaces --if-present",
     "changeset": "changeset",
     "version-packages": "changeset version",
     "release": "npm run build && changeset publish"
