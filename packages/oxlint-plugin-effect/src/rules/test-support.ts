@@ -8,7 +8,7 @@ import { promisify } from "node:util";
 const execFileAsync = promisify(execFile);
 const packageRoot = path.resolve(import.meta.dirname, "..", "..");
 const workspaceRoot = path.resolve(packageRoot, "..", "..");
-const pluginPath = path.join(packageRoot, "dist", "index.js").replaceAll(path.sep, "/");
+const pluginPath = path.join(packageRoot, "dist", "index.mjs").replaceAll(path.sep, "/");
 const oxlintBin = path.join(workspaceRoot, "node_modules", "oxlint", "bin", "oxlint");
 
 type LintResult = {

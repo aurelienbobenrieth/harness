@@ -2,27 +2,28 @@
   "name": "@aurelienbbn/oxlint-plugin-effect",
   "version": "0.0.0",
   "description": "Custom oxlint rules for Effect projects.",
-  "type": "module",
   "license": "MIT",
   "files": [
     "dist"
   ],
+  "type": "module",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs"
     }
   },
   "scripts": {
-    "build": "tsc -p tsconfig.json",
-    "test": "npm run build && node --test src/rules/**/*.test.ts",
+    "build": "tsdown",
+    "test": "npm run build && vitest run",
+    "test:watch": "vitest",
     "prepack": "npm run build"
   },
   "dependencies": {
     "@oxlint/plugins": "^1.71.0"
   },
+  "devDependencies": {},
   "peerDependencies": {
     "oxlint": ">=1.71.0"
-  },
-  "devDependencies": {}
+  }
 }

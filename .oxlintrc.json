@@ -9,11 +9,15 @@
     "builtin": true,
     "node": true
   },
-  "plugins": ["typescript", "node", "unicorn"],
+  "plugins": ["typescript", "node", "unicorn", "vitest"],
   "ignorePatterns": ["packages/*/dist/**"],
   "rules": {
     "typescript/no-explicit-any": "error",
     "typescript/no-non-null-assertion": "error",
-    "unicorn/filename-case": ["error", { "case": "kebabCase" }]
+    "unicorn/filename-case": ["error", { "case": "kebabCase" }],
+    "jest/no-conditional-expect": "off",
+    "jest/valid-expect": "off",
+    "jest/no-standalone-expect": "off",
+    "jest/expect-expect": "off"
   }
 }
