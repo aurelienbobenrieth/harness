@@ -15,8 +15,6 @@
   },
   "scripts": {
     "build": "tsdown",
-    "test": "pnpm build && vp test",
-    "test:watch": "vp test --watch",
     "prepack": "pnpm build"
   },
   "dependencies": {
