@@ -1,0 +1,17 @@
+{
+  "name": "@aurelienbbn/oxlint-config",
+  "version": "0.0.0",
+  "description": "Strict reusable oxlint config for TypeScript projects.",
+  "type": "module",
+  "license": "MIT",
+  "files": [
+    "configs"
+  ],
+  "exports": {
+    ".": "./configs/strict.json",
+    "./strict": "./configs/strict.json"
+  },
+  "peerDependencies": {
+    "oxlint": ">=1.71.0"
+  }
+}
