@@ -1,13 +1,13 @@
-import { expect, test } from "vitest";
+import { expect, it } from "vitest";
 import { assertRuleDoesNotReport, assertRuleReports } from "../test-support.ts";
 
 const ruleName = "effect/no-raw-json-stringify";
 
-test("reports raw JSON.stringify", async () => {
+it("reports raw JSON.stringify", async () => {
   await expect(assertRuleReports(ruleName, "const value = JSON.stringify(input);\n")).resolves.toBeUndefined();
 });
 
-test("allows Effect Schema JSON encoders", async () => {
+it("allows Effect Schema JSON encoders", async () => {
   await expect(
     assertRuleDoesNotReport(
       ruleName,
