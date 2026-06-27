@@ -1,0 +1,26 @@
+{
+  "name": "@aurelienbbn/agentlint-plugin-effect",
+  "version": "0.0.0",
+  "description": "Custom agentlint rules for Effect projects.",
+  "license": "MIT",
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs"
+    }
+  },
+  "scripts": {
+    "build": "tsdown",
+    "prepack": "pnpm build"
+  },
+  "devDependencies": {
+    "@aurelienbbn/agentlint": "0.1.5"
+  },
+  "peerDependencies": {
+    "@aurelienbbn/agentlint": ">=0.1.5"
+  }
+}
