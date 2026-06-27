@@ -1,7 +1,7 @@
 {
-  "name": "@aurelienbbn/oxlint-config",
+  "name": "@aurelienbbn/oxfmt-config",
   "version": "0.0.0",
-  "description": "Opinionated strict reusable oxlint config for Vite+ TypeScript projects.",
+  "description": "Reusable oxfmt config for Vite+ projects.",
   "license": "MIT",
   "files": [
     "dist"
@@ -18,8 +18,7 @@
     "prepack": "pnpm build"
   },
   "peerDependencies": {
-    "oxlint": ">=1.71.0",
-    "oxlint-tsgolint": ">=0.23.0",
+    "oxfmt": ">=0.56.0",
     "vite-plus": ">=0.2.1"
   }
 }
