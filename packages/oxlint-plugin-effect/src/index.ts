@@ -7,6 +7,7 @@ import { noRawJsonStringify } from "./rules/no-raw-json-stringify/rule.js";
 import { noUnsafeErrorChannel } from "./rules/no-unsafe-error-channel/rule.js";
 import { noUnsafeEffectBody } from "./rules/no-unsafe-effect-body/rule.js";
 import { requireForEachConcurrency } from "./rules/require-for-each-concurrency/rule.js";
+import { requireNamedEffectFn } from "./rules/require-named-effect-fn/rule.js";
 import { requireTaggedEffectFail } from "./rules/require-tagged-effect-fail/rule.js";
 import { useRootImports } from "./rules/use-root-imports/rule.js";
 
@@ -23,6 +24,7 @@ export default eslintCompatPlugin({
     "no-unsafe-error-channel": noUnsafeErrorChannel,
     "no-unsafe-effect-body": noUnsafeEffectBody,
     "require-for-each-concurrency": requireForEachConcurrency,
+    "require-named-effect-fn": requireNamedEffectFn,
     "require-tagged-effect-fail": requireTaggedEffectFail,
     "use-root-imports": useRootImports,
   },
