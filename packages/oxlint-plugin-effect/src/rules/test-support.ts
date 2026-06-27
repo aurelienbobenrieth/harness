@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { execFile } from "node:child_process";
-import { mkdtemp, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { promisify } from "node:util";
@@ -17,18 +17,26 @@ type LintResult = {
   readonly exitCode: number;
 };
 
-export async function lintCode(ruleName: string, code: string): Promise<LintResult> {
+type RuleConfig = "error" | readonly ["error", unknown];
+
+type LintCodeOptions = {
+  readonly filename?: string;
+  readonly ruleConfig?: RuleConfig;
+};
+
+export async function lintCode(ruleName: string, code: string, options: LintCodeOptions = {}): Promise<LintResult> {
   const directory = await mkdtemp(path.join(tmpdir(), "oxlint-plugin-effect-"));
   const configPath = path.join(directory, "oxlint.json");
-  const sourcePath = path.join(directory, "sample.ts");
+  const sourcePath = path.join(directory, options.filename ?? "sample.ts");
 
+  await mkdir(path.dirname(sourcePath), { recursive: true });
   await writeFile(
     configPath,
     JSON.stringify(
       {
         jsPlugins: [`file:///${pluginPath}`],
         rules: {
-          [ruleName]: "error",
+          [ruleName]: options.ruleConfig ?? "error",
         },
       },
       null,
@@ -56,15 +64,19 @@ export async function lintCode(ruleName: string, code: string): Promise<LintResu
   }
 }
 
-export async function assertRuleReports(ruleName: string, code: string): Promise<void> {
-  const result = await lintCode(ruleName, code);
+export async function assertRuleReports(ruleName: string, code: string, options?: LintCodeOptions): Promise<void> {
+  const result = await lintCode(ruleName, code, options);
 
   assert.notEqual(result.exitCode, 0);
   assert.match(result.stdout + result.stderr, diagnosticCodePattern(ruleName));
 }
 
-export async function assertRuleDoesNotReport(ruleName: string, code: string): Promise<void> {
-  const result = await lintCode(ruleName, code);
+export async function assertRuleDoesNotReport(
+  ruleName: string,
+  code: string,
+  options?: LintCodeOptions,
+): Promise<void> {
+  const result = await lintCode(ruleName, code, options);
 
   assert.doesNotMatch(result.stdout + result.stderr, diagnosticCodePattern(ruleName));
 }
