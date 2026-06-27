@@ -37,6 +37,15 @@ importers:
         specifier: 0.2.1
         version: 0.2.1(typescript@6.0.3)(vite@8.1.0)
 
+  packages/oxfmt-config:
+    dependencies:
+      oxfmt:
+        specifier: '>=0.56.0'
+        version: 0.56.0(vite-plus@0.2.1(typescript@6.0.3)(vite@8.1.0))
+      vite-plus:
+        specifier: '>=0.2.1'
+        version: 0.2.1(typescript@6.0.3)(vite@8.1.0)
+
   packages/oxlint-config:
     dependencies:
       oxlint:
@@ -49,14 +58,14 @@ importers:
         specifier: '>=0.2.1'
         version: 0.2.1(typescript@6.0.3)(vite@8.1.0)
 
-  packages/oxfmt-config:
+  packages/oxlint-plugin-core:
     dependencies:
-      oxfmt:
-        specifier: '>=0.56.0'
-        version: 0.56.0(vite-plus@0.2.1(typescript@6.0.3)(vite@8.1.0))
-      vite-plus:
-        specifier: '>=0.2.1'
-        version: 0.2.1(typescript@6.0.3)(vite@8.1.0)
+      '@oxlint/plugins':
+        specifier: 1.71.0
+        version: 1.71.0
+      oxlint:
+        specifier: '>=1.71.0'
+        version: 1.71.0(oxlint-tsgolint@0.23.0)(vite-plus@0.2.1(typescript@6.0.3)(vite@8.1.0))
 
   packages/oxlint-plugin-effect:
     dependencies:
