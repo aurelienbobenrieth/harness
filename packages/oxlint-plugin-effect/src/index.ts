@@ -1,4 +1,5 @@
 import { eslintCompatPlugin } from "@oxlint/plugins";
+import { noCatchAllCause } from "./rules/no-catch-all-cause/rule.js";
 import { noRawJsonParse } from "./rules/no-raw-json-parse/rule.js";
 import { noRawJsonStringify } from "./rules/no-raw-json-stringify/rule.js";
 import { noUnsafeErrorChannel } from "./rules/no-unsafe-error-channel/rule.js";
@@ -12,6 +13,7 @@ export default eslintCompatPlugin({
     name: "effect",
   },
   rules: {
+    "no-catch-all-cause": noCatchAllCause,
     "no-raw-json-parse": noRawJsonParse,
     "no-raw-json-stringify": noRawJsonStringify,
     "no-unsafe-error-channel": noUnsafeErrorChannel,

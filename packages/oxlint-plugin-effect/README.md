@@ -4,6 +4,7 @@ Custom oxlint rules for projects that use Effect.
 
 ## Rules
 
+- `effect/no-catch-all-cause`: require expected error handlers instead of `Effect.catchAllCause`, which also catches defects.
 - `effect/no-raw-json-parse`: require JSON strings to be parsed through Effect Schema decoding.
 - `effect/no-raw-json-stringify`: require JSON output to be emitted through Effect Schema encoding.
 - `effect/no-unsafe-error-channel`: require `Effect.Effect` error channels to use `never` or typed errors instead of `unknown` or `any`.
@@ -13,6 +14,8 @@ Custom oxlint rules for projects that use Effect.
 - `effect/use-root-imports`: require stable Effect modules to be imported from `"effect"` instead of stable `effect/*` subpaths.
 
 ## Autofix
+
+ffect/no-catch-all-cause is not autofixable because replacing it requires choosing the intended expected-error handler and defect policy.
 
 `effect/no-unsafe-error-channel` is not autofixable because replacing `unknown` or `any` requires choosing a typed domain/infra error or confirming the Effect is truly infallible.
 `effect/no-unsafe-effect-body` is not autofixable because replacing `throw` or `await` requires choosing the correct typed failure, defect, or promise adapter.
