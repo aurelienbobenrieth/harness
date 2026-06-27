@@ -10,6 +10,7 @@ Custom oxlint rules for projects that use Effect.
 - `effect/no-unsafe-effect-body`: require `Effect.gen` and `Effect.fn` bodies to use Effect error/promise constructors instead of raw `throw` or `await`.
 - `effect/require-for-each-concurrency`: require `Effect.forEach` calls to declare an explicit concurrency option.
 - `effect/require-tagged-effect-fail`: require `Effect.fail` calls to receive typed error values instead of raw literals or objects.
+- `effect/use-root-imports`: require stable Effect modules to be imported from `"effect"` instead of stable `effect/*` subpaths.
 
 ## Autofix
 
@@ -17,3 +18,4 @@ Custom oxlint rules for projects that use Effect.
 `effect/no-unsafe-effect-body` is not autofixable because replacing `throw` or `await` requires choosing the correct typed failure, defect, or promise adapter.
 `effect/require-for-each-concurrency` is not autofixable because choosing `concurrency: 1`, an unbounded policy, inheritance, or a named project constant changes runtime behavior.
 `effect/require-tagged-effect-fail` is not autofixable because replacing a raw failure value requires choosing or defining the correct typed error.
+`effect/use-root-imports` is not autofixable yet because safely rewriting imports requires merging with existing root imports and preserving local specifiers.
