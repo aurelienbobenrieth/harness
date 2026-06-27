@@ -1,5 +1,6 @@
 import { eslintCompatPlugin } from "@oxlint/plugins";
 import { noCatchAllCause } from "./rules/no-catch-all-cause/rule.js";
+import { noEffectOrDie } from "./rules/no-effect-ordie/rule.js";
 import { noRawJsonParse } from "./rules/no-raw-json-parse/rule.js";
 import { noRunPromiseInRuntime } from "./rules/no-run-promise-in-runtime/rule.js";
 import { noServiceDependencyParameters } from "./rules/no-service-dependency-parameters/rule.js";
@@ -21,6 +22,7 @@ export default eslintCompatPlugin({
   },
   rules: {
     "no-catch-all-cause": noCatchAllCause,
+    "no-effect-ordie": noEffectOrDie,
     "no-raw-json-parse": noRawJsonParse,
     "no-run-promise-in-runtime": noRunPromiseInRuntime,
     "no-service-dependency-parameters": noServiceDependencyParameters,

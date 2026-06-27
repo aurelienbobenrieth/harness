@@ -5,6 +5,7 @@ Custom oxlint rules for projects that use Effect.
 ## Rules
 
 - `effect/no-catch-all-cause`: require expected error handlers instead of `Effect.catchAllCause`, which also catches defects.
+- `effect/no-effect-ordie`: require typed failures instead of converting failures to defects with `Effect.orDie` or `Effect.orDieWith` outside configured escape hatches.
 - `effect/no-raw-json-parse`: require JSON strings to be parsed through Effect Schema decoding.
 - `effect/no-run-promise-in-runtime`: require `Effect.runPromise` to stay inside configured runtime boundary files.
 - `effect/no-schema-any`: require concrete schemas or `Schema.Unknown` instead of `Schema.Any` outside configured escape-hatch files.
@@ -24,6 +25,7 @@ Custom oxlint rules for projects that use Effect.
 
 ffect/no-catch-all-cause is not autofixable because replacing it requires choosing the intended expected-error handler and defect policy.
 
+`effect/no-effect-ordie` is not autofixable because replacing defect conversion requires choosing the intended typed failure or explicit defect boundary.
 `effect/no-unsafe-error-channel` is not autofixable because replacing `unknown` or `any` requires choosing a typed domain/infra error or confirming the Effect is truly infallible.
 `effect/no-unsafe-effect-body` is not autofixable because replacing `throw` or `await` requires choosing the correct typed failure, defect, or promise adapter.
 `effect/no-unsafe-error-mapper` is not autofixable because replacing broad error parameters requires choosing a typed failure union or explicit boundary helper.
