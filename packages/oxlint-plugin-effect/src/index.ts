@@ -2,6 +2,7 @@ import { eslintCompatPlugin } from "@oxlint/plugins";
 import { noCatchAllCause } from "./rules/no-catch-all-cause/rule.js";
 import { noRawJsonParse } from "./rules/no-raw-json-parse/rule.js";
 import { noRunPromiseInRuntime } from "./rules/no-run-promise-in-runtime/rule.js";
+import { noServiceDependencyParameters } from "./rules/no-service-dependency-parameters/rule.js";
 import { noSchemaAny } from "./rules/no-schema-any/rule.js";
 import { noRawJsonStringify } from "./rules/no-raw-json-stringify/rule.js";
 import { noUnsafeErrorChannel } from "./rules/no-unsafe-error-channel/rule.js";
@@ -21,6 +22,7 @@ export default eslintCompatPlugin({
     "no-catch-all-cause": noCatchAllCause,
     "no-raw-json-parse": noRawJsonParse,
     "no-run-promise-in-runtime": noRunPromiseInRuntime,
+    "no-service-dependency-parameters": noServiceDependencyParameters,
     "no-schema-any": noSchemaAny,
     "no-raw-json-stringify": noRawJsonStringify,
     "no-unsafe-error-channel": noUnsafeErrorChannel,
