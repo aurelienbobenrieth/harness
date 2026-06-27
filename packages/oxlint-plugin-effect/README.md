@@ -17,6 +17,7 @@ Custom oxlint rules for projects that use Effect.
 - `effect/require-for-each-concurrency`: require `Effect.forEach` calls to declare an explicit concurrency option.
 - `effect/require-named-effect-fn`: require `Effect.fn` calls to include a non-empty tracing name.
 - `effect/require-tagged-effect-fail`: require `Effect.fail` calls to receive typed error values instead of raw literals or objects.
+- `effect/schema-type-adjacent`: require Effect Schema type aliases to be placed immediately after their schema declarations.
 - `effect/use-root-imports`: require stable Effect modules to be imported from `"effect"` instead of stable `effect/*` subpaths.
 
 ## Autofix
@@ -30,4 +31,5 @@ Custom oxlint rules for projects that use Effect.
 `effect/require-for-each-concurrency` is not autofixable because choosing `concurrency: 1`, an unbounded policy, inheritance, or a named project constant changes runtime behavior.
 `effect/require-named-effect-fn` is not autofixable because the tracing name should encode project/domain intent.
 `effect/require-tagged-effect-fail` is not autofixable because replacing a raw failure value requires choosing or defining the correct typed error.
+`effect/schema-type-adjacent` is not autofixable yet because moving separated type aliases can reorder module-level declarations.
 `effect/use-root-imports` is not autofixable yet because safely rewriting imports requires merging with existing root imports and preserving local specifiers.

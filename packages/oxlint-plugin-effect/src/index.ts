@@ -12,6 +12,7 @@ import { preferEffectArrayHelpers } from "./rules/prefer-effect-array-helpers/ru
 import { requireForEachConcurrency } from "./rules/require-for-each-concurrency/rule.js";
 import { requireNamedEffectFn } from "./rules/require-named-effect-fn/rule.js";
 import { requireTaggedEffectFail } from "./rules/require-tagged-effect-fail/rule.js";
+import { schemaTypeAdjacent } from "./rules/schema-type-adjacent/rule.js";
 import { useRootImports } from "./rules/use-root-imports/rule.js";
 
 export default eslintCompatPlugin({
@@ -32,6 +33,7 @@ export default eslintCompatPlugin({
     "require-for-each-concurrency": requireForEachConcurrency,
     "require-named-effect-fn": requireNamedEffectFn,
     "require-tagged-effect-fail": requireTaggedEffectFail,
+    "schema-type-adjacent": schemaTypeAdjacent,
     "use-root-imports": useRootImports,
   },
 });
