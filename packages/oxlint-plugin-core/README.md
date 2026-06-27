@@ -4,7 +4,7 @@ Custom oxlint rules for TypeScript projects.
 
 ## Rules
 
-- `core/no-multi-positional-parameters`: require exported functions and exported function constants to use one object input instead of multiple positional parameters.
+- `core/no-multi-positional-parameters`: require functions to use one object input instead of multiple positional parameters.
 
 ## Autofix
 

@@ -9,30 +9,15 @@ function hasMultipleParameters(node: FunctionLike): boolean {
   return (node.params?.length ?? 0) > 1;
 }
 
-function isExportedFunctionDeclaration(node: ParentNode): boolean {
-  return node.type === "FunctionDeclaration" && node.parent?.type === "ExportNamedDeclaration";
-}
-
-function isExportedFunctionConstant(node: ParentNode): boolean {
-  const parent = node.parent;
-  if (parent?.type !== "VariableDeclarator") return false;
-
-  const declaration = parent.parent;
-  return declaration?.type === "VariableDeclaration" && declaration.parent?.type === "ExportNamedDeclaration";
-}
-
 function shouldReport(node: ParentNode): node is FunctionLike {
-  return (
-    hasMultipleParameters(node as FunctionLike) &&
-    (isExportedFunctionDeclaration(node) || isExportedFunctionConstant(node))
-  );
+  return hasMultipleParameters(node as FunctionLike);
 }
 
 export const noMultiPositionalParameters: Rule = {
   meta: {
     type: "problem",
     docs: {
-      description: "Require object inputs instead of multiple positional parameters for exported functions.",
+      description: "Require object inputs instead of multiple positional parameters for functions.",
     },
     messages: {
       objectInput: message,
