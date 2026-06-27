@@ -7,6 +7,7 @@ Custom oxlint rules for projects that use Effect.
 - `effect/no-catch-all-cause`: require expected error handlers instead of `Effect.catchAllCause`, which also catches defects.
 - `effect/no-raw-json-parse`: require JSON strings to be parsed through Effect Schema decoding.
 - `effect/no-run-promise-in-runtime`: require `Effect.runPromise` to stay inside configured runtime boundary files.
+- `effect/no-schema-any`: require concrete schemas or `Schema.Unknown` instead of `Schema.Any` outside configured escape-hatch files.
 - `effect/no-raw-json-stringify`: require JSON output to be emitted through Effect Schema encoding.
 - `effect/no-unsafe-error-channel`: require `Effect.Effect` error channels to use `never` or typed errors instead of `unknown` or `any`.
 - `effect/no-unsafe-effect-body`: require `Effect.gen` and `Effect.fn` bodies to use Effect error/promise constructors instead of raw `throw` or `await`.
