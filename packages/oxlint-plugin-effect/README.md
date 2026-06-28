@@ -15,6 +15,7 @@ Custom oxlint rules for projects that use Effect.
 - `effect/no-unsafe-error-channel`: require `Effect.Effect` error channels to use `never` or typed errors instead of `unknown` or `any`.
 - `effect/no-unsafe-effect-body`: require `Effect.gen` and `Effect.fn` bodies to use Effect error/promise constructors instead of raw `throw` or `await`.
 - `effect/no-unsafe-error-mapper`: require Effect error handlers and mappers to receive typed errors instead of `unknown` or `any`.
+- `effect/no-unscoped-runtime-launch`: require Effect and Layer launch calls to stay inside configured runtime boundary files.
 - `effect/prefer-effect-array-helpers`: prefer Effect collection helpers over native array helper methods in runtime code.
 - `effect/require-for-each-concurrency`: require `Effect.forEach` calls to declare an explicit concurrency option.
 - `effect/require-named-effect-fn`: require `Effect.fn` calls to include a non-empty tracing name.
@@ -31,6 +32,7 @@ Custom oxlint rules for projects that use Effect.
 `effect/no-unsafe-error-channel` is not autofixable because replacing `unknown` or `any` requires choosing a typed domain/infra error or confirming the Effect is truly infallible.
 `effect/no-unsafe-effect-body` is not autofixable because replacing `throw` or `await` requires choosing the correct typed failure, defect, or promise adapter.
 `effect/no-unsafe-error-mapper` is not autofixable because replacing broad error parameters requires choosing a typed failure union or explicit boundary helper.
+`effect/no-unscoped-runtime-launch` is not autofixable because moving runtime launch calls requires choosing the application boundary.
 `effect/prefer-effect-array-helpers` is not autofixable because the right Effect helper and concurrency/error behavior depends on intent.
 `effect/require-for-each-concurrency` is not autofixable because choosing `concurrency: 1`, an unbounded policy, inheritance, or a named project constant changes runtime behavior.
 `effect/require-named-effect-fn` is not autofixable because the tracing name should encode project/domain intent.
