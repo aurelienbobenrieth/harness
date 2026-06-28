@@ -1,4 +1,5 @@
 import { eslintCompatPlugin } from "@oxlint/plugins";
+import { dependenciesFirst } from "./rules/dependencies-first/rule.js";
 import { noCatchAllCause } from "./rules/no-catch-all-cause/rule.js";
 import { noEffectOrDie } from "./rules/no-effect-ordie/rule.js";
 import { noRawJsonParse } from "./rules/no-raw-json-parse/rule.js";
@@ -21,6 +22,7 @@ export default eslintCompatPlugin({
     name: "effect",
   },
   rules: {
+    "dependencies-first": dependenciesFirst,
     "no-catch-all-cause": noCatchAllCause,
     "no-effect-ordie": noEffectOrDie,
     "no-raw-json-parse": noRawJsonParse,
