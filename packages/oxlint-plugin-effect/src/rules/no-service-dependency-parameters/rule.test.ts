@@ -9,9 +9,37 @@ it("reports service-named parameters", async () => {
   ).resolves.toBeUndefined();
 });
 
+it("reports service tag Service indexed access parameters", async () => {
+  await expect(
+    assertRuleReports(ruleName, 'const run = (repo: UserRepo["Service"]) => Effect.void;\n'),
+  ).resolves.toBeUndefined();
+});
+
+it("reports service tag Service property parameters", async () => {
+  await expect(
+    assertRuleReports(ruleName, "const run = (repo: UserRepo.Service) => Effect.void;\n"),
+  ).resolves.toBeUndefined();
+});
+
+it("reports Context.Tag.Service parameters", async () => {
+  await expect(
+    assertRuleReports(ruleName, "const run = (repo: Context.Tag.Service<typeof UserRepo>) => Effect.void;\n"),
+  ).resolves.toBeUndefined();
+});
+
+it("reports common service dependency type names", async () => {
+  await expect(assertRuleReports(ruleName, "const run = (repo: UserRepo) => Effect.void;\n")).resolves.toBeUndefined();
+});
+
 it("allows non-service parameters", async () => {
   await expect(
     assertRuleDoesNotReport(ruleName, "const run = (userId: UserId) => Effect.void;\n"),
+  ).resolves.toBeUndefined();
+});
+
+it("allows domain entity parameters", async () => {
+  await expect(
+    assertRuleDoesNotReport(ruleName, "const run = (user: User) => Effect.void;\n"),
   ).resolves.toBeUndefined();
 });
 

@@ -2,7 +2,7 @@ import type { ESTree, Rule } from "@oxlint/plugins";
 
 const message = "Yield Effect services from context instead of passing service instances through parameters.";
 const serviceParameterPattern =
-  /(?:readonly\s+)?[A-Za-z_$][\w$]*\??:\s*(?:[A-Z][A-Za-z0-9_$]*\[\s*(?:"Service")?\s*\]|[A-Z][A-Za-z0-9_$.]*Service)\b/u;
+  /(?:readonly\s+)?[A-Za-z_$][\w$]*\??:\s*(?:[A-Z][\w$]*(?:Service|Repo|Repository|Store|Client|Gateway|Config)|[A-Z][\w$]*(?:\[\s*"Service"\s*\]|\.\s*Service)|Context\.Tag\.Service\s*<\s*typeof\s+[A-Z][\w$]*\s*>)/u;
 
 type SourceContext = {
   readonly sourceCode?: { getText: () => string };
