@@ -8,6 +8,7 @@ Custom oxlint rules for TypeScript projects.
 - `core/no-multi-positional-parameters`: require functions to use one object input instead of multiple positional parameters.
 - `core/no-mutable-exported-state`: require modules to export immutable contracts or factories instead of mutable state.
 - `core/no-vitest-in-source`: require Vitest imports to stay in test files, setup files, config files, or test utilities.
+- `core/no-vitest-mocking`: prefer manual fakes, in-memory adapters, or deterministic doubles instead of Vitest mocking APIs.
 
 ## Autofix
 
@@ -15,3 +16,4 @@ Custom oxlint rules for TypeScript projects.
 `core/no-multi-positional-parameters` is not autofixable because changing call signatures requires updating callers and choosing property names.
 `core/no-mutable-exported-state` is not autofixable because replacing shared mutable state requires choosing a factory, immutable contract, or dependency boundary.
 `core/no-vitest-in-source` is not autofixable because moving test-only APIs out of production source requires choosing the correct test utility or dependency seam.
+`core/no-vitest-mocking` is not autofixable because replacing mocks requires choosing the right dependency boundary and fake implementation.
