@@ -14,20 +14,16 @@ function shouldReviewCall(text: string, filename: string): boolean {
 }
 
 export const boundedDataAccess = defineRule({
-  meta: {
-    name: "core/bounded-data-access",
-    description: "Flags repository-like list/search/query calls without obvious boundedness markers.",
-    languages: ["ts", "tsx"],
-    ignore: ["**/*.test.*", "**/*.it-test.*", "**/*.smoke.*", "**/inMemory.*", "**/deterministic.*"],
-    instruction:
-      "Review the flagged data-access call for boundedness. Accept it when the call is proven tiny, paginated, cursor-based, ID-scoped, or explicitly limited. For true positives, add a limit/page size/cursor contract, move filtering into the query, or split the work into bounded chunks. Treat this as a review trigger because ORM and API naming conventions vary by project.",
-  },
+  id: "core/bounded-data-access",
+  description: "Flags repository-like list/search/query calls without obvious boundedness markers.",
+  guidance:
+    "Review the flagged data-access call for boundedness. Accept it when the call is proven tiny, paginated, cursor-based, ID-scoped, or explicitly limited. For true positives, add a limit/page size/cursor contract, move filtering into the query, or split the work into bounded chunks. Treat this as a review trigger because ORM and API naming conventions vary by project.",
   createOnce(context) {
     return {
       call_expression(node) {
         if (!shouldReviewCall(node.text, context.getFilename())) return;
 
-        context.flag({
+        context.report({
           node,
           message: "Repository-like data access has no obvious limit, page size, cursor, or ID bound.",
         });

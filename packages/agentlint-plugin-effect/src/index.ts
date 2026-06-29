@@ -7,6 +7,6 @@ export const strictPreset = defineConfig({
   rules: {
     "effect/prefer-schema-contracts": preferSchemaContracts,
   },
-  include: ["**/*.{ts,tsx}"],
-  ignore: ["**/*.d.ts"],
+  files: ["**/*.{ts,tsx}"],
+  ignores: ["**/*.d.ts"],
 });

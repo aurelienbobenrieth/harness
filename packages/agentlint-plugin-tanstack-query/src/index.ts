@@ -7,6 +7,6 @@ export const strictPreset = defineConfig({
   rules: {
     "tanstack-query/query-state-coverage": queryStateCoverage,
   },
-  include: ["**/*.{ts,tsx}"],
-  ignore: ["**/*.d.ts"],
+  files: ["**/*.{ts,tsx}"],
+  ignores: ["**/*.d.ts"],
 });

@@ -25,20 +25,16 @@ function shouldReview(source: string): boolean {
 }
 
 export const boundedWorkReview = defineRule({
-  meta: {
-    name: "core/bounded-work-review",
-    description: "Flags execution paths that may exceed bounded runtime budgets.",
-    languages: ["ts", "tsx"],
-    ignore: ["**/*.test.*", "**/*.it-test.*", "**/*.smoke.*", "**/inMemory.*", "**/deterministic.*"],
-    instruction:
-      "Review the flagged execution path against the project's runtime budget. In serverless and worker environments, check wall time, CPU, subrequests, retries, provider rate limits, and cold starts. In stateful services, check request latency, queue pressure, and backpressure. Accept when the work is explicitly tiny, chunked, rate-limited, queued, idempotent, or approved as a long-running boundary. For true positives, split work into bounded units, add concurrency/rate limits, persist progress, or move the work behind a workflow/queue boundary.",
-  },
+  id: "core/bounded-work-review",
+  description: "Flags execution paths that may exceed bounded runtime budgets.",
+  guidance:
+    "Review the flagged execution path against the project's runtime budget. In serverless and worker environments, check wall time, CPU, subrequests, retries, provider rate limits, and cold starts. In stateful services, check request latency, queue pressure, and backpressure. Accept when the work is explicitly tiny, chunked, rate-limited, queued, idempotent, or approved as a long-running boundary. For true positives, split work into bounded units, add concurrency/rate limits, persist progress, or move the work behind a workflow/queue boundary.",
   createOnce(context) {
     return {
       program(node) {
         if (!shouldReview(node.text)) return;
 
-        context.flag({
+        context.report({
           node,
           message:
             "Program contains sequential I/O, looped I/O, fan-out, or a long runtime budget; review boundedness.",

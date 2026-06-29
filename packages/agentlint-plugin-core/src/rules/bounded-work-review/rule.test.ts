@@ -1,8 +1,8 @@
-import type { AgentReviewNode, RuleContext } from "@aurelienbbn/agentlint";
+import type { AgentlintNode, RuleContext } from "@aurelienbbn/agentlint";
 import { expect, it } from "vitest";
 import { boundedWorkReview } from "./rule.js";
 
-function createNode(text: string): AgentReviewNode {
+function createNode(text: string): AgentlintNode {
   return {
     type: "program",
     text,
@@ -24,9 +24,10 @@ function createContext(): RuleContext & { readonly messages: string[] } {
   return {
     messages,
     getFilename: () => "src/handler.ts",
+    getFilePath: () => "src/handler.ts",
     getSourceCode: () => "",
     getLinesAround: () => "",
-    flag: (options) => {
+    report: (options) => {
       messages.push(options.message);
     },
   };

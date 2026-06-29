@@ -18,7 +18,7 @@
     "prepack": "pnpm build"
   },
   "devDependencies": {
-    "@aurelienbbn/agentlint": "0.1.5"
+    "@aurelienbbn/agentlint": "file:../../local-packages/aurelienbbn-agentlint-0.1.5.tgz"
   },
   "peerDependencies": {
     "@aurelienbbn/agentlint": ">=0.1.5"

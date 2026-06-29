@@ -10,6 +10,6 @@ export const strictPreset = defineConfig({
     "core/bounded-data-access": boundedDataAccess,
     "core/bounded-work-review": boundedWorkReview,
   },
-  include: ["**/*.{ts,tsx}"],
-  ignore: ["**/*.d.ts"],
+  files: ["**/*.{ts,tsx}"],
+  ignores: ["**/*.d.ts"],
 });
