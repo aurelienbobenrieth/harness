@@ -11,6 +11,7 @@ import { noRawJsonStringify } from "./rules/no-raw-json-stringify/rule.js";
 import { noUnsafeErrorChannel } from "./rules/no-unsafe-error-channel/rule.js";
 import { noUnsafeEffectBody } from "./rules/no-unsafe-effect-body/rule.js";
 import { noUnsafeErrorMapper } from "./rules/no-unsafe-error-mapper/rule.js";
+import { noUntypedTryPromiseCatch } from "./rules/no-untyped-try-promise-catch/rule.js";
 import { noUnscopedRuntimeLaunch } from "./rules/no-unscoped-runtime-launch/rule.js";
 import { preferEffectArrayHelpers } from "./rules/prefer-effect-array-helpers/rule.js";
 import { preferSchemaDecodeUnknown } from "./rules/prefer-schema-decode-unknown/rule.js";
@@ -37,6 +38,7 @@ export default eslintCompatPlugin({
     "no-unsafe-error-channel": noUnsafeErrorChannel,
     "no-unsafe-effect-body": noUnsafeEffectBody,
     "no-unsafe-error-mapper": noUnsafeErrorMapper,
+    "no-untyped-try-promise-catch": noUntypedTryPromiseCatch,
     "no-unscoped-runtime-launch": noUnscopedRuntimeLaunch,
     "prefer-effect-array-helpers": preferEffectArrayHelpers,
     "prefer-schema-decode-unknown": preferSchemaDecodeUnknown,
