@@ -49,6 +49,12 @@ importers:
         specifier: 0.1.5
         version: 0.1.5(ioredis@5.11.1)
 
+  packages/agentlint-plugin-tanstack-query:
+    devDependencies:
+      '@aurelienbbn/agentlint':
+        specifier: 0.1.5
+        version: 0.1.5(ioredis@5.11.1)
+
   packages/oxfmt-config:
     dependencies:
       oxfmt:
