@@ -40,7 +40,7 @@ it("reports useQuery calls", () => {
   visitors.call_expression?.(createNode("useQuery(userQueryOptions(userId))"));
 
   expect(context.messages).toEqual([
-    "Review this TanStack Query usage for pending, error, empty, success, and retry-state coverage.",
+    "TanStack Query usage needs visible-state coverage for pending, error, empty, success, and retry states.",
   ]);
 });
 
@@ -51,7 +51,7 @@ it("reports useInfiniteQuery calls", () => {
   visitors.call_expression?.(createNode("useInfiniteQuery(feedQueryOptions())"));
 
   expect(context.messages).toEqual([
-    "Review this TanStack Query usage for pending, error, empty, success, and retry-state coverage.",
+    "TanStack Query usage needs visible-state coverage for pending, error, empty, success, and retry states.",
   ]);
 });
 
@@ -62,7 +62,7 @@ it("reports queryOptions definitions", () => {
   visitors.call_expression?.(createNode("queryOptions({ queryKey, queryFn })"));
 
   expect(context.messages).toEqual([
-    "Review this TanStack Query usage for pending, error, empty, success, and retry-state coverage.",
+    "TanStack Query usage needs visible-state coverage for pending, error, empty, success, and retry states.",
   ]);
 });
 

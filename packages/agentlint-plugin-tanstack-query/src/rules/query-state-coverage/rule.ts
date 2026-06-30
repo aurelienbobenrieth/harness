@@ -2,23 +2,31 @@ import { defineRule } from "@aurelienbbn/agentlint";
 
 const queryCallPattern = /\b(?:useQuery|useInfiniteQuery|queryOptions|infiniteQueryOptions)\s*\(/;
 
-function shouldReviewQueryCall(text: string): boolean {
+function shouldReportQueryCall(text: string): boolean {
   return queryCallPattern.test(text);
 }
 
 export const queryStateCoverage = defineRule({
   id: "tanstack-query/query-state-coverage",
-  description: "Flags TanStack Query usages for pending, error, empty, success, and retry-state review.",
-  guidance:
-    "Review the flagged TanStack Query usage from the visible UI boundary. User-facing queries should intentionally handle pending, error, empty success, populated success, and retry states. Accept when this call is a shared query definition whose caller clearly owns the visible states, a background prefetch, or dev/test-only support. For true positives, separate loading from error, avoid rendering empty success for failed queries, add a retry affordance when useful, and make empty states distinct from errors.",
+  description: "Flags TanStack Query usages that need visible-state coverage.",
+  guidance: {
+    standard:
+      "User-facing TanStack Query usages must intentionally handle pending, error, empty success, populated success, and retry states at the visible UI boundary.",
+    checks: [
+      "Shared query definitions are acceptable when a caller clearly owns all visible states.",
+      "Background prefetches and dev/test-only helpers stay outside the user-facing UI boundary.",
+      "Loading and error states stay distinct, failed queries do not render as empty success, retry is available when useful, and empty states are distinct from errors.",
+    ],
+  },
   createOnce(context) {
     return {
       call_expression(node) {
-        if (!shouldReviewQueryCall(node.text)) return;
+        if (!shouldReportQueryCall(node.text)) return;
 
         context.report({
           node,
-          message: "Review this TanStack Query usage for pending, error, empty, success, and retry-state coverage.",
+          message:
+            "TanStack Query usage needs visible-state coverage for pending, error, empty, success, and retry states.",
         });
       },
     };

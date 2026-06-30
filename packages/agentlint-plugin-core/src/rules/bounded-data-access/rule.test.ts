@@ -59,7 +59,9 @@ it("allows calls with an explicit limit", () => {
   const context = createContext("src/userRepo.ts");
   const visitors = boundedDataAccess.createOnce(context);
 
-  visitors.call_expression?.(createNode("userRepo.findMany({ where: { active: true }, limit: 50 })"));
+  visitors.call_expression?.(
+    createNode("userRepo.findMany({ where: { active: true }, limit: 50 })"),
+  );
 
   expect(context.messages).toEqual([]);
 });

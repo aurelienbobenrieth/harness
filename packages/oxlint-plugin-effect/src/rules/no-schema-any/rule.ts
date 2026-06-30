@@ -1,7 +1,7 @@
 import type { ESTree, Rule } from "@oxlint/plugins";
 import { isMemberExpression } from "../ast.js";
 
-const message = "Use a concrete Schema or Schema.Unknown instead of Schema.Any.";
+const message = "Use a concrete Schema or Schema.Unknown (only when relevant) instead of Schema.Any.";
 const defaultAllow = [
   "**/*.test.ts",
   "**/*.test.tsx",

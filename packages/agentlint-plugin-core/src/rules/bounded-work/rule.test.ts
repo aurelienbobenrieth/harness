@@ -1,6 +1,6 @@
 import type { AgentlintNode, RuleContext } from "@aurelienbbn/agentlint";
 import { expect, it } from "vitest";
-import { boundedWorkReview } from "./rule.js";
+import { boundedWork } from "./rule.js";
 
 function createNode(text: string): AgentlintNode {
   return {
@@ -35,7 +35,7 @@ function createContext(): RuleContext & { readonly messages: string[] } {
 
 it("reports sequential awaited I/O", () => {
   const context = createContext();
-  const visitors = boundedWorkReview.createOnce(context);
+  const visitors = boundedWork.createOnce(context);
 
   visitors.program?.(
     createNode(`
@@ -46,13 +46,13 @@ await fetch(url);
   );
 
   expect(context.messages).toEqual([
-    "Program contains sequential I/O, looped I/O, fan-out, or a long runtime budget; review boundedness.",
+    "Execution path needs an explicit bound for sequential I/O, looped I/O, fan-out, or a long runtime budget.",
   ]);
 });
 
 it("reports I/O inside loops", () => {
   const context = createContext();
-  const visitors = boundedWorkReview.createOnce(context);
+  const visitors = boundedWork.createOnce(context);
 
   visitors.program?.(
     createNode(`
@@ -63,35 +63,35 @@ for (const item of items) {
   );
 
   expect(context.messages).toEqual([
-    "Program contains sequential I/O, looped I/O, fan-out, or a long runtime budget; review boundedness.",
+    "Execution path needs an explicit bound for sequential I/O, looped I/O, fan-out, or a long runtime budget.",
   ]);
 });
 
 it("reports Promise.all map fan-out", () => {
   const context = createContext();
-  const visitors = boundedWorkReview.createOnce(context);
+  const visitors = boundedWork.createOnce(context);
 
   visitors.program?.(createNode("await Promise.all(items.map((item) => client.send(item)));\n"));
 
   expect(context.messages).toEqual([
-    "Program contains sequential I/O, looped I/O, fan-out, or a long runtime budget; review boundedness.",
+    "Execution path needs an explicit bound for sequential I/O, looped I/O, fan-out, or a long runtime budget.",
   ]);
 });
 
 it("reports long runtime budgets", () => {
   const context = createContext();
-  const visitors = boundedWorkReview.createOnce(context);
+  const visitors = boundedWork.createOnce(context);
 
   visitors.program?.(createNode("export const options = { timeoutMS: 120_000 };\n"));
 
   expect(context.messages).toEqual([
-    "Program contains sequential I/O, looped I/O, fan-out, or a long runtime budget; review boundedness.",
+    "Execution path needs an explicit bound for sequential I/O, looped I/O, fan-out, or a long runtime budget.",
   ]);
 });
 
 it("ignores small pure code", () => {
   const context = createContext();
-  const visitors = boundedWorkReview.createOnce(context);
+  const visitors = boundedWork.createOnce(context);
 
   visitors.program?.(createNode("const result = items.map((item) => item.id);\n"));
 
@@ -100,7 +100,7 @@ it("ignores small pure code", () => {
 
 it("ignores short explicit budgets", () => {
   const context = createContext();
-  const visitors = boundedWorkReview.createOnce(context);
+  const visitors = boundedWork.createOnce(context);
 
   visitors.program?.(createNode("export const options = { timeoutMS: 5_000 };\n"));
 
