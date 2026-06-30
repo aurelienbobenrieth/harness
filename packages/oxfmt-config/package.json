@@ -1,0 +1,24 @@
+{
+  "name": "@aurelienbbn/oxfmt-config",
+  "version": "0.0.0",
+  "description": "Reusable oxfmt config for Vite+ projects.",
+  "license": "MIT",
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs"
+    }
+  },
+  "scripts": {
+    "build": "tsdown",
+    "prepack": "pnpm build"
+  },
+  "peerDependencies": {
+    "oxfmt": ">=0.56.0",
+    "vite-plus": ">=0.2.1"
+  }
+}

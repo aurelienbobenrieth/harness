@@ -9,16 +9,23 @@ export function isIdentifier(node: ESTree.Node | undefined, name?: string): node
   return node?.type === "Identifier" && "name" in node && (name === undefined || node.name === name);
 }
 
+export function isMemberExpression(
+  node: ESTree.Node | undefined,
+  objectName: string,
+  propertyName: string,
+): node is ESTree.MemberExpression {
+  return (
+    node?.type === "MemberExpression" &&
+    isIdentifier(node.object, objectName) &&
+    isIdentifier(node.property, propertyName)
+  );
+}
+
 export function isJsonMethodCall(
   node: ESTree.Node | undefined,
   methodName: "parse" | "stringify",
 ): node is ESTree.CallExpression {
-  return (
-    node?.type === "CallExpression" &&
-    node.callee.type === "MemberExpression" &&
-    isIdentifier(node.callee.object, "JSON") &&
-    isIdentifier(node.callee.property, methodName)
-  );
+  return node?.type === "CallExpression" && isMemberExpression(node.callee, "JSON", methodName);
 }
 
 export function isImmediateFunctionCallWithArgument(
