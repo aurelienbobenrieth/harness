@@ -1,0 +1,35 @@
+{
+  "name": "@aurelienbbn/conformance-shopify-theme",
+  "version": "0.0.0",
+  "description": "Structural conformance checks for Shopify themes, packaged as a Vitest suite.",
+  "license": "MIT",
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs"
+    },
+    "./vitest": {
+      "types": "./dist/vitest.d.mts",
+      "import": "./dist/vitest.mjs"
+    }
+  },
+  "scripts": {
+    "build": "tsdown",
+    "prepack": "pnpm build"
+  },
+  "devDependencies": {
+    "vitest": "4.1.9"
+  },
+  "peerDependencies": {
+    "vitest": ">=4"
+  },
+  "peerDependenciesMeta": {
+    "vitest": {
+      "optional": true
+    }
+  }
+}

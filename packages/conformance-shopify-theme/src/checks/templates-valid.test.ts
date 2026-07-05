@@ -1,0 +1,31 @@
+import { expect, it } from "vitest";
+import { createFixture } from "./test-support.js";
+import { templatesValid } from "./templates-valid.js";
+
+it("passes for consistent templates", async () => {
+  const root = await createFixture({
+    "templates/index.json": '{ "sections": { "hero": { "type": "hero" } }, "order": ["hero"] }',
+  });
+
+  expect(await templatesValid.run({ root })).toEqual([]);
+});
+
+it("reports templates without a sections object", async () => {
+  const root = await createFixture({ "templates/index.json": '{ "order": [] }' });
+
+  const findings = await templatesValid.run({ root });
+  expect(findings).toHaveLength(1);
+  expect(findings[0]?.message).toContain("sections");
+});
+
+it("reports sections without a type and dangling order entries", async () => {
+  const root = await createFixture({
+    "templates/product.json": '{ "sections": { "main": {} }, "order": ["main", "ghost"] }',
+  });
+
+  const findings = await templatesValid.run({ root });
+  expect(findings.map((finding) => finding.message)).toEqual([
+    expect.stringContaining('"main" is missing its "type"'),
+    expect.stringContaining('"ghost" does not exist'),
+  ]);
+});
