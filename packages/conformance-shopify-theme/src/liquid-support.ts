@@ -38,8 +38,10 @@ export function parseSchema(content: string): LiquidSchema | undefined {
 }
 
 export function parseJson<T>(text: string): T | undefined {
+  // Shopify's admin prepends a /* auto-generated */ block comment to JSON it writes.
+  const withoutHeader = text.replace(/^\s*\/\*[\s\S]*?\*\//, "");
   try {
-    return JSON.parse(text) as T;
+    return JSON.parse(withoutHeader) as T;
   } catch {
     return undefined;
   }

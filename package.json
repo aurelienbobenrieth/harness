@@ -15,6 +15,7 @@
     "fmt:check": "vp fmt --check",
     "test": "vp test",
     "test:watch": "vp test --watch",
+    "bundle": "pnpm -r exec pnpm pack --pack-destination ../../local-packages",
     "changeset": "changeset",
     "version-packages": "changeset version",
     "release": "pnpm build && changeset publish"

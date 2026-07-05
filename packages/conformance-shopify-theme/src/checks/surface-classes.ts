@@ -30,6 +30,7 @@ export const surfaceClasses: ConformanceCheck = {
 
     for (const entry of registry.primitives) {
       if (!implementedStatuses.has(entry.status)) continue;
+      if (entry.path === undefined && entry.via !== undefined) continue; // hosted by another primitive
 
       if (entry.surface === undefined || entry.delivery === undefined) {
         findings.push(
@@ -88,7 +89,8 @@ export const surfaceClasses: ConformanceCheck = {
             ),
           );
         }
-        if (!hasDocTag(content)) {
+        const isGenerated = /auto[- ]?generated|automatically generated/i.test(content.slice(0, 300));
+        if (!hasDocTag(content) && !isGenerated) {
           findings.push(
             finding("surface-internal-hidden", `internal snippet "${entry.id}" has no {% doc %} header.`, entry.path),
           );

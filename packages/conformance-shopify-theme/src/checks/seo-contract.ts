@@ -21,11 +21,11 @@ export const seoContract: ConformanceCheck = {
       themeContent += (await readTextFile(liquidFile)) ?? "";
     }
 
-    if (!layoutContent.includes("canonical_url")) {
+    if (!themeContent.includes("canonical_url")) {
       findings.push({
         check: "seo-contract",
         severity: "error",
-        message: 'layout/theme.liquid must render <link rel="canonical" href="{{ canonical_url }}">.',
+        message: 'The theme never renders <link rel="canonical" href="{{ canonical_url }}"> (layout or snippet).',
         path: layoutPath,
         docs,
       });

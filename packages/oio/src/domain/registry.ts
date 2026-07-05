@@ -8,6 +8,7 @@ export const RegistryEntry = Schema.Struct({
   surface: Schema.optional(Schema.Literals(["merchant", "internal", "preset", "contract"])),
   delivery: Schema.optional(Schema.Literals(["block", "compound", "snippet", "section", "enhancer", "adapter"])),
   path: Schema.optional(Schema.String),
+  via: Schema.optional(Schema.String),
 });
 
 export type RegistryEntry = Schema.Schema.Type<typeof RegistryEntry>;

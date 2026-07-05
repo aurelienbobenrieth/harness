@@ -46,6 +46,8 @@ export const headingOrder: ConformanceCheck = {
       if (!entry.endsWith(".liquid")) continue;
       const sectionName = entry.replace(/\.liquid$/, "");
       if (defaultH1Sections.has(sectionName)) continue;
+      // Dawn-style route sections ("main-product", "main-customers-login", …) own their route's h1.
+      if (sectionName.startsWith("main-")) continue;
       const content = (await readTextFile(path.join(root, "sections", entry))) ?? "";
       if (!h1Pattern.test(content)) continue;
       findings.push({

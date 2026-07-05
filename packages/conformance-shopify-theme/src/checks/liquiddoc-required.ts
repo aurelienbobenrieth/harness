@@ -16,6 +16,7 @@ export const liquiddocRequired: ConformanceCheck = {
       if (!entry.endsWith(".liquid")) continue;
       const content = (await readTextFile(path.join(root, "snippets", entry))) ?? "";
       if (hasDocTag(content)) continue;
+      if (/auto[- ]?generated|automatically generated/i.test(content.slice(0, 300))) continue; // build tool output
       findings.push({
         check: "liquiddoc-required",
         severity: "error",

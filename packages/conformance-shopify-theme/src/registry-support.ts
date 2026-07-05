@@ -12,13 +12,19 @@ export type RegistryEntry = {
   readonly surface?: RegistrySurface;
   readonly delivery?: RegistryDelivery;
   readonly path?: string;
+  /** Host primitive id when this primitive is implemented inside another one. */
+  readonly via?: string;
 };
 
 export type Registry = {
   readonly primitives: readonly RegistryEntry[];
 };
 
-export const implementedStatuses = new Set(["implemented", "direct-plus", "refactor"]);
+/**
+ * Statuses whose entries must resolve to a location (path or via).
+ * refactor/direct-plus/skeleton describe capability, not dedicated files.
+ */
+export const implementedStatuses = new Set(["implemented"]);
 
 export async function loadRegistry(root: string, registryPath = "registry.json"): Promise<Registry | undefined> {
   const content = await readTextFile(path.join(root, registryPath));

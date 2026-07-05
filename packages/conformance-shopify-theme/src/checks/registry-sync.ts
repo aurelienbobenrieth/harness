@@ -23,15 +23,28 @@ export const registrySync: ConformanceCheck = {
     }
 
     const registeredPaths = new Set<string>();
+    const knownIds = new Set(registry.primitives.map((entry) => entry.id));
     for (const entry of registry.primitives) {
       if (typeof entry.path === "string") registeredPaths.add(entry.path.replaceAll("\\", "/"));
 
       if (!implementedStatuses.has(entry.status)) continue;
+
       if (entry.path === undefined) {
+        if (entry.via !== undefined) {
+          if (!knownIds.has(entry.via)) {
+            findings.push({
+              check: "registry-sync",
+              severity: "error",
+              message: `registry entry "${entry.id}" is implemented via "${entry.via}" which does not exist.`,
+              docs,
+            });
+          }
+          continue;
+        }
         findings.push({
           check: "registry-sync",
           severity: "error",
-          message: `registry entry "${entry.id}" is ${entry.status} but declares no path.`,
+          message: `registry entry "${entry.id}" is ${entry.status} but declares no path or via.`,
           docs,
         });
         continue;

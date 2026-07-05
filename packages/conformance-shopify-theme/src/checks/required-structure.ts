@@ -23,6 +23,7 @@ export const requiredStructure: ConformanceCheck = {
 
     const assetsRoot = path.join(root, "assets");
     for (const entry of await listDirectory(assetsRoot)) {
+      if (entry.startsWith(".")) continue; // tooling metadata (e.g. .vite), excluded from upload
       if (await isDirectory(path.join(assetsRoot, entry))) {
         findings.push({
           check: "required-structure",

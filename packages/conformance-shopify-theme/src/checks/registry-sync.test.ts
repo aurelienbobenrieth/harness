@@ -36,6 +36,25 @@ it("reports implemented entries without files", async () => {
   ]);
 });
 
+it("accepts implemented entries hosted via another primitive", async () => {
+  const root = await createFixture({
+    "registry.json": registry([
+      { id: "layout.surface", status: "implemented", path: "blocks/surface.liquid" },
+      { id: "layout.modal", status: "implemented", via: "layout.surface" },
+    ]),
+    "blocks/surface.liquid": "<div></div>",
+  });
+  expect(await registrySync.run({ root })).toEqual([]);
+});
+
+it("reports via references to unknown ids", async () => {
+  const root = await createFixture({
+    "registry.json": registry([{ id: "layout.modal", status: "implemented", via: "layout.ghost" }]),
+  });
+  const findings = await registrySync.run({ root });
+  expect(findings.map((finding) => finding.message)).toEqual([expect.stringContaining('"layout.ghost"')]);
+});
+
 it("reports unregistered blocks", async () => {
   const root = await createFixture({
     "registry.json": registry([]),

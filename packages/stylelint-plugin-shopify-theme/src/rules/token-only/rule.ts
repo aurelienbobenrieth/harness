@@ -41,8 +41,8 @@ type SecondaryOptions = {
 function isTokenizedPart(part: string, prefixes: readonly string[]): boolean {
   if (passthroughValuePattern.test(part)) return true;
   if (part.startsWith("env(") || part.startsWith("inset")) return true;
-  if (!part.startsWith("var(")) return false;
-  return prefixes.some((prefix) => part.startsWith(`var(${prefix}`));
+  // functions deriving from a token (color-mix, calc, light-dark, …) count as tokenized
+  return prefixes.some((prefix) => part.includes(`var(${prefix}`));
 }
 
 const rule: Rule = (primary, secondaryOptions) => (root, result) => {

@@ -1,6 +1,7 @@
 import path from "node:path";
 import type { ConformanceCheck, ConformanceFinding } from "../finding.js";
 import { listDirectory, readTextFile } from "../fs-support.js";
+import { parseJson } from "../liquid-support.js";
 
 const docs = "https://shopify.dev/docs/storefronts/themes/architecture/templates/json-templates";
 
@@ -10,13 +11,9 @@ type JsonTemplate = {
 };
 
 function parseTemplate(content: string): JsonTemplate | undefined {
-  try {
-    const parsed: unknown = JSON.parse(content);
-    if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed)) return undefined;
-    return parsed as JsonTemplate;
-  } catch {
-    return undefined;
-  }
+  const parsed = parseJson<unknown>(content);
+  if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed)) return undefined;
+  return parsed as JsonTemplate;
 }
 
 export const templatesValid: ConformanceCheck = {
