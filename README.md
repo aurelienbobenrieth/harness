@@ -24,6 +24,7 @@ This repository is the source of truth for reusable lint rules, tool configs, an
 - `@aurelienbbn/conformance-shopify-app`: structural conformance checks for Shopify apps, packaged as a Vitest suite.
 - `@aurelienbbn/conformance-shopify-theme`: structural conformance checks for Shopify themes, packaged as a Vitest suite.
 - `@aurelienbbn/oxfmt-config`: reusable oxfmt config presets made from existing formatter settings.
+- `@aurelienbbn/oio`: Theme OS CLI (registry sync/check, surface audit, budgets, scaffolding) in Effect TS.
 
 ## Package Taxonomy
 
