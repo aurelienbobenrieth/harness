@@ -187,7 +187,7 @@ importers:
 packages:
 
   '@aurelienbbn/agentlint@file:local-packages/aurelienbbn-agentlint-0.1.5.tgz':
-    resolution: {integrity: sha512-AwgD8B1o59ERpMQWX8WKPGDnMcYxr+DcPo7wLSemKiqiYlDWszFao4G9GFbD27aoW2KYr674tcvzVXTp0Emayw==, tarball: file:local-packages/aurelienbbn-agentlint-0.1.5.tgz}
+    resolution: {integrity: sha512-LbUL2XNgf0WReWzKs3l1uqX71RnAgxSmrIDvcVrmAHbWLTLlVUETtGil7A+sOYCUpm6xau8KFfcougAz9Zov6A==, tarball: file:local-packages/aurelienbbn-agentlint-0.1.5.tgz}
     version: 0.1.5
     engines: {node: '>=22'}
     hasBin: true
