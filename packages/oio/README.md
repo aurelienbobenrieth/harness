@@ -9,6 +9,7 @@ Theme OS CLI: one entry point wrapping the theme harness so agents and humans ru
 - `oio surface audit` — print the merchant-facing catalog and flag implemented entries without surface classification.
 - `oio budget` — check `assets/` against size budgets.
 - `oio scaffold block|snippet|section|enhancer|machine <id>` — generate files with LiquidDoc/schema/test stubs and flip the registry entry to `skeleton`.
+- `oio docs build` — generate the primitive catalog and event contract docs from registry.json + LiquidDoc, plus an `llms.txt` at the project root.
 
 ## Configuration
 

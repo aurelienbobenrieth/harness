@@ -9,6 +9,8 @@ import { defaultBudgets, defaultStatuses, type OioConfig } from "./config.js";
 import { Env } from "./env.js";
 import { budgetHandler } from "./features/budget/handler.js";
 import { BudgetCommand } from "./features/budget/request.js";
+import { docsBuildHandler } from "./features/docs/handler.js";
+import { DocsBuildCommand } from "./features/docs/request.js";
 import { registryCheckHandler, registrySyncHandler } from "./features/registry/handler.js";
 import { RegistryCheckCommand, RegistrySyncCommand } from "./features/registry/request.js";
 import { scaffoldHandler } from "./features/scaffold/handler.js";
@@ -28,6 +30,7 @@ function usage(): string {
     "  oio registry sync           write registry.json from the markdown registry",
     "  oio surface audit           print the merchant-facing catalog",
     "  oio budget                  check asset size budgets",
+    "  oio docs build              generate the primitive catalog, event docs, and llms.txt",
     "  oio scaffold <kind> <id>    kind: block|snippet|section|enhancer|machine",
   ].join("\n");
 }
@@ -92,6 +95,23 @@ const program = Effect.gen(function* () {
       return yield* printResult(
         yield* budgetHandler(new BudgetCommand({ root: env.cwd, budgets: config.budgets ?? defaultBudgets })),
       );
+    }
+    case "docs": {
+      if (subcommand === "build") {
+        return yield* printResult(
+          yield* docsBuildHandler(
+            new DocsBuildCommand({
+              root: env.cwd,
+              jsonPath: registry.jsonPath,
+              eventsPath: config.docs?.eventsPath,
+              outputDir: config.docs?.outputDir ?? "docs/generated",
+            }),
+          ),
+        );
+      }
+      yield* Console.log("Usage: oio docs build");
+      env.setExitCode(2);
+      return;
     }
     case "scaffold": {
       const id = rest[0];

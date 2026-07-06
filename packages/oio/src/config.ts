@@ -15,9 +15,17 @@ export type OioRegistryConfig = {
   readonly minCount?: number;
 };
 
+export type OioDocsConfig = {
+  /** Output directory for generated docs, relative to root. Default: docs/generated */
+  readonly outputDir?: string;
+  /** Machine-readable event contract to document. */
+  readonly eventsPath?: string;
+};
+
 export type OioConfig = {
   readonly registry?: OioRegistryConfig;
   readonly budgets?: readonly OioBudget[];
+  readonly docs?: OioDocsConfig;
   /** Namespace for scaffolded machines and custom elements. Default: oio */
   readonly namespace?: string;
 };
