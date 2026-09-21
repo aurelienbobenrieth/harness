@@ -63,3 +63,17 @@ it("ignores unsafe examples in comments", async () => {
     assertRuleDoesNotReport(ruleName, "// type Program = Effect.Effect<void, any, Config>;\n"),
   ).resolves.toBeUndefined();
 });
+
+it("reports regression: type ErrorType = unknown; const task: Effect.Effect<() => string, ErrorType> = source;", async () => {
+  await assertRuleReports(
+    ruleName,
+    "type ErrorType = unknown; const task: Effect.Effect<() => string, ErrorType> = source;",
+  );
+});
+
+it('reports regression: import { Effect as E } from "effect"; const task: E.Effect<string, any> = source;', async () => {
+  await assertRuleReports(
+    ruleName,
+    'import { Effect as E } from "effect"; const task: E.Effect<string, any> = source;',
+  );
+});

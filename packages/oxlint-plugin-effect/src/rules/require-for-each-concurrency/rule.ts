@@ -1,21 +1,11 @@
-import type { ESTree, Rule } from "@oxlint/plugins";
-import { isIdentifier, isMemberExpression } from "../ast.js";
+import { effectMethod } from "../binding-support.js";
+import type { ESTree, Rule, Context } from "@oxlint/plugins";
+import { hasPropertyNamed } from "../ast.js";
 
 const message = "Provide an explicit concurrency option for Effect.forEach.";
 
-function hasConcurrencyOption(node: ESTree.Node | undefined): boolean {
-  if (node?.type !== "ObjectExpression") return false;
-
-  return node.properties.some((property) => {
-    if (property.type !== "Property") return false;
-
-    const key = property.key;
-    return isIdentifier(key, "concurrency") || (key.type === "Literal" && key.value === "concurrency");
-  });
-}
-
-function isEffectForEachCall(node: ESTree.Node): node is ESTree.CallExpression {
-  return node.type === "CallExpression" && isMemberExpression(node.callee, "Effect", "forEach");
+function isEffectForEachCall(node: ESTree.Node, context: Context): node is ESTree.CallExpression {
+  return node.type === "CallExpression" && effectMethod(context, node.callee) === "forEach";
 }
 
 export const requireForEachConcurrency: Rule = {
@@ -31,8 +21,8 @@ export const requireForEachConcurrency: Rule = {
   createOnce(context) {
     return {
       CallExpression(node) {
-        if (!isEffectForEachCall(node)) return;
-        if (hasConcurrencyOption(node.arguments[2])) return;
+        if (!isEffectForEachCall(node, context)) return;
+        if (hasPropertyNamed(node.arguments.at(-1), "concurrency")) return;
 
         context.report({
           node,

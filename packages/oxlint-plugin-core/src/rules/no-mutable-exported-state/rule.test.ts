@@ -56,3 +56,14 @@ it("allows exported factories", async () => {
 it("allows local mutable state that is not exported", async () => {
   await expect(assertRuleDoesNotReport(ruleName, "const cache = new Map();\n")).resolves.toBeUndefined();
 });
+
+it("accepts regression: function local() { const state = {}; return state; } const state = 1; export { state, local };", async () => {
+  await assertRuleDoesNotReport(
+    ruleName,
+    "function local() { const state = {}; return state; } const state = 1; export { state, local };",
+  );
+});
+
+it("reports regression: export { state }; const state = {};", async () => {
+  await assertRuleReports(ruleName, "export { state }; const state = {};");
+});

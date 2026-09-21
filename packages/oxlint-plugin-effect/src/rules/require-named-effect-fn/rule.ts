@@ -1,14 +1,10 @@
+import { binding, effectMethod } from "../binding-support.js";
 import type { ESTree, Rule } from "@oxlint/plugins";
-import { isMemberExpression } from "../ast.js";
 
 const message = 'Name Effect.fn calls for tracing, for example Effect.fn("service.method")(...).';
 
-function isEffectFnCall(node: ESTree.Node): node is ESTree.CallExpression {
-  return node.type === "CallExpression" && isMemberExpression(node.callee, "Effect", "fn");
-}
-
 function isNonEmptyStringLiteral(node: ESTree.Node | undefined): boolean {
-  return node?.type === "Literal" && typeof node.value === "string" && node.value.length > 0;
+  return node?.type === "Literal" && typeof node.value === "string" && node.value.trim().length > 0;
 }
 
 export const requireNamedEffectFn: Rule = {
@@ -20,8 +16,20 @@ export const requireNamedEffectFn: Rule = {
   createOnce(context) {
     return {
       CallExpression(node) {
-        if (!isEffectFnCall(node)) return;
-        if (isNonEmptyStringLiteral(node.arguments[0])) return;
+        if (effectMethod(context, node.callee) !== "fn") return;
+        const name = node.arguments[0];
+        if (isNonEmptyStringLiteral(name)) return;
+        if (
+          name?.type === "Identifier" &&
+          binding(context, name, name.name)?.defs.some(
+            (definition) =>
+              definition.node.type === "VariableDeclarator" &&
+              definition.parent?.type === "VariableDeclaration" &&
+              definition.parent.kind === "const" &&
+              isNonEmptyStringLiteral(definition.node.init ?? undefined),
+          )
+        )
+          return;
         context.report({ node, messageId: "namedEffectFn" });
       },
     };

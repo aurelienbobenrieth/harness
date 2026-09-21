@@ -37,7 +37,7 @@ it("allows composed Effect values", async () => {
     assertRuleDoesNotReport(
       ruleName,
       `
-pipe(
+const program = pipe(
   Effect.succeed(value),
   Effect.map((value) => value + 1),
 );
@@ -50,6 +50,18 @@ it("allows runtime boundary calls", async () => {
   await expect(assertRuleDoesNotReport(ruleName, "Effect.runPromise(program);\n")).resolves.toBeUndefined();
 });
 
-it("allows standalone Effect log calls", async () => {
-  await expect(assertRuleDoesNotReport(ruleName, "Effect.logInfo(message);\n")).resolves.toBeUndefined();
+it("enforces corrected contract: allows standalone Effect log calls", async () => {
+  await expect(assertRuleReports(ruleName, "Effect.logInfo(message);\n")).resolves.toBeUndefined();
+});
+
+it('reports regression: Effect.log("lost");', async () => {
+  await assertRuleReports(ruleName, 'Effect.log("lost");');
+});
+
+it("allows curried run*With runtime boundary statements", async () => {
+  await expect(assertRuleDoesNotReport(ruleName, "Effect.runForkWith(services)(program);\n")).resolves.toBeUndefined();
+});
+
+it("reports discarded curried Effect calls", async () => {
+  await expect(assertRuleReports(ruleName, "Effect.provideService(Clock, clock)(program);\n")).resolves.toBeUndefined();
 });

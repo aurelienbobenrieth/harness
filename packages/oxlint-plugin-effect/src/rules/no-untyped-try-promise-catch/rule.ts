@@ -1,11 +1,9 @@
 import type { ESTree, Rule } from "@oxlint/plugins";
-import { isMemberExpression } from "../ast.js";
+import { effectMethod } from "../binding-support.js";
 
-const message = "Effect.tryPromise should map promise errors with a catch handler instead of leaking unknown errors.";
-
-function isEffectTryPromiseCall(node: ESTree.Node): node is ESTree.CallExpression {
-  return node.type === "CallExpression" && isMemberExpression(node.callee, "Effect", "tryPromise");
-}
+const message =
+  "Map thrown and rejected failures to the project domain error contract with an explicit catch handler; the framework default is a generic Cause.UnknownError wrapper.";
+const tryConstructors = new Set(["try", "tryPromise"]);
 
 function hasCatchProperty(node: ESTree.Node | undefined): boolean {
   if (node?.type !== "ObjectExpression") return false;
@@ -22,7 +20,7 @@ export const noUntypedTryPromiseCatch: Rule = {
   meta: {
     type: "problem",
     docs: {
-      description: "Require Effect.tryPromise to map promise errors with a catch handler.",
+      description: "Require Effect.try and Effect.tryPromise to map thrown or rejected values with a catch handler.",
     },
     messages: {
       noUntypedTryPromiseCatch: message,
@@ -31,7 +29,7 @@ export const noUntypedTryPromiseCatch: Rule = {
   createOnce(context) {
     return {
       CallExpression(node) {
-        if (!isEffectTryPromiseCall(node)) return;
+        if (!tryConstructors.has(effectMethod(context, node.callee) ?? "")) return;
         if (hasCatchProperty(node.arguments.at(0))) return;
 
         context.report({

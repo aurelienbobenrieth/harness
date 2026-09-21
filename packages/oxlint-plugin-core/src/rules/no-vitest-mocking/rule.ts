@@ -1,20 +1,10 @@
-import type { ESTree, Rule } from "@oxlint/plugins";
+import type { Rule } from "@oxlint/plugins";
+import { getFilename, type RuleContextWithFilename } from "../filename-support.js";
+import { testApi } from "../test-api-support.js";
 
-const message = "Prefer manual fakes, in-memory adapters, or deterministic doubles instead of Vitest mocking APIs.";
-const bannedMethods = new Set(["fn", "mock", "spyOn"]);
-
-type RuleContextWithFilename = {
-  readonly filename?: string;
-  readonly getFilename?: () => string;
-};
-
-function getFilename(context: RuleContextWithFilename): string {
-  return normalizePath(context.filename ?? context.getFilename?.() ?? "");
-}
-
-function normalizePath(value: string): string {
-  return value.replaceAll("\\", "/");
-}
+const message =
+  "Inject deterministic doubles instead of replacing modules. Spies and fake functions can express observable boundary contracts.";
+const bannedMethods = new Set(["mock", "doMock", "unmock", "doUnmock"]);
 
 function isAllowedMockingFile(filename: string): boolean {
   return (
@@ -24,20 +14,19 @@ function isAllowedMockingFile(filename: string): boolean {
   );
 }
 
-function isVitestMockingCall(node: ESTree.CallExpression): boolean {
-  if (node.callee.type !== "MemberExpression") return false;
-  if (node.callee.object.type !== "Identifier" || node.callee.object.name !== "vi") return false;
-  if (node.callee.property.type !== "Identifier") return false;
-
-  return bannedMethods.has(node.callee.property.name);
-}
-
 export const noVitestMocking: Rule = {
   meta: {
     type: "problem",
     docs: {
       description: "Disallow Vitest mocking APIs in favor of deterministic test doubles.",
     },
+    schema: [
+      {
+        type: "object",
+        properties: { forbidSpies: { type: "boolean" } },
+        additionalProperties: false,
+      },
+    ],
     messages: {
       noVitestMocking: message,
     },
@@ -45,7 +34,13 @@ export const noVitestMocking: Rule = {
   createOnce(context) {
     return {
       CallExpression(node) {
-        if (!isVitestMockingCall(node)) return;
+        const options = context.options[0] as { forbidSpies?: boolean } | undefined;
+        const method = testApi(context, node.callee)?.replace(/^vi\./, "");
+        if (
+          method === undefined ||
+          (!bannedMethods.has(method) && !(options?.forbidSpies === true && ["fn", "spyOn"].includes(method)))
+        )
+          return;
         if (isAllowedMockingFile(getFilename(context as RuleContextWithFilename))) return;
 
         context.report({

@@ -1,7 +1,9 @@
-import type { ESTree, Rule } from "@oxlint/plugins";
-import { isMemberExpression } from "../ast.js";
+import type { Context, ESTree, Rule } from "@oxlint/plugins";
+import { effectMethod, moduleMethod } from "../binding-support.js";
+import { getFilename, isAllowedFile, type RuleContextWithOptions } from "../runtime-support.js";
 
-const message = "Use typed Effect failures instead of converting failures to defects with Effect.orDie.";
+const message =
+  "Use typed Effect failures instead of converting failures to defects with Effect.orDie, Layer.orDie, or a catch handler that only dies.";
 const defaultAllow: readonly string[] = [];
 const defaultAllowedCalls: readonly string[] = [];
 
@@ -9,16 +11,6 @@ type RuleOptions = {
   readonly allow?: readonly string[];
   readonly allowedCalls?: readonly string[];
 };
-
-type RuleContextWithOptions = {
-  readonly filename?: string;
-  readonly getFilename?: () => string;
-  readonly options?: readonly unknown[];
-};
-
-function getFilename(context: RuleContextWithOptions): string {
-  return context.filename ?? context.getFilename?.() ?? "";
-}
 
 function getOptions(context: RuleContextWithOptions): RuleOptions {
   const candidate = context.options?.[0];
@@ -36,66 +28,41 @@ function getOptions(context: RuleContextWithOptions): RuleOptions {
   };
 }
 
-function normalizePath(value: string): string {
-  return value.replaceAll("\\", "/");
+type ErasureName = "orDie" | "orDieWith" | "Layer.orDie" | "catchDie";
+
+function isDieCall(context: Context, node: ESTree.Node | null | undefined): boolean {
+  return node?.type === "CallExpression" && effectMethod(context, node.callee) === "die";
 }
 
-function escapeRegExp(value: string): string {
-  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+/** Recognize `Effect.catch(Effect.die)` and handlers whose whole body is `Effect.die(...)`. */
+function isDieOnlyHandler(context: Context, handler: ESTree.Node | undefined): boolean {
+  if (handler === undefined) return false;
+  if (effectMethod(context, handler) === "die") return true;
+  if (handler.type !== "ArrowFunctionExpression" && handler.type !== "FunctionExpression") return false;
+  if (handler.body === null) return false;
+  if (handler.body.type !== "BlockStatement") return isDieCall(context, handler.body);
+
+  const [statement, ...rest] = handler.body.body;
+  return rest.length === 0 && statement?.type === "ReturnStatement" && isDieCall(context, statement.argument);
 }
 
-function globToRegExp(glob: string): RegExp {
-  let pattern = "";
-  const normalized = normalizePath(glob);
+function getErasureName(context: Context, node: ESTree.MemberExpression): ErasureName | undefined {
+  const method = effectMethod(context, node);
+  if (method === "orDie" || method === "orDieWith") return method;
+  if (moduleMethod(context, node, "Layer") === "orDie") return "Layer.orDie";
+  if (method !== "catch" && method !== "catchAll") return undefined;
 
-  for (let index = 0; index < normalized.length; index += 1) {
-    const character = normalized.charAt(index);
-    const next = normalized.charAt(index + 1);
-    const afterNext = normalized.charAt(index + 2);
-
-    if (character === "*" && next === "*" && afterNext === "/") {
-      pattern += "(?:.*/)?";
-      index += 2;
-      continue;
-    }
-
-    if (character === "*" && next === "*") {
-      pattern += ".*";
-      index += 1;
-      continue;
-    }
-
-    if (character === "*") {
-      pattern += "[^/]*";
-      continue;
-    }
-
-    pattern += escapeRegExp(character);
-  }
-
-  return new RegExp(`^${pattern}$`, "u");
-}
-
-function isAllowedFile(filename: string, patterns: readonly string[]): boolean {
-  const normalized = normalizePath(filename);
-  return patterns.some((pattern) => globToRegExp(pattern).test(normalized));
-}
-
-function isOrDieReference(node: ESTree.Node): node is ESTree.MemberExpression {
-  return isMemberExpression(node, "Effect", "orDie") || isMemberExpression(node, "Effect", "orDieWith");
-}
-
-function getEffectCallName(node: ESTree.Node): "orDie" | "orDieWith" | undefined {
-  if (isMemberExpression(node, "Effect", "orDie")) return "orDie";
-  if (isMemberExpression(node, "Effect", "orDieWith")) return "orDieWith";
-  return undefined;
+  const call = node.parent;
+  if (call.type !== "CallExpression" || call.callee !== node) return undefined;
+  return isDieOnlyHandler(context, call.arguments.at(-1)) ? "catchDie" : undefined;
 }
 
 export const noEffectOrDie: Rule = {
   meta: {
     type: "problem",
     docs: {
-      description: "Disallow Effect.orDie and Effect.orDieWith outside configured escape hatches.",
+      description:
+        "Disallow Effect.orDie, Effect.orDieWith, Layer.orDie, and Effect.catch handlers that only die outside configured escape hatches.",
     },
     messages: {
       noEffectOrDie: message,
@@ -110,26 +77,26 @@ export const noEffectOrDie: Rule = {
           },
           allowedCalls: {
             type: "array",
-            items: { enum: ["orDie", "orDieWith"] },
+            items: { enum: ["orDie", "orDieWith", "Layer.orDie", "catchDie"] },
           },
         },
         additionalProperties: false,
       },
     ],
-    defaultOptions: [{ allow: defaultAllow, allowedCalls: defaultAllowedCalls }],
+    defaultOptions: [{ allow: [...defaultAllow], allowedCalls: [...defaultAllowedCalls] }],
   },
   createOnce(context) {
     return {
       MemberExpression(node) {
-        if (!isOrDieReference(node)) return;
+        const callName = getErasureName(context, node);
+        if (callName === undefined) return;
 
         const options = getOptions(context as RuleContextWithOptions);
         const allow = options.allow ?? defaultAllow;
         const allowedCalls = options.allowedCalls ?? defaultAllowedCalls;
         if (isAllowedFile(getFilename(context as RuleContextWithOptions), allow)) return;
 
-        const callName = getEffectCallName(node);
-        if (callName !== undefined && allowedCalls.includes(callName)) return;
+        if (allowedCalls.includes(callName)) return;
 
         context.report({
           node,

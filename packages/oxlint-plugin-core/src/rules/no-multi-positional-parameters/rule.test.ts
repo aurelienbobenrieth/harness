@@ -15,9 +15,9 @@ it("reports arrow function constants with multiple parameters", async () => {
   ).resolves.toBeUndefined();
 });
 
-it("reports local callbacks with multiple parameters", async () => {
+it("allows callbacks whose positional contract belongs to the caller", async () => {
   await expect(
-    assertRuleReports(ruleName, "const names = users.map((user, index) => `${index}:${user.name}`);\n"),
+    assertRuleDoesNotReport(ruleName, "const names = users.map((user, index) => `${index}:${user.name}`);\n"),
   ).resolves.toBeUndefined();
 });
 
@@ -48,5 +48,47 @@ it("allows callbacks with one object parameter", async () => {
 it("allows exported zero parameter functions", async () => {
   await expect(
     assertRuleDoesNotReport(ruleName, "export function loadUser() { return undefined; }\n"),
+  ).resolves.toBeUndefined();
+});
+
+it("allows function declarations listed in exemptFunctionNames", async () => {
+  await expect(
+    assertRuleDoesNotReport(ruleName, "function merge(left: Config, right: Config) { return left ?? right; }\n", {
+      ruleOptions: { exemptFunctionNames: ["merge"] },
+    }),
+  ).resolves.toBeUndefined();
+});
+
+it("allows arrow constants listed in exemptFunctionNames", async () => {
+  await expect(
+    assertRuleDoesNotReport(ruleName, "const merge = (left: Config, right: Config) => left ?? right;\n", {
+      ruleOptions: { exemptFunctionNames: ["merge"] },
+    }),
+  ).resolves.toBeUndefined();
+});
+
+it("reports functions not listed in exemptFunctionNames", async () => {
+  await expect(
+    assertRuleReports(ruleName, "function split(value: string, separator: string) { return value; }\n", {
+      ruleOptions: { exemptFunctionNames: ["merge"] },
+    }),
+  ).resolves.toBeUndefined();
+});
+
+it("allows files listed in exemptFileBasenames", async () => {
+  await expect(
+    assertRuleDoesNotReport(ruleName, "function loadUser(userId: UserId, includePosts: boolean) { return userId; }\n", {
+      filename: "legacy.ts",
+      ruleOptions: { exemptFileBasenames: ["legacy.ts"] },
+    }),
+  ).resolves.toBeUndefined();
+});
+
+it("reports files not listed in exemptFileBasenames", async () => {
+  await expect(
+    assertRuleReports(ruleName, "function loadUser(userId: UserId, includePosts: boolean) { return userId; }\n", {
+      filename: "current.ts",
+      ruleOptions: { exemptFileBasenames: ["legacy.ts"] },
+    }),
   ).resolves.toBeUndefined();
 });

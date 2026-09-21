@@ -1,0 +1,7 @@
+---
+"@aurelienbbn/oxlint-plugin-core": minor
+---
+
+Tighten `no-weak-test-assertions` and add three test-quality rules. `no-weak-test-assertions` now treats as weak a matcher whose arguments are all wildcards (`toHaveBeenCalledWith(expect.anything())`, `toEqual(expect.any(Object))`, `expect.objectContaining({})`, `expect.arrayContaining([])`), a bare `toHaveBeenCalled()` / `toBeCalled()`, `toBeInstanceOf(Object)`, and `expect(typeof x).toBe("<literal>")`; one concrete argument keeps a matcher strong, and a bare `toThrow()` stays with `vitest/require-to-throw-message`. New: `no-stubbed-subject` (a `<stem>.test` file must not give canned behavior to a `vi.spyOn` on its own `<stem>` module), `no-test-logic-in-production` (no `NODE_ENV === "test"` / `import.meta.env.MODE === "test"` comparisons, test-runner environment probes, `import.meta.vitest`, or exports named or commented as existing for tests only, outside test and test-utility files), and `no-ambient-nondeterminism-in-tests` (no locale-sensitive formatting without a locale, real clock reads without fake timers, or `Math.random()` in test files; option `allowClock`).
+
+Migration: tests whose only assertion is a wildcard-only matcher, a bare call check, an `Object` instance check or a `typeof` comparison now report; assert the exact arguments or the observable value. The three new rules are opt-in by name like every rule of this plugin. None of these diagnostics has an autofix.

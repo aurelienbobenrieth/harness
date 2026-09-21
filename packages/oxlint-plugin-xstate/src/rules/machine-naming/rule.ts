@@ -5,7 +5,7 @@ const message =
 
 type RuleOptions = { readonly pattern?: string };
 
-const defaultPattern = "^oio\\.[a-z0-9-]+$";
+const defaultPattern = "^[a-z][a-z0-9-]*\\.[a-z][a-z0-9-]*$";
 
 function machineIdPattern(context: unknown): RegExp {
   const options = (context as { readonly options?: readonly unknown[] }).options;
@@ -25,7 +25,9 @@ function isCreateMachineCallee(callee: ESTree.Expression | ESTree.Super): boolea
   return false;
 }
 
-function machineIdProperty(argument: ESTree.Expression | ESTree.SpreadElement | undefined): ESTree.Literal | undefined {
+function machineIdProperty(
+  argument: ESTree.Expression | ESTree.SpreadElement | undefined,
+): ESTree.StringLiteral | undefined {
   if (argument === undefined || argument.type !== "ObjectExpression") return undefined;
   for (const property of argument.properties) {
     if (property.type !== "Property" || property.computed) continue;

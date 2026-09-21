@@ -18,9 +18,9 @@ it("reports dependency yields after logic", async () => {
   ).resolves.toBeUndefined();
 });
 
-it("reports missing blank line after dependency yields", async () => {
+it("leaves blank line formatting alone after dependency yields", async () => {
   await expect(
-    assertRuleReports(
+    assertRuleDoesNotReport(
       ruleName,
       `const program = Effect.gen(function* () {
   const repo = yield* UserRepo;
@@ -66,7 +66,7 @@ it("checks named Effect.fn generator bodies", async () => {
   await expect(
     assertRuleReports(
       ruleName,
-      `const run = Effect.fn("run", function* () {
+      `const run = Effect.fn("run")(function* () {
   const user = yield* repo.findUser(id);
   const repo = yield* UserRepo;
 
@@ -87,6 +87,33 @@ it("ignores non Effect generators", async () => {
   return user;
 });
 `,
+    ),
+  ).resolves.toBeUndefined();
+});
+
+it("reports late dependencies inside Effect.fnUntraced", async () => {
+  await expect(
+    assertRuleReports(
+      ruleName,
+      "const run = Effect.fnUntraced(function* (id: string) {\n  const user = yield* repo.findUser(id);\n  const repo = yield* UserRepo;\n  return user;\n});\n",
+    ),
+  ).resolves.toBeUndefined();
+});
+
+it("reports late dependencies through an aliased Effect import", async () => {
+  await expect(
+    assertRuleReports(
+      ruleName,
+      'import { Effect as E } from "effect";\nconst run = E.gen(function* () {\n  const user = yield* repo.findUser(id);\n  const repo = yield* UserRepo;\n  return user;\n});\n',
+    ),
+  ).resolves.toBeUndefined();
+});
+
+it("allows dependencies first inside Effect.fnUntraced", async () => {
+  await expect(
+    assertRuleDoesNotReport(
+      ruleName,
+      "const run = Effect.fnUntraced(function* (id: string) {\n  const repo = yield* UserRepo;\n  const user = yield* repo.findUser(id);\n  return user;\n});\n",
     ),
   ).resolves.toBeUndefined();
 });

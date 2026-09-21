@@ -2,7 +2,15 @@
   "name": "@aurelienbbn/oxfmt-config",
   "version": "0.0.0",
   "description": "Reusable oxfmt config for Vite+ projects.",
+  "bugs": {
+    "url": "https://github.com/aurelienbobenrieth/harness/issues"
+  },
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aurelienbobenrieth/harness.git",
+    "directory": "packages/oxfmt-config"
+  },
   "files": [
     "dist"
   ],
@@ -15,10 +23,14 @@
   },
   "scripts": {
     "build": "tsdown",
-    "prepack": "pnpm build"
+    "prepack": "pnpm build",
+    "typecheck": "tsc --noEmit"
   },
   "peerDependencies": {
-    "oxfmt": ">=0.56.0",
-    "vite-plus": ">=0.2.1"
+    "oxfmt": ">=0.67.0 <0.69.0",
+    "vite-plus": "^0.3.2"
+  },
+  "engines": {
+    "node": "^22.19.0 || ^24.11.0"
   }
 }

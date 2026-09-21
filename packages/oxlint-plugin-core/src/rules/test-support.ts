@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { execFile } from "node:child_process";
-import { mkdir, mkdtemp, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { promisify } from "node:util";
@@ -15,6 +15,7 @@ type LintResult = { readonly stdout: string; readonly stderr: string; readonly e
 
 type LintCodeOptions = {
   readonly filename?: string;
+  readonly ruleOptions?: Record<string, unknown>;
 };
 
 async function lintCode(ruleName: string, code: string, options: LintCodeOptions = {}): Promise<LintResult> {
@@ -22,10 +23,20 @@ async function lintCode(ruleName: string, code: string, options: LintCodeOptions
   const configPath = path.join(directory, "oxlint.json");
   const sourcePath = path.join(directory, options.filename ?? "sample.ts");
 
+  const ruleConfig = options.ruleOptions === undefined ? "error" : ["error", options.ruleOptions];
+
   await mkdir(path.dirname(sourcePath), { recursive: true });
   await writeFile(
     configPath,
-    JSON.stringify({ jsPlugins: [`file:///${pluginPath}`], rules: { [ruleName]: "error" } }, null, 2),
+    JSON.stringify(
+      {
+        categories: { correctness: "off" },
+        jsPlugins: [`file:///${pluginPath}`],
+        rules: { [ruleName]: ruleConfig },
+      },
+      null,
+      2,
+    ),
   );
   await writeFile(sourcePath, code);
 
@@ -38,15 +49,23 @@ async function lintCode(ruleName: string, code: string, options: LintCodeOptions
     return { stdout, stderr, exitCode: 0 };
   } catch (error) {
     if (typeof error === "object" && error !== null && "stdout" in error && "stderr" in error && "code" in error) {
-      return { stdout: String(error.stdout), stderr: String(error.stderr), exitCode: Number(error.code) };
+      return {
+        stdout: String(error.stdout),
+        stderr: String(error.stderr),
+        exitCode: Number(error.code),
+      };
     }
     throw error;
+  } finally {
+    assert.equal(path.dirname(path.resolve(directory)), path.resolve(tmpdir()));
+    await rm(directory, { recursive: true, force: true });
   }
 }
 
 export async function assertRuleReports(ruleName: string, code: string, options?: LintCodeOptions): Promise<void> {
   const result = await lintCode(ruleName, code, options);
-  assert.notEqual(result.exitCode, 0);
+  assertHealthyResult(result);
+  assert.equal(result.exitCode, 1);
   assert.match(result.stdout + result.stderr, diagnosticCodePattern(ruleName));
 }
 
@@ -56,6 +75,8 @@ export async function assertRuleDoesNotReport(
   options?: LintCodeOptions,
 ): Promise<void> {
   const result = await lintCode(ruleName, code, options);
+  assertHealthyResult(result);
+  assert.equal(result.exitCode, 0, result.stdout + result.stderr);
   assert.doesNotMatch(result.stdout + result.stderr, diagnosticCodePattern(ruleName));
 }
 
@@ -66,4 +87,17 @@ function diagnosticCodePattern(ruleName: string): RegExp {
 
 function escapeRegExp(value: string): string {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function assertHealthyResult(result: LintResult): void {
+  assert.equal(result.stderr, "", result.stderr);
+  const output = JSON.parse(result.stdout) as {
+    diagnostics: { code?: string; message: string; labels?: unknown[] }[];
+  };
+  assert.ok(Array.isArray(output.diagnostics), result.stdout);
+  for (const diagnostic of output.diagnostics) {
+    assert.ok(diagnostic.code, diagnostic.message);
+    assert.ok(diagnostic.labels && diagnostic.labels.length > 0, diagnostic.message);
+    assert.doesNotMatch(diagnostic.message, /Error running JS plugin|Failed to parse|Maximum call stack/);
+  }
 }

@@ -1,15 +1,31 @@
-import type { ESTree, Rule } from "@oxlint/plugins";
-import { isIdentifier, isImmediateFunctionCallWithArgument, isJsonMethodCall } from "../ast.js";
+import { binding, moduleMethod } from "../binding-support.js";
+import type { ESTree, Rule, Context } from "@oxlint/plugins";
+import { isJsonMethodCall } from "../ast.js";
 
 const message =
   "Parse JSON through an Effect Schema JSON decoder, such as Schema.fromJsonString(...), before using the value.";
 
-function isEffectSchemaDecoderCall(node: ESTree.Node | undefined, jsonParseNode: ESTree.CallExpression): boolean {
-  return isImmediateFunctionCallWithArgument(
-    node,
-    jsonParseNode,
-    (callee) => isIdentifier(callee) && callee.name.endsWith("Decoder"),
-  );
+const schemaDecoders = new Set([
+  "decodeUnknown",
+  "decodeUnknownEffect",
+  "decodeUnknownSync",
+  "decodeUnknownEither",
+  "decodeUnknownExit",
+  "decodeUnknownOption",
+  "decodeUnknownPromise",
+  "decodeUnknownResult",
+]);
+
+function isEffectSchemaDecoderCall(node: ESTree.Node | undefined, context: Context): boolean {
+  if (node?.type !== "CallExpression") return false;
+  let callee = node.callee;
+  if (callee.type === "Identifier") {
+    const definition = binding(context, callee, callee.name)?.defs[0]?.node;
+    if (definition?.type === "VariableDeclarator" && definition.init?.type === "CallExpression")
+      callee = definition.init.callee;
+  }
+  if (callee.type === "CallExpression") callee = callee.callee;
+  return schemaDecoders.has(moduleMethod(context, callee, "Schema") ?? "");
 }
 
 export const noRawJsonParse: Rule = {
@@ -26,7 +42,7 @@ export const noRawJsonParse: Rule = {
     return {
       CallExpression(node) {
         if (!isJsonMethodCall(node, "parse")) return;
-        if (isEffectSchemaDecoderCall(node.parent, node)) return;
+        if (isEffectSchemaDecoderCall(node.parent, context)) return;
 
         context.report({
           node,

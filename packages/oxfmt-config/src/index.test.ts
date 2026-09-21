@@ -20,3 +20,12 @@ it("does not mutate the exported default config", () => {
   expect(defaultOxfmtConfig.ignorePatterns).toEqual([".agents/**", "**/*.wasm", "pnpm-lock.yaml"]);
   expect(defaultOxfmtConfig.semi).toBe(true);
 });
+
+it("replaces list defaults and returns independent nested state", () => {
+  expect(defineOxfmtConfig({ ignorePatterns: ["generated/**"] }, { replaceLists: true }).ignorePatterns).toEqual([
+    "generated/**",
+  ]);
+  const config = defineOxfmtConfig();
+  config.ignorePatterns?.push("other/**");
+  expect(defineOxfmtConfig().ignorePatterns).not.toContain("other/**");
+});

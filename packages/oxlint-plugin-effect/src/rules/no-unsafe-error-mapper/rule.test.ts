@@ -47,3 +47,7 @@ it("ignores string examples", async () => {
     assertRuleDoesNotReport(ruleName, 'const example = "Effect.mapError((error: unknown) => error)";\n'),
   ).resolves.toBeUndefined();
 });
+
+it("accepts regression: const Effect = { mapError: fn => fn }; Effect.mapError((x: unknown) => x);", async () => {
+  await assertRuleDoesNotReport(ruleName, "const Effect = { mapError: fn => fn }; Effect.mapError((x: unknown) => x);");
+});

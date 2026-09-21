@@ -51,3 +51,21 @@ it("ignores non-Schema Any members", async () => {
     }),
   ).resolves.toBeUndefined();
 });
+
+it("reports Schema.Any through an aliased import", async () => {
+  await expect(
+    assertRuleReports(
+      ruleName,
+      'import { Schema as S } from "effect";\nconst Payload = S.Struct({ value: S.Any });\n',
+      { filename: "apps/backend/src/features/example.ts" },
+    ),
+  ).resolves.toBeUndefined();
+});
+
+it("ignores Any on a local object shadowing Schema", async () => {
+  await expect(
+    assertRuleDoesNotReport(ruleName, "const Schema = { Any: 1 };\nconst value = Schema.Any;\n", {
+      filename: "apps/backend/src/features/example.ts",
+    }),
+  ).resolves.toBeUndefined();
+});

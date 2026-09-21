@@ -26,3 +26,21 @@ it("ignores non-Effect fn calls", async () => {
     assertRuleDoesNotReport(ruleName, "const run = Other.fn(function* () { return 1; });\n"),
   ).resolves.toBeUndefined();
 });
+
+it("reports unnamed Effect.fn through an aliased import", async () => {
+  await expect(
+    assertRuleReports(
+      ruleName,
+      'import { Effect as E } from "effect";\nconst run = E.fn(function* () { return 1; });\n',
+    ),
+  ).resolves.toBeUndefined();
+});
+
+it("ignores fn on a local object shadowing Effect", async () => {
+  await expect(
+    assertRuleDoesNotReport(
+      ruleName,
+      "const Effect = { fn: (body: unknown) => body };\nconst run = Effect.fn(function* () { return 1; });\n",
+    ),
+  ).resolves.toBeUndefined();
+});

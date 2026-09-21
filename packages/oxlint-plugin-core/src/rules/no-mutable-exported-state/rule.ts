@@ -23,7 +23,10 @@ type ExportSpecifier = ESTree.Node & {
 
 const mutableConstructors = new Set(["Date", "Map", "Set", "WeakMap", "WeakSet"]);
 
-function isIdentifier(node: ESTree.Node | undefined, name?: string): node is ESTree.Identifier {
+function isIdentifier(
+  node: ESTree.Node | undefined,
+  name?: string,
+): node is Extract<ESTree.Node, { type: "Identifier" }> {
   return node?.type === "Identifier" && (name === undefined || node.name === name);
 }
 
@@ -63,22 +66,29 @@ export const noMutableExportedState: Rule = {
     },
   },
   createOnce(context) {
-    const mutableBindings = new Set<string>();
-
     return {
-      VariableDeclaration(node: VariableDeclaration) {
-        for (const name of mutableDeclaratorNames(node)) {
-          mutableBindings.add(name);
+      Program(program) {
+        const mutableBindings = new Set<string>();
+        for (const statement of program.body) {
+          const declaration = statement.type === "ExportNamedDeclaration" ? statement.declaration : statement;
+          if (isVariableDeclaration(declaration)) {
+            for (const name of mutableDeclaratorNames(declaration)) mutableBindings.add(name);
+          }
         }
-      },
-      ExportNamedDeclaration(node: ExportNamedDeclaration) {
-        if (isVariableDeclaration(node.declaration) && mutableDeclaratorNames(node.declaration).length > 0) {
-          context.report({ node, messageId: "noMutableExportedState" });
-          return;
-        }
-
-        if (getExportedLocalNames(node).some((name) => mutableBindings.has(name))) {
-          context.report({ node, messageId: "noMutableExportedState" });
+        for (const statement of program.body) {
+          if (
+            statement.type !== "ExportNamedDeclaration" ||
+            statement.source !== null ||
+            statement.exportKind === "type"
+          )
+            continue;
+          if (
+            (isVariableDeclaration(statement.declaration) &&
+              mutableDeclaratorNames(statement.declaration).length > 0) ||
+            getExportedLocalNames(statement).some((name) => mutableBindings.has(name))
+          ) {
+            context.report({ node: statement, messageId: "noMutableExportedState" });
+          }
         }
       },
     };

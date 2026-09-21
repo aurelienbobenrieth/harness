@@ -2,7 +2,15 @@
   "name": "@aurelienbbn/oxlint-plugin-effect",
   "version": "0.0.0",
   "description": "Custom oxlint rules for Effect projects.",
+  "bugs": {
+    "url": "https://github.com/aurelienbobenrieth/harness/issues"
+  },
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aurelienbobenrieth/harness.git",
+    "directory": "packages/oxlint-plugin-effect"
+  },
   "files": [
     "dist"
   ],
@@ -15,13 +23,17 @@
   },
   "scripts": {
     "build": "tsdown",
-    "prepack": "pnpm build"
+    "prepack": "pnpm build",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@oxlint/plugins": "1.71.0"
+    "@oxlint/plugins": "1.83.0"
   },
   "devDependencies": {},
   "peerDependencies": {
-    "oxlint": ">=1.71.0"
+    "oxlint": ">=1.82.0 <2.0.0"
+  },
+  "engines": {
+    "node": "^22.19.0 || ^24.11.0"
   }
 }

@@ -1,209 +1,131 @@
-import type { ESTree, Rule } from "@oxlint/plugins";
+import type { Context, ESTree, Rule, Scope, Variable } from "@oxlint/plugins";
 
-const message = "Exported functions should return named contracts instead of anonymous object shapes.";
+type FunctionNode = ESTree.Function | ESTree.ArrowFunctionExpression;
+type IdentifierNode = Extract<ESTree.Node, { type: "Identifier" }>;
 
-type SourceContext = {
-  readonly sourceCode?: { getText: () => string };
-  readonly getSourceCode?: () => { getText: () => string };
-};
-
-function getSourceText(context: SourceContext): string | undefined {
-  return context.sourceCode?.getText() ?? context.getSourceCode?.().getText();
-}
-
-function hasExportedAnonymousObjectReturn(source: string): boolean {
-  const masked = maskNonCode(source);
-
-  return hasExportedFunctionAnonymousObjectReturn(masked) || hasExportedArrowAnonymousObjectReturn(masked);
-}
-
-function hasExportedFunctionAnonymousObjectReturn(source: string): boolean {
-  if (/\bexport\s+function\s+\w+\s*\([^)]*\)\s*:\s*\{/u.test(source)) return true;
-
-  const functionPattern = /\bexport\s+function\s+\w+\s*\([^)]*\)/gu;
-
-  for (const match of source.matchAll(functionPattern)) {
-    const signatureEnd = match.index + match[0].length;
-    const bodyOpenBrace = source.indexOf("{", signatureEnd);
-    if (bodyOpenBrace === -1) continue;
-
-    const signatureTail = source.slice(signatureEnd, bodyOpenBrace);
-    if (/^\s*:\s*\{/u.test(signatureTail)) return true;
-    if (/^\s*:/u.test(signatureTail)) continue;
-
-    const bodyCloseBrace = findMatchingCharacter(source, bodyOpenBrace, "{", "}");
-    if (bodyCloseBrace === undefined) continue;
-    if (/\breturn\s*\{/u.test(source.slice(bodyOpenBrace + 1, bodyCloseBrace))) return true;
+function variableAt(context: Context, node: IdentifierNode): Variable | undefined {
+  let scope: Scope | null = context.sourceCode.getScope(node);
+  while (scope !== null) {
+    const variable = scope.set.get(node.name);
+    if (variable !== undefined) return variable;
+    scope = scope.upper;
   }
-
-  return false;
-}
-
-function hasExportedArrowAnonymousObjectReturn(source: string): boolean {
-  const arrowPattern = /\bexport\s+const\s+\w+\s*=\s*(?:async\s*)?(?:\([^)]*\)|[A-Za-z_$][\w$]*)/gu;
-
-  for (const match of source.matchAll(arrowPattern)) {
-    const signatureStart = match.index + match[0].length;
-    const arrowIndex = source.indexOf("=>", signatureStart);
-    if (arrowIndex === -1) continue;
-
-    const signatureTail = source.slice(signatureStart, arrowIndex);
-    if (/:\s*\{/u.test(signatureTail)) return true;
-    if (/:\s*/u.test(signatureTail)) continue;
-
-    const bodyStart = arrowIndex + 2;
-    const bodyPrefix = source.slice(bodyStart).trimStart();
-    if (bodyPrefix.startsWith("({") || bodyPrefix.startsWith("{")) {
-      if (bodyPrefix.startsWith("({")) return true;
-
-      const bodyOpenBrace = source.indexOf("{", bodyStart);
-      if (bodyOpenBrace === -1) continue;
-
-      const bodyCloseBrace = findMatchingCharacter(source, bodyOpenBrace, "{", "}");
-      if (bodyCloseBrace === undefined) continue;
-      if (/\breturn\s*\{/u.test(source.slice(bodyOpenBrace + 1, bodyCloseBrace))) return true;
-    }
-  }
-
-  return false;
-}
-
-function findMatchingCharacter(
-  source: string,
-  start: number,
-  openCharacter: string,
-  closeCharacter: string,
-): number | undefined {
-  let depth = 0;
-
-  for (let index = start; index < source.length; index += 1) {
-    const character = source.charAt(index);
-
-    if (character === openCharacter) {
-      depth += 1;
-      continue;
-    }
-
-    if (character !== closeCharacter) continue;
-
-    depth -= 1;
-    if (depth === 0) return index;
-  }
-
   return undefined;
 }
 
-function maskNonCode(source: string): string {
-  let masked = "";
-  let state: "block" | "code" | "double" | "line" | "single" | "template" = "code";
-  let escaped = false;
-
-  for (let index = 0; index < source.length; index += 1) {
-    const character = source.charAt(index);
-    const next = source.charAt(index + 1);
-
-    if (state === "code") {
-      if (character === "/" && next === "/") {
-        masked += "  ";
-        index += 1;
-        state = "line";
-        continue;
-      }
-      if (character === "/" && next === "*") {
-        masked += "  ";
-        index += 1;
-        state = "block";
-        continue;
-      }
-      if (character === '"') {
-        masked += " ";
-        state = "double";
-        continue;
-      }
-      if (character === "'") {
-        masked += " ";
-        state = "single";
-        continue;
-      }
-      if (character === "`") {
-        masked += " ";
-        state = "template";
-        continue;
-      }
-      masked += character;
-      continue;
-    }
-
-    if (state === "line") {
-      if (isLineBreak(character)) {
-        masked += character;
-        state = "code";
-      } else {
-        masked += " ";
-      }
-      continue;
-    }
-
-    if (state === "block") {
-      if (character === "*" && next === "/") {
-        masked += "  ";
-        index += 1;
-        state = "code";
-      } else {
-        masked += isLineBreak(character) ? character : " ";
-      }
-      continue;
-    }
-
-    if (escaped) {
-      masked += isLineBreak(character) ? character : " ";
-      escaped = false;
-      continue;
-    }
-
-    if (character === "\\") {
-      masked += " ";
-      escaped = true;
-      continue;
-    }
-
-    if (
-      (state === "double" && character === '"') ||
-      (state === "single" && character === "'") ||
-      (state === "template" && character === "`")
-    ) {
-      masked += " ";
-      state = "code";
-      continue;
-    }
-
-    masked += isLineBreak(character) ? character : " ";
-  }
-
-  return masked;
+function isPublic(node: FunctionNode, exported: ReadonlySet<ESTree.Node>): boolean {
+  if (exported.has(node)) return true;
+  const parent = node.parent;
+  if (parent.type === "ExportNamedDeclaration" || parent.type === "ExportDefaultDeclaration") return true;
+  return (
+    parent.type === "VariableDeclarator" &&
+    parent.parent.type === "VariableDeclaration" &&
+    parent.parent.parent.type === "ExportNamedDeclaration"
+  );
 }
 
-function isLineBreak(character: string): boolean {
-  return character === "\n" || character === "\r";
+function objectType(type: ESTree.TSType): boolean {
+  if (type.type === "TSTypeLiteral") return true;
+  if (type.type === "TSUnionType" || type.type === "TSIntersectionType") return type.types.some(objectType);
+  if (type.type === "TSParenthesizedType") return objectType(type.typeAnnotation);
+  if (type.type === "TSTypeReference" && type.typeName.type === "Identifier" && type.typeName.name === "Promise")
+    return type.typeArguments?.params.some(objectType) ?? false;
+  return false;
 }
 
 export const noExportedAnonymousObjectReturn: Rule = {
   meta: {
-    type: "problem",
+    type: "suggestion",
     docs: {
-      description: "Require exported functions to return named contracts instead of anonymous object shapes.",
+      description:
+        "Require named object return contracts for functions exported directly, by local alias, or as a default identifier.",
     },
     messages: {
-      noAnonymousObjectReturn: message,
+      namedReturn: "Name the exported object return contract and annotate the public function.",
     },
   },
-  createOnce(context) {
+  create(context) {
+    const exported = new Set<ESTree.Node>();
+    const overloads = new Set<string>();
+    const expose = (identifier: IdentifierNode, seen = new Set<Variable>()): void => {
+      const variable = variableAt(context, identifier);
+      if (variable === undefined || seen.has(variable)) return;
+      seen.add(variable);
+      for (const definition of variable.defs) {
+        if (definition.node.type === "FunctionDeclaration" || definition.node.type === "TSDeclareFunction")
+          exported.add(definition.node);
+        if (definition.node.type !== "VariableDeclarator") continue;
+        const initial = definition.node.init;
+        if (initial?.type === "ArrowFunctionExpression" || initial?.type === "FunctionExpression")
+          exported.add(initial);
+        if (
+          initial?.type === "Identifier" &&
+          definition.node.parent.type === "VariableDeclaration" &&
+          definition.node.parent.kind === "const"
+        )
+          expose(initial, seen);
+      }
+    };
+    const check = (node: FunctionNode): void => {
+      if (!isPublic(node, exported)) return;
+      if (node.returnType && objectType(node.returnType.typeAnnotation))
+        context.report({ node: node.returnType, messageId: "namedReturn" });
+      else if (!node.returnType && node.type === "ArrowFunctionExpression" && node.body.type === "ObjectExpression")
+        context.report({ node: node.body, messageId: "namedReturn" });
+    };
     return {
-      Program(node: ESTree.Node) {
-        const source = getSourceText(context as SourceContext);
-        if (source === undefined || !hasExportedAnonymousObjectReturn(source)) return;
-
-        context.report({ node, messageId: "noAnonymousObjectReturn" });
+      Program(node) {
+        for (const statement of node.body) {
+          const declaration =
+            statement.type === "ExportNamedDeclaration" || statement.type === "ExportDefaultDeclaration"
+              ? statement.declaration
+              : statement;
+          if (declaration?.type === "TSDeclareFunction" && declaration.id && declaration.returnType)
+            overloads.add(declaration.id.name);
+          if (
+            statement.type === "ExportNamedDeclaration" &&
+            statement.source === null &&
+            statement.exportKind !== "type"
+          )
+            for (const specifier of statement.specifiers)
+              if (specifier.local.type === "Identifier" && specifier.exportKind !== "type") expose(specifier.local);
+          if (statement.type === "ExportDefaultDeclaration" && statement.declaration.type === "Identifier")
+            expose(statement.declaration);
+        }
+      },
+      FunctionDeclaration: check,
+      FunctionExpression: check,
+      ArrowFunctionExpression: check,
+      TSDeclareFunction(node) {
+        if (
+          (exported.has(node) ||
+            node.parent.type === "ExportNamedDeclaration" ||
+            node.parent.type === "ExportDefaultDeclaration") &&
+          node.returnType &&
+          objectType(node.returnType.typeAnnotation)
+        )
+          context.report({ node: node.returnType, messageId: "namedReturn" });
+      },
+      ReturnStatement(node) {
+        if (node.argument?.type !== "ObjectExpression") return;
+        let owner = node.parent;
+        while (owner.type !== "Program") {
+          if (
+            owner.type === "FunctionDeclaration" ||
+            owner.type === "FunctionExpression" ||
+            owner.type === "ArrowFunctionExpression"
+          ) {
+            const signatureOwnsReturn =
+              owner.type === "FunctionDeclaration" &&
+              owner.id &&
+              overloads.has(owner.id.name) &&
+              (owner.parent.type === "Program" || owner.parent.parent?.type === "Program");
+            if (!owner.returnType && !signatureOwnsReturn && isPublic(owner, exported))
+              context.report({ node, messageId: "namedReturn" });
+            return;
+          }
+          owner = owner.parent;
+        }
       },
     };
   },

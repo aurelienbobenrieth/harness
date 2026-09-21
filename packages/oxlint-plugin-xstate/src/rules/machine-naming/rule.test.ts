@@ -5,7 +5,7 @@ const ruleName = "xstate/machine-naming";
 
 it("reports machine ids outside the default namespace", async () => {
   await expect(
-    assertRuleReports(ruleName, 'const machine = createMachine({ id: "theme.cart" });\nconsole.log(machine);\n'),
+    assertRuleReports(ruleName, 'const machine = createMachine({ id: "Bad Machine ID" });\nconsole.log(machine);\n'),
   ).resolves.toBeUndefined();
 });
 

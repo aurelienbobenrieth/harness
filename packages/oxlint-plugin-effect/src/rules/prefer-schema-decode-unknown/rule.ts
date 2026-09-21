@@ -1,17 +1,9 @@
 import type { ESTree, Rule } from "@oxlint/plugins";
+import { getSourceText, type SourceContext } from "../ast.js";
 
 const message = "Use Schema decodeUnknown variants for unknown or JSON-parsed input.";
 const unsafeDecodePattern =
   /\bSchema\.decode(?:Sync|Either|Promise)?\s*\([^)]*\)\s*\(\s*(?:JSON\.parse\s*\(|[^)]*\bas\s+(?:unknown|any)\b)/u;
-
-type SourceContext = {
-  readonly sourceCode?: { getText: () => string };
-  readonly getSourceCode?: () => { getText: () => string };
-};
-
-function getSourceText(context: SourceContext): string | undefined {
-  return context.sourceCode?.getText() ?? context.getSourceCode?.().getText();
-}
 
 function hasUnsafeBoundaryDecode(source: string): boolean {
   return unsafeDecodePattern.test(maskNonCode(source));

@@ -1,9 +1,13 @@
-import type { UserConfig } from "vite-plus";
+import type { OxfmtConfig } from "vite-plus/fmt";
 
-export type VitePlusFormatConfig = NonNullable<UserConfig["fmt"]>;
+export type VitePlusFormatConfig = OxfmtConfig;
 
-function mergeList<T>(base: readonly T[] | undefined, overrides: readonly T[] | undefined): T[] | undefined {
-  const values = [...(base ?? []), ...(overrides ?? [])];
+function mergeList<T>(
+  base: readonly T[] | undefined,
+  overrides: readonly T[] | undefined,
+  replace = false,
+): T[] | undefined {
+  const values = replace && overrides !== undefined ? [...(overrides ?? [])] : [...(base ?? []), ...(overrides ?? [])];
 
   return values.length ? Array.from(new Set(values)) : undefined;
 }
@@ -20,11 +24,14 @@ export const defaultOxfmtConfig = {
   overrides: [],
 } satisfies VitePlusFormatConfig;
 
-export function defineOxfmtConfig(overrides: VitePlusFormatConfig = {}): VitePlusFormatConfig {
-  return {
+export function defineOxfmtConfig(
+  overrides: VitePlusFormatConfig = {},
+  options: { readonly replaceLists?: boolean } = {},
+): VitePlusFormatConfig {
+  return structuredClone({
     ...defaultOxfmtConfig,
     ...overrides,
-    ignorePatterns: mergeList(defaultOxfmtConfig.ignorePatterns, overrides.ignorePatterns),
-    overrides: mergeList(defaultOxfmtConfig.overrides, overrides.overrides),
-  };
+    ignorePatterns: mergeList(defaultOxfmtConfig.ignorePatterns, overrides.ignorePatterns, options.replaceLists),
+    overrides: mergeList(defaultOxfmtConfig.overrides, overrides.overrides, options.replaceLists),
+  });
 }

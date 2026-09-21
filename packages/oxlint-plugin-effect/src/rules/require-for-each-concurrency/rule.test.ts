@@ -41,3 +41,7 @@ it("ignores non-Effect forEach calls", async () => {
     assertRuleDoesNotReport(ruleName, "const values = Array.forEach(items, processItem);\n"),
   ).resolves.toBeUndefined();
 });
+
+it("accepts regression: Effect.forEach(x => Effect.succeed(x), { concurrency: 2 });", async () => {
+  await assertRuleDoesNotReport(ruleName, "Effect.forEach(x => Effect.succeed(x), { concurrency: 2 });");
+});
