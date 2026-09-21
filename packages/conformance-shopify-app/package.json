@@ -1,0 +1,51 @@
+{
+  "name": "@aurelienbbn/conformance-shopify-app",
+  "version": "0.0.0",
+  "description": "Structural conformance checks for Shopify apps, packaged as a Vitest suite.",
+  "bugs": {
+    "url": "https://github.com/aurelienbobenrieth/harness/issues"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aurelienbobenrieth/harness.git",
+    "directory": "packages/conformance-shopify-app"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs"
+    },
+    "./vitest": {
+      "types": "./dist/vitest.d.mts",
+      "import": "./dist/vitest.mjs"
+    }
+  },
+  "scripts": {
+    "build": "tsdown",
+    "prepack": "pnpm build",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "parse5": "8.0.1",
+    "smol-toml": "1.8.0"
+  },
+  "devDependencies": {
+    "vitest": "4.1.11"
+  },
+  "peerDependencies": {
+    "vitest": ">=4.1.11 <5.0.0"
+  },
+  "peerDependenciesMeta": {
+    "vitest": {
+      "optional": true
+    }
+  },
+  "engines": {
+    "node": "^22.19.0 || ^24.11.0"
+  }
+}
