@@ -40,6 +40,7 @@ Defaults deliberately optimize for these projects. Architecture preferences, det
 
 - `pnpm check`: build, source typecheck, lint, formatting, unit tests, and repository policy/catalog gates.
 - `pnpm quality:check`: require a clean Knip report and keep production-source duplication at or below the reviewed 28-clone baseline; tests, fixtures, generated output, documentation, and vendored archives are excluded.
+- `pnpm review:rules`: regenerate the interactive rule/check triage in `docs/reviews/rule-triage.html`; `pnpm check` rejects a stale artifact.
 - `pnpm security:check`: audit all dependency classes against current registry advisories; required separately in CI and release preparation because it needs network access.
 - `pnpm test:compatibility baseline` / `current`: install the 9 packed candidates outside the workspace using reviewed public-registry tool versions, strict peers and engines, and complete declaration checking. No local dependency archive, alias, or declaration waiver is used.
 - `pnpm test:package`: exercise all 15 packed packages, including the private drafts, against the reviewed local agentlint archive and Vite Plus alias. Checks cover public APIs, the oxlint and agentlint runners, and conformance suites.

@@ -9,7 +9,7 @@
   "type": "module",
   "scripts": {
     "build": "pnpm --recursive --if-present build",
-    "check": "pnpm build && pnpm quality:check && pnpm typecheck && pnpm lint && pnpm fmt:check && pnpm test:unit && pnpm catalog:check && pnpm compatibility:check && pnpm test:compatibility-policy && pnpm release:check && pnpm test:release && pnpm skills:check && pnpm test:skills && pnpm test:consumer-results && pnpm shopify:check && pnpm test:shopify-policy",
+    "check": "pnpm build && pnpm quality:check && pnpm typecheck && pnpm lint && pnpm fmt:check && pnpm test:unit && pnpm catalog:check && pnpm review:rules:check && pnpm compatibility:check && pnpm test:compatibility-policy && pnpm release:check && pnpm test:release && pnpm skills:check && pnpm test:skills && pnpm test:consumer-results && pnpm shopify:check && pnpm test:shopify-policy",
     "lint": "vp lint",
     "fmt": "vp fmt",
     "fmt:check": "vp fmt --check",
@@ -20,6 +20,8 @@
     "release": "node scripts/release.mjs",
     "release:plan": "node scripts/release.mjs",
     "release:check": "node scripts/check-release.mjs",
+    "review:rules": "pnpm build && node scripts/generate-rule-review.mjs --write",
+    "review:rules:check": "node scripts/generate-rule-review.mjs --check",
     "security:check": "pnpm audit --audit-level=low",
     "quality:check": "node scripts/check-quality.mjs",
     "test:release": "node --test scripts/release.test.mjs",
