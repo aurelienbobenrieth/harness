@@ -104,8 +104,14 @@ export function defineIsomorphicMapping(options: IsomorphicMappingOptions = {}):
           },
         ],
         refs: [
-          { type: "url", href: "https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html" },
-          { type: "url", href: "https://martinfowler.com/bliki/PresentationDomainDataLayering.html" },
+          {
+            type: "url",
+            href: "https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html",
+          },
+          {
+            type: "url",
+            href: "https://martinfowler.com/bliki/PresentationDomainDataLayering.html",
+          },
           { type: "url", href: "https://martinfowler.com/bliki/BoundedContext.html" },
           { type: "url", href: "https://udidahan.com/2009/06/07/the-fallacy-of-reuse/" },
           { type: "url", href: "https://www.hyrumslaw.com/" },
@@ -142,7 +148,7 @@ export function defineIsomorphicMapping(options: IsomorphicMappingOptions = {}):
       id: "core/isomorphic-mapping",
       version: 1,
       scan: "file",
-      createOnce(context) {
+      createOnce({ context }) {
         function inspect(fn: AgentlintNode): void {
           const parameters = parametersOf(fn);
           const pattern = parameters.length === 1 && parameters[0] ? parameterPattern(parameters[0]) : undefined;

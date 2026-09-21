@@ -1,7 +1,7 @@
 {
   "name": "@aurelienbbn/oxfmt-config",
   "version": "0.0.0",
-  "description": "Reusable oxfmt config for Vite+ projects.",
+  "description": "Reusable oxfmt config for JavaScript and TypeScript projects.",
   "bugs": {
     "url": "https://github.com/aurelienbobenrieth/harness/issues"
   },
@@ -27,8 +27,7 @@
     "typecheck": "tsc --noEmit"
   },
   "peerDependencies": {
-    "oxfmt": ">=0.67.0 <0.69.0",
-    "vite-plus": "^0.3.2"
+    "oxfmt": ">=0.67.0 <0.69.0"
   },
   "engines": {
     "node": "^22.19.0 || ^24.11.0"

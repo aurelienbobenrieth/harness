@@ -50,7 +50,7 @@ function lastSegment(value: string): string {
 }
 
 function matches(site: IdentifierSite, className: string, suffixes: readonly string[]): boolean {
-  const candidate = site.kind === "path" ? lastSegment(site.value) : site.value;
+  const candidate = lastSegment(site.value);
   if (candidate === className) return true;
   return suffixes.some(
     (suffix) =>
@@ -61,7 +61,6 @@ function matches(site: IdentifierSite, className: string, suffixes: readonly str
 }
 
 function replacement(site: IdentifierSite, className: string): string {
-  if (site.kind === "tag") return className;
   return `${site.value.slice(0, site.value.length - lastSegment(site.value).length)}${className}`;
 }
 

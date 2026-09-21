@@ -3,7 +3,11 @@ import { expect, it } from "vitest";
 import { layerIdentity } from "./rule.js";
 
 async function findingLines(source: string): Promise<ReadonlyArray<number>> {
-  const findings = await testRuleOnSource(layerIdentity, source, "src/module.ts");
+  const findings = await testRuleOnSource({
+    rule: layerIdentity,
+    source: source,
+    file: "src/module.ts",
+  });
   return findings.map((finding) => finding.line);
 }
 

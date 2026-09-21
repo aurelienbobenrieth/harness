@@ -234,7 +234,7 @@ export function defineFlagForkedFunction(options: FlagForkedFunctionOptions = {}
       id: "core/flag-forked-function",
       version: 1,
       scan: "file",
-      createOnce(context) {
+      createOnce({ context }) {
         function inspect(fn: AgentlintNode): void {
           if (!includeJsx && jsxFilePattern.test(context.path)) return;
           const body = fn.childByFieldName("body");

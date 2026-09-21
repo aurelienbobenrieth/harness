@@ -112,7 +112,7 @@ export function defineSpawnedActorRelease(options: SpawnedActorReleaseOptions = 
       id: "xstate/spawned-actor-release",
       version: 1,
       scan: "file",
-      createOnce(context) {
+      createOnce({ context }) {
         return {
           call_expression(node) {
             if (!isMachineCall(node) || isChainedIntoMachineCall(node)) return;

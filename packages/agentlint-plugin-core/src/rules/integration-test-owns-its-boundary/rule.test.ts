@@ -11,7 +11,7 @@ const real =
   'it("saves", async () => {\n  const repository = new SqlOrderRepository(await startDatabase());\n  await place(repository);\n});\n';
 
 async function messages(source: string, file: string, rule = integrationTestOwnsItsBoundary) {
-  return (await testRuleOnSource(rule, source, file)).map((finding) => finding.message);
+  return (await testRuleOnSource({ rule: rule, source: source, file: file })).map((finding) => finding.message);
 }
 
 it("reports integration-named files and folders that construct doubles, once per file", async () => {
@@ -52,9 +52,21 @@ it("ignores double names that only appear in strings and comments", async () => 
 
 it("carries the sorted unique doubles as evidence", async () => {
   const file = "src/orders.integration.test.ts";
-  const [one] = await testRuleOnSource(integrationTestOwnsItsBoundary, stubbed, file);
-  const [same] = await testRuleOnSource(integrationTestOwnsItsBoundary, stubbed.replace("vi.fn()", "vi.fn( )"), file);
-  const [other] = await testRuleOnSource(integrationTestOwnsItsBoundary, inMemory, file);
+  const [one] = await testRuleOnSource({
+    rule: integrationTestOwnsItsBoundary,
+    source: stubbed,
+    file: file,
+  });
+  const [same] = await testRuleOnSource({
+    rule: integrationTestOwnsItsBoundary,
+    source: stubbed.replace("vi.fn()", "vi.fn( )"),
+    file: file,
+  });
+  const [other] = await testRuleOnSource({
+    rule: integrationTestOwnsItsBoundary,
+    source: inMemory,
+    file: file,
+  });
   expect(one?.fingerprint).toBeDefined();
   expect(other?.fingerprint).not.toStrictEqual(one?.fingerprint);
   expect(same?.line).toBe(one?.line);

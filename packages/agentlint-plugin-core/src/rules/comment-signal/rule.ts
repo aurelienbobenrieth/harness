@@ -122,7 +122,7 @@ export function defineCommentSignal(options: CommentSignalOptions = {}): StateRu
       id: "core/comment-signal",
       version: 1,
       scan: "file",
-      createOnce(context) {
+      createOnce({ context }) {
         return {
           comment(node) {
             if (isSignatureRestatement(node.text, /\.[cm]?jsx?$/.test(context.path))) {

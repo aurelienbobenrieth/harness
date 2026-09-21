@@ -6,7 +6,7 @@ const messageFor = (fake: string, port: string): string =>
   `Stateful fake \`${fake}\` encodes behaviour of \`${port}\` that nothing checks against the real implementation; run one shared suite or contract test against both, or cite the one that exists.`;
 
 async function messages(source: string, file = "src/testing/fakes.ts", rule = fakeParity): Promise<readonly string[]> {
-  return (await testRuleOnSource(rule, source, file)).map((finding) => finding.message);
+  return (await testRuleOnSource({ rule: rule, source: source, file: file })).map((finding) => finding.message);
 }
 
 const inMemoryRepository = `

@@ -48,7 +48,10 @@ export function defineTemporalCoupling(options: TemporalCouplingOptions = {}): S
   const guardMessagePattern = options.guardMessagePattern ?? defaultGuardMessagePattern;
   const initMethodPattern = options.initMethodPattern ?? defaultInitMethodPattern;
 
-  function inspect(node: AgentlintNode): { readonly signals: readonly string[]; readonly fields: readonly string[] } {
+  function inspect(node: AgentlintNode): {
+    readonly signals: readonly string[];
+    readonly fields: readonly string[];
+  } {
     const body = node.childByFieldName("body");
     if (!body) return { signals: [], fields: [] };
     const bodyKey = nodeKey(body);
@@ -76,7 +79,10 @@ export function defineTemporalCoupling(options: TemporalCouplingOptions = {}): S
       for (const assignment of method.descendantsOfType("assignment_expression").filter(owned)) {
         const target = assignment.childByFieldName("left")?.text ?? "";
         if (!target.startsWith("this.")) continue;
-        const entry = { method: methodName, empty: isEmptyValue(assignment.childByFieldName("right")) };
+        const entry = {
+          method: methodName,
+          empty: isEmptyValue(assignment.childByFieldName("right")),
+        };
         assignments.set(target, [...(assignments.get(target) ?? []), entry]);
       }
     }
@@ -189,7 +195,7 @@ export function defineTemporalCoupling(options: TemporalCouplingOptions = {}): S
       id: "core/temporal-coupling",
       version: 1,
       scan: "file",
-      createOnce(context) {
+      createOnce({ context }) {
         function visit(node: AgentlintNode): void {
           if (!node.isNamed || !classNodeTypes.has(node.type)) return;
           const { signals, fields } = inspect(node);

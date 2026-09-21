@@ -140,7 +140,7 @@ export function defineAdminApiLoopReview(options: AdminApiLoopReviewOptions = {}
       id: "shopify-app/admin-api-loop-review",
       version: 1,
       scan: "file",
-      createOnce(context) {
+      createOnce({ context }) {
         return {
           call_expression(node) {
             const callee = node.childByFieldName("function");

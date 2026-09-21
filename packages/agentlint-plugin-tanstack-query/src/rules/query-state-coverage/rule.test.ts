@@ -131,16 +131,16 @@ it.each([
 });
 
 it("reports each hook once through the real parser and records the review mode", async () => {
-  const findings = await testRuleOnSource(
-    queryStateCoverage,
-    [
+  const findings = await testRuleOnSource({
+    rule: queryStateCoverage,
+    source: [
       "const client = useQueryClient();",
       "const todos = useQuery<Todo[], Error>({ queryKey: ['todos'], queryFn });",
       "const user = trpc.user.byId.useQuery(id, { enabled: id !== undefined });",
       "const feed = useSuspenseInfiniteQuery(feedOptions);",
     ].join("\n"),
-    "src/page.tsx",
-  );
+    file: "src/page.tsx",
+  });
 
   expect(findings.map((finding) => finding.message)).toEqual([localMessage, lazyMessage, suspenseMessage]);
 });

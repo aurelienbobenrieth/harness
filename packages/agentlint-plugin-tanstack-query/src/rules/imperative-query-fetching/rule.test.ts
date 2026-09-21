@@ -8,7 +8,11 @@ const effectRefetchMessage =
   "refetch() is called from an effect: put the changing input in the queryKey so the query refetches declaratively, and delete the effect.";
 
 async function messagesFor(source: string, file = "src/search.tsx"): Promise<ReadonlyArray<string>> {
-  const findings = await testRuleOnSource(imperativeQueryFetching, source, file);
+  const findings = await testRuleOnSource({
+    rule: imperativeQueryFetching,
+    source: source,
+    file: file,
+  });
   return findings.map((finding) => finding.message);
 }
 

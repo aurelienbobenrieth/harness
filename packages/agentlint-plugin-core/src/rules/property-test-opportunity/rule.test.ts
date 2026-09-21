@@ -12,7 +12,7 @@ async function messages(
   file = "src/cursor.test.ts",
   rule = propertyTestOpportunity,
 ): Promise<readonly string[]> {
-  return (await testRuleOnSource(rule, source, file)).map((finding) => finding.message);
+  return (await testRuleOnSource({ rule: rule, source: source, file: file })).map((finding) => finding.message);
 }
 
 const cursorExamples = `

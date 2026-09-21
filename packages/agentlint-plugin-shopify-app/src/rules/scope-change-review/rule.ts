@@ -137,7 +137,7 @@ export function defineScopeChangeReview(options: ScopeChangeReviewOptions = {}):
       },
       id: "shopify-app/scope-change-review",
       version: 1,
-      detect(context) {
+      detect({ context }) {
         for (const file of context.change.files) {
           if (file.after === null || !matchesPattern(manifestPattern, file.path)) continue;
           if (file.after.content === undefined) throw new Error(`Missing change snapshot: ${file.path}`);

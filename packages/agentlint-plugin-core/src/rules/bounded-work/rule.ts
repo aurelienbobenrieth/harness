@@ -87,7 +87,7 @@ export const boundedWork = defineRule({
     id: "core/bounded-work",
     version: 1,
     scan: "file",
-    createOnce(context) {
+    createOnce({ context }) {
       const check = (node: AgentlintNode): void => {
         const source = executionSource(node);
         if (!shouldReport(source)) return;

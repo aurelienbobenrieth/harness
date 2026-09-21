@@ -71,7 +71,11 @@ const machine = setup({ actors: { load, sync } }).createMachine({
   invoke: { src: "load", onDone: ".ready", onError: ".failed" },
 });
 `;
-  const findings = await testRuleOnSource(machineFailureCoverage, source, "src/cart-machine.ts");
+  const findings = await testRuleOnSource({
+    rule: machineFailureCoverage,
+    source: source,
+    file: "src/cart-machine.ts",
+  });
 
   expect(findings).toHaveLength(1);
   expect(findings[0]?.message).toContain("Spawned actor");
@@ -86,7 +90,9 @@ const machine = createMachine({
   },
 });
 `;
-  await expect(testRuleOnSource(machineFailureCoverage, source, "src/cart-machine.ts")).resolves.toHaveLength(2);
+  await expect(
+    testRuleOnSource({ rule: machineFailureCoverage, source: source, file: "src/cart-machine.ts" }),
+  ).resolves.toHaveLength(2);
 });
 
 it("accepts spawned actors when the machine handles an xstate.error event", async () => {
@@ -96,7 +102,9 @@ const machine = createMachine({
   on: { "xstate.error.actor.sync": { target: ".failed" } },
 });
 `;
-  await expect(testRuleOnSource(machineFailureCoverage, source, "src/cart-machine.ts")).resolves.toEqual([]);
+  await expect(
+    testRuleOnSource({ rule: machineFailureCoverage, source: source, file: "src/cart-machine.ts" }),
+  ).resolves.toEqual([]);
 });
 
 it("keeps invoke and spawn coverage independent", async () => {
@@ -107,7 +115,11 @@ const machine = createMachine({
   invoke: { src: "load" },
 });
 `;
-  const findings = await testRuleOnSource(machineFailureCoverage, source, "src/cart-machine.ts");
+  const findings = await testRuleOnSource({
+    rule: machineFailureCoverage,
+    source: source,
+    file: "src/cart-machine.ts",
+  });
 
   expect(findings).toHaveLength(1);
   expect(findings[0]?.message).toContain("no onError");
@@ -122,7 +134,11 @@ const machine = createMachine({
   },
 });
 `;
-  const findings = await testRuleOnSource(machineFailureCoverage, source, "src/cart-machine.ts");
+  const findings = await testRuleOnSource({
+    rule: machineFailureCoverage,
+    source: source,
+    file: "src/cart-machine.ts",
+  });
 
   expect(findings).toHaveLength(1);
   expect(findings[0]?.message).toContain("empty onError");

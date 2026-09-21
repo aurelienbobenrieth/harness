@@ -14,7 +14,7 @@ import {
   tanstackQueryRules,
   testFileGlobs,
   vagueTestTitlePattern,
-  type VitePlusLintConfig,
+  type OxlintConfig,
   withImportGraphLayer,
   withTanstackQueryLayer,
 } from "./index.ts";
@@ -38,7 +38,7 @@ async function runOxlint(args: readonly string[], cwd: string): Promise<string> 
 }
 
 /** Lints `files` in an OS temp directory with the installed oxlint; type-aware linting is off because no tsconfig exists there. */
-async function lintWith(config: VitePlusLintConfig, files: Readonly<Record<string, string>>): Promise<Diagnostic[]> {
+async function lintWith(config: OxlintConfig, files: Readonly<Record<string, string>>): Promise<Diagnostic[]> {
   const directory = await mkdtemp(path.join(tmpdir(), "oxlint-config-"));
   try {
     const runnable = { ...config, options: { ...config.options, typeAware: false, typeCheck: false } };
@@ -138,6 +138,19 @@ it("switches off the oxc rules that ban modern syntax", () => {
   }
 });
 
+it("keeps independent const declarations independent", async () => {
+  const separateDiagnostics = await lintWith(defineStrictOxlintConfig(), {
+    "src/declarations.ts": "const first = 1;\nconst second = 2;\nexport const total = first + second;\n",
+  });
+  const joinedDiagnostics = await lintWith(defineStrictOxlintConfig(), {
+    "src/declarations.ts": "const first = 1, second = 2;\nexport const total = first + second;\n",
+  });
+
+  expect(strictOxlintConfig.rules["eslint/one-var"]).toEqual(["error", "never"]);
+  expect(separateDiagnostics.map((diagnostic) => diagnostic.code)).not.toContain("eslint(one-var)");
+  expect(joinedDiagnostics.map((diagnostic) => diagnostic.code)).toContain("eslint(one-var)");
+});
+
 it.each(exclusiveRuleGroups)("never leaves %s and %s enabled together", (...group) => {
   expect(group.filter((rule) => !isSwitchedOff(rule)).length).toBeLessThanOrEqual(1);
 });
@@ -201,7 +214,20 @@ it("pins the vitest rules that close assertion loopholes instead of relying on t
 
   expect(testOverride.rules["vitest/require-to-throw-message"]).toBe("error");
   expect(testOverride.rules["vitest/prefer-called-with"]).toBe("error");
+  expect(testOverride.rules["vitest/no-standalone-expect"]).toBe("off");
   expect(testOverride.rules["vitest/valid-title"]).toEqual(["error", { mustNotMatch: vagueTestTitlePattern }]);
+});
+
+it("allows assertions inside Effect-aware tests", async () => {
+  const diagnostics = await lintWith(defineStrictOxlintConfig(), {
+    "src/effect.test.ts": [
+      'import { expect, it } from "@effect/vitest";',
+      'import { Effect } from "effect";',
+      'it.effect("checks a value", () => Effect.sync(() => expect(1).toBe(1)));',
+    ].join("\n"),
+  });
+
+  expect(diagnostics.map((diagnostic) => diagnostic.code)).not.toContain("vitest(no-standalone-expect)");
 });
 
 it("configures valid-title with one mustNotMatch string, the only shape oxlint applies in full", () => {

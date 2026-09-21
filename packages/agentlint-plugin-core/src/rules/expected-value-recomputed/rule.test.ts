@@ -5,7 +5,7 @@ import { defineExpectedValueRecomputed, expectedValueRecomputed } from "./rule.j
 const wrap = (body: string, head = ""): string => `${head}\nit("case", async () => {\n${body}\n});\n`;
 
 async function evidence(source: string, file = "src/pricing.test.ts", rule = expectedValueRecomputed) {
-  return (await testRuleOnSource(rule, source, file)).map((finding) => finding.line);
+  return (await testRuleOnSource({ rule: rule, source: source, file: file })).map((finding) => finding.line);
 }
 
 it("reports arithmetic, pipelines and string derivations that reuse the subject's inputs", async () => {
@@ -62,7 +62,10 @@ it("ignores non-test files and caps findings per file", async () => {
 });
 
 it("honours custom matchers and derivation callees, and mirrors options into the binding", async () => {
-  const rule = defineExpectedValueRecomputed({ matcherPattern: /^toBeSameAs$/g, derivationCallees: ["padStart"] });
+  const rule = defineExpectedValueRecomputed({
+    matcherPattern: /^toBeSameAs$/g,
+    derivationCallees: ["padStart"],
+  });
   const source = wrap(
     'expect(format(code)).toBeSameAs(code.padStart(4, "0"));\nexpect(format(code)).toBeSameAs(code.padStart(4, "0"));',
   );

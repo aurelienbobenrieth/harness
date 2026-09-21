@@ -10,7 +10,7 @@ async function messages(
   file = "src/invoice.ts",
   rule = flagForkedFunction,
 ): Promise<readonly string[]> {
-  return (await testRuleOnSource(rule, source, file)).map((finding) => finding.message);
+  return (await testRuleOnSource({ rule: rule, source: source, file: file })).map((finding) => finding.message);
 }
 
 it("reports two defaulted option flags that are only ever tested", async () => {
@@ -139,7 +139,11 @@ it("honours thresholds, mirrors options and excludes test files", async () => {
   const source = "export function run(job: Job, dry: boolean) { if (dry) return plan(job); return apply(job); }";
   expect(await messages(source)).toEqual([]);
   expect(await messages(source, "src/run.ts", defineFlagForkedFunction({ minFlags: 1 }))).toEqual([messageFor("dry")]);
-  expect(flagForkedFunction.binding.options).toEqual({ minFlags: null, minSitesForSingleFlag: null, includeJsx: null });
+  expect(flagForkedFunction.binding.options).toEqual({
+    minFlags: null,
+    minSitesForSingleFlag: null,
+    includeJsx: null,
+  });
   expect(defineFlagForkedFunction({ minFlags: 3, minSitesForSingleFlag: 4, includeJsx: true }).binding.options).toEqual(
     {
       minFlags: 3,

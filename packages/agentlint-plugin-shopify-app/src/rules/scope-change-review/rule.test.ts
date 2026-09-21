@@ -6,9 +6,12 @@ const manifest = (scopes: string, extra = ""): string =>
   `client_id = "abc"\n\n[access_scopes]\n# scopes = "write_customers"\nscopes = "${scopes}"\n${extra}\n[webhooks]\napi_version = "2026-07"\n`;
 
 it("reports scopes added to an existing manifest and anchors the scope line", async () => {
-  const findings = await testRuleOnChange(scopeChangeReview, {
-    before: { "shopify.app.toml": manifest("read_products") },
-    after: { "shopify.app.toml": manifest("read_products, write_orders,read_all_orders") },
+  const findings = await testRuleOnChange({
+    rule: scopeChangeReview,
+    fixture: {
+      before: { "shopify.app.toml": manifest("read_products") },
+      after: { "shopify.app.toml": manifest("read_products, write_orders,read_all_orders") },
+    },
   });
   expect(findings.map((finding) => [finding.file, finding.line, finding.message])).toEqual([
     ["shopify.app.toml", 5, expect.stringContaining("required read_all_orders, write_orders")],
@@ -16,12 +19,15 @@ it("reports scopes added to an existing manifest and anchors the scope line", as
 });
 
 it("reports every scope of a new deployment manifest, including multi-line optional scopes", async () => {
-  const findings = await testRuleOnChange(scopeChangeReview, {
-    after: {
-      "apps/store/shopify.app.production.toml": manifest(
-        "read_products",
-        'optional_scopes = [\n  "write_products", # editor\n  "read_customers",\n]',
-      ),
+  const findings = await testRuleOnChange({
+    rule: scopeChangeReview,
+    fixture: {
+      after: {
+        "apps/store/shopify.app.production.toml": manifest(
+          "read_products",
+          'optional_scopes = [\n  "write_products", # editor\n  "read_customers",\n]',
+        ),
+      },
     },
   });
   expect(findings.map((finding) => finding.message)).toEqual([
@@ -30,24 +36,33 @@ it("reports every scope of a new deployment manifest, including multi-line optio
 });
 
 it("reports an optional scope promoted to required", async () => {
-  const findings = await testRuleOnChange(scopeChangeReview, {
-    before: {
-      "shopify.app.toml": manifest("read_products", 'optional_scopes = ["write_products"]'),
+  const findings = await testRuleOnChange({
+    rule: scopeChangeReview,
+    fixture: {
+      before: {
+        "shopify.app.toml": manifest("read_products", 'optional_scopes = ["write_products"]'),
+      },
+      after: { "shopify.app.toml": manifest("read_products,write_products") },
     },
-    after: { "shopify.app.toml": manifest("read_products,write_products") },
   });
   expect(findings.map((finding) => finding.message)).toEqual([expect.stringContaining("required write_products")]);
 });
 
 it("keeps the same fingerprint when unrelated manifest lines move", async () => {
   const before = { "shopify.app.toml": manifest("read_products") };
-  const [first] = await testRuleOnChange(scopeChangeReview, {
-    before,
-    after: { "shopify.app.toml": manifest("read_products,read_orders") },
+  const [first] = await testRuleOnChange({
+    rule: scopeChangeReview,
+    fixture: {
+      before,
+      after: { "shopify.app.toml": manifest("read_products,read_orders") },
+    },
   });
-  const [second] = await testRuleOnChange(scopeChangeReview, {
-    before,
-    after: { "shopify.app.toml": `# note\n${manifest("read_orders,read_products")}` },
+  const [second] = await testRuleOnChange({
+    rule: scopeChangeReview,
+    fixture: {
+      before,
+      after: { "shopify.app.toml": `# note\n${manifest("read_orders,read_products")}` },
+    },
   });
   expect(first?.fingerprint).toBeDefined();
   expect(second?.fingerprint).toStrictEqual(first?.fingerprint);
@@ -63,9 +78,12 @@ it("stays silent when scopes are removed, reordered, demoted to optional, or onl
   ] as const;
   const findings = await Promise.all(
     cases.map(([before, after]) =>
-      testRuleOnChange(scopeChangeReview, {
-        before: { "shopify.app.toml": before },
-        after: { "shopify.app.toml": after },
+      testRuleOnChange({
+        rule: scopeChangeReview,
+        fixture: {
+          before: { "shopify.app.toml": before },
+          after: { "shopify.app.toml": after },
+        },
       }),
     ),
   );
@@ -74,18 +92,24 @@ it("stays silent when scopes are removed, reordered, demoted to optional, or onl
 
 it("ignores scope-looking keys outside app manifests and in other tables, and deleted manifests", async () => {
   await expect(
-    testRuleOnChange(scopeChangeReview, {
-      before: { "shopify.app.toml": manifest("read_products") },
-      after: {
-        "extensions/checkout/shopify.extension.toml": '[access_scopes]\nscopes = "write_orders"\n',
-        "shopify.web.toml": 'scopes = "write_orders"\n',
+    testRuleOnChange({
+      rule: scopeChangeReview,
+      fixture: {
+        before: { "shopify.app.toml": manifest("read_products") },
+        after: {
+          "extensions/checkout/shopify.extension.toml": '[access_scopes]\nscopes = "write_orders"\n',
+          "shopify.web.toml": 'scopes = "write_orders"\n',
+        },
       },
     }),
   ).resolves.toEqual([]);
   await expect(
-    testRuleOnChange(scopeChangeReview, {
-      before: { "shopify.app.toml": "[auth]\n" },
-      after: { "shopify.app.toml": '[auth]\nscopes = "write_orders"\n' },
+    testRuleOnChange({
+      rule: scopeChangeReview,
+      fixture: {
+        before: { "shopify.app.toml": "[auth]\n" },
+        after: { "shopify.app.toml": '[auth]\nscopes = "write_orders"\n' },
+      },
     }),
   ).resolves.toEqual([]);
 });
@@ -93,6 +117,6 @@ it("ignores scope-looking keys outside app manifests and in other tables, and de
 it("honours a custom manifest pattern", async () => {
   const rule = defineScopeChangeReview({ manifestPattern: /(?:^|\/)app\.toml$/g });
   const fixture = { after: { "config/app.toml": 'scopes = "read_orders"\n' } };
-  expect(await testRuleOnChange(rule, fixture)).toHaveLength(1);
-  expect(await testRuleOnChange(rule, fixture)).toHaveLength(1);
+  expect(await testRuleOnChange({ rule: rule, fixture: fixture })).toHaveLength(1);
+  expect(await testRuleOnChange({ rule: rule, fixture: fixture })).toHaveLength(1);
 });

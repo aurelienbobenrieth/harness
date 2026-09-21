@@ -144,7 +144,7 @@ export function defineDerivedBooleanContext(options: DerivedBooleanContextOption
       id: "xstate/derived-boolean-context",
       version: 2,
       scan: "file",
-      createOnce(context) {
+      createOnce({ context }) {
         const inMachineFile = (): boolean => {
           machineFilePattern.lastIndex = 0;
           return machineFilePattern.test(context.source);

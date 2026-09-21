@@ -59,7 +59,7 @@ export function defineBannerUsage(options: BannerUsageOptions = {}): StateRule {
       id: "shopify-app/banner-usage",
       version: 1,
       scan: "file",
-      createOnce(context) {
+      createOnce({ context }) {
         const check = (node: AgentlintNode): void => {
           if (!matchesPattern(pattern, elementName(node) ?? "")) return;
           context.report({

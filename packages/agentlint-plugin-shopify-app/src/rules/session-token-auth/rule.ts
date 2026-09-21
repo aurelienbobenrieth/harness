@@ -69,7 +69,7 @@ export function defineSessionTokenAuth(options: SessionTokenAuthOptions = {}): S
       id: "shopify-app/session-token-auth",
       version: 1,
       scan: "file",
-      createOnce(context) {
+      createOnce({ context }) {
         return {
           member_expression(node) {
             if (!cookieAccessPattern.test(node.text)) return;

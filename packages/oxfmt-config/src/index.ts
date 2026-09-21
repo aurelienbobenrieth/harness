@@ -1,6 +1,6 @@
-import type { OxfmtConfig } from "vite-plus/fmt";
+import type { OxfmtConfig } from "oxfmt";
 
-export type VitePlusFormatConfig = OxfmtConfig;
+export type { OxfmtConfig } from "oxfmt";
 
 function mergeList<T>(
   base: readonly T[] | undefined,
@@ -19,15 +19,18 @@ export const defaultOxfmtConfig = {
   trailingComma: "all",
   tabWidth: 2,
   arrowParens: "always",
+  jsdoc: {
+    commentLineStrategy: "multiline",
+  },
   sortPackageJson: true,
   ignorePatterns: [".agents/**", "**/*.wasm", "pnpm-lock.yaml"],
   overrides: [],
-} satisfies VitePlusFormatConfig;
+} satisfies OxfmtConfig;
 
 export function defineOxfmtConfig(
-  overrides: VitePlusFormatConfig = {},
+  overrides: OxfmtConfig = {},
   options: { readonly replaceLists?: boolean } = {},
-): VitePlusFormatConfig {
+): OxfmtConfig {
   return structuredClone({
     ...defaultOxfmtConfig,
     ...overrides,

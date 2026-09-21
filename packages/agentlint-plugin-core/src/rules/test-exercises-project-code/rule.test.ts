@@ -8,12 +8,16 @@ const vitest = 'import { expect, it, test } from "vitest";\n';
 const body = 'it("slugifies", () => {\n  expect(slugify("Hello World")).toBe("hello-world");\n});\n';
 
 async function messages(source: string, file = "src/slugify.test.ts", rule = testExercisesProjectCode) {
-  return (await testRuleOnSource(rule, source, file)).map((finding) => finding.message);
+  return (await testRuleOnSource({ rule: rule, source: source, file: file })).map((finding) => finding.message);
 }
 
 it("reports a test whose subject is declared in the test file, on the first test call", async () => {
   const source = `${vitest}function slugify(title: string) { return title.toLowerCase().replaceAll(" ", "-"); }\n${body}${body}`;
-  const findings = await testRuleOnSource(testExercisesProjectCode, source, "src/slugify.test.ts");
+  const findings = await testRuleOnSource({
+    rule: testExercisesProjectCode,
+    source: source,
+    file: "src/slugify.test.ts",
+  });
   expect(findings.map((finding) => [finding.line, finding.message])).toEqual([[3, message]]);
 });
 

@@ -33,6 +33,21 @@ it("allows exported functions with named return types", async () => {
   ).resolves.toBeUndefined();
 });
 
+it("allows named variable and JSDoc return contracts", async () => {
+  await expect(
+    assertRuleDoesNotReport(
+      ruleName,
+      [
+        "type Load = () => UserView;",
+        "export const load: Load = () => ({ id: user.id });",
+        "/** @returns {Promise<UserView>} */",
+        "export async function read() { return { id: user.id }; }",
+        "",
+      ].join("\n"),
+    ),
+  ).resolves.toBeUndefined();
+});
+
 it("allows local functions returning object literals", async () => {
   await expect(
     assertRuleDoesNotReport(ruleName, "function getUser() { return { id: user.id }; }\n"),

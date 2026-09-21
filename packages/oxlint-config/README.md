@@ -1,24 +1,22 @@
 # @aurelienbbn/oxlint-config
 
-Strict reusable oxlint config for Vite+ projects.
+Strict reusable oxlint config for TypeScript projects. The returned object works with Oxlint directly and with hosts such as Vite+ that consume `OxlintConfig`.
 
 ## Presets
 
-- `strictOxlintConfig`: baseline strict Vite+ `lint` config. Bans `@ts-ignore` and requires a description on `@ts-expect-error` via `typescript/ban-ts-comment`.
+- `strictOxlintConfig`: baseline strict Oxlint config. Bans `@ts-ignore` and requires a description on `@ts-expect-error` via `typescript/ban-ts-comment`.
 - `defineStrictOxlintConfig(overrides)`: merge helper for project-specific overrides.
 
 ```ts
 import { defineStrictOxlintConfig } from "@aurelienbbn/oxlint-config";
-import { defineConfig } from "vite-plus";
+import { defineConfig } from "oxlint";
 
-export default defineConfig({
-  lint: defineStrictOxlintConfig({
+export default defineConfig(
+  defineStrictOxlintConfig({
     ignorePatterns: ["dist/**"],
-    rules: {
-      "id-length": "off",
-    },
+    rules: { "id-length": "off" },
   }),
-});
+);
 ```
 
 ## Plugins
@@ -26,6 +24,8 @@ export default defineConfig({
 `plugins` replaces the oxlint default set instead of extending it, so the preset lists every default plugin itself: `eslint`, `typescript`, `unicorn` and `oxc`, plus `node` and `promise`. The `vitest` plugin is enabled through an `overrides` entry for `testFileGlobs` (`**/*.{test,spec}.{ts,tsx,mts,cts,js,jsx,mjs,cjs}`) only, because rules such as `vitest/require-hook` report ordinary top-level calls in source files. Projects with another test layout add their own `overrides` entry with `plugins: ["vitest"]`.
 
 Three `oxc` restriction rules are off because they ban modern syntax rather than defects: `oxc/no-async-await`, `oxc/no-optional-chaining`, `oxc/no-rest-spread-properties`.
+
+`eslint/one-var` uses its `never` mode. Independent bindings stay as independent declarations instead of being joined into one comma-separated statement; grouping them does not establish correctness and makes later edits noisier.
 
 ## Resolved conflicts
 
@@ -68,11 +68,9 @@ pnpm add -D @tanstack/eslint-plugin-query
 
 ```ts
 import { defineStrictOxlintConfig, withTanstackQueryLayer } from "@aurelienbbn/oxlint-config";
-import { defineConfig } from "vite-plus";
+import { defineConfig } from "oxlint";
 
-export default defineConfig({
-  lint: withTanstackQueryLayer(defineStrictOxlintConfig({ ignorePatterns: ["dist/**"] })),
-});
+export default defineConfig(withTanstackQueryLayer(defineStrictOxlintConfig({ ignorePatterns: ["dist/**"] })));
 ```
 
 `@tanstack/query/no-void-query-fn` is left out: it needs the TypeScript checker, which oxlint does not expose to JS plugins, so it reports nothing there. oxlint JS plugins are alpha.
@@ -97,10 +95,10 @@ The `testFileGlobs` override sets three `vitest` rules explicitly, so an upstrea
 
 ```ts
 import { defineStrictOxlintConfig, layerDirectionOverride } from "@aurelienbbn/oxlint-config";
-import { defineConfig } from "vite-plus";
+import { defineConfig } from "oxlint";
 
-export default defineConfig({
-  lint: defineStrictOxlintConfig({
+export default defineConfig(
+  defineStrictOxlintConfig({
     overrides: [
       layerDirectionOverride({
         files: ["**/domain/**"],
@@ -110,7 +108,7 @@ export default defineConfig({
       }),
     ],
   }),
-});
+);
 ```
 
 `forbidden` takes gitignore-style globs for paths and bare names for packages; both the relative import and the package import are reported. `message` carries the fix direction, because the rule cannot know which of the three moves is right. oxlint replaces rule options instead of merging them: when two `overrides` entries match a file the later `eslint/no-restricted-imports` wins, and either one replaces a root-level `eslint/no-restricted-imports`. Give each layer glob a single entry that lists everything the layer must not reach.
@@ -121,11 +119,9 @@ export default defineConfig({
 
 ```ts
 import { defineStrictOxlintConfig, withImportGraphLayer } from "@aurelienbbn/oxlint-config";
-import { defineConfig } from "vite-plus";
+import { defineConfig } from "oxlint";
 
-export default defineConfig({
-  lint: withImportGraphLayer(defineStrictOxlintConfig({ ignorePatterns: ["dist/**"] })),
-});
+export default defineConfig(withImportGraphLayer(defineStrictOxlintConfig({ ignorePatterns: ["dist/**"] })));
 ```
 
 The plugin cannot simply be added to `plugins`: the preset sets whole categories to `error`, so loading it would switch on every `import/*` rule, including pairs that contradict each other (`import/no-default-export` and `import/prefer-default-export`, `import/no-named-export`, `import/group-exports`). `importGraphRules` therefore pins all 33 `import/*` rules of oxlint 1.82.0: two at `error`, 31 at `off`. A project that wants another one sets it in `rules`.
@@ -138,4 +134,4 @@ Upgrade step: a rule that a newer oxlint adds to the `import` plugin is not in `
 
 Defaults remain opinionated for this project's Node/TypeScript stack. Browser projects should explicitly override `env.node` and enable their browser environment. The nursery category is off pending deliberate upgrade review, apart from the rule named under type-aware additions; broad stable categories remain enabled. Blanket Jest-namespace assertion disables were removed. `defineStrictOxlintConfig(overrides, { replaceLists: true })` replaces supplied lists, including plugins; normal calls merge them. Returned nested rule options are independent clones.
 
-Public types come from `vite-plus/lint`, keeping build-tool declaration dependencies outside the lint configuration contract. The [compatibility matrix](../../docs/compatibility.md) records supported peers and tests the packed config with both baseline and current compatible runners, including type-aware linting.
+Public types come from `oxlint`. Vite+ re-exports the same contract, so a consumer can also pass the returned object as its `lint` configuration without adding a Vite+ dependency here. The [compatibility matrix](../../docs/compatibility.md) records supported peers and tests the packed config with both baseline and current compatible runners, including type-aware linting.

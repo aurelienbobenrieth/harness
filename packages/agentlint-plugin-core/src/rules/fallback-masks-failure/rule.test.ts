@@ -12,7 +12,7 @@ async function messages(
   file = "src/module.ts",
   rule = fallbackMasksFailure,
 ): Promise<readonly string[]> {
-  return (await testRuleOnSource(rule, source, file)).map((finding) => finding.message);
+  return (await testRuleOnSource({ rule: rule, source: source, file: file })).map((finding) => finding.message);
 }
 
 it("reports a single fallback on a value whose name marks required data", async () => {
@@ -38,7 +38,11 @@ function normalize(input) {
   const meta = input.meta ?? {};
   return { label, tags, meta };
 }`;
-  const findings = await testRuleOnSource(fallbackMasksFailure, dense, "src/module.ts");
+  const findings = await testRuleOnSource({
+    rule: fallbackMasksFailure,
+    source: dense,
+    file: "src/module.ts",
+  });
   expect(findings.map((finding) => finding.message)).toEqual([fallbackMessage]);
 
   const spread = `
@@ -134,11 +138,11 @@ it("takes a replacement name list and a density threshold", async () => {
 });
 
 it("attaches every fallback of the function as evidence", async () => {
-  const findings = await testRuleOnSource(
-    fallbackMasksFailure,
-    'function f(input) { const a = input.label ?? ""; const b = input.orderId ?? ""; }',
-    "src/module.ts",
-  );
+  const findings = await testRuleOnSource({
+    rule: fallbackMasksFailure,
+    source: 'function f(input) { const a = input.label ?? ""; const b = input.orderId ?? ""; }',
+    file: "src/module.ts",
+  });
   expect(findings).toHaveLength(1);
   expect(JSON.stringify(findings[0])).toContain("input.orderId");
 });

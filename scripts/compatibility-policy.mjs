@@ -98,9 +98,9 @@ export function validateCompatibility({ policy, rootManifest, packages, agentlin
         : directory.startsWith("conformance-")
           ? ["vitest"]
           : directory === "oxlint-config"
-            ? ["oxlint", "oxlint-tsgolint", "vite-plus"]
+            ? ["oxlint", "oxlint-tsgolint"]
             : directory === "oxfmt-config"
-              ? ["oxfmt", "vite-plus"]
+              ? ["oxfmt"]
               : directory.startsWith("stylelint-plugin-")
                 ? ["stylelint"]
                 : [];

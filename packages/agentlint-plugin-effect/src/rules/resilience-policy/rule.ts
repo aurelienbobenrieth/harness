@@ -112,7 +112,7 @@ export function defineResiliencePolicy(options: ResiliencePolicyOptions = {}): S
       id: "effect/resilience-policy",
       version: 1,
       scan: "file",
-      createOnce(context) {
+      createOnce({ context }) {
         return {
           call_expression(node) {
             if (retryCallPattern.test(node.text)) {

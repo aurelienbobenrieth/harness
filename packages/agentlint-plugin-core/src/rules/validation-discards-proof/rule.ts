@@ -90,8 +90,14 @@ export function defineValidationDiscardsProof(options: ValidationDiscardsProofOp
           },
         ],
         refs: [
-          { type: "url", href: "https://lexi-lambda.github.io/blog/2019/11/05/parse-don-t-validate/" },
-          { type: "url", href: "https://fsharpforfunandprofit.com/posts/designing-with-types-single-case-dus/" },
+          {
+            type: "url",
+            href: "https://lexi-lambda.github.io/blog/2019/11/05/parse-don-t-validate/",
+          },
+          {
+            type: "url",
+            href: "https://fsharpforfunandprofit.com/posts/designing-with-types-single-case-dus/",
+          },
           {
             type: "url",
             href: "https://fsharpforfunandprofit.com/posts/designing-with-types-making-illegal-states-unrepresentable/",
@@ -126,7 +132,7 @@ export function defineValidationDiscardsProof(options: ValidationDiscardsProofOp
       id: "core/validation-discards-proof",
       version: 1,
       scan: "file",
-      createOnce(context) {
+      createOnce({ context }) {
         function inspect(fn: AgentlintNode): void {
           const name = functionName(fn);
           if (name === undefined || !matches(namePattern, name)) return;

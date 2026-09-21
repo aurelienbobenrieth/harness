@@ -8,13 +8,13 @@
     "oxlint-tsgolint": "^7.0.2001",
     "oxfmt": ">=0.67.0 <0.69.0",
     "vite-plus": "^0.3.2",
-    "vitest": ">=4.1.11 <5.0.0",
+    "vitest": ">=4.1.11 <6.0.0",
     "stylelint": ">=17.15.0 <18.0.0"
   },
   "localAgentlint": {
     "version": "0.1.5",
     "path": "local-packages/agentlint-current.tgz",
-    "integrity": "sha512-AzKSsfApIbQIa0DVRpDZnM0ERAcybNG+gM8uD62GJctcllZWIqf2rUvQvNs/X9B2KpkxeEFK5zkRLkbyz0BgWw==",
+    "integrity": "sha512-7c1XgeVzL7CrQFKiizvZPj0FdKXzmOVX4TXTAFWL844nTR7qscMK4bZUYcBhnwoVd6i3/gjJ/qGWXSpeXsAbwg==",
     "registryIntegrity": "sha512-845ZB/KsP7j1PuL163l11J40WhU1qHP1MPDzRVUExybGZdhAWZuDo/PVAosKGrv1LSBQYqg7Z3QA2nWJx1qDhw==",
     "registryCompatible": false,
     "developmentDependency": "link:../../../agentlint/packages/agentlint"
@@ -41,7 +41,7 @@
       "oxlint-tsgolint": "7.0.2002",
       "oxfmt": "0.68.0",
       "vite-plus": "0.3.2",
-      "vitest": "4.1.11",
+      "vitest": "5.0.1",
       "stylelint": "17.15.0"
     }
   }

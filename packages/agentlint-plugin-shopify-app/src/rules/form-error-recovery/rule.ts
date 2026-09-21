@@ -73,7 +73,7 @@ export function defineFormErrorRecovery(options: FormErrorRecoveryOptions = {}):
       id: "shopify-app/form-error-recovery",
       version: 1,
       scan: "file",
-      createOnce(context) {
+      createOnce({ context }) {
         const check = (node: AgentlintNode): void => {
           if (!matchesPattern(pattern, elementName(node) ?? "") || !hasPossibleAttributeValue(node, errorAttribute))
             return;

@@ -3,7 +3,7 @@ import { expect, it } from "vitest";
 import { defineTemporalCoupling, temporalCoupling } from "./rule.js";
 
 async function signals(source: string, rule = temporalCoupling, file = "src/module.ts") {
-  return (await testRuleOnSource(rule, source, file)).map((finding) =>
+  return (await testRuleOnSource({ rule: rule, source: source, file: file })).map((finding) =>
     finding.message.replace(/^Class (?:`(\w+)` )?can be held before it is usable \(([^)]*)\).*$/, "$1:$2"),
   );
 }
@@ -20,7 +20,11 @@ export class Indexer {
 }`;
 
 it("reports a definite-assignment field filled by a method, on the class name", async () => {
-  const findings = await testRuleOnSource(temporalCoupling, indexer, "src/indexer.ts");
+  const findings = await testRuleOnSource({
+    rule: temporalCoupling,
+    source: indexer,
+    file: "src/indexer.ts",
+  });
   expect(findings.map((finding) => [finding.line, finding.message])).toEqual([
     [
       2,
@@ -121,7 +125,10 @@ it("keeps test files out of the binding", () => {
 });
 
 it("honours custom patterns and mirrors them into the binding", async () => {
-  const rule = defineTemporalCoupling({ guardMessagePattern: /warm up first/gi, initMethodPattern: /^warmUp$/g });
+  const rule = defineTemporalCoupling({
+    guardMessagePattern: /warm up first/gi,
+    initMethodPattern: /^warmUp$/g,
+  });
   const guard = 'class Engine { run() { throw new Error("Warm up first"); } }';
   expect(await signals(guard, rule)).toEqual(["Engine:guard-throw"]);
   expect(await signals(guard, rule)).toEqual(["Engine:guard-throw"]);

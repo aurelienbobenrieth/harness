@@ -277,7 +277,10 @@ export function defineTestExpectationDrift(options: TestExpectationDriftOptions 
         ],
         refs: [
           { type: "skill", id: "testing" },
-          { type: "url", href: "https://blog.cleancoder.com/uncle-bob/2017/10/03/TestContravariance.html" },
+          {
+            type: "url",
+            href: "https://blog.cleancoder.com/uncle-bob/2017/10/03/TestContravariance.html",
+          },
           { type: "url", href: "https://michaelfeathers.silvrback.com/characterization-testing" },
           { type: "url", href: "https://testdesiderata.com/" },
           { type: "url", href: "https://www.hyrumslaw.com/" },
@@ -315,16 +318,24 @@ export function defineTestExpectationDrift(options: TestExpectationDriftOptions 
             before: {
               "src/order.test.ts": 'it("builds", () => {\n  expect(order).toEqual({ id: "o1", total: 3 });\n});\n',
             },
-            after: { "src/order.test.ts": 'it("builds", () => {\n  expect(order).toMatchObject({ id: "o1" });\n});\n' },
+            after: {
+              "src/order.test.ts": 'it("builds", () => {\n  expect(order).toMatchObject({ id: "o1" });\n});\n',
+            },
           },
         ],
         mustStaySilent: [
           {
-            before: { "src/price.test.ts": 'it("adds tax", () => {\n  expect(total(10)).toBe(12);\n});\n' },
-            after: { "src/price.test.ts": 'it("adds tax", () => {\n  expect(total(10)).toBe(12.5);\n});\n' },
+            before: {
+              "src/price.test.ts": 'it("adds tax", () => {\n  expect(total(10)).toBe(12);\n});\n',
+            },
+            after: {
+              "src/price.test.ts": 'it("adds tax", () => {\n  expect(total(10)).toBe(12.5);\n});\n',
+            },
           },
           {
-            before: { "src/price.test.ts": 'it("adds tax", () => {\n  expect(total(10)).toBe(12);\n});\n' },
+            before: {
+              "src/price.test.ts": 'it("adds tax", () => {\n  expect(total(10)).toBe(12);\n});\n',
+            },
             after: {
               "src/price.test.ts":
                 'it("adds tax", () => {\n  expect(total(10)).toBe(12);\n  expect(total(0)).toBe(0);\n});\n',
@@ -334,7 +345,7 @@ export function defineTestExpectationDrift(options: TestExpectationDriftOptions 
       },
       id: "core/test-expectation-drift",
       version: 1,
-      detect(context) {
+      detect({ context }) {
         const files = context.change.files;
         const tests = files.filter((file) => isTest(file.path));
         const sources = files.filter(
@@ -355,7 +366,13 @@ export function defineTestExpectationDrift(options: TestExpectationDriftOptions 
             throw new Error(`Missing change snapshot: ${file.path}`);
           if (file.status === "deleted" && retiredStems.has(stem(file.path))) continue;
 
-          const signals: FileSignals = { file, kinds: new Set(), removed: [], added: [], firstLine: undefined };
+          const signals: FileSignals = {
+            file,
+            kinds: new Set(),
+            removed: [],
+            added: [],
+            firstLine: undefined,
+          };
           if (isSnapshot(file.path)) snapshotSignals(signals, sourceTouched);
           else testSignals(signals, sourceTouched, moves);
           if (signals.kinds.size === 0) continue;

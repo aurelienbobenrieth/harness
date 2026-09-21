@@ -74,7 +74,7 @@ export function defineReviewSolicitation(options: ReviewSolicitationOptions = {}
       id: "shopify-app/review-solicitation",
       version: 1,
       scan: "file",
-      createOnce(context) {
+      createOnce({ context }) {
         const check = (node: AgentlintNode): void => {
           if (!patterns.some((pattern) => matchesPattern(pattern, node.text))) return;
           context.report({

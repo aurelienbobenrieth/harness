@@ -12,12 +12,12 @@ The executable contract is [policy/compatibility.json](../policy/compatibility.j
 | oxlint-tsgolint | `^7.0.2001`         | 7.0.2001      | 7.0.2002                |
 | oxfmt           | `>=0.67.0 <0.69.0`  | 0.67.0        | 0.68.0                  |
 | vite-plus       | `^0.3.2`            | 0.3.2         | 0.3.2                   |
-| Vitest          | `>=4.1.11 <5.0.0`   | 4.1.11        | 4.1.11                  |
+| Vitest          | `>=4.1.11 <6.0.0`   | 4.1.11        | 5.0.1                   |
 | Stylelint       | `>=17.15.0 <18.0.0` | 17.15.0       | 17.15.0                 |
 
-Both profiles also pin TypeScript 7.0.2, Vite 8.3.0, Node declarations 22.20.3, Lit 3.3.3, XState 5.33.2, and jsdom 30.1.0. `current` means the reviewed versions within the supported families; it never resolves a floating dist-tag. The baseline is the toolchain Vite Plus 0.3.2 bundles. Vitest 5 is outside this contract because Vite Plus pins Vitest 4.1.11. Vite Plus 0.3.3 was published on 2026-09-18 and waits for pnpm's minimum release age. `conformance-shopify-theme` keeps TypeScript 6.0.3 as its runtime dependency: TypeScript 7 no longer exposes the compiler API it uses to resolve event names.
+Both profiles also pin TypeScript 7.0.2, Vite 8.3.0, Node declarations 22.20.3, Lit 3.3.3, XState 5.33.2, and jsdom 30.1.0. `current` means the reviewed versions within the supported families; it never resolves a floating dist-tag. The baseline is the toolchain Vite Plus 0.3.2 bundles. The current profile exercises the conformance adapters with Vitest 5 independently of that Vite+ baseline. Vite Plus 0.3.3 was published on 2026-09-18 and waits for pnpm's minimum release age. `conformance-shopify-theme` keeps TypeScript 6.0.3 as its runtime dependency: TypeScript 7 no longer exposes the compiler API it uses to resolve event names.
 
-Versions and peer metadata were checked against the public npm registry on 2026-09-18. Sources: [oxlint metadata](https://registry.npmjs.org/oxlint/1.83.0), [Vite Plus metadata](https://registry.npmjs.org/vite-plus/0.3.2), [Vitest metadata](https://registry.npmjs.org/vitest/4.1.11), [Stylelint metadata](https://registry.npmjs.org/stylelint/17.15.0).
+Versions and peer metadata were checked against the public npm registry on 2026-09-21. Sources: [oxlint metadata](https://registry.npmjs.org/oxlint/1.83.0), [Vite Plus metadata](https://registry.npmjs.org/vite-plus/0.3.2), [Vitest metadata](https://registry.npmjs.org/vitest/5.0.1), [Stylelint metadata](https://registry.npmjs.org/stylelint/17.15.0).
 
 ## Reproduce the evidence
 
@@ -57,7 +57,7 @@ The pre-migration local consumer passed 26 tests with three intentional conforma
 
 Current local development links all five plugins to the built sibling agentlint workspace. `pnpm test:agentlint-current` checks six packed archives with the exact local runtime dependency graph, typed consumer imports, real parser fixtures, and all five domains through the CLI. This does not require a registry installation. The engine also passes a separate fresh npm tarball smoke, including strict TypeScript and acceptance. The complete active harness graph passes the separate 15-package consumer described below. See the [current migration review](reviews/agentlint-current-contract.md) for scopes, semantic changes and the publication boundary.
 
-The configuration packages now import their host types through `vite-plus/lint` and `vite-plus/fmt`. This preserves the underlying public types while avoiding an unrelated build-tool declaration chain, removing the former Vite Plus declaration exception from their consumer contract.
+The configuration packages import their host types directly from `oxlint` and `oxfmt`. Vite+ re-exports those contracts, so the same objects remain valid in its `lint` and `fmt` fields without making Vite+ part of either package's peer contract.
 
 ## Updating the contract
 

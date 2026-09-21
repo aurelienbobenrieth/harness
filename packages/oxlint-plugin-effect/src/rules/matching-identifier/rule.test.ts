@@ -34,15 +34,15 @@ it("reports a Self type argument naming another class", async () => {
   ).resolves.toBeUndefined();
 });
 
-it("allows path-prefixed keys and identifiers ending with the class name", async () => {
+it("allows path-prefixed keys and tags ending with the class name", async () => {
   await expect(
     assertRuleDoesNotReport(
       ruleName,
       [
         'class OrderRepo extends Context.Service<OrderRepo, { readonly find: () => void }>()("app/orders/OrderRepo") {}',
         'class Order extends Schema.Class<Order>("app/Order")({ id: Schema.String }) {}',
-        'class OrderNotFound extends Schema.TaggedError<OrderNotFound>()("OrderNotFound", { id: Schema.String }) {}',
-        'class Missing extends Data.TaggedError("Missing")<{}> {}',
+        'class OrderNotFound extends Schema.TaggedError<OrderNotFound>()("orders/OrderNotFound", { id: Schema.String }) {}',
+        'class Missing extends Data.TaggedError("orders/Missing")<{}> {}',
         "",
       ].join("\n"),
     ),
@@ -80,4 +80,11 @@ it("suggests renaming only the last key segment", async () => {
   await expect(
     fixCode(ruleName, 'class OrderRepo extends Context.Service<OrderRepo, {}>()("app/UserRepo") {}\n', "suggestions"),
   ).resolves.toBe('class OrderRepo extends Context.Service<OrderRepo, {}>()("app/OrderRepo") {}\n');
+  await expect(
+    fixCode(
+      ruleName,
+      'class OrderNotFound extends Schema.TaggedError<OrderNotFound>()("orders/UserNotFound", {}) {}\n',
+      "suggestions",
+    ),
+  ).resolves.toBe('class OrderNotFound extends Schema.TaggedError<OrderNotFound>()("orders/OrderNotFound", {}) {}\n');
 });

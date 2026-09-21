@@ -64,7 +64,7 @@ export function defineActionLabelClarity(options: ActionLabelClarityOptions = {}
       id: "shopify-app/action-label-clarity",
       version: 1,
       scan: "file",
-      createOnce(context) {
+      createOnce({ context }) {
         const check = (node: AgentlintNode): void => {
           const owner = textOwner(node);
           if (!owner || !matchesPattern(elements, elementName(owner) ?? "")) return;

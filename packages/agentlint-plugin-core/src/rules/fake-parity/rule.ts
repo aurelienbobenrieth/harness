@@ -159,8 +159,14 @@ export function defineFakeParity(options: FakeParityOptions = {}): StateRule {
           { type: "skill", id: "test-strategy" },
           { type: "url", href: "https://martinfowler.com/bliki/ContractTest.html" },
           { type: "url", href: "https://martinfowler.com/bliki/IntegrationTest.html" },
-          { type: "url", href: "https://blog.thecodewhisperer.com/permalink/getting-started-with-contract-tests" },
-          { type: "url", href: "https://blog.cleancoder.com/uncle-bob/2014/05/08/TheLittleMocker.html" },
+          {
+            type: "url",
+            href: "https://blog.thecodewhisperer.com/permalink/getting-started-with-contract-tests",
+          },
+          {
+            type: "url",
+            href: "https://blog.cleancoder.com/uncle-bob/2014/05/08/TheLittleMocker.html",
+          },
         ],
       },
     },
@@ -193,7 +199,7 @@ export function defineFakeParity(options: FakeParityOptions = {}): StateRule {
       id: "core/fake-parity",
       version: 1,
       scan: "file",
-      createOnce(context) {
+      createOnce({ context }) {
         function inspectObject(object: AgentlintNode, type: AgentlintNode | null | undefined, anchor: AgentlintNode) {
           const port = typeName(type);
           if (!matches(portTypePattern, port)) return;
@@ -205,7 +211,11 @@ export function defineFakeParity(options: FakeParityOptions = {}): StateRule {
             closedOverStores(object).some((name) => sharesState(methods, (method) => closureReferences(method, name)));
           if (!stateful) return;
           const name = anchor.type === "identifier" ? anchor.text : "object literal";
-          context.report({ node: anchor, message: message(name, port), evidence: { fake: name, port } });
+          context.report({
+            node: anchor,
+            message: message(name, port),
+            evidence: { fake: name, port },
+          });
         }
 
         return {
@@ -222,7 +232,11 @@ export function defineFakeParity(options: FakeParityOptions = {}): StateRule {
             const port = namedChildren(implemented)
               .map((type) => typeName(type))
               .join(", ");
-            context.report({ node: name, message: message(name.text, port), evidence: { fake: name.text, port } });
+            context.report({
+              node: name,
+              message: message(name.text, port),
+              evidence: { fake: name.text, port },
+            });
           },
           satisfies_expression(node) {
             const [value, type] = namedChildren(node);

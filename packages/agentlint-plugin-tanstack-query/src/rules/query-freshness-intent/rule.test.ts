@@ -10,7 +10,11 @@ function switchedOff(labels: string): string {
 }
 
 async function messagesFor(source: string, file = "src/query-client.ts"): Promise<ReadonlyArray<string>> {
-  const findings = await testRuleOnSource(queryFreshnessIntent, source, file);
+  const findings = await testRuleOnSource({
+    rule: queryFreshnessIntent,
+    source: source,
+    file: file,
+  });
   return findings.map((finding) => finding.message);
 }
 

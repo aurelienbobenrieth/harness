@@ -68,7 +68,7 @@ export function defineDestructiveActionReview(options: DestructiveActionReviewOp
       id: "shopify-app/destructive-action-review",
       version: 1,
       scan: "file",
-      createOnce(context) {
+      createOnce({ context }) {
         const check = (node: AgentlintNode): void => {
           if (!matchesPattern(pattern, elementName(node) ?? "")) return;
           if (attributeValue(node, options.toneAttribute ?? "tone") !== (options.destructiveTone ?? "critical")) return;

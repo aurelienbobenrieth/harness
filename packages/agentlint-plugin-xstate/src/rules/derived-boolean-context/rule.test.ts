@@ -118,12 +118,18 @@ const machine = setup({}).createMachine({
   states: { idle: {} },
 });
 `;
-  await expect(testRuleOnSource(derivedBooleanContext, source, "src/cart-machine.ts")).resolves.toHaveLength(1);
+  await expect(
+    testRuleOnSource({ rule: derivedBooleanContext, source: source, file: "src/cart-machine.ts" }),
+  ).resolves.toHaveLength(1);
 });
 
 it("reports a status enum in a lazy initial context", async () => {
   const source = 'createMachine({ context: ({ input }) => ({ id: input.id, status: "idle" }) });';
-  const findings = await testRuleOnSource(derivedBooleanContext, source, "src/cart-machine.ts");
+  const findings = await testRuleOnSource({
+    rule: derivedBooleanContext,
+    source: source,
+    file: "src/cart-machine.ts",
+  });
 
   expect(findings).toHaveLength(1);
   expect(findings[0]?.message).toContain("mirrors the finite state");
@@ -135,7 +141,9 @@ const machine = setup({
   types: { context: {} as { isLoading?: boolean; phase: "a" | "b" } },
 }).createMachine({ context: { isLoading: false, phase: "a" } });
 `;
-  await expect(testRuleOnSource(derivedBooleanContext, source, "src/cart-machine.ts")).resolves.toHaveLength(1);
+  await expect(
+    testRuleOnSource({ rule: derivedBooleanContext, source: source, file: "src/cart-machine.ts" }),
+  ).resolves.toHaveLength(1);
 });
 
 it("reports types.context when the initial context is not a literal the detector can read", async () => {
@@ -144,7 +152,9 @@ const machine = setup({
   types: { context: {} as { canCheckout: boolean } },
 }).createMachine({ context: initialContext });
 `;
-  await expect(testRuleOnSource(derivedBooleanContext, source, "src/cart-machine.ts")).resolves.toHaveLength(1);
+  await expect(
+    testRuleOnSource({ rule: derivedBooleanContext, source: source, file: "src/cart-machine.ts" }),
+  ).resolves.toHaveLength(1);
 });
 
 it("ignores context keys that are not a machine context declaration", async () => {
@@ -156,12 +166,14 @@ const machine = createMachine({
 render({ context: { isLoading: false } });
 const types = { context: { isReady: true } };
 `;
-  await expect(testRuleOnSource(derivedBooleanContext, source, "src/cart-machine.ts")).resolves.toEqual([]);
+  await expect(
+    testRuleOnSource({ rule: derivedBooleanContext, source: source, file: "src/cart-machine.ts" }),
+  ).resolves.toEqual([]);
 });
 
 it("honours a configured stateMirrorPattern", async () => {
   const rule = defineDerivedBooleanContext({ stateMirrorPattern: /\bstage\s*:\s*"/ });
   const source = 'createMachine({ context: { stage: "one" } }); createMachine({ context: { status: "one" } });';
 
-  await expect(testRuleOnSource(rule, source, "src/cart-machine.ts")).resolves.toHaveLength(1);
+  await expect(testRuleOnSource({ rule: rule, source: source, file: "src/cart-machine.ts" })).resolves.toHaveLength(1);
 });

@@ -122,7 +122,7 @@ export function definePinnedSuspectOutput(options: PinnedSuspectOutputOptions = 
       id: "core/pinned-suspect-output",
       version: 1,
       scan: "file",
-      createOnce(context) {
+      createOnce({ context }) {
         let reported = 0;
 
         function suspectToken(matcher: string, argument: AgentlintNode): string | undefined {

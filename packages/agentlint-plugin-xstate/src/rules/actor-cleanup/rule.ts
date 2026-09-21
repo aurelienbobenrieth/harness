@@ -54,7 +54,7 @@ export function defineActorCleanup(options: ActorCleanupOptions = {}): StateRule
       id: "xstate/actor-cleanup",
       version: 1,
       scan: "file",
-      createOnce(context) {
+      createOnce({ context }) {
         return {
           call_expression(node) {
             actorStartPattern.lastIndex = 0;

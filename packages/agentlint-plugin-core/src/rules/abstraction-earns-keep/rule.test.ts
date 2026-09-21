@@ -16,7 +16,9 @@ const forwardingModuleMessage = (forwarding: number, members: number, binding: s
   `Module forwards ${forwarding} of ${members} exported functions unchanged to \`${binding}\`; state what this layer decides, or let callers import the collaborator directly.`;
 
 async function messages(source: string, rule = abstractionEarnsKeep): Promise<readonly string[]> {
-  return (await testRuleOnSource(rule, source, "src/invoice-service.ts")).map((finding) => finding.message);
+  return (await testRuleOnSource({ rule: rule, source: source, file: "src/invoice-service.ts" })).map(
+    (finding) => finding.message,
+  );
 }
 
 const headerInterface = `
@@ -276,8 +278,11 @@ it("mirrors options into the binding and validates thresholds", () => {
     forwardingRatio: null,
   });
   expect(
-    defineAbstractionEarnsKeep({ interfacePattern: /^I[A-Z][a-z]/, minForwardingMembers: 4, forwardingRatio: 1 })
-      .binding.options,
+    defineAbstractionEarnsKeep({
+      interfacePattern: /^I[A-Z][a-z]/,
+      minForwardingMembers: 4,
+      forwardingRatio: 1,
+    }).binding.options,
   ).toEqual({
     interfacePattern: { source: "^I[A-Z][a-z]", flags: "" },
     minForwardingMembers: 4,

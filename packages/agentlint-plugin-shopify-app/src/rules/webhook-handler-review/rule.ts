@@ -123,7 +123,7 @@ export function defineWebhookHandlerReview(options: WebhookHandlerReviewOptions 
       id: "shopify-app/webhook-handler-review",
       version: 1,
       scan: "file",
-      createOnce(context) {
+      createOnce({ context }) {
         let reported = false;
         const report = (node: AgentlintNode, signal: string): void => {
           if (reported) return;

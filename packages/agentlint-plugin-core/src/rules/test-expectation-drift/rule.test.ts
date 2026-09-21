@@ -14,14 +14,17 @@ const inlineSnapshotTest = (line: string): string =>
   `it("prints", () => {\n  expect(print(receipt)).toMatchInlineSnapshot(\`\n    header\n    a\n    b\n    c\n    d\n    ${line}\n  \`);\n});\n`;
 
 async function kinds(before: Repository, after: Repository, rule = testExpectationDrift) {
-  const findings = await testRuleOnChange(rule, { before, after });
+  const findings = await testRuleOnChange({ rule: rule, fixture: { before, after } });
   return findings.map((finding) => [finding.file, finding.message.replace(/^.*\(([^)]*)\).*$/, "$1")]);
 }
 
 it("reports a re-valued expectation when source changed in the same change, on the hunk line", async () => {
-  const findings = await testRuleOnChange(testExpectationDrift, {
-    before: { "src/price.ts": priceSource(2), "src/price.test.ts": priceTest("12.06") },
-    after: { "src/price.ts": priceSource(3), "src/price.test.ts": priceTest("12.05") },
+  const findings = await testRuleOnChange({
+    rule: testExpectationDrift,
+    fixture: {
+      before: { "src/price.ts": priceSource(2), "src/price.test.ts": priceTest("12.06") },
+      after: { "src/price.ts": priceSource(3), "src/price.test.ts": priceTest("12.05") },
+    },
   });
   expect(findings.map((finding) => [finding.file, finding.line, finding.authority, finding.lineageKey])).toEqual([
     ["src/price.test.ts", 1, "human", "src/price.test.ts"],
@@ -34,8 +37,14 @@ it("reports a re-valued expectation when source changed in the same change, on t
 it("counts a .tsx source file as touched source", async () => {
   expect(
     await kinds(
-      { "src/Price.tsx": "export const Price = () => <b>1</b>;\n", "src/price.test.ts": priceTest("12.06") },
-      { "src/Price.tsx": "export const Price = () => <b>2</b>;\n", "src/price.test.ts": priceTest("12.05") },
+      {
+        "src/Price.tsx": "export const Price = () => <b>1</b>;\n",
+        "src/price.test.ts": priceTest("12.06"),
+      },
+      {
+        "src/Price.tsx": "export const Price = () => <b>2</b>;\n",
+        "src/price.test.ts": priceTest("12.05"),
+      },
     ),
   ).toEqual([["src/price.test.ts", "expectation-revalued"]]);
 });
@@ -76,8 +85,12 @@ it("reports a downgraded matcher and a gained wildcard without any source change
 it("stays silent when a matcher is strengthened", async () => {
   expect(
     await kinds(
-      { "src/order.test.ts": 'it("builds", () => {\n  expect(order).toMatchObject({ id: "o1" });\n});\n' },
-      { "src/order.test.ts": 'it("builds", () => {\n  expect(order).toStrictEqual({ id: "o1", total: 30 });\n});\n' },
+      {
+        "src/order.test.ts": 'it("builds", () => {\n  expect(order).toMatchObject({ id: "o1" });\n});\n',
+      },
+      {
+        "src/order.test.ts": 'it("builds", () => {\n  expect(order).toStrictEqual({ id: "o1", total: 30 });\n});\n',
+      },
     ),
   ).toEqual([]);
 });
@@ -107,12 +120,23 @@ it("reports a rewritten snapshot file and inline snapshot body only when source 
       "src/receipt.ts": "export const a = 2;\n",
     }),
   ).toEqual([["src/__snapshots__/receipt.test.ts.snap", "snapshot-rewritten"]]);
-  expect(await kinds(before, { ...before, "src/__snapshots__/receipt.test.ts.snap": snapshotFile("31") })).toEqual([]);
+  expect(
+    await kinds(before, {
+      ...before,
+      "src/__snapshots__/receipt.test.ts.snap": snapshotFile("31"),
+    }),
+  ).toEqual([]);
 
   expect(
     await kinds(
-      { "src/receipt.test.ts": inlineSnapshotTest("total 30"), "src/receipt.ts": "export const a = 1;\n" },
-      { "src/receipt.test.ts": inlineSnapshotTest("total 31"), "src/receipt.ts": "export const a = 2;\n" },
+      {
+        "src/receipt.test.ts": inlineSnapshotTest("total 30"),
+        "src/receipt.ts": "export const a = 1;\n",
+      },
+      {
+        "src/receipt.test.ts": inlineSnapshotTest("total 31"),
+        "src/receipt.ts": "export const a = 2;\n",
+      },
     ),
   ).toEqual([["src/receipt.test.ts", "snapshot-rewritten"]]);
 });
@@ -135,8 +159,14 @@ it("does not let a moved line hide a second, genuinely removed copy", async () =
   const line = "  expect(build().total).toBe(30);\n";
   expect(
     await kinds(
-      { "src/a.test.ts": `it("a", () => {\n${line}${line}});\n`, "src/b.test.ts": 'it("b", () => {\n});\n' },
-      { "src/a.test.ts": 'it("a", () => {\n});\n', "src/b.test.ts": `it("b", () => {\n${line}});\n` },
+      {
+        "src/a.test.ts": `it("a", () => {\n${line}${line}});\n`,
+        "src/b.test.ts": 'it("b", () => {\n});\n',
+      },
+      {
+        "src/a.test.ts": 'it("a", () => {\n});\n',
+        "src/b.test.ts": `it("b", () => {\n${line}});\n`,
+      },
     ),
   ).toEqual([["src/a.test.ts", "assertion-removed"]]);
 });
@@ -171,13 +201,22 @@ it("reports a test file deleted while its source stays", async () => {
 
 it("keeps the fingerprint stable when unrelated lines shift the hunk", async () => {
   const before = { "src/price.ts": priceSource(2), "src/price.test.ts": priceTest("12.06") };
-  const [first] = await testRuleOnChange(testExpectationDrift, {
-    before,
-    after: { "src/price.ts": priceSource(3), "src/price.test.ts": priceTest("12.05") },
+  const [first] = await testRuleOnChange({
+    rule: testExpectationDrift,
+    fixture: {
+      before,
+      after: { "src/price.ts": priceSource(3), "src/price.test.ts": priceTest("12.05") },
+    },
   });
-  const [second] = await testRuleOnChange(testExpectationDrift, {
-    before,
-    after: { "src/price.ts": priceSource(3), "src/price.test.ts": `// moved\n${priceTest("12.05")}` },
+  const [second] = await testRuleOnChange({
+    rule: testExpectationDrift,
+    fixture: {
+      before,
+      after: {
+        "src/price.ts": priceSource(3),
+        "src/price.test.ts": `// moved\n${priceTest("12.05")}`,
+      },
+    },
   });
   expect(first?.fingerprint).toBeDefined();
   expect(second?.fingerprint).toStrictEqual(first?.fingerprint);
@@ -191,14 +230,17 @@ it("binds source files and snapshots so the engine keeps them in the change, and
 });
 
 it("honours custom patterns, caps evidence and rejects an invalid cap", async () => {
-  const rule = defineTestExpectationDrift({ testFilePattern: /\.check\.ts$/g, assertionPattern: /\bverify\(/g });
+  const rule = defineTestExpectationDrift({
+    testFilePattern: /\.check\.ts$/g,
+    assertionPattern: /\bverify\(/g,
+  });
   const fixture = {
     before: { "src/a.check.ts": "run(() => {\n  verify(total, 30);\n});\n" },
     after: { "src/a.check.ts": "run(() => {\n});\n" },
   };
-  expect(await testRuleOnChange(rule, fixture)).toHaveLength(1);
-  expect(await testRuleOnChange(rule, fixture)).toHaveLength(1);
-  expect(await testRuleOnChange(testExpectationDrift, fixture)).toEqual([]);
+  expect(await testRuleOnChange({ rule: rule, fixture: fixture })).toHaveLength(1);
+  expect(await testRuleOnChange({ rule: rule, fixture: fixture })).toHaveLength(1);
+  expect(await testRuleOnChange({ rule: testExpectationDrift, fixture: fixture })).toEqual([]);
   expect(rule.binding.options).toEqual({
     authority: null,
     testFilePattern: { source: "\\.check\\.ts$", flags: "g" },

@@ -65,7 +65,9 @@ const discardedFailure =
   "Handler around an outbound call discards the failure; rethrow it, branch on a named condition, or justify the silence with a REASON: comment.";
 
 async function messages(source: string): Promise<readonly string[]> {
-  return (await testRuleOnSource(boundaryResilience, source, "src/module.ts")).map((finding) => finding.message);
+  return (await testRuleOnSource({ rule: boundaryResilience, source: source, file: "src/module.ts" })).map(
+    (finding) => finding.message,
+  );
 }
 
 it("does not accept resilience words that only appear in a URL, string or comment", async () => {

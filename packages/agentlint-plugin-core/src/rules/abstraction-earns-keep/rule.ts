@@ -130,7 +130,10 @@ function implementersOf(root: AgentlintNode, target: string): readonly Implement
     const value = declarator.childByFieldName("value");
     const annotation = namedChildren(declarator.childByFieldName("type"))[0];
     if (value?.type !== "object" || typeName(annotation) !== target) continue;
-    found.push({ name: declarator.childByFieldName("name")?.text ?? "object literal", members: objectMembers(value) });
+    found.push({
+      name: declarator.childByFieldName("name")?.text ?? "object literal",
+      members: objectMembers(value),
+    });
   }
   return found;
 }
@@ -265,7 +268,10 @@ export function defineAbstractionEarnsKeep(options: AbstractionEarnsKeepOptions 
           { type: "url", href: "https://github.com/johnousterhout/aposd-vs-clean-code" },
           { type: "url", href: "https://martinfowler.com/bliki/Yagni.html" },
           { type: "url", href: "https://martinfowler.com/articles/gateway-pattern.html" },
-          { type: "url", href: "https://blog.cleancoder.com/uncle-bob/2016/01/04/ALittleArchitecture.html" },
+          {
+            type: "url",
+            href: "https://blog.cleancoder.com/uncle-bob/2016/01/04/ALittleArchitecture.html",
+          },
           { type: "skill", id: "code-review" },
         ],
       },
@@ -303,7 +309,7 @@ export function defineAbstractionEarnsKeep(options: AbstractionEarnsKeepOptions 
       id: "core/abstraction-earns-keep",
       version: 2,
       scan: "file",
-      createOnce(context) {
+      createOnce({ context }) {
         function reportInterfaces(root: AgentlintNode): void {
           const declarations = [
             ...root.descendantsOfType("interface_declaration"),
@@ -328,7 +334,11 @@ export function defineAbstractionEarnsKeep(options: AbstractionEarnsKeepOptions 
               context.report({
                 node: name,
                 message: `Interface \`${name.text}\` lists exactly the members of its only implementer \`${only.name}\` in this file; it earns its keep with a second implementer, a test double, or a consumer-owned seam.`,
-                evidence: { interface: name.text, implementer: only.name, members: members.toSorted() },
+                evidence: {
+                  interface: name.text,
+                  implementer: only.name,
+                  members: members.toSorted(),
+                },
               });
               continue;
             }
@@ -395,7 +405,12 @@ export function defineAbstractionEarnsKeep(options: AbstractionEarnsKeepOptions 
             if (!fn) return [];
             const call = verbatimForward(fn);
             const target = call ? forwardTarget(call, "binding") : undefined;
-            return [{ statement, target: target !== undefined && imports.has(target) ? target : undefined }];
+            return [
+              {
+                statement,
+                target: target !== undefined && imports.has(target) ? target : undefined,
+              },
+            ];
           });
           if (exported.length < minForwardingMembers) return [];
           const dominant = dominantTarget(exported.map((entry) => entry.target));
@@ -407,7 +422,11 @@ export function defineAbstractionEarnsKeep(options: AbstractionEarnsKeepOptions 
           context.report({
             node: first,
             message: `Module forwards ${dominant[1]} of ${exported.length} exported functions unchanged to \`${dominant[0]}\`; state what this layer decides, or let callers import the collaborator directly.`,
-            evidence: { collaborator: dominant[0], forwarding: dominant[1], members: exported.length },
+            evidence: {
+              collaborator: dominant[0],
+              forwarding: dominant[1],
+              members: exported.length,
+            },
           });
           return covered;
         }

@@ -123,10 +123,19 @@ export function defineTestBehaviorCoverage(options: TestBehaviorCoverageOptions 
           { type: "skill", id: "test-strategy" },
           { type: "skill", id: "testing" },
           { type: "url", href: "https://enterprisecraftsmanship.com/posts/when-to-mock/" },
-          { type: "url", href: "https://testing.googleblog.com/2015/01/testing-on-toilet-change-detector-tests.html" },
-          { type: "url", href: "https://testing.googleblog.com/2013/05/testing-on-toilet-dont-overuse-mocks.html" },
+          {
+            type: "url",
+            href: "https://testing.googleblog.com/2015/01/testing-on-toilet-change-detector-tests.html",
+          },
+          {
+            type: "url",
+            href: "https://testing.googleblog.com/2013/05/testing-on-toilet-dont-overuse-mocks.html",
+          },
           { type: "url", href: "https://martinfowler.com/articles/mocksArentStubs.html" },
-          { type: "url", href: "https://www.jamesshore.com/v2/projects/nullables/testing-without-mocks" },
+          {
+            type: "url",
+            href: "https://www.jamesshore.com/v2/projects/nullables/testing-without-mocks",
+          },
           { type: "url", href: "https://kentcdodds.com/blog/effective-snapshot-testing" },
         ],
       },
@@ -177,7 +186,7 @@ export function defineTestBehaviorCoverage(options: TestBehaviorCoverageOptions 
       id: "core/test-behavior-coverage",
       version: 3,
       scan: "file",
-      createOnce(context) {
+      createOnce({ context }) {
         function reportFileDensity(root: AgentlintNode): boolean {
           const source = context.source;
           if (countMatches(source, mockPattern) < minMockMatches) return false;
@@ -229,7 +238,11 @@ export function defineTestBehaviorCoverage(options: TestBehaviorCoverageOptions 
                 key: "interaction-only",
                 node: firstInteractionOnly,
                 message: `${interactionOnly.length} of ${tests.length} tests assert mock interactions only (${shown.join(", ")}); assert the resulting state or return value, or show that each listed double is an unmanaged process boundary.`,
-                evidence: { interactionOnlyTests: interactionOnly.length, totalTests: tests.length, doubles: listed },
+                evidence: {
+                  interactionOnlyTests: interactionOnly.length,
+                  totalTests: tests.length,
+                  doubles: listed,
+                },
               });
             }
 

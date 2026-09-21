@@ -109,7 +109,7 @@ export function definePersistedSnapshotCompat(options: PersistedSnapshotCompatOp
       id: "xstate/persisted-snapshot-compat",
       version: 1,
       scan: "file",
-      createOnce(context) {
+      createOnce({ context }) {
         return {
           call_expression(node) {
             const callee = node.childByFieldName("function")?.text ?? "";

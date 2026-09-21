@@ -6,7 +6,9 @@ const messageFor = (name: string): string =>
   `\`${name}\` checks its argument and returns nothing the type system can carry; return the refined value, or declare an \`asserts\`/\`is\` signature so callers stop re-checking.`;
 
 async function messages(source: string, rule = validationDiscardsProof): Promise<readonly string[]> {
-  return (await testRuleOnSource(rule, source, "src/order.ts")).map((finding) => finding.message);
+  return (await testRuleOnSource({ rule: rule, source: source, file: "src/order.ts" })).map(
+    (finding) => finding.message,
+  );
 }
 
 it("reports a throwing validator declared void", async () => {

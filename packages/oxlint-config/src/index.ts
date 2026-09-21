@@ -1,9 +1,9 @@
-import type { OxlintConfig } from "vite-plus/lint";
+import type { OxlintConfig } from "oxlint";
 
-export type VitePlusLintConfig = OxlintConfig;
+export type { OxlintConfig } from "oxlint";
 
-type RuleEntries = NonNullable<VitePlusLintConfig["rules"]>;
-type OverrideEntry = NonNullable<VitePlusLintConfig["overrides"]>[number];
+type RuleEntries = NonNullable<OxlintConfig["rules"]>;
+type OverrideEntry = NonNullable<OxlintConfig["overrides"]>[number];
 
 function mergeList<T>(
   base: readonly T[] | null | undefined,
@@ -58,6 +58,7 @@ export const strictOxlintConfig = {
     "eslint/no-undefined": "off",
     "eslint/no-underscore-dangle": ["error", { allow: ["_tag", "_tree", "__dirname"] }],
     "eslint/no-warning-comments": "off",
+    "eslint/one-var": ["error", "never"],
     "eslint/prefer-promise-reject-errors": "off",
     "eslint/require-await": "off",
     "node/no-top-level-await": "off",
@@ -84,6 +85,7 @@ export const strictOxlintConfig = {
       plugins: ["vitest"],
       rules: {
         "vitest/no-importing-vitest-globals": "off",
+        "vitest/no-standalone-expect": "off",
         "vitest/prefer-called-with": "error",
         "vitest/prefer-to-be-falsy": "off",
         "vitest/prefer-to-be-truthy": "off",
@@ -92,7 +94,7 @@ export const strictOxlintConfig = {
       },
     },
   ],
-} satisfies VitePlusLintConfig;
+} satisfies OxlintConfig;
 
 /**
  * Low-noise nursery rules that are not part of the strict preset yet.
@@ -106,9 +108,9 @@ export const nurseryCandidateRules = {
 } satisfies RuleEntries;
 
 export function defineStrictOxlintConfig(
-  overrides: VitePlusLintConfig = {},
+  overrides: OxlintConfig = {},
   options: { readonly replaceLists?: boolean } = {},
-): VitePlusLintConfig {
+): OxlintConfig {
   return structuredClone({
     ...strictOxlintConfig,
     ...overrides,
@@ -177,9 +179,9 @@ export interface TanstackQueryLayerOptions {
  * `@tanstack/eslint-plugin-query`; rules already set on the config win over the layer.
  */
 export function withTanstackQueryLayer(
-  config: VitePlusLintConfig = defineStrictOxlintConfig(),
+  config: OxlintConfig = defineStrictOxlintConfig(),
   options: TanstackQueryLayerOptions = {},
-): VitePlusLintConfig {
+): OxlintConfig {
   const companionPlugins = options.companionPlugins ?? [];
 
   return structuredClone({
@@ -224,7 +226,7 @@ export function layerDirectionOverride(options: LayerDirectionOptions): Override
 }
 
 /** Plugins oxlint loads when a config sets none; a config that sets `plugins` replaces them. */
-const defaultOxlintPlugins: NonNullable<VitePlusLintConfig["plugins"]> = ["eslint", "typescript", "unicorn", "oxc"];
+const defaultOxlintPlugins: NonNullable<OxlintConfig["plugins"]> = ["eslint", "typescript", "unicorn", "oxc"];
 
 /**
  * Every `import/*` rule of oxlint 1.82.0. Only the two import-graph rules are on; the rest are pinned off
@@ -270,7 +272,7 @@ export const importGraphRules = {
  * Adds the opt-in import-graph layer: the `import` plugin with only `import/no-cycle` and
  * `import/no-self-import` enabled. Rules already set on the config win over the layer.
  */
-export function withImportGraphLayer(config: VitePlusLintConfig = defineStrictOxlintConfig()): VitePlusLintConfig {
+export function withImportGraphLayer(config: OxlintConfig = defineStrictOxlintConfig()): OxlintConfig {
   return structuredClone({
     ...config,
     plugins: mergeList(config.plugins ?? defaultOxlintPlugins, ["import" as const]),

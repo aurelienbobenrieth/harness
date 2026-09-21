@@ -106,7 +106,7 @@ export const layerIdentity = defineRule({
     id: "effect/layer-identity",
     version: 1,
     scan: "file",
-    createOnce(context) {
+    createOnce({ context }) {
       function inspect(node: AgentlintNode): void {
         const returned = returnedExpression(node);
         if (!returned || !layerExpressionPattern.test(returned.text)) return;

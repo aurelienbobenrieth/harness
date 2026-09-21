@@ -28,7 +28,10 @@ export const mutationStateCoverage = defineRule({
         "Background mutations with no user-visible interaction may document that boundary and accept the review instead of fabricating UI state.",
       ],
       refs: [
-        { type: "url", href: "https://tanstack.com/query/latest/docs/framework/react/guides/mutations" },
+        {
+          type: "url",
+          href: "https://tanstack.com/query/latest/docs/framework/react/guides/mutations",
+        },
         {
           type: "url",
           href: "https://tanstack.com/query/latest/docs/framework/react/guides/mutations#persisting-offline-mutations",
@@ -73,7 +76,7 @@ export const mutationStateCoverage = defineRule({
     id: "tanstack-query/mutation-state-coverage",
     version: 1,
     scan: "file",
-    createOnce(context) {
+    createOnce({ context }) {
       return {
         call_expression(node) {
           if (calleeName(node) !== "useMutation") return;

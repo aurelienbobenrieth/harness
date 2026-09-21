@@ -33,6 +33,25 @@ function objectType(type: ESTree.TSType): boolean {
   return false;
 }
 
+function hasNamedVariableContract(node: FunctionNode): boolean {
+  const parent = node.parent;
+  if (parent.type !== "VariableDeclarator" || parent.id.type !== "Identifier") return false;
+  const annotation = parent.id.typeAnnotation?.typeAnnotation;
+  return annotation !== undefined && !objectType(annotation);
+}
+
+function hasNamedJsdocReturn(context: Context, node: FunctionNode): boolean {
+  const owner =
+    node.parent.type === "ExportNamedDeclaration" || node.parent.type === "ExportDefaultDeclaration"
+      ? node.parent
+      : node;
+  return context.sourceCode
+    .getCommentsBefore(owner)
+    .some((comment) =>
+      /@returns?\s*\{\s*(?:Promise\s*<\s*)?[A-Za-z_$][\w$]*(?:\s*[./]\s*[A-Za-z_$][\w$]*)*/u.test(comment.value),
+    );
+}
+
 export const noExportedAnonymousObjectReturn: Rule = {
   meta: {
     type: "suggestion",
@@ -68,6 +87,7 @@ export const noExportedAnonymousObjectReturn: Rule = {
     };
     const check = (node: FunctionNode): void => {
       if (!isPublic(node, exported)) return;
+      if (hasNamedVariableContract(node) || hasNamedJsdocReturn(context, node)) return;
       if (node.returnType && objectType(node.returnType.typeAnnotation))
         context.report({ node: node.returnType, messageId: "namedReturn" });
       else if (!node.returnType && node.type === "ArrowFunctionExpression" && node.body.type === "ObjectExpression")
@@ -120,7 +140,13 @@ export const noExportedAnonymousObjectReturn: Rule = {
               owner.id &&
               overloads.has(owner.id.name) &&
               (owner.parent.type === "Program" || owner.parent.parent?.type === "Program");
-            if (!owner.returnType && !signatureOwnsReturn && isPublic(owner, exported))
+            if (
+              !owner.returnType &&
+              !signatureOwnsReturn &&
+              !hasNamedVariableContract(owner) &&
+              !hasNamedJsdocReturn(context, owner) &&
+              isPublic(owner, exported)
+            )
               context.report({ node, messageId: "namedReturn" });
             return;
           }

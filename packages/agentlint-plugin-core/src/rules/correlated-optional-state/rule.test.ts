@@ -5,7 +5,7 @@ import { correlatedOptionalState, defineCorrelatedOptionalState } from "./rule.j
 const body = '{ status: "idle" | "uploading" | "done" | "failed"; progress?: number; url?: string; error?: Error }';
 
 async function messages(source: string, rule = correlatedOptionalState, file = "src/upload.ts") {
-  return (await testRuleOnSource(rule, source, file)).map((finding) => finding.message);
+  return (await testRuleOnSource({ rule: rule, source: source, file: file })).map((finding) => finding.message);
 }
 
 it("reports a status union next to optional fields, naming the fields", async () => {

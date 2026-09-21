@@ -95,7 +95,10 @@ export function defineCorrelatedOptionalState(options: CorrelatedOptionalStateOp
             type: "url",
             href: "https://fsharpforfunandprofit.com/posts/designing-with-types-making-illegal-states-unrepresentable/",
           },
-          { type: "url", href: "https://lexi-lambda.github.io/blog/2019/11/05/parse-don-t-validate/" },
+          {
+            type: "url",
+            href: "https://lexi-lambda.github.io/blog/2019/11/05/parse-don-t-validate/",
+          },
         ],
       },
     },
@@ -133,7 +136,7 @@ export function defineCorrelatedOptionalState(options: CorrelatedOptionalStateOp
       id: "core/correlated-optional-state",
       version: 1,
       scan: "file",
-      createOnce(context) {
+      createOnce({ context }) {
         function inspect(declaration: AgentlintNode, body: AgentlintNode | null): void {
           const name = declaration.childByFieldName("name");
           if (!name || !body || matches(skipNamePattern, name.text)) return;

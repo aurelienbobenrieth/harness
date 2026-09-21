@@ -1,7 +1,7 @@
 {
   "name": "@aurelienbbn/oxlint-config",
   "version": "0.0.0",
-  "description": "Opinionated strict reusable oxlint config for Vite+ TypeScript projects.",
+  "description": "Opinionated strict reusable oxlint config for TypeScript projects.",
   "bugs": {
     "url": "https://github.com/aurelienbobenrieth/harness/issues"
   },
@@ -28,8 +28,7 @@
   },
   "peerDependencies": {
     "oxlint": ">=1.82.0 <2.0.0",
-    "oxlint-tsgolint": "^7.0.2001",
-    "vite-plus": "^0.3.2"
+    "oxlint-tsgolint": "^7.0.2001"
   },
   "engines": {
     "node": "^22.19.0 || ^24.11.0"

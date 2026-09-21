@@ -13,7 +13,11 @@ const todos = setup({ actors: { todo: todoMachine } }).createMachine({
 `;
 
 it("reports a machine that spawns inside assign, once for the chained setup().createMachine()", async () => {
-  const findings = await testRuleOnSource(spawnedActorRelease, todosMachine, "src/todos-machine.ts");
+  const findings = await testRuleOnSource({
+    rule: spawnedActorRelease,
+    source: todosMachine,
+    file: "src/todos-machine.ts",
+  });
 
   expect(findings).toHaveLength(1);
   expect(findings[0]?.message).toContain("stopChild()");
@@ -24,8 +28,12 @@ it("reports spawnChild and enqueue.spawnChild", async () => {
   const enqueued =
     'createMachine({ entry: enqueueActions(({ enqueue }) => { enqueue.spawnChild("sync", { id: "sync" }); }) });';
 
-  await expect(testRuleOnSource(spawnedActorRelease, bare, "src/m.ts")).resolves.toHaveLength(1);
-  await expect(testRuleOnSource(spawnedActorRelease, enqueued, "src/m.ts")).resolves.toHaveLength(1);
+  await expect(testRuleOnSource({ rule: spawnedActorRelease, source: bare, file: "src/m.ts" })).resolves.toHaveLength(
+    1,
+  );
+  await expect(
+    testRuleOnSource({ rule: spawnedActorRelease, source: enqueued, file: "src/m.ts" }),
+  ).resolves.toHaveLength(1);
 });
 
 it("reports a stored setup() whose actions spawn, separately from its createMachine call", async () => {
@@ -33,7 +41,9 @@ it("reports a stored setup() whose actions spawn, separately from its createMach
 const machineSetup = setup({ actions: { startSync: spawnChild("sync", { id: "sync" }) } });
 const machine = machineSetup.createMachine({ entry: "startSync" });
 `;
-  await expect(testRuleOnSource(spawnedActorRelease, source, "src/m.ts")).resolves.toHaveLength(1);
+  await expect(testRuleOnSource({ rule: spawnedActorRelease, source: source, file: "src/m.ts" })).resolves.toHaveLength(
+    1,
+  );
 });
 
 it("reports each spawning machine definition of a file once", async () => {
@@ -42,13 +52,15 @@ const a = createMachine({ entry: spawnChild("one") });
 const b = createMachine({ entry: spawnChild("two") });
 const c = createMachine({ invoke: { src: "three", onError: "failed" } });
 `;
-  await expect(testRuleOnSource(spawnedActorRelease, source, "src/m.ts")).resolves.toHaveLength(2);
+  await expect(testRuleOnSource({ rule: spawnedActorRelease, source: source, file: "src/m.ts" })).resolves.toHaveLength(
+    2,
+  );
 });
 
 it("stays silent on machines that only invoke", async () => {
   const source = 'setup({}).createMachine({ invoke: { src: "load", onDone: "ready", onError: "failed" } });';
 
-  await expect(testRuleOnSource(spawnedActorRelease, source, "src/m.ts")).resolves.toEqual([]);
+  await expect(testRuleOnSource({ rule: spawnedActorRelease, source: source, file: "src/m.ts" })).resolves.toEqual([]);
 });
 
 it("stays silent on child_process-style spawn and on spawn mentioned outside assign", async () => {
@@ -56,7 +68,7 @@ it("stays silent on child_process-style spawn and on spawn mentioned outside ass
 const child = spawn("git", ["status"]);
 const machine = createMachine({ on: { RUN: { actions: ({ context }) => context.runner.spawn("job") } } });
 `;
-  await expect(testRuleOnSource(spawnedActorRelease, source, "src/m.ts")).resolves.toEqual([]);
+  await expect(testRuleOnSource({ rule: spawnedActorRelease, source: source, file: "src/m.ts" })).resolves.toEqual([]);
 });
 
 it("excludes test files by default and honours a configured machineCalleePattern", async () => {
@@ -64,7 +76,7 @@ it("excludes test files by default and honours a configured machineCalleePattern
 
   const rule = defineSpawnedActorRelease({ machineCalleePattern: /^defineMachine$/ });
   const source = 'defineMachine({ entry: spawnChild("sync") }); createMachine({ entry: spawnChild("sync") });';
-  const findings = await testRuleOnSource(rule, source, "src/m.ts");
+  const findings = await testRuleOnSource({ rule: rule, source: source, file: "src/m.ts" });
 
   expect(findings).toHaveLength(1);
 });

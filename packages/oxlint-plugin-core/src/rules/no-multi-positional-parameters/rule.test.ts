@@ -21,6 +21,12 @@ it("allows callbacks whose positional contract belongs to the caller", async () 
   ).resolves.toBeUndefined();
 });
 
+it("allows constructor callbacks whose positional contract belongs to the constructor", async () => {
+  await expect(
+    assertRuleDoesNotReport(ruleName, "const deferred = new Promise((resolve, reject) => resolve(reject));\n"),
+  ).resolves.toBeUndefined();
+});
+
 it("reports function expressions with multiple parameters", async () => {
   await expect(
     assertRuleReports(

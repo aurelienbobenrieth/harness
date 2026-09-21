@@ -69,7 +69,7 @@ export function defineSettingsSaveBar(options: SettingsSaveBarOptions = {}): Sta
       id: "shopify-app/settings-save-bar",
       version: 1,
       scan: "file",
-      createOnce(context) {
+      createOnce({ context }) {
         const check = (node: AgentlintNode): void => {
           if (!matchesPattern(formElementPattern, node.text)) return;
           const marker = attributeValue(node, "data-save-bar");

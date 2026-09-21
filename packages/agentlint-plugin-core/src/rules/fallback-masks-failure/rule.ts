@@ -256,7 +256,7 @@ export function defineFallbackMasksFailure(options: FallbackMasksFailureOptions 
       id: "core/fallback-masks-failure",
       version: 1,
       scan: "file",
-      createOnce(context) {
+      createOnce({ context }) {
         return {
           program(root) {
             const scopes = new Map<string, Candidate[]>();

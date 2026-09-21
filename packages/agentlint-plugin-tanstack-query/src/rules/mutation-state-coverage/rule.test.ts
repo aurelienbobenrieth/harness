@@ -11,7 +11,11 @@ it.each([
   "trpc.todo.save.useMutation()",
   "api?.orders.create.useMutation({ onSuccess })",
 ])("reports mutation hooks through the real parser: %s", async (source) => {
-  const findings = await testRuleOnSource(mutationStateCoverage, `const mutation = ${source};`, "src/editor.tsx");
+  const findings = await testRuleOnSource({
+    rule: mutationStateCoverage,
+    source: `const mutation = ${source};`,
+    file: "src/editor.tsx",
+  });
   expect(findings.map((finding) => finding.message)).toEqual([message]);
 });
 
@@ -22,9 +26,13 @@ it.each([
   "useMutations()",
   "render(useMutation)",
 ])("stays silent on near misses: %s", async (source) => {
-  await expect(testRuleOnSource(mutationStateCoverage, `const value = ${source};`, "src/editor.tsx")).resolves.toEqual(
-    [],
-  );
+  await expect(
+    testRuleOnSource({
+      rule: mutationStateCoverage,
+      source: `const value = ${source};`,
+      file: "src/editor.tsx",
+    }),
+  ).resolves.toEqual([]);
 });
 
 it("passes its activation and near-miss fixtures", async () => {

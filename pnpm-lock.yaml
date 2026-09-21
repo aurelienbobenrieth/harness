@@ -113,9 +113,6 @@ importers:
       oxfmt:
         specifier: 0.67.0
         version: 0.67.0(vite-plus@0.3.2(@types/node@22.20.3)(jiti@2.7.0)(typescript@7.0.2)(yaml@2.9.1))
-      vite-plus:
-        specifier: 0.3.2
-        version: 0.3.2(@types/node@22.20.3)(jiti@2.7.0)(typescript@7.0.2)(yaml@2.9.1)
 
   packages/oxlint-config:
     dependencies:
@@ -125,9 +122,6 @@ importers:
       oxlint-tsgolint:
         specifier: ^7.0.2001
         version: 7.0.2001
-      vite-plus:
-        specifier: 0.3.2
-        version: 0.3.2(@types/node@22.20.3)(jiti@2.7.0)(typescript@7.0.2)(yaml@2.9.1)
 
   packages/oxlint-plugin-core:
     dependencies:

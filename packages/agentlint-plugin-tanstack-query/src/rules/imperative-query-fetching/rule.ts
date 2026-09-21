@@ -148,7 +148,7 @@ export const imperativeQueryFetching = defineRule({
     id: "tanstack-query/imperative-query-fetching",
     version: 1,
     scan: "file",
-    createOnce(context) {
+    createOnce({ context }) {
       return {
         pair(node) {
           if (pairKey(node) !== "enabled") return;

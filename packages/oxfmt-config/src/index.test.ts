@@ -18,6 +18,7 @@ it("does not mutate the exported default config", () => {
   });
 
   expect(defaultOxfmtConfig.ignorePatterns).toEqual([".agents/**", "**/*.wasm", "pnpm-lock.yaml"]);
+  expect(defaultOxfmtConfig.jsdoc).toEqual({ commentLineStrategy: "multiline" });
   expect(defaultOxfmtConfig.semi).toBe(true);
 });
 

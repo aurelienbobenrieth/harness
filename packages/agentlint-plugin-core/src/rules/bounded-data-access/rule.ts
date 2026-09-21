@@ -44,7 +44,7 @@ export const boundedDataAccess = defineRule({
     id: "core/bounded-data-access",
     version: 1,
     scan: "file",
-    createOnce(context) {
+    createOnce({ context }) {
       return {
         call_expression(node) {
           if (!shouldReportCall(node.text, context.path)) return;

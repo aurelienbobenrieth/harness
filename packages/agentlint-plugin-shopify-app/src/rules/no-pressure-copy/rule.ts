@@ -79,7 +79,7 @@ export function defineNoPressureCopy(options: NoPressureCopyOptions = {}): State
       id: "shopify-app/no-pressure-copy",
       version: 1,
       scan: "file",
-      createOnce(context) {
+      createOnce({ context }) {
         return {
           jsx_text(node) {
             if (!reportsOnCopy(node.text)) return;

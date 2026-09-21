@@ -113,7 +113,7 @@ export function defineMachineFailureCoverage(options: MachineFailureCoverageOpti
       id: "xstate/machine-failure-coverage",
       version: 2,
       scan: "file",
-      createOnce(context) {
+      createOnce({ context }) {
         return {
           call_expression(node) {
             if (!matches(machineDefinitionPattern, node.text) || !matches(invokeMarkerPattern, node.text)) return;

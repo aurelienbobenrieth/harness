@@ -7,7 +7,7 @@ const messageFor = (identity: number, properties: number): string =>
 const message = messageFor(5, 5);
 
 async function findings(source: string, rule = isomorphicMapping, file = "src/user-mapper.ts") {
-  return testRuleOnSource(rule, source, file);
+  return testRuleOnSource({ rule: rule, source: source, file: file });
 }
 
 async function messages(source: string, rule = isomorphicMapping): Promise<readonly string[]> {

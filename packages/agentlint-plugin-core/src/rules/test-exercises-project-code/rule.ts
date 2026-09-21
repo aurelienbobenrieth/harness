@@ -125,7 +125,7 @@ export function defineTestExercisesProjectCode(options: TestExercisesProjectCode
       id: "core/test-exercises-project-code",
       version: 1,
       scan: "file",
-      createOnce(context) {
+      createOnce({ context }) {
         return {
           program(root) {
             if (!testFilePattern.test(context.path)) return;

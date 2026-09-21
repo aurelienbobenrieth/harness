@@ -43,7 +43,11 @@ export type PropertyTestOpportunityOptions = {
   readonly propertyApiPattern?: RegExp;
 };
 
-type Import = { readonly name: string; readonly specifier: string; readonly statement: AgentlintNode };
+type Import = {
+  readonly name: string;
+  readonly specifier: string;
+  readonly statement: AgentlintNode;
+};
 
 function relativeValueImports(root: AgentlintNode): readonly Import[] {
   const imports: Import[] = [];
@@ -118,8 +122,14 @@ export function definePropertyTestOpportunity(options: PropertyTestOpportunityOp
         ],
         refs: [
           { type: "skill", id: "test-strategy" },
-          { type: "url", href: "https://fsharpforfunandprofit.com/posts/property-based-testing-2/" },
-          { type: "url", href: "https://fast-check.dev/docs/introduction/what-is-property-based-testing/" },
+          {
+            type: "url",
+            href: "https://fsharpforfunandprofit.com/posts/property-based-testing-2/",
+          },
+          {
+            type: "url",
+            href: "https://fast-check.dev/docs/introduction/what-is-property-based-testing/",
+          },
           { type: "url", href: "https://www.hillelwayne.com/post/pbt-contracts/" },
         ],
       },
@@ -157,7 +167,7 @@ export function definePropertyTestOpportunity(options: PropertyTestOpportunityOp
       id: "core/property-test-opportunity",
       version: 1,
       scan: "file",
-      createOnce(context) {
+      createOnce({ context }) {
         return {
           program(root) {
             if (!testFilePattern.test(context.path)) return;

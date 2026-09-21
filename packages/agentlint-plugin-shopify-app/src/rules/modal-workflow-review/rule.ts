@@ -62,7 +62,7 @@ export function defineModalWorkflowReview(options: ModalWorkflowReviewOptions = 
       id: "shopify-app/modal-workflow-review",
       version: 1,
       scan: "file",
-      createOnce(context) {
+      createOnce({ context }) {
         const check = (node: AgentlintNode): void => {
           if (!matchesPattern(pattern, elementName(node) ?? "")) return;
           context.report({

@@ -98,5 +98,5 @@ export function createContext(
 export function createVisitors(rule: StateRule, context: RuleContext): Visitors {
   const create = rule.detector.createOnce;
   if (!create) throw new Error("Expected an imperative state detector");
-  return create(context, rule.binding.options);
+  return create({ context, options: rule.binding.options });
 }

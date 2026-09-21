@@ -195,7 +195,7 @@ export function defineAppUxReview(options: AppUxReviewOptions = {}): StateRule {
       id: "shopify-app/app-ux-review",
       version: 1,
       scan: "file",
-      createOnce(context) {
+      createOnce({ context }) {
         const reported = new Set<"page" | "file">();
         const check = (node: AgentlintNode, trigger: "page" | "file"): void => {
           if (reported.has(trigger) || (trigger === "page" && !matchesPattern(elements, elementName(node) ?? "")))

@@ -63,7 +63,10 @@ function hasMultipleParameters(node: FunctionLike): boolean {
 
 function shouldReport(node: ParentNode, context: RuleContextWithOptions): node is FunctionLike {
   if (!hasMultipleParameters(node as FunctionLike)) return false;
-  if (node.parent?.type === "CallExpression" && node.parent.arguments.some((argument) => argument === node))
+  if (
+    (node.parent?.type === "CallExpression" || node.parent?.type === "NewExpression") &&
+    node.parent.arguments.some((argument) => argument === node)
+  )
     return false;
 
   const options = getOptions(context);

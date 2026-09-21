@@ -73,7 +73,7 @@ export function defineCheckoutNetworkDiscipline(options: CheckoutNetworkDiscipli
       id: "shopify-app/checkout-network-discipline",
       version: 1,
       scan: "file",
-      createOnce(context) {
+      createOnce({ context }) {
         return {
           call_expression(node) {
             if (!matchesPattern(networkCallPattern, node.text)) return;

@@ -167,8 +167,14 @@ export function defineExpectedValueRecomputed(options: ExpectedValueRecomputedOp
         refs: [
           { type: "skill", id: "testing" },
           { type: "skill", id: "test-strategy" },
-          { type: "url", href: "https://testing.googleblog.com/2014/07/testing-on-toilet-dont-put-logic-in.html" },
-          { type: "url", href: "https://fsharpforfunandprofit.com/posts/property-based-testing-2/" },
+          {
+            type: "url",
+            href: "https://testing.googleblog.com/2014/07/testing-on-toilet-dont-put-logic-in.html",
+          },
+          {
+            type: "url",
+            href: "https://fsharpforfunandprofit.com/posts/property-based-testing-2/",
+          },
           { type: "url", href: "https://arxiv.org/html/2410.21136v1" },
           { type: "url", href: "https://blog.ploeh.dk/2019/10/07/devils-advocate/" },
         ],
@@ -199,13 +205,16 @@ export function defineExpectedValueRecomputed(options: ExpectedValueRecomputedOp
             file: "src/discount.test.ts",
             source: 'it("discounts", () => { expect(applyDiscount(200, 15)).toBe(170); });',
           },
-          { file: "src/ttl.test.ts", source: 'it("lasts an hour", () => { expect(ttl(now)).toBe(60 * 60 * 1000); });' },
+          {
+            file: "src/ttl.test.ts",
+            source: 'it("lasts an hour", () => { expect(ttl(now)).toBe(60 * 60 * 1000); });',
+          },
         ],
       },
       id: "core/expected-value-recomputed",
       version: 1,
       scan: "file",
-      createOnce(context) {
+      createOnce({ context }) {
         let findings = 0;
         let imports: ReadonlyMap<string, string> | undefined;
 

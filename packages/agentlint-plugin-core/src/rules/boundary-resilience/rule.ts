@@ -74,7 +74,7 @@ export function defineBoundaryResilience(options: BoundaryResilienceOptions = {}
       id: "core/boundary-resilience",
       version: 2,
       scan: "file",
-      createOnce(context) {
+      createOnce({ context }) {
         const isNetworkCall = (node: AgentlintNode): boolean => {
           networkCallPattern.lastIndex = 0;
           if (!networkCallPattern.test(node.text)) return false;

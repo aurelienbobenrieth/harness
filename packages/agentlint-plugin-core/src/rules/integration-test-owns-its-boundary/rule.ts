@@ -103,7 +103,10 @@ export function defineIntegrationTestOwnsItsBoundary(options: IntegrationTestOwn
           },
         ],
         mustStaySilent: [
-          { file: "src/orders.test.ts", source: 'it("saves", () => { const save = vi.fn(); place({ save }); });' },
+          {
+            file: "src/orders.test.ts",
+            source: 'it("saves", () => { const save = vi.fn(); place({ save }); });',
+          },
           {
             file: "src/interaction.test.ts",
             source: 'it("clicks", () => { const onClick = vi.fn(); click(onClick); });',
@@ -113,7 +116,7 @@ export function defineIntegrationTestOwnsItsBoundary(options: IntegrationTestOwn
       id: "core/integration-test-owns-its-boundary",
       version: 1,
       scan: "file",
-      createOnce(context) {
+      createOnce({ context }) {
         return {
           program(root) {
             if (!testFilePattern.test(context.path)) return;

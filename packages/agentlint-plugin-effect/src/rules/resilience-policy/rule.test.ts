@@ -10,7 +10,7 @@ const timeoutMessage =
   "Outbound effect shows no timeout; apply `Effect.timeout` in its pipeline or confirm the client enforces one.";
 
 async function messages(source: string, rule = resiliencePolicy): Promise<ReadonlyArray<string>> {
-  const findings = await testRuleOnSource(rule, source, "src/module.ts");
+  const findings = await testRuleOnSource({ rule: rule, source: source, file: "src/module.ts" });
   return findings.map((finding) => finding.message);
 }
 

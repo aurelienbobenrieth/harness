@@ -57,7 +57,7 @@ export const preferSchemaContracts = defineRule({
     id: "effect/prefer-schema-contracts",
     version: 2,
     scan: "file",
-    createOnce(context) {
+    createOnce({ context }) {
       return {
         interface_declaration(node) {
           if (!shouldReportManualContract(node.parent?.type === "export_statement" ? node.parent.text : node.text))

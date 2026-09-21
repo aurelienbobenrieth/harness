@@ -173,7 +173,7 @@ export const queryFreshnessIntent = defineRule({
     id: "tanstack-query/query-freshness-intent",
     version: 1,
     scan: "file",
-    createOnce(context) {
+    createOnce({ context }) {
       return {
         object(node) {
           const switches = disabledSwitches(node);

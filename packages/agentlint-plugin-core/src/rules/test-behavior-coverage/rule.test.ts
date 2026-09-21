@@ -16,7 +16,7 @@ async function messagesFor(
   file = "src/user.test.ts",
   rule = testBehaviorCoverage,
 ): Promise<readonly string[]> {
-  return (await testRuleOnSource(rule, source, file)).map((finding) => finding.message);
+  return (await testRuleOnSource({ rule: rule, source: source, file: file })).map((finding) => finding.message);
 }
 
 const mirrorWareSource = `
@@ -242,8 +242,11 @@ it("mirrors options into the binding and validates them", () => {
     maxInlineSnapshotLines: null,
   });
   expect(
-    defineTestBehaviorCoverage({ mockPattern: /stub\(/g, minInteractionShare: 1, maxInlineSnapshotLines: 5 }).binding
-      .options,
+    defineTestBehaviorCoverage({
+      mockPattern: /stub\(/g,
+      minInteractionShare: 1,
+      maxInlineSnapshotLines: 5,
+    }).binding.options,
   ).toEqual({
     mockPattern: { source: "stub\\(", flags: "g" },
     outcomePattern: null,

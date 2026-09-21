@@ -124,7 +124,7 @@ export const queryStateCoverage = defineRule({
     id: "tanstack-query/query-state-coverage",
     version: 2,
     scan: "file",
-    createOnce(context) {
+    createOnce({ context }) {
       return {
         call_expression(node) {
           const hook = calleeName(node);

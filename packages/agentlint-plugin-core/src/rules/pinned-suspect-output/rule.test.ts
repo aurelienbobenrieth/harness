@@ -10,7 +10,7 @@ async function messages(
   file = "src/greeting.test.ts",
   rule = pinnedSuspectOutput,
 ): Promise<readonly string[]> {
-  return (await testRuleOnSource(rule, source, file)).map((finding) => finding.message);
+  return (await testRuleOnSource({ rule: rule, source: source, file: file })).map((finding) => finding.message);
 }
 
 const inTest = (assertion: string, title = "formats the label"): string =>
