@@ -1,3 +1,4 @@
+import { createVisitors } from "../test-support.js";
 import type { AgentlintNode, RuleContext } from "@aurelienbbn/agentlint";
 import { expect, it } from "vitest";
 import { boundedWork } from "./rule.js";
@@ -23,10 +24,10 @@ function createContext(): RuleContext & { readonly messages: string[] } {
 
   return {
     messages,
-    getFilename: () => "src/handler.ts",
-    getFilePath: () => "src/handler.ts",
-    getSourceCode: () => "",
-    getLinesAround: () => "",
+    path: "src/handler.ts",
+    absolutePath: "src/handler.ts",
+    source: "",
+    dependencies: {},
     report: (options) => {
       messages.push(options.message);
     },
@@ -35,7 +36,7 @@ function createContext(): RuleContext & { readonly messages: string[] } {
 
 it("reports sequential awaited I/O", () => {
   const context = createContext();
-  const visitors = boundedWork.createOnce(context);
+  const visitors = createVisitors(boundedWork, context);
 
   visitors.program?.(
     createNode(`
@@ -52,7 +53,7 @@ await fetch(url);
 
 it("reports I/O inside loops", () => {
   const context = createContext();
-  const visitors = boundedWork.createOnce(context);
+  const visitors = createVisitors(boundedWork, context);
 
   visitors.program?.(
     createNode(`
@@ -69,7 +70,7 @@ for (const item of items) {
 
 it("reports Promise.all map fan-out", () => {
   const context = createContext();
-  const visitors = boundedWork.createOnce(context);
+  const visitors = createVisitors(boundedWork, context);
 
   visitors.program?.(createNode("await Promise.all(items.map((item) => client.send(item)));\n"));
 
@@ -80,7 +81,7 @@ it("reports Promise.all map fan-out", () => {
 
 it("reports long runtime budgets", () => {
   const context = createContext();
-  const visitors = boundedWork.createOnce(context);
+  const visitors = createVisitors(boundedWork, context);
 
   visitors.program?.(createNode("export const options = { timeoutMS: 120_000 };\n"));
 
@@ -91,7 +92,7 @@ it("reports long runtime budgets", () => {
 
 it("ignores small pure code", () => {
   const context = createContext();
-  const visitors = boundedWork.createOnce(context);
+  const visitors = createVisitors(boundedWork, context);
 
   visitors.program?.(createNode("const result = items.map((item) => item.id);\n"));
 
@@ -100,7 +101,7 @@ it("ignores small pure code", () => {
 
 it("ignores short explicit budgets", () => {
   const context = createContext();
-  const visitors = boundedWork.createOnce(context);
+  const visitors = createVisitors(boundedWork, context);
 
   visitors.program?.(createNode("export const options = { timeoutMS: 5_000 };\n"));
 

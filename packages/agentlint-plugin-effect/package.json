@@ -1,8 +1,17 @@
 {
   "name": "@aurelienbbn/agentlint-plugin-effect",
   "version": "0.0.0",
+  "private": true,
   "description": "Custom agentlint rules for Effect projects.",
+  "bugs": {
+    "url": "https://github.com/aurelienbobenrieth/harness/issues"
+  },
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aurelienbobenrieth/harness.git",
+    "directory": "packages/agentlint-plugin-effect"
+  },
   "files": [
     "dist"
   ],
@@ -15,12 +24,16 @@
   },
   "scripts": {
     "build": "tsdown",
-    "prepack": "pnpm build"
+    "prepack": "pnpm build",
+    "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
-    "@aurelienbbn/agentlint": "file:../../local-packages/aurelienbbn-agentlint-0.1.5.tgz"
+    "@aurelienbbn/agentlint": "link:../../../agentlint/packages/agentlint"
   },
   "peerDependencies": {
-    "@aurelienbbn/agentlint": ">=0.1.5"
+    "@aurelienbbn/agentlint": "0.1.5"
+  },
+  "engines": {
+    "node": "^22.19.0 || ^24.11.0"
   }
 }
