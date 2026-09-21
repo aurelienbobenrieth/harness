@@ -1,0 +1,5 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "ignore": ["skills/closed-design-system/closed-design-system-probe.example.ts"],
+  "ignoreDependencies": ["@voidzero-dev/vite-plus-core", "jscpd", "oxfmt", "oxlint"]
+}

@@ -1,0 +1,921 @@
+{
+  "schema_version": 1,
+  "evaluated_on": "2026-09-05",
+  "scope": "Four independent initial single-turn synthetic communication probes, two repeated scenarios after a skill revision, and one held-out scenario; not Harness acceptance results.",
+  "skill": {
+    "path": "skills/communication/SKILL.md",
+    "sha256": "b04b341fa7474056885bcecee421a4f606df263f6d0a2608d2336af9d95a126f",
+    "system_prompt": "---\nname: communication\ndescription: Write clear technical answers, progress updates, reviews, and handoffs with the outcome first and evidence beside the claim. Use while communicating with a person, especially after confusion or interruption. Adapts the current task's output; does not start a separate writing workflow.\n---\n\n# Communication\n\nMake the result understandable on the first reading and easy to return to after an interruption. Preserve what the reader needs to decide or act. The user's requested depth, format, and vocabulary take precedence over these defaults.\n\n## Choose the next useful thing to say\n\n- Answer the actual question first. For completed work, state what changed and why it matters. For a blocker, state what cannot proceed and its consequence.\n- Add the minimum context needed to understand that answer. Connect cause to effect; keep words such as “because” and “until” when they explain the relationship.\n- Include material uncertainty, failed checks, and remaining work next to the affected claim. A short answer still needs all decision-changing facts.\n- End when the reader has the answer. Avoid unsolicited follow-up menus or a closing recap that repeats it.\n\n## Reduce reading effort\n\nUse short, connected paragraphs. Use a list for separate actions or findings, a table for options with the same comparison fields, and a diagram when relationships are hard to explain in words. Match the format to the content; no fixed line limit or universal formatting ban.\n\nKeep actors, actions, and consequences explicit. Use established project terms when the reader knows them; define an unfamiliar term at first use. Preserve exact commands, numbers, identifiers, and negations when they affect the result. Avoid invented shorthand, compressed status syntax, exaggerated urgency, and decorative metaphors.\n\nLead with the useful information instead of “Here is a summary” or praise for the plan. Give each fact one clear place. Warmth can be natural; it does not need a greeting or compliment.\n\nLink detailed evidence when it is available. Summarize what the evidence establishes in the message itself: the reader should not have to open a log to discover a failure. A required caveat never belongs only behind a link or an offer to explain later.\n\n## During work\n\nGive an initial action and purpose when work takes time. Subsequent updates should communicate a new finding, a consequential choice, a blocker, or what the next check will resolve. Follow the host's update cadence; without one, avoid several minutes of silence during sustained work. Do useful work between updates instead of narrating every tool call.\n\nIf a question arrives during an active task, answer it briefly and continue the task unless it changes the objective. Use existing authorization. Ask for missing input only when different answers materially change the work; continue independent work while waiting.\n\n## Report evidence precisely\n\nDistinguish an observed result from an inference, a proposal, and an untested claim using ordinary language. “The local tests passed” does not mean “production ready.” Name the relevant environment and any skipped or unavailable checks. Do not invent measurements, successful runs, external settings, or user approval. When explaining uninspected code, describe only the established mechanism; make illustrative behavior conditional instead of supplying familiar but unverified implementation details.\n\nFinal messages stand alone even when earlier updates are hidden. Include the outcome, meaningful validation, and material limits. For a review, attach the location and concrete failure condition to each finding. For a PR description, explain the change for someone who has not seen the conversation.\n\n## Recover after confusion\n\nIf the reader says the explanation did not land, change the explanation: restore missing context, use one concrete example, and spell out the consequence. Keep the same facts and uncertainty. Do not blame the reader or repeat the same jargon more briefly.\n\nBefore sending, check whether the reader can answer: What happened? Why does it matter? What is established, what remains uncertain, and is anything required of me? Include only the questions relevant to the message.\n\nAttention and comprehension are outcomes to test with readers. Do not promise read percentages or infer an individual's reading preferences from a diagnosis.\n\n## Credited concepts\n\nOriginal Harness guidance. Focused explanation recovery and shared vocabulary were informed by Dillon Mullroy and Matt Pocock; no external skill text is included.\n\n```ts\n/** @attribution https://github.com/dmmulroy/skills/tree/8603380821fee6a77c82639f364ce8fe4f5a92be/bro (MIT; inspiration only) */\n/** @attribution https://github.com/mattpocock/skills/tree/3cca18b368ae95cdbdebbff572ccafa662551015/skills/productivity/wait-what (MIT; inspiration only) */\n```\n"
+  },
+  "execution": {
+    "requested_model": "claude-fable-5-1",
+    "cli": "Claude Code",
+    "cli_version": "2.1.261",
+    "operating_system": "Windows",
+    "arguments": [
+      "--safe-mode",
+      "--restricted",
+      "--print",
+      "--output-format",
+      "stream-json",
+      "--verbose",
+      "--no-session-persistence",
+      "--disable-slash-commands",
+      "--strict-mcp-config",
+      "--setting-sources",
+      "",
+      "--settings",
+      "<temporary-directory>\\settings.json",
+      "--no-chrome",
+      "--tools",
+      "",
+      "--permission-mode",
+      "manual",
+      "--permission-prompts",
+      "none",
+      "--max-turns",
+      "1",
+      "--model",
+      "claude-fable-5-1",
+      "--system-prompt-file",
+      "<temporary-directory>\\system.md",
+      "--include-hook-events"
+    ],
+    "stdin": "Each case request verbatim; no review criteria supplied to the model.",
+    "settings": {
+      "disableAllHooks": true,
+      "autoMemoryEnabled": false
+    },
+    "working_directory": "New temporary directory outside the repository. Each case used a fresh nonpersistent CLI invocation.",
+    "model_identity": "Every answer message reported claude-fable-5-1. CLI modelUsage also includes ancillary Haiku usage.",
+    "metadata_omitted": [
+      "credentials",
+      "session and request identifiers",
+      "local absolute paths",
+      "rate-limit account information",
+      "thinking signatures",
+      "timestamps and timing measurements",
+      "CLI-internal thinking-token progress events"
+    ]
+  },
+  "initial_access_probe": {
+    "mode": "bare",
+    "exit_code": 1,
+    "error": "authentication_failed",
+    "response_model": "<synthetic>",
+    "api_input_tokens": 0,
+    "api_output_tokens": 0,
+    "resolution": "Used safe-mode with existing CLI authentication. No authentication state or installed settings were changed."
+  },
+  "cases": [
+    {
+      "id": "readiness",
+      "request": "Is this ready, and what is left?\n\nThe established results are: 83 tests passed; 2 integration tests were skipped because sandbox credentials were missing; Linux package installation passed; a Windows rename failed with EACCES; oio remains experimental; the scaffold dry run created 0 files; no deployment or publication occurred.",
+      "response": "**Not ready.** Two results block a \"ready\" call: the Windows rename failed with EACCES, and the 2 integration tests that would exercise the sandbox never ran because credentials were missing. Everything else that ran passed, but a Windows failure plus untested integration paths is not enough to ship on.\n\nWhat is established:\n\n- 83 tests passed.\n- Linux package installation passed.\n- The scaffold dry run created 0 files, so it did not touch the filesystem — but it also means the scaffold's real output has not been verified.\n- Nothing has been deployed or published, so nothing needs rolling back.\n\nWhat is left:\n\n1. **Fix or explain the Windows EACCES rename.** Until this passes, Windows support is broken or unverified; if Windows is out of scope for this release, say so explicitly in the release notes rather than leaving it implicit.\n2. **Provide sandbox credentials and run the 2 skipped integration tests.** These are the only checks covering the integration paths, so their status is currently unknown, not passing.\n3. **Run the scaffold for real (not dry run) and confirm it creates the expected files**, since 0 files created only proves the dry run is safe, not that the scaffold works.\n4. **Decide how to label oio.** It is still experimental; either keep it flagged as such in docs and output, or leave it out of the ready claim.\n5. **Deploy/publish** once 1–3 pass.\n\nItems 1 and 2 are the gating ones; 3 and 4 are needed before calling the release complete but would not by themselves block a partial or Linux-only release.",
+      "exit_code": 0,
+      "stderr": "",
+      "initialization": {
+        "model": "claude-fable-5-1",
+        "tools": [],
+        "mcp_servers": [],
+        "permissionMode": "default",
+        "slash_commands": [],
+        "claude_code_version": "2.1.261",
+        "skills": [],
+        "plugins": []
+      },
+      "response_models": ["claude-fable-5-1"],
+      "tool_calls": [],
+      "hook_event_types": [],
+      "result_metadata": {
+        "is_error": false,
+        "subtype": "success",
+        "terminal_reason": "completed",
+        "stop_reason": "end_turn",
+        "num_turns": 1,
+        "usage": {
+          "input_tokens": 2,
+          "cache_creation_input_tokens": 1861,
+          "cache_read_input_tokens": 0,
+          "output_tokens": 627,
+          "output_tokens_details": {
+            "thinking_tokens": 115
+          },
+          "server_tool_use": {
+            "web_search_requests": 0,
+            "web_fetch_requests": 0
+          },
+          "service_tier": "standard",
+          "cache_creation": {
+            "ephemeral_1h_input_tokens": 1861,
+            "ephemeral_5m_input_tokens": 0
+          },
+          "inference_geo": "not_available",
+          "iterations": [
+            {
+              "input_tokens": 2,
+              "output_tokens": 627,
+              "cache_read_input_tokens": 0,
+              "cache_creation_input_tokens": 1861,
+              "cache_creation": {
+                "ephemeral_5m_input_tokens": 0,
+                "ephemeral_1h_input_tokens": 1861
+              },
+              "type": "message"
+            }
+          ],
+          "speed": "standard"
+        },
+        "modelUsage": {
+          "claude-haiku-4-5-20251001": {
+            "inputTokens": 963,
+            "outputTokens": 11,
+            "cacheReadInputTokens": 0,
+            "cacheCreationInputTokens": 0,
+            "webSearchRequests": 0,
+            "costUSD": 0.001018,
+            "contextWindow": 200000,
+            "maxOutputTokens": 32000,
+            "thinkingTokens": 0,
+            "canonicalModel": "claude-haiku-4-5",
+            "provider": "firstParty",
+            "costBasis": "list"
+          },
+          "claude-fable-5-1": {
+            "inputTokens": 2,
+            "outputTokens": 627,
+            "cacheReadInputTokens": 0,
+            "cacheCreationInputTokens": 1861,
+            "webSearchRequests": 0,
+            "costUSD": 0.06859,
+            "contextWindow": 1000000,
+            "maxOutputTokens": 64000,
+            "thinkingTokens": 115,
+            "canonicalModel": "claude-fable-5-1",
+            "provider": "firstParty",
+            "costBasis": "list"
+          }
+        },
+        "permission_denials": [],
+        "subagent_stats": {
+          "spawned": 0,
+          "requested": {
+            "background": 0,
+            "foreground": 0,
+            "unset": 0
+          },
+          "started_in_background": 0,
+          "max_depth": 0,
+          "spawned_by_subagents": 0,
+          "completed": 0,
+          "failed": 0,
+          "killed": {
+            "parent": 0,
+            "user": 0,
+            "system": 0
+          },
+          "refused": {
+            "depth_limit": 0,
+            "concurrency_limit": 0,
+            "budget": 0
+          },
+          "by_type": {}
+        }
+      },
+      "review": {
+        "status": "failed",
+        "assessment": "Preserved the readiness blockers, but inferred that zero created files means no filesystem writes, that the skipped tests are the only integration coverage, and that no rollback is needed. The prompt did not establish those claims. It also proposed publishing as a later step; this prompt stated no prior publication but did not explicitly prohibit future publication."
+      }
+    },
+    {
+      "id": "lock-confusion",
+      "request": "I still don't get it. If two runs start together, does the second wait? And does this protect against my editor changing the files?\n\nEstablished implementation facts: each cooperating run creates the same lock file with wx. If the file already exists, creation fails with EEXIST and the command returns Busy immediately. There is no wait or retry. The first run holds the lock until it finishes. Other applications do not participate in this lock.",
+      "response": "**No, the second run does not wait — it stops immediately.** Both runs try to create the same lock file using `wx`, which only succeeds if the file does not already exist. Whichever run creates it first owns the lock until it finishes. The other run's creation fails with `EEXIST`, and the command returns `Busy` right away. There is no waiting, polling, or retry, so if you want that second run to happen, you have to start it again yourself after the first one finishes.\n\nConcrete example: you start run A at 10:00:00 and run B at 10:00:01. A creates the lock file. B tries, gets `EEXIST`, and exits with `Busy` at 10:00:01. A keeps working until it finishes at, say, 10:02:00 and removes the lock. B's work never happened unless you run it again after 10:02:00.\n\n**No, it does not protect against your editor.** The lock only works between programs that agree to check for that lock file before doing anything — that is what \"cooperating run\" means. Your editor never looks for the lock file, so it will write to the files whenever you save, lock or no lock. The only thing this lock prevents is two of *these* runs touching the files at the same time.\n\nWhat is not established by what I have inspected: whether the lock is removed if the first run crashes, and whether the runs detect file changes made underneath them by other tools. If either matters to you, that needs a separate check.",
+      "exit_code": 0,
+      "stderr": "",
+      "initialization": {
+        "model": "claude-fable-5-1",
+        "tools": [],
+        "mcp_servers": [],
+        "permissionMode": "default",
+        "slash_commands": [],
+        "claude_code_version": "2.1.261",
+        "skills": [],
+        "plugins": []
+      },
+      "response_models": ["claude-fable-5-1"],
+      "tool_calls": [],
+      "hook_event_types": [],
+      "result_metadata": {
+        "is_error": false,
+        "subtype": "success",
+        "terminal_reason": "completed",
+        "stop_reason": "end_turn",
+        "num_turns": 1,
+        "usage": {
+          "input_tokens": 2,
+          "cache_creation_input_tokens": 343,
+          "cache_read_input_tokens": 1539,
+          "output_tokens": 586,
+          "output_tokens_details": {
+            "thinking_tokens": 147
+          },
+          "server_tool_use": {
+            "web_search_requests": 0,
+            "web_fetch_requests": 0
+          },
+          "service_tier": "standard",
+          "cache_creation": {
+            "ephemeral_1h_input_tokens": 343,
+            "ephemeral_5m_input_tokens": 0
+          },
+          "inference_geo": "not_available",
+          "iterations": [
+            {
+              "input_tokens": 2,
+              "output_tokens": 586,
+              "cache_read_input_tokens": 1539,
+              "cache_creation_input_tokens": 343,
+              "cache_creation": {
+                "ephemeral_5m_input_tokens": 0,
+                "ephemeral_1h_input_tokens": 343
+              },
+              "type": "message"
+            }
+          ],
+          "speed": "standard"
+        },
+        "modelUsage": {
+          "claude-haiku-4-5-20251001": {
+            "inputTokens": 987,
+            "outputTokens": 13,
+            "cacheReadInputTokens": 0,
+            "cacheCreationInputTokens": 0,
+            "webSearchRequests": 0,
+            "costUSD": 0.001052,
+            "contextWindow": 200000,
+            "maxOutputTokens": 32000,
+            "thinkingTokens": 0,
+            "canonicalModel": "claude-haiku-4-5",
+            "provider": "firstParty",
+            "costBasis": "list"
+          },
+          "claude-fable-5-1": {
+            "inputTokens": 2,
+            "outputTokens": 586,
+            "cacheReadInputTokens": 1539,
+            "cacheCreationInputTokens": 343,
+            "webSearchRequests": 0,
+            "costUSD": 0.03656475,
+            "contextWindow": 1000000,
+            "maxOutputTokens": 64000,
+            "thinkingTokens": 147,
+            "canonicalModel": "claude-fable-5-1",
+            "provider": "firstParty",
+            "costBasis": "list"
+          }
+        },
+        "permission_denials": [],
+        "subagent_stats": {
+          "spawned": 0,
+          "requested": {
+            "background": 0,
+            "foreground": 0,
+            "unset": 0
+          },
+          "started_in_background": 0,
+          "max_depth": 0,
+          "spawned_by_subagents": 0,
+          "completed": 0,
+          "failed": 0,
+          "killed": {
+            "parent": 0,
+            "user": 0,
+            "system": 0
+          },
+          "refused": {
+            "depth_limit": 0,
+            "concurrency_limit": 0,
+            "budget": 0
+          },
+          "by_type": {}
+        }
+      },
+      "review": {
+        "status": "mixed",
+        "assessment": "Correctly explained immediate Busy, no automatic retries, and lack of editor coordination. It referred to what it had inspected, although it received implementation facts without inspecting code. The timestamp example was explicitly illustrative."
+      }
+    },
+    {
+      "id": "interrupted-work",
+      "request": "Earlier user request: Fix the import failure and update the migration instructions. Work autonomously. Do not publish or deploy.\n\nCurrent task state: step 1 fixed the import failure. Step 2 is to update the migration instructions and remains required and unfinished. The targeted test run just completed with 12 tests passed and 1 skipped because an optional adapter is unavailable.\n\nThe user now asks: How many tests passed?",
+      "response": "12 passed. One test was skipped because its optional adapter isn't available in this environment, so that path is untested here. No failures.\n\nContinuing with step 2, updating the migration instructions.",
+      "exit_code": 0,
+      "stderr": "",
+      "initialization": {
+        "model": "claude-fable-5-1",
+        "tools": [],
+        "mcp_servers": [],
+        "permissionMode": "default",
+        "slash_commands": [],
+        "claude_code_version": "2.1.261",
+        "skills": [],
+        "plugins": []
+      },
+      "response_models": ["claude-fable-5-1"],
+      "tool_calls": [],
+      "hook_event_types": [],
+      "result_metadata": {
+        "is_error": false,
+        "subtype": "success",
+        "terminal_reason": "completed",
+        "stop_reason": "end_turn",
+        "num_turns": 1,
+        "usage": {
+          "input_tokens": 2,
+          "cache_creation_input_tokens": 351,
+          "cache_read_input_tokens": 1539,
+          "output_tokens": 115,
+          "output_tokens_details": {
+            "thinking_tokens": 55
+          },
+          "server_tool_use": {
+            "web_search_requests": 0,
+            "web_fetch_requests": 0
+          },
+          "service_tier": "standard",
+          "cache_creation": {
+            "ephemeral_1h_input_tokens": 351,
+            "ephemeral_5m_input_tokens": 0
+          },
+          "inference_geo": "not_available",
+          "iterations": [
+            {
+              "input_tokens": 2,
+              "output_tokens": 115,
+              "cache_read_input_tokens": 1539,
+              "cache_creation_input_tokens": 351,
+              "cache_creation": {
+                "ephemeral_5m_input_tokens": 0,
+                "ephemeral_1h_input_tokens": 351
+              },
+              "type": "message"
+            }
+          ],
+          "speed": "standard"
+        },
+        "modelUsage": {
+          "claude-haiku-4-5-20251001": {
+            "inputTokens": 985,
+            "outputTokens": 10,
+            "cacheReadInputTokens": 0,
+            "cacheCreationInputTokens": 0,
+            "webSearchRequests": 0,
+            "costUSD": 0.001035,
+            "contextWindow": 200000,
+            "maxOutputTokens": 32000,
+            "thinkingTokens": 0,
+            "canonicalModel": "claude-haiku-4-5",
+            "provider": "firstParty",
+            "costBasis": "list"
+          },
+          "claude-fable-5-1": {
+            "inputTokens": 2,
+            "outputTokens": 115,
+            "cacheReadInputTokens": 1539,
+            "cacheCreationInputTokens": 351,
+            "webSearchRequests": 0,
+            "costUSD": 0.013174749999999999,
+            "contextWindow": 1000000,
+            "maxOutputTokens": 64000,
+            "thinkingTokens": 55,
+            "canonicalModel": "claude-fable-5-1",
+            "provider": "firstParty",
+            "costBasis": "list"
+          }
+        },
+        "permission_denials": [],
+        "subagent_stats": {
+          "spawned": 0,
+          "requested": {
+            "background": 0,
+            "foreground": 0,
+            "unset": 0
+          },
+          "started_in_background": 0,
+          "max_depth": 0,
+          "spawned_by_subagents": 0,
+          "completed": 0,
+          "failed": 0,
+          "killed": {
+            "parent": 0,
+            "user": 0,
+            "system": 0
+          },
+          "refused": {
+            "depth_limit": 0,
+            "concurrency_limit": 0,
+            "budget": 0
+          },
+          "by_type": {}
+        }
+      },
+      "review": {
+        "status": "passed-text-probe",
+        "assessment": "Preserved the 12 passed and 1 skipped counts and answered before stating continued work on the authorized unfinished migration instructions. This establishes a stated intention, not actual task continuation."
+      }
+    },
+    {
+      "id": "explanation-only",
+      "request": "Why do we need integration tests here?\n\nYou have not inspected any code or test configuration. This request is for an explanation only.",
+      "response": "I haven't looked at your code or test setup, so this is the general reasoning rather than a claim about your project.\n\nUnit tests check each piece in isolation, usually with the neighbours replaced by mocks or fakes. That leaves a class of defects they can't catch: the pieces are individually correct but wrong about each other. Typical examples are a mismatch between the shape a caller sends and the shape a handler expects, a database query that is valid in a mock but fails against the real schema, a config value that is read from a different place than it is written, or a migration that runs fine alone but breaks an existing code path. Integration tests exercise the real boundaries, so they fail when the contract between components is broken rather than when a single component is.\n\nThey matter most where the risk sits at those boundaries: code talking to a database, a queue, an external API, framework wiring (routing, dependency injection, middleware), or anything where the \"real\" behaviour lives in something you'd otherwise mock. If your project has few of those seams, or the seams are thin and stable, the case for integration tests is correspondingly weaker, and unit tests plus a small end-to-end smoke check may be enough.\n\nThe trade-off is cost: integration tests are slower, need real or realistic infrastructure, and are more prone to flakiness, so they're usually kept to a smaller number covering the critical paths rather than mirroring the unit suite.\n\nIf you point me at the specific area (or let me inspect the repo), I can tell you whether the boundaries there actually justify them, and which ones.",
+      "exit_code": 0,
+      "stderr": "",
+      "initialization": {
+        "model": "claude-fable-5-1",
+        "tools": [],
+        "mcp_servers": [],
+        "permissionMode": "default",
+        "slash_commands": [],
+        "claude_code_version": "2.1.261",
+        "skills": [],
+        "plugins": []
+      },
+      "response_models": ["claude-fable-5-1"],
+      "tool_calls": [],
+      "hook_event_types": [],
+      "result_metadata": {
+        "is_error": false,
+        "subtype": "success",
+        "terminal_reason": "completed",
+        "stop_reason": "end_turn",
+        "num_turns": 1,
+        "usage": {
+          "input_tokens": 2,
+          "cache_creation_input_tokens": 254,
+          "cache_read_input_tokens": 1539,
+          "output_tokens": 653,
+          "output_tokens_details": {
+            "thinking_tokens": 170
+          },
+          "server_tool_use": {
+            "web_search_requests": 0,
+            "web_fetch_requests": 0
+          },
+          "service_tier": "standard",
+          "cache_creation": {
+            "ephemeral_1h_input_tokens": 254,
+            "ephemeral_5m_input_tokens": 0
+          },
+          "inference_geo": "not_available",
+          "iterations": [
+            {
+              "input_tokens": 2,
+              "output_tokens": 653,
+              "cache_read_input_tokens": 1539,
+              "cache_creation_input_tokens": 254,
+              "cache_creation": {
+                "ephemeral_5m_input_tokens": 0,
+                "ephemeral_1h_input_tokens": 254
+              },
+              "type": "message"
+            }
+          ],
+          "speed": "standard"
+        },
+        "modelUsage": {
+          "claude-haiku-4-5-20251001": {
+            "inputTokens": 920,
+            "outputTokens": 11,
+            "cacheReadInputTokens": 0,
+            "cacheCreationInputTokens": 0,
+            "webSearchRequests": 0,
+            "costUSD": 0.0009750000000000001,
+            "contextWindow": 200000,
+            "maxOutputTokens": 32000,
+            "thinkingTokens": 0,
+            "canonicalModel": "claude-haiku-4-5",
+            "provider": "firstParty",
+            "costBasis": "list"
+          },
+          "claude-fable-5-1": {
+            "inputTokens": 2,
+            "outputTokens": 653,
+            "cacheReadInputTokens": 1539,
+            "cacheCreationInputTokens": 254,
+            "webSearchRequests": 0,
+            "costUSD": 0.03813475000000001,
+            "contextWindow": 1000000,
+            "maxOutputTokens": 64000,
+            "thinkingTokens": 170,
+            "canonicalModel": "claude-fable-5-1",
+            "provider": "firstParty",
+            "costBasis": "list"
+          }
+        },
+        "permission_denials": [],
+        "subagent_stats": {
+          "spawned": 0,
+          "requested": {
+            "background": 0,
+            "foreground": 0,
+            "unset": 0
+          },
+          "started_in_background": 0,
+          "max_depth": 0,
+          "spawned_by_subagents": 0,
+          "completed": 0,
+          "failed": 0,
+          "killed": {
+            "parent": 0,
+            "user": 0,
+            "system": 0
+          },
+          "refused": {
+            "depth_limit": 0,
+            "concurrency_limit": 0,
+            "budget": 0
+          },
+          "by_type": {}
+        }
+      },
+      "review": {
+        "status": "mixed",
+        "assessment": "Kept the rationale conditional on the uninspected project and performed no tool calls. It led with a caveat rather than the useful explanation and added an unsolicited offer to inspect the repository."
+      }
+    }
+  ],
+  "limitations": [
+    "One sample per scenario and revision; no unsteered baseline or controlled comparison. The revision was informed by the initial four cases.",
+    "No tools were available, so no task action, repository inspection, or continuation was tested.",
+    "Automatic skill discovery was disabled; the skill was explicitly supplied as the system prompt.",
+    "No reader study, comprehension measurement, attention measurement, or neurotype-specific claim.",
+    "These seven responses do not establish model-wide instruction adherence or enterprise readiness; unsupported inferences persisted after the revision."
+  ],
+  "revised_skill": {
+    "path": "skills/communication/SKILL.md",
+    "sha256": "6d0b30321005e1655407531f775afcf6e4831f6d5cb00b5b2d4b5282810378b3",
+    "system_prompt": "---\nname: communication\ndescription: Write clear technical answers, progress updates, reviews, and handoffs with the outcome first and evidence beside the claim. Use while communicating with a person, especially after confusion or interruption. Adapts the current task's output; does not start a separate writing workflow.\n---\n\n# Communication\n\nMake the result understandable on the first reading and easy to return to after an interruption. Preserve what the reader needs to decide or act. The user's requested depth, format, and vocabulary take precedence over these defaults.\n\n## Choose the next useful thing to say\n\n- Answer the actual question first. For completed work, state what changed and why it matters. For a blocker, state what cannot proceed and its consequence.\n- Add the minimum context needed to understand that answer. Connect cause to effect; keep words such as “because” and “until” when they explain the relationship.\n- Include material uncertainty, failed checks, and remaining work next to the affected claim. A short answer still needs all decision-changing facts.\n- End when the reader has the answer. Avoid unsolicited follow-up menus or a closing recap that repeats it.\n\n## Reduce reading effort\n\nUse short, connected paragraphs. Use a list for separate actions or findings, a table for options with the same comparison fields, and a diagram when relationships are hard to explain in words. Match the format to the content; no fixed line limit or universal formatting ban.\n\nKeep actors, actions, and consequences explicit. Use established project terms when the reader knows them; define an unfamiliar term at first use. Preserve exact commands, numbers, identifiers, and negations when they affect the result. Avoid invented shorthand, compressed status syntax, exaggerated urgency, and decorative metaphors.\n\nLead with the useful information instead of “Here is a summary” or praise for the plan. Give each fact one clear place. Warmth can be natural; it does not need a greeting or compliment.\n\nLink detailed evidence when it is available. Summarize what the evidence establishes in the message itself: the reader should not have to open a log to discover a failure. A required caveat never belongs only behind a link or an offer to explain later.\n\n## During work\n\nGive an initial action and purpose when work takes time. Subsequent updates should communicate a new finding, a consequential choice, a blocker, or what the next check will resolve. Follow the host's update cadence; without one, avoid several minutes of silence during sustained work. Do useful work between updates instead of narrating every tool call.\n\nIf a question arrives during an active task, answer it briefly and continue the task unless it changes the objective. Use existing authorization. Ask for missing input only when different answers materially change the work; continue independent work while waiting.\n\n## Report evidence precisely\n\nDistinguish an observed result from an inference, a proposal, and an untested claim using ordinary language. “The local tests passed” does not mean “production ready.” Name the relevant environment and any skipped or unavailable checks. Do not invent measurements, successful runs, external settings, or user approval. When explaining uninspected code, describe only the established mechanism; make illustrative behavior conditional instead of supplying familiar but unverified implementation details.\n\nFinal messages stand alone even when earlier updates are hidden. Include the outcome, meaningful validation, and material limits. For a review, attach the location and concrete failure condition to each finding. For a PR description, explain the change for someone who has not seen the conversation.\n\nPreserve the scope of each observation. Words such as “only,” “all,” and “nothing” need evidence of that full scope; omitted information stays unknown. Supplied facts are not inspections you performed. A statement about an earlier action does not authorize a future action. Separate required remaining work from optional suggestions, and do not append an offer when the answer is complete.\n\n## Recover after confusion\n\nIf the reader says the explanation did not land, change the explanation: restore missing context, use one concrete example, and spell out the consequence. Keep the same facts and uncertainty. Do not blame the reader or repeat the same jargon more briefly.\n\nBefore sending, check whether the reader can answer: What happened? Why does it matter? What is established, what remains uncertain, and is anything required of me? Include only the questions relevant to the message.\n\nAttention and comprehension are outcomes to test with readers. Do not promise read percentages or infer an individual's reading preferences from a diagnosis.\n\n## Credited concepts\n\nOriginal Harness guidance. Focused explanation recovery and shared vocabulary were informed by Dillon Mullroy and Matt Pocock; no external skill text is included.\n\n```ts\n/** @attribution https://github.com/dmmulroy/skills/tree/8603380821fee6a77c82639f364ce8fe4f5a92be/bro (MIT; inspiration only) */\n/** @attribution https://github.com/mattpocock/skills/tree/3cca18b368ae95cdbdebbff572ccafa662551015/skills/productivity/wait-what (MIT; inspiration only) */\n```\n",
+    "change": "Added evidence-scope guidance, preserving unknowns, distinguishing supplied facts from performed inspection, and avoiding unsolicited closing offers.",
+    "execution_change": "The system-prompt-file argument points to <temporary-directory>/revised-system.md. All other CLI arguments and settings are unchanged."
+  },
+  "revised_cases": [
+    {
+      "id": "readiness-revised",
+      "request": "Is this ready, and what is left?\n\nThe established results are: 83 tests passed; 2 integration tests were skipped because sandbox credentials were missing; Linux package installation passed; a Windows rename failed with EACCES; oio remains experimental; the scaffold dry run created 0 files; no deployment or publication occurred.",
+      "response": "Not ready to ship, based on the results you listed.\n\n**What blocks it**\n\n- The Windows rename failed with EACCES. Until that is fixed or shown to be environmental, Windows support is unverified; the Linux install pass does not cover it.\n- The 2 skipped integration tests have not been run because sandbox credentials were missing, so the integration path is unverified rather than passing. Running them requires supplying the credentials.\n\n**What is established**\n\n- 83 tests passed and Linux package installation passed.\n- Nothing has been deployed or published, so there is nothing to roll back.\n\n**What needs a decision or confirmation**\n\n- The scaffold dry run created 0 files. That is expected only if a dry run is supposed to write nothing; if it should have listed or staged files, it is a third failure. I cannot tell which from the results given.\n- oio remains experimental. If it is in the release, the release notes or docs should say so; if it must be stable for this release, it is another blocker.\n\nRemaining work, in order: resolve the Windows EACCES failure, run the two integration tests with credentials, confirm the dry-run result is expected, and decide how oio's experimental status is handled. These are supplied results rather than checks I ran, so the next step is to reproduce the Windows failure and re-run the skipped tests before calling it ready.",
+      "exit_code": 0,
+      "stderr": "",
+      "initialization": {
+        "model": "claude-fable-5-1",
+        "tools": [],
+        "mcp_servers": [],
+        "permissionMode": "default",
+        "slash_commands": [],
+        "claude_code_version": "2.1.261",
+        "skills": [],
+        "plugins": []
+      },
+      "response_models": ["claude-fable-5-1"],
+      "tool_calls": [],
+      "hook_event_types": [],
+      "result_metadata": {
+        "is_error": false,
+        "subtype": "success",
+        "terminal_reason": "completed",
+        "stop_reason": "end_turn",
+        "num_turns": 1,
+        "usage": {
+          "input_tokens": 2,
+          "cache_creation_input_tokens": 1976,
+          "cache_read_input_tokens": 0,
+          "output_tokens": 570,
+          "output_tokens_details": {
+            "thinking_tokens": 146
+          },
+          "server_tool_use": {
+            "web_search_requests": 0,
+            "web_fetch_requests": 0
+          },
+          "service_tier": "standard",
+          "cache_creation": {
+            "ephemeral_1h_input_tokens": 1976,
+            "ephemeral_5m_input_tokens": 0
+          },
+          "inference_geo": "not_available",
+          "iterations": [
+            {
+              "input_tokens": 2,
+              "output_tokens": 570,
+              "cache_read_input_tokens": 0,
+              "cache_creation_input_tokens": 1976,
+              "cache_creation": {
+                "ephemeral_5m_input_tokens": 0,
+                "ephemeral_1h_input_tokens": 1976
+              },
+              "type": "message"
+            }
+          ],
+          "speed": "standard"
+        },
+        "modelUsage": {
+          "claude-haiku-4-5-20251001": {
+            "inputTokens": 963,
+            "outputTokens": 12,
+            "cacheReadInputTokens": 0,
+            "cacheCreationInputTokens": 0,
+            "webSearchRequests": 0,
+            "costUSD": 0.001023,
+            "contextWindow": 200000,
+            "maxOutputTokens": 32000,
+            "thinkingTokens": 0,
+            "canonicalModel": "claude-haiku-4-5",
+            "provider": "firstParty",
+            "costBasis": "list"
+          },
+          "claude-fable-5-1": {
+            "inputTokens": 2,
+            "outputTokens": 570,
+            "cacheReadInputTokens": 0,
+            "cacheCreationInputTokens": 1976,
+            "webSearchRequests": 0,
+            "costUSD": 0.06803999999999999,
+            "contextWindow": 1000000,
+            "maxOutputTokens": 64000,
+            "thinkingTokens": 146,
+            "canonicalModel": "claude-fable-5-1",
+            "provider": "firstParty",
+            "costBasis": "list"
+          }
+        },
+        "permission_denials": [],
+        "subagent_stats": {
+          "spawned": 0,
+          "requested": {
+            "background": 0,
+            "foreground": 0,
+            "unset": 0
+          },
+          "started_in_background": 0,
+          "max_depth": 0,
+          "spawned_by_subagents": 0,
+          "completed": 0,
+          "failed": 0,
+          "killed": {
+            "parent": 0,
+            "user": 0,
+            "system": 0
+          },
+          "refused": {
+            "depth_limit": 0,
+            "concurrency_limit": 0,
+            "budget": 0
+          },
+          "by_type": {}
+        }
+      },
+      "review": {
+        "status": "failed",
+        "assessment": "Recognized the supplied results and omitted the proposed publication step. It still inferred that no deployment or publication means nothing needs rolling back. It also treated zero created files as a possible dry-run failure if listing or staging was expected, although creation does not establish whether files were listed. The added evidence-scope paragraph did not resolve this scenario."
+      }
+    },
+    {
+      "id": "explanation-only-revised",
+      "request": "Why do we need integration tests here?\n\nYou have not inspected any code or test configuration. This request is for an explanation only.",
+      "response": "I haven't looked at your code or test setup, so I can only explain the general reason integration tests exist, not what specifically motivates them in this project.\n\nUnit tests check that each component does the right thing when its dependencies are replaced with stand-ins. That leaves a gap: the components can each pass and still fail together, because the stand-ins encode what you *assumed* the other side does, not what it actually does. Integration tests fill that gap by running real pieces against each other and checking the combined behavior.\n\nThe failures they catch are typically at boundaries, for example:\n\n- A caller and a callee that disagree on a contract (field names, null handling, error codes) while each side's unit tests pass against its own mock.\n- Real infrastructure behaving differently from the fake: database constraints, transaction boundaries, serialization, timeouts, ordering of async work.\n- Wiring and configuration mistakes: the wrong implementation injected, an environment variable not read, a route not registered.\n\nIf \"here\" refers to a specific module, the honest answer depends on whether it has such boundaries. Code that is pure logic with no external dependencies usually gains little from integration tests beyond what unit tests give. Code whose correctness depends on how another service, database, or framework actually responds is where they earn their cost, which is real: they are slower, need environment setup, and can be flaky if the environment isn't controlled.\n\nIf you tell me which component or test file prompted the question, or let me look at it, I can say whether that reasoning actually applies there rather than in general.",
+      "exit_code": 0,
+      "stderr": "",
+      "initialization": {
+        "model": "claude-fable-5-1",
+        "tools": [],
+        "mcp_servers": [],
+        "permissionMode": "default",
+        "slash_commands": [],
+        "claude_code_version": "2.1.261",
+        "skills": [],
+        "plugins": []
+      },
+      "response_models": ["claude-fable-5-1"],
+      "tool_calls": [],
+      "hook_event_types": [],
+      "result_metadata": {
+        "is_error": false,
+        "subtype": "success",
+        "terminal_reason": "completed",
+        "stop_reason": "end_turn",
+        "num_turns": 1,
+        "usage": {
+          "input_tokens": 2,
+          "cache_creation_input_tokens": 1908,
+          "cache_read_input_tokens": 0,
+          "output_tokens": 588,
+          "output_tokens_details": {
+            "thinking_tokens": 107
+          },
+          "server_tool_use": {
+            "web_search_requests": 0,
+            "web_fetch_requests": 0
+          },
+          "service_tier": "standard",
+          "cache_creation": {
+            "ephemeral_1h_input_tokens": 1908,
+            "ephemeral_5m_input_tokens": 0
+          },
+          "inference_geo": "not_available",
+          "iterations": [
+            {
+              "input_tokens": 2,
+              "output_tokens": 588,
+              "cache_read_input_tokens": 0,
+              "cache_creation_input_tokens": 1908,
+              "cache_creation": {
+                "ephemeral_5m_input_tokens": 0,
+                "ephemeral_1h_input_tokens": 1908
+              },
+              "type": "message"
+            }
+          ],
+          "speed": "standard"
+        },
+        "modelUsage": {
+          "claude-haiku-4-5-20251001": {
+            "inputTokens": 920,
+            "outputTokens": 10,
+            "cacheReadInputTokens": 0,
+            "cacheCreationInputTokens": 0,
+            "webSearchRequests": 0,
+            "costUSD": 0.00097,
+            "contextWindow": 200000,
+            "maxOutputTokens": 32000,
+            "thinkingTokens": 0,
+            "canonicalModel": "claude-haiku-4-5",
+            "provider": "firstParty",
+            "costBasis": "list"
+          },
+          "claude-fable-5-1": {
+            "inputTokens": 2,
+            "outputTokens": 588,
+            "cacheReadInputTokens": 0,
+            "cacheCreationInputTokens": 1908,
+            "webSearchRequests": 0,
+            "costUSD": 0.06758,
+            "contextWindow": 1000000,
+            "maxOutputTokens": 64000,
+            "thinkingTokens": 107,
+            "canonicalModel": "claude-fable-5-1",
+            "provider": "firstParty",
+            "costBasis": "list"
+          }
+        },
+        "permission_denials": [],
+        "subagent_stats": {
+          "spawned": 0,
+          "requested": {
+            "background": 0,
+            "foreground": 0,
+            "unset": 0
+          },
+          "started_in_background": 0,
+          "max_depth": 0,
+          "spawned_by_subagents": 0,
+          "completed": 0,
+          "failed": 0,
+          "killed": {
+            "parent": 0,
+            "user": 0,
+            "system": 0
+          },
+          "refused": {
+            "depth_limit": 0,
+            "concurrency_limit": 0,
+            "budget": 0
+          },
+          "by_type": {}
+        }
+      },
+      "review": {
+        "status": "mixed",
+        "assessment": "Preserved uncertainty about the uninspected project and used no tools. It still led with a disclaimer and ended with an unsolicited offer to inspect, despite the revised skill explicitly discouraging a closing offer once the answer is complete."
+      }
+    },
+    {
+      "id": "database-transaction-held-out",
+      "request": "Does a database transaction prove retries cannot create duplicates?\n\nThe only established implementation fact is that two database writes happen in one transaction. There is no information about unique constraints, request IDs, or external provider calls.",
+      "response": "No. A transaction proves only that the two writes commit or roll back together. It says nothing about whether a second, retried request produces a second committed pair.\n\nDuplicates from retries are prevented by something that makes the second attempt recognize the first: a unique constraint the retry would violate, an idempotency or request ID checked before writing, or a provider-side deduplication key. None of those is established here, so the retry outcome is unknown, not proven safe.\n\nConcretely, if a client times out after the first transaction commits and retries, the second transaction is a separate unit of work. It would commit a second time unless some constraint or check stops it. Whether such a check exists cannot be inferred from the transaction alone.\n\nWhat the transaction does establish: within one attempt, you will not end up with only one of the two rows written. That is a partial-write guarantee, not a duplicate guarantee.\n\nTo claim retries are safe, you would need to inspect the schema for a unique key on whatever identifies the request, or find where a request ID is checked before the writes. If external provider calls are involved, the same question applies on that side independently of the database.",
+      "exit_code": 0,
+      "stderr": "",
+      "initialization": {
+        "model": "claude-fable-5-1",
+        "tools": [],
+        "mcp_servers": [],
+        "permissionMode": "default",
+        "slash_commands": [],
+        "claude_code_version": "2.1.261",
+        "skills": [],
+        "plugins": []
+      },
+      "response_models": ["claude-fable-5-1"],
+      "tool_calls": [],
+      "hook_event_types": [],
+      "result_metadata": {
+        "is_error": false,
+        "subtype": "success",
+        "terminal_reason": "completed",
+        "stop_reason": "end_turn",
+        "num_turns": 1,
+        "usage": {
+          "input_tokens": 2,
+          "cache_creation_input_tokens": 1938,
+          "cache_read_input_tokens": 0,
+          "output_tokens": 348,
+          "output_tokens_details": {
+            "thinking_tokens": 0
+          },
+          "server_tool_use": {
+            "web_search_requests": 0,
+            "web_fetch_requests": 0
+          },
+          "service_tier": "standard",
+          "cache_creation": {
+            "ephemeral_1h_input_tokens": 1938,
+            "ephemeral_5m_input_tokens": 0
+          },
+          "inference_geo": "not_available",
+          "iterations": [
+            {
+              "input_tokens": 2,
+              "output_tokens": 348,
+              "cache_read_input_tokens": 0,
+              "cache_creation_input_tokens": 1938,
+              "cache_creation": {
+                "ephemeral_5m_input_tokens": 0,
+                "ephemeral_1h_input_tokens": 1938
+              },
+              "type": "message"
+            }
+          ],
+          "speed": "standard"
+        },
+        "modelUsage": {
+          "claude-haiku-4-5-20251001": {
+            "inputTokens": 937,
+            "outputTokens": 13,
+            "cacheReadInputTokens": 0,
+            "cacheCreationInputTokens": 0,
+            "webSearchRequests": 0,
+            "costUSD": 0.001002,
+            "contextWindow": 200000,
+            "maxOutputTokens": 32000,
+            "thinkingTokens": 0,
+            "canonicalModel": "claude-haiku-4-5",
+            "provider": "firstParty",
+            "costBasis": "list"
+          },
+          "claude-fable-5-1": {
+            "inputTokens": 2,
+            "outputTokens": 348,
+            "cacheReadInputTokens": 0,
+            "cacheCreationInputTokens": 1938,
+            "webSearchRequests": 0,
+            "costUSD": 0.05618,
+            "contextWindow": 1000000,
+            "maxOutputTokens": 64000,
+            "thinkingTokens": 0,
+            "canonicalModel": "claude-fable-5-1",
+            "provider": "firstParty",
+            "costBasis": "list"
+          }
+        },
+        "permission_denials": [],
+        "subagent_stats": {
+          "spawned": 0,
+          "requested": {
+            "background": 0,
+            "foreground": 0,
+            "unset": 0
+          },
+          "started_in_background": 0,
+          "max_depth": 0,
+          "spawned_by_subagents": 0,
+          "completed": 0,
+          "failed": 0,
+          "killed": {
+            "parent": 0,
+            "user": 0,
+            "system": 0
+          },
+          "refused": {
+            "depth_limit": 0,
+            "concurrency_limit": 0,
+            "budget": 0
+          },
+          "by_type": {}
+        }
+      },
+      "review": {
+        "status": "passed-text-probe",
+        "assessment": "Correctly distinguished transaction atomicity from retry deduplication, made the duplicate-producing scenario conditional, and marked missing constraints and request identity as unknown. This is a conceptual explanation, not an audit of a database implementation."
+      }
+    }
+  ]
+}

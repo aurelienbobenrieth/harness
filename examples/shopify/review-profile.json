@@ -1,0 +1,8 @@
+{
+  "programs": ["app-store", "bfs"],
+  "surfaces": ["app-home", "server", "functions", "storefront"],
+  "categories": {
+    "app-store": ["online-store"],
+    "bfs": ["discount"]
+  }
+}
