@@ -18,6 +18,7 @@ assert.equal(
 const developmentEngine = await realpath(
   path.join(root, "packages/agentlint-plugin-core/node_modules/@aurelienbbn/agentlint"),
 );
+const developmentModules = path.dirname(path.dirname(developmentEngine));
 const folder = await mkdtemp(path.join(tmpdir(), "harness-agentlint-current-"));
 const domains = ["core", "effect", "shopify-app", "tanstack-query", "xstate"];
 const presets = ["strictPreset", "strictPreset", "shopifyAppPreset", "strictPreset", "xstatePreset"];
@@ -53,7 +54,7 @@ try {
   const engine = await unpack(archive, "agentlint");
   const manifest = JSON.parse(await readFile(path.join(engine, "package.json"), "utf8"));
   for (const [name, version] of Object.entries(manifest.dependencies)) {
-    const source = await realpath(path.join(developmentEngine, "node_modules", name));
+    const source = await realpath(path.join(developmentModules, name));
     const installed = JSON.parse(await readFile(path.join(source, "package.json"), "utf8"));
     assert.equal(installed.version, version, `Local runtime differs from packed dependency: ${name}`);
     const target = path.join(engine, "node_modules", name);

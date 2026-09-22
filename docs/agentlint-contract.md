@@ -29,7 +29,7 @@ The five active agentlint plugins target the local standard/detector/binding API
 
 ## Local installation boundary
 
-Development manifests use `link:../../../agentlint/packages/agentlint`; `policy/compatibility.json` records that dependency and a separately hashed local tarball. The sibling source must be built before checking harness. The archive retains version 0.1.5 because the engine is still a pre-release draft; this does **not** mean compatibility with registry 0.1.5.
+Development manifests install the hash-pinned `local-packages/agentlint-current.tgz` archive, so a clean Harness checkout does not depend on a sibling repository. The archive retains version 0.1.5 because the engine is still a pre-release draft; this does **not** mean compatibility with registry 0.1.5.
 
 The engine passes its separate fresh npm tarball smoke test, with strict TypeScript and the finding/acceptance workflow. The six-archive harness test uses local runtime dependencies; the separate package consumer below verifies a fresh installation of the active harness graph. Keep these plugins private until the engine has an installable published version, then update all five peer/dev contracts and rerun packed consumer checks. Earlier registry-profile or historical tarball results do not certify this new graph.
 

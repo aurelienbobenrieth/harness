@@ -28,7 +28,7 @@
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
-    "@aurelienbbn/agentlint": "link:../../../agentlint/packages/agentlint"
+    "@aurelienbbn/agentlint": "file:../../local-packages/agentlint-current.tgz"
   },
   "peerDependencies": {
     "@aurelienbbn/agentlint": "0.1.5"
