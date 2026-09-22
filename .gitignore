@@ -5,6 +5,6 @@ coverage/
 .DS_Store
 *.log
 .tmp/
+.stryker-tmp/
 local-packages/*.tgz
-!local-packages/aurelienbbn-agentlint-0.1.5.tgz
 !local-packages/agentlint-current.tgz

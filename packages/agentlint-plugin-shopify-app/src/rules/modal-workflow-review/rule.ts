@@ -1,5 +1,5 @@
 import { defineRule, type AgentlintNode, type StateRule } from "@aurelienbbn/agentlint";
-import { elementName, matchesPattern } from "../jsx-support.js";
+import { elementName, matchesPattern, serializedPattern } from "../jsx-support.js";
 
 export type ModalWorkflowReviewOptions = {
   /** Overlay component names to review. Defaults to s-modal and s-app-window. */
@@ -49,9 +49,7 @@ export function defineModalWorkflowReview(options: ModalWorkflowReviewOptions = 
       include: ["**/*.{ts,tsx,js,jsx}", "**/locales/**/*.json"],
       exclude: ["**/*.d.ts"],
       options: {
-        elementNamePattern: options.elementNamePattern
-          ? { source: options.elementNamePattern.source, flags: options.elementNamePattern.flags }
-          : null,
+        elementNamePattern: serializedPattern(options.elementNamePattern),
       },
     },
     detector: {

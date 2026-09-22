@@ -1,4 +1,4 @@
-# Current agentlint contract review
+# Agentlint contract
 
 The five active agentlint plugins target the local standard/detector/binding API. This is a breaking draft migration, without an adapter for the former flat rules, object-map config, or ledger records.
 

@@ -127,7 +127,7 @@ The rules independently implement review triggers and guidance inspired by Shopi
 
 - Server-side reviews, inspected on 2026-09-19: [Admin GraphQL API](https://shopify.dev/docs/api/admin-graphql/latest), [API limits](https://shopify.dev/docs/api/usage/limits), [bulk operations](https://shopify.dev/docs/api/usage/bulk-operations/queries), and [idempotency](https://shopify.dev/docs/api/usage/implementing-idempotency) for `admin-api-loop-review`; [HTTPS webhook delivery](https://shopify.dev/docs/apps/build/webhooks/subscribe/https), [duplicate webhooks](https://shopify.dev/docs/apps/build/webhooks/ignore-duplicates), [webhook best practices](https://shopify.dev/docs/apps/build/webhooks/best-practices), and [`authenticate.webhook`](https://shopify.dev/docs/api/shopify-app-react-router/latest/authenticate/webhook) for `webhook-handler-review`; [access scope management](https://shopify.dev/docs/apps/build/authentication-authorization/app-installation/manage-access-scopes) and [protected customer data](https://shopify.dev/docs/apps/launch/protected-customer-data) for `scope-change-review`; [checkout capabilities](https://shopify.dev/docs/apps/build/checkout/capabilities) and the [`shopify-app-js` future flags](https://github.com/Shopify/shopify-app-js) for the extended checkout and authentication guidance.
 
-See the [research and coverage record](../../docs/reviews/2026-09-05-shopify-review-research.md) for requirement IDs, evidence boundaries, and validation.
+Requirement IDs and evidence boundaries are governed by [`policy/shopify-requirements.json`](../../policy/shopify-requirements.json) and the repository Shopify checks.
 
 <!-- harness-catalog:start -->
 

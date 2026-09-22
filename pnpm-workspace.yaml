@@ -10,3 +10,4 @@ overrides:
   vite-plus: 0.3.2
   oxlint: 1.82.0
   oxfmt: 0.67.0
+  qs: 6.16.0

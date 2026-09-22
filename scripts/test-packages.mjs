@@ -24,6 +24,13 @@ assert.ok(packageManager, "Run with pnpm test:package");
 const temporary = await mkdtemp(path.join(tmpdir(), "harness-packed-consumer-"));
 const archives = path.join(temporary, "archives");
 const consumer = path.join(temporary, "consumer");
+async function packageBin(packageName, binName) {
+  const packageFolder = path.join(root, "node_modules", ...packageName.split("/"));
+  const manifest = JSON.parse(await readFile(path.join(packageFolder, "package.json"), "utf8"));
+  const relative = typeof manifest.bin === "string" ? manifest.bin : manifest.bin[binName];
+  assert.ok(relative, `${packageName} does not expose ${binName}`);
+  return path.join(packageFolder, relative);
+}
 async function run(args, cwd = consumer, expectedExit = 0) {
   try {
     const output = await execute(process.execPath, args, {
@@ -69,6 +76,20 @@ try {
   for (const manifest of packages) {
     const archive = path.join(archives, `${manifest.name.replace("@", "").replace("/", "-")}-${manifest.version}.tgz`);
     await access(archive);
+    console.log(`Validating ${manifest.name} package metadata and type resolution...`);
+    await run([await packageBin("publint", "publint"), "run", archive, "--strict"], root);
+    await run(
+      [
+        await packageBin("@arethetypeswrong/cli", "attw"),
+        archive,
+        "--profile",
+        "esm-only",
+        "--no-summary",
+        "--no-emoji",
+        "--no-color",
+      ],
+      root,
+    );
     dependencies[manifest.name] = `file:${archive.replaceAll("\\", "/")}`;
   }
   await writeFile(

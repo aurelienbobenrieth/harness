@@ -19,6 +19,7 @@ const report = await runCoreConformanceReport({
       "**/*.yaml",
       "**/*.yml",
       "**/.tmp/**",
+      "**/.stryker-tmp/**",
       "**/local-packages/**",
       "evals/**",
       "skills/**",

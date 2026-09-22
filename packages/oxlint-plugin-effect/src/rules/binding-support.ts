@@ -29,7 +29,7 @@ export function isModuleNamespace(context: Context, node: ESTree.Node, moduleNam
 }
 
 /** Recognize Effect imports and aliases without matching local shadows. */
-export function isEffectNamespace(context: Context, node: ESTree.Node): boolean {
+function isEffectNamespace(context: Context, node: ESTree.Node): boolean {
   return isModuleNamespace(context, node, "Effect");
 }
 

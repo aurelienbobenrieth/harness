@@ -11,11 +11,13 @@ export default defineConfig({
       builtin: true,
       node: true,
     },
-    plugins: ["typescript", "node", "unicorn", "vitest"],
-    ignorePatterns: ["packages/*/dist/**", ".tmp/**", "local-packages/**"],
+    plugins: ["typescript", "node", "unicorn", "vitest", "import"],
+    ignorePatterns: ["packages/*/dist/**", ".tmp/**", ".stryker-tmp/**", "local-packages/**"],
     rules: {
       "typescript/no-explicit-any": "error",
       "typescript/no-non-null-assertion": "error",
+      "import/no-cycle": "error",
+      "import/no-self-import": "error",
       "unicorn/filename-case": ["error", { case: "kebabCase" }],
       "jest/no-conditional-expect": "off",
       "jest/valid-expect": "off",
@@ -50,5 +52,22 @@ export default defineConfig({
     include: ["packages/*/src/**/*.test.ts"],
     pool: "forks",
     testTimeout: 15_000,
+    coverage: {
+      provider: "v8",
+      include: [
+        "packages/agentlint-plugin-*/src/**/*.ts",
+        "packages/conformance-*/src/**/*.ts",
+        "packages/oxfmt-config/src/**/*.ts",
+        "packages/oxlint-config/src/**/*.ts",
+      ],
+      exclude: ["**/*.test.ts", "**/test-support.ts"],
+      reporter: ["text", "json-summary"],
+      thresholds: {
+        statements: 93,
+        branches: 87,
+        functions: 96,
+        lines: 95,
+      },
+    },
   },
 });

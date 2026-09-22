@@ -1,5 +1,5 @@
 import type { Context, ESTree } from "@oxlint/plugins";
-import { binding, effectMethod } from "./binding-support.js";
+import { binding } from "./binding-support.js";
 
 export type ParentNode = ESTree.Node & {
   readonly parent?: ParentNode | null;
@@ -64,7 +64,7 @@ export function stringLiteralValue(node: ESTree.Node | null | undefined): string
  * is a named import from `effect`, a namespace import from `effect/<Module>`,
  * or an unbound global-style reference. Local shadows never match.
  */
-export function isModuleNamespace(context: Context, node: ESTree.Node, moduleName: string): boolean {
+function isModuleNamespace(context: Context, node: ESTree.Node, moduleName: string): boolean {
   if (node.type !== "Identifier") return false;
   const variable = binding(context, node, node.name);
   if (variable === undefined) return node.name === moduleName;
@@ -88,26 +88,6 @@ export function moduleMethod(context: Context, node: ESTree.Node, moduleName: st
   )
     return undefined;
   return node.property.name;
-}
-
-const effectBodyMethods: ReadonlySet<string> = new Set(["gen", "fn", "fnUntraced", "fnUntracedEager"]);
-
-/**
- * True when the function is the body handed to `Effect.gen`, `Effect.fn`,
- * `Effect.fnUntraced` or `Effect.fnUntracedEager`, including the curried
- * `Effect.fn("name")(function* () {})` form.
- */
-function effectBodyMethod(node: FunctionNode, context: Context): string | undefined {
-  const parent = parentOf(node);
-  if (parent?.type !== "CallExpression") return undefined;
-  if (!parent.arguments.includes(node as ESTree.Expression)) return undefined;
-  const callee = parent.callee.type === "CallExpression" ? parent.callee.callee : parent.callee;
-  const method = effectMethod(context, callee);
-  return method !== undefined && effectBodyMethods.has(method) ? method : undefined;
-}
-
-export function isEffectBody(node: FunctionNode, context: Context): boolean {
-  return effectBodyMethod(node, context) !== undefined;
 }
 
 /** True when the identifier resolves to no local binding, i.e. it is the ambient global. */

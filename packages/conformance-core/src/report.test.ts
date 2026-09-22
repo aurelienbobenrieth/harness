@@ -1,6 +1,16 @@
 import { expect, it } from "vitest";
 import { createFixture } from "./checks/test-support.js";
-import { runCoreConformanceReport } from "./report.js";
+import type { ConformanceCheck } from "./finding.js";
+import { evaluateCoreCheck, runCoreConformanceReport } from "./report.js";
+
+const throwingCheck = (failure: Error | string): ConformanceCheck => ({
+  id: "throwing-probe",
+  description: "probe",
+  docs: "https://example.com/probe",
+  run: async () => {
+    throw failure;
+  },
+});
 
 it("reports missing optional tools and an unconfigured probe as incomplete evidence", async () => {
   const root = await createFixture({ "package.json": "{}" });
@@ -14,6 +24,87 @@ it("reports missing optional tools and an unconfigured probe as incomplete evide
     ["tsconfig-strictness", "skipped"],
   ]);
   expect(report.findings.filter((finding) => finding.severity === "error")).toEqual([]);
+  expect(report.checks.find((check) => check.check === "closed-design-system-probe")).toEqual({
+    check: "closed-design-system-probe",
+    status: "skipped",
+    reason: "No CSS build/selector probe configured.",
+    findings: [],
+  });
+  expect(report.checks.find((check) => check.check === "tsconfig-strictness")).toEqual({
+    check: "tsconfig-strictness",
+    status: "skipped",
+    reason: "No tsconfigStrictness options configured; pass {} to enable the default baseline.",
+    findings: [],
+  });
+});
+
+it("preserves unavailable evidence and gives execution failure priority", async () => {
+  const check: ConformanceCheck = {
+    id: "probe",
+    description: "probe",
+    docs: "https://example.com/probe",
+    run: async () => [
+      { check: "probe", severity: "warning", message: "ordinary", docs: "https://example.com/probe" },
+      {
+        check: "probe",
+        severity: "warning",
+        evaluation: "unsupported",
+        message: "tool absent",
+        docs: "https://example.com/probe",
+      },
+      {
+        check: "probe",
+        severity: "error",
+        evaluation: "failed",
+        message: "invalid report",
+        docs: "https://example.com/probe",
+      },
+    ],
+  };
+
+  await expect(evaluateCoreCheck(check, { root: "." })).resolves.toMatchObject({
+    status: "failed",
+    reason: "invalid report",
+  });
+
+  await expect(
+    evaluateCoreCheck(
+      {
+        ...check,
+        run: async () => [
+          { check: "probe", severity: "warning", message: "ordinary", docs: "https://example.com/probe" },
+          {
+            check: "probe",
+            severity: "warning",
+            evaluation: "unsupported",
+            message: "tool absent",
+            docs: "https://example.com/probe",
+          },
+        ],
+      },
+      { root: "." },
+    ),
+  ).resolves.toMatchObject({ status: "unsupported", reason: "tool absent" });
+});
+
+it("turns thrown Error and non-Error values into failed evidence", async () => {
+  await expect(evaluateCoreCheck(throwingCheck(new Error("boom")), { root: "." })).resolves.toEqual({
+    check: "throwing-probe",
+    status: "failed",
+    reason: "Check execution failed: boom",
+    findings: [
+      {
+        check: "throwing-probe",
+        severity: "error",
+        evaluation: "failed",
+        message: "Check execution failed: boom",
+        docs: "https://example.com/probe",
+      },
+    ],
+  });
+  await expect(evaluateCoreCheck(throwingCheck("broken"), { root: "." })).resolves.toMatchObject({
+    reason: "Check execution failed: broken",
+  });
 });
 
 it("keeps explicit skips visible and rejects misspelled check IDs", async () => {

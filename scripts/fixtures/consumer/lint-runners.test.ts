@@ -42,7 +42,7 @@ it("executes a combined oxlint policy using every packed oxlint plugin", async (
   const packages = ["core", "effect", "shopify-app", "type-evidence", "xstate"];
   const rules = [
     "core/no-exported-anonymous-object-return",
-    "effect/no-floating-effect",
+    "effect/no-schema-any",
     "shopify-app/require-fetch-abort-signal",
     "type-evidence/no-unknown-parameters",
     "xstate/require-setup-create-machine",
@@ -57,11 +57,11 @@ it("executes a combined oxlint policy using every packed oxlint plugin", async (
   );
   await writeFixture(
     "combined-broken.ts",
-    'import { Effect } from "effect"; import { createMachine } from "xstate"; export const read = () => ({ id: 1 }); Effect.succeed(1); fetch("/cart"); export function consume(value: unknown) { return value; } export const machine = createMachine({});',
+    'import { Schema } from "effect"; import { createMachine } from "xstate"; export const read = () => ({ id: 1 }); export const payload = Schema.Any; fetch("/cart"); export function consume(value: unknown) { return value; } export const machine = createMachine({});',
   );
   await writeFixture(
     "combined-clean.ts",
-    'import { Effect } from "effect"; import { setup } from "xstate"; type User = { id: number }; export const read = (): User => ({ id: 1 }); export const program = Effect.succeed(1); export const request = (signal: AbortSignal): Promise<Response> => fetch("/cart", { signal }); export const machine = setup({ types: {} as { context: Record<string, never>; events: { type: "start" } } }).createMachine({});',
+    'import { Schema } from "effect"; import { setup } from "xstate"; type User = { id: number }; export const read = (): User => ({ id: 1 }); export const payload = Schema.String; export const request = (signal: AbortSignal): Promise<Response> => fetch("/cart", { signal }); export const machine = setup({ types: {} as { context: Record<string, never>; events: { type: "start" } } }).createMachine({});',
   );
   const executable = path.resolve("node_modules/oxlint/bin/oxlint");
   const broken = JSON.parse(

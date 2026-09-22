@@ -2,7 +2,7 @@
 
 Reusable lint rules, tool configurations, conformance checks, and operating skills for TypeScript projects.
 
-Nine packages are release candidates. Six packages are private drafts with documented adoption limits: the five agentlint plugins and `@aurelienbbn/oxlint-plugin-tanstack-query`. Seven packages are parked outside this repository until a later release: the four Shopify theme packages, both Lit plugins, and `oio`. **Publishing is disabled:** `pnpm release` prints a preparation plan. See the [executed readiness evidence](docs/reviews/2026-09-05-readiness.md), [release policy](docs/release-readiness.md), and [consumer compatibility](docs/compatibility.md).
+Nine packages are release candidates. Six packages are private drafts with documented adoption limits: the five agentlint plugins and `@aurelienbbn/oxlint-plugin-tanstack-query`. Seven packages are parked outside this repository until a later release: the four Shopify theme packages, both Lit plugins, and `oio`. **Publishing is disabled:** `pnpm release` prints a preparation plan. See the [release policy](docs/release-readiness.md) and [consumer compatibility](docs/compatibility.md).
 
 ## Packages
 
@@ -40,25 +40,24 @@ Defaults deliberately optimize for these projects. Architecture preferences, det
 
 - `pnpm check`: build, source typecheck, lint, formatting, unit tests, and repository policy/catalog gates.
 - `pnpm quality:check`: require a clean Knip report and keep production-source duplication at or below the reviewed 28-clone baseline; tests, fixtures, generated output, documentation, and vendored archives are excluded.
-- `pnpm review:rules`: regenerate the interactive rule/check triage in `docs/reviews/rule-triage.html`; `pnpm check` rejects a stale artifact.
+- `pnpm test:coverage`: measure directly imported config, agentlint, and conformance code with ratcheted thresholds.
+- `pnpm test:mutation`: mutation-test the small conformance-core kernel.
+- [Rule ownership](docs/rule-ownership.md): upstream boundaries, removed overlap, and the graph-tooling decision.
 - `pnpm security:check`: audit all dependency classes against current registry advisories; required separately in CI and release preparation because it needs network access.
 - `pnpm test:compatibility baseline` / `current`: install the 9 packed candidates outside the workspace using reviewed public-registry tool versions, strict peers and engines, and complete declaration checking. No local dependency archive, alias, or declaration waiver is used.
 - `pnpm test:package`: exercise all 15 packed packages, including the private drafts, against the reviewed local agentlint archive and Vite Plus alias. Checks cover public APIs, the oxlint and agentlint runners, and conformance suites.
 - `pnpm release:plan`: inspect candidate versions, draft exclusions, working-tree status, and publication blockers without changing files or contacting a registry.
-- `pnpm policy`: regenerate the shared Theme OS defaults from `policy/theme.json`.
 - `pnpm catalog`: refresh exported rule/check inventories and credited concepts after building.
 - `pnpm test`: rebuild before running tests. The old watch script was removed because edits could leave the subprocess rules testing stale dist files.
 
-The [roadmap implementation record](docs/reviews/2026-09-05-roadmap-implementation.md) lists the completed reliability work, concrete acceptance fixtures, migration impact, and remaining coverage boundaries.
+The 15-package consumer and both candidate registry profiles require complete TypeScript dependency declarations. The former Effect and Vite Plus declaration exceptions have been removed; these commands use neither `skipLibCheck` nor an error allowlist. The agentlint plugins still require the reviewed private archive or built sibling workspace and remain incompatible with public agentlint 0.1.5. See the [current contract](docs/agentlint-contract.md).
 
-The 15-package consumer and both candidate registry profiles require complete TypeScript dependency declarations. The former Effect and Vite Plus declaration exceptions have been removed; these commands use neither `skipLibCheck` nor an error allowlist. The agentlint plugins still require the reviewed private archive or built sibling workspace and remain incompatible with public agentlint 0.1.5. See the [current migration contract](docs/reviews/agentlint-current-contract.md).
-
-CI covers Linux/Windows with current Node 22/24 and separate checks at the declared runtime floors. A configured matrix is not evidence that its remote runs passed. See [compatibility evidence](docs/compatibility.md) for the actual local runs and [the remediation backlog](docs/reviews/2026-09-05-remediation-and-roadmap.md) for remaining work.
+CI covers Linux/Windows with current Node 22/24 and separate checks at the declared runtime floors. A configured matrix is not evidence that its remote runs passed. See [compatibility evidence](docs/compatibility.md) for the actual local runs.
 
 ## Operating skills
 
 The [Shopify tooling guide](docs/shopify.md) connects App Store and Built for Shopify requirements to scoped lint rules, conformance, contextual review, and app-owned runtime evidence. It includes a tested App Home lint recipe and a source-drift-aware review planner.
 
-The [skills guide](docs/skills.md) explains the communication, build, testing, git, and toolsmith guidance, automatic versus explicit invocation, independent fixture evaluations, and source credits. Deterministic policy belongs in executable checks; skills carry the context-dependent decisions those checks cannot make.
+The [skills guide](docs/skills.md) explains the communication, build, testing, git, and toolsmith guidance, automatic versus explicit invocation, validation boundaries, and source credits. Deterministic policy belongs in executable checks; skills carry the context-dependent decisions those checks cannot make.
 
 Use [CONTRIBUTING.md](CONTRIBUTING.md) for changes and validation, [SECURITY.md](SECURITY.md) for vulnerability-reporting status, and [CODEOWNERS](.github/CODEOWNERS) for maintainer ownership.

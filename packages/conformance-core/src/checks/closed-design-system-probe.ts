@@ -1,4 +1,4 @@
-import postcss from "postcss";
+import { parse } from "postcss";
 /**
  * Builds CSS and checks the configured required and forbidden selector lists.
  * A finite selector probe does not establish an exhaustive closed set.
@@ -83,7 +83,7 @@ export const closedDesignSystemProbe: ConformanceCheck = {
 
       const selectors = new Set<string>();
       try {
-        postcss.parse(css).walkRules((rule) => {
+        parse(css).walkRules((rule) => {
           for (const selector of rule.selectors) selectors.add(selector.trim());
         });
       } catch {

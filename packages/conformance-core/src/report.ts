@@ -1,5 +1,5 @@
 import type { ConformanceCheck, ConformanceEvaluation, ConformanceReport, ConformanceRunOptions } from "./finding.js";
-import { activeChecks, coreChecks } from "./index.js";
+import { activeChecks, coreChecks } from "./registry.js";
 
 /** Names why an opt-in check has nothing to evaluate, or undefined when it is configured. */
 export function unconfiguredReason(check: ConformanceCheck, options: ConformanceRunOptions): string | undefined {

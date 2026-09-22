@@ -34,29 +34,9 @@ Deterministic requirements belong in executable owners: syntax-aware lint for so
 
 The [Shopify review skill](../skills/shopify-review/SKILL.md) applies when Shopify quality, requirements, Polaris, copy, or integration review is requested. It selects surface-specific tooling and evidence without requiring a full platform audit for an isolated edit. See the [Shopify tooling guide](shopify.md) for automatic checks, contextual triggers, explicit probes, and remaining review work.
 
-## KeepCart findings
-
-The review read KeepCart's communication, build, testing, git, and toolsmith skills and applicable instructions without changing KeepCart. Useful recurring needs were generated-state repair, fast focused feedback, real boundary verification, careful handling of staged work, and reproducible tools.
-
-The revised Harness versions remove approval loops that ignored existing authorization, mandatory specification ceremony, a blanket network ban that contradicted integration testing, whole-record-only assertions, and a rule that split fixes from their tests. Communication preserves an early answer and attached evidence while removing unverifiable 99% readership claims and fixed budgets that could hide important limits.
-
-KeepCart's installed copies and bootstrap remain unchanged. Adopting these improvements there is a separate integration task; existing consumer instructions can still override or conflict with the revised package.
-
-## Astra and Fable 5.1
-
-Official guidance was checked on 2026-09-05. OpenAI describes Astra as sensitive to conflicting skill instructions and recommends explicit guidance on autonomy, writing style, delegation, and proportional testing. Harness therefore keeps authorization continuous, descriptions narrow, and completion claims tied to executed checks. This is a design response to provider guidance, not a measured performance claim. [OpenAI model guidance](https://developers.openai.com/api/docs/guides/latest-model).
-
-Anthropic's Fable 5.1 guidance identifies dense prose, missing progress updates, unnecessary permission pauses, excess scope, and avoidable waiting on subagents as areas to assess. The shared skills address those decisions without embedding provider API settings. A host must also render the provider's progress events correctly; prose instructions cannot repair a hidden event stream. Use current provider documentation when changing that integration. [Fable 5.1 prompting guidance](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-fable-5-1).
-
-Evaluate realistic tasks under each target model and host before claiming a cross-model improvement. Record the exact model/runtime, skill revision, task, artifacts, unnecessary pauses, scope errors, and verification results. The initial local-task evaluation used the collaborating-agent runtime. Later probes exercised Astra and the actual Fable 5.1 model through isolated Claude Code sessions; their different prompts and hosts do not constitute a controlled model comparison.
-
 ## Evidence and limits
 
 `pnpm skills:check` validates discovery frontmatter, nonempty instructions, supported local Markdown references, and optional invocation metadata. It fails on an empty skill inventory, missing links, duplicate YAML fields, and invalid metadata. `pnpm test:skills` exercises those behaviors with isolated fixtures. Neither command scores writing quality or proves that automatic routing selects the right skill.
-
-The [2026-09-05 forward evaluation](reviews/2026-09-05-skill-evaluation.md) records three executed local tasks and two communication exercises. An independent worker received raw requests and fixtures; the skill author inspected the resulting artifacts. This supplies bounded behavioral evidence, not proof of production safety, universal task coverage, or a reader's attention.
-
-The [Astra response record](../evals/skills/astra.json) preserves an unsupported inference about lock contention and two successful follow-up explanations after a targeted revision. The [Fable evaluation](reviews/2026-09-05-fable-evaluation.md) includes seven verified Fable 5.1 responses. It retained blockers and some important distinctions, but readiness summaries still over-inferred from supplied facts after revision. Guidance helps; the results do not justify treating it as an enforced correctness boundary. Exact inputs and responses remain available for future regression probes.
 
 ## Independent inspiration and credits
 

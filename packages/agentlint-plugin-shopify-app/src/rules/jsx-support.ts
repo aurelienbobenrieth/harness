@@ -6,6 +6,13 @@ export function matchesPattern(pattern: RegExp, text: string): boolean {
   return pattern.test(text);
 }
 
+/** Serializes a configurable pattern into stable binding data. */
+export function serializedPattern(
+  pattern: RegExp | undefined,
+): { readonly source: string; readonly flags: string } | null {
+  return pattern ? { source: pattern.source, flags: pattern.flags } : null;
+}
+
 /** Reads only the element's grammar name; prop text cannot impersonate an element. */
 export function elementName(node: AgentlintNode): string | undefined {
   return node.childByFieldName("name")?.text;

@@ -1,7 +1,7 @@
 /* eslint-disable vitest/no-conditional-tests, vitest/no-disabled-tests -- Consumer exclusions are reported as skipped tests instead of silently passing. */
 import { describe, expect, it } from "vitest";
 import type { ConformanceFinding, ConformanceRunOptions } from "./finding.js";
-import { activeChecks, coreChecks } from "./index.js";
+import { activeChecks, coreChecks } from "./registry.js";
 import { evaluateCoreCheck, unconfiguredReason } from "./report.js";
 
 function formatFindings(findings: readonly ConformanceFinding[]): string {

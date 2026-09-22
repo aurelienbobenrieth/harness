@@ -88,6 +88,24 @@ for (const directory of (await readdir(path.join(root, "packages"))).toSorted())
       const fileId = id;
       const test = isCheck ? `src/checks/${fileId}.test.ts` : `src/rules/${id}/rule.test.ts`;
       await access(path.join(folder, test));
+      const testSource = await readFile(path.join(folder, test), "utf8");
+      if (directory.startsWith("oxlint-plugin-")) {
+        assert.match(testSource, /\bassertRuleReports\b/u, `${directory}/${id}: missing positive test case`);
+        assert.match(testSource, /\bassertRuleDoesNotReport\b/u, `${directory}/${id}: missing negative test case`);
+      }
+      if (directory.startsWith("agentlint-plugin-")) {
+        const ruleSource = await readFile(path.join(folder, `src/rules/${id}/rule.ts`), "utf8");
+        assert.match(ruleSource, /\bmustReport\s*:/u, `${directory}/${id}: missing mustReport fixture`);
+        assert.match(ruleSource, /\bmustStaySilent\s*:/u, `${directory}/${id}: missing mustStaySilent fixture`);
+      }
+      if (isCheck) {
+        assert.match(
+          testSource,
+          /toHaveLength\([1-9]\d*\)|\.severity\)|\.message\)/u,
+          `${directory}/${id}: missing finding assertion`,
+        );
+        assert.match(testSource, /toEqual\(\[\]\)|toHaveLength\(0\)/u, `${directory}/${id}: missing passing assertion`);
+      }
       inventory.push(`| \`${id}\` | ${description.replaceAll("|", "\\|").replaceAll(/\s+/g, " ")} |`);
     }
     if (attributions.size > 0)
@@ -110,5 +128,5 @@ for (const directory of (await readdir(path.join(root, "packages"))).toSorted())
   rows.push(`${directory}: ${entries.size || "configuration/CLI"}`);
 }
 console.log(
-  `Validated ${rows.length} packages, ${ruleCount} rules, ${checkCount} checks, export artifacts, tests, and license metadata.`,
+  `Validated ${rows.length} packages, ${ruleCount} rules, ${checkCount} checks, positive/negative contracts, export artifacts, and license metadata.`,
 );

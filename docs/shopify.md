@@ -16,7 +16,7 @@ Start with the app's actual distribution, deployment, surfaces, component versio
 | Admin, carrier, fulfillment, and storefront performance                                           | Explicit performance evaluators in the conformance package                   | Supplied measurements meet the selected thresholds and input requirements.                   |
 | App-wide applicability and missing evidence                                                       | [Shopify review skill](../skills/shopify-review/SKILL.md) and review planner | The review has an explicit scope and pending work; no acceptance is inferred.                |
 
-The agentlint plugins use the migrated draft contract and remain private. Follow their [current package instructions](../packages/agentlint-plugin-shopify-app/README.md) and [migration contract](reviews/agentlint-current-contract.md); the local and public agentlint archives share a version number but expose incompatible APIs. The Oxlint and conformance packages have separate public-registry consumer validation.
+The agentlint plugins use the migrated draft contract and remain private. Follow their [current package instructions](../packages/agentlint-plugin-shopify-app/README.md) and [contract](agentlint-contract.md); the local and public agentlint archives share a version number but expose incompatible APIs. The Oxlint and conformance packages have separate public-registry consumer validation.
 
 ## Adopt incrementally
 
@@ -56,6 +56,4 @@ The [general App Store best practices](https://shopify.dev/docs/apps/launch/shop
 
 Visual contrast, keyboard behavior, readable copy, permissions necessity, billing and consent, privacy processing, category-specific workflows, merchant metrics, and submission evidence need app-specific observations. Inventory completeness and local green tests cannot grant App Store approval or Built for Shopify status. Shopify's review and deployment systems remain authoritative.
 
-The implementation is independently authored. Greppable `@attribution` comments and package README credits identify adopted concepts. Official documentation is linked and hashed, with no copied documentation corpus shipped. Research details are recorded for [components](reviews/2026-09-05-shopify-ast-research.md), [conformance](reviews/2026-09-05-shopify-conformance-research.md), and [contextual review](reviews/2026-09-05-shopify-review-research.md).
-
-The [executed evidence record](reviews/2026-09-06-shopify-evidence.md) identifies the tested environment, source coverage, independent regressions, packed-consumer checks, and remaining app-owned evidence.
+The implementation is independently authored. Greppable `@attribution` comments and package README credits identify adopted concepts. Official documentation is linked and hashed in the governed source manifest, with no copied documentation corpus shipped. Deterministic requirements live in `policy/shopify-requirements.json`; app-owned behavior still requires browser/runtime evidence.
