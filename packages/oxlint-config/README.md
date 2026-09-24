@@ -185,17 +185,6 @@ Appends the plugin to `jsPlugins`, sets `tanstackQueryRules` to `error`.
 
 `options.companionPlugins`: `{ specifier, rules }[]`. Specifier appended to `jsPlugins` after the official plugin; rules merge after the official rules.
 
-```ts
-withTanstackQueryLayer(config, {
-  companionPlugins: [
-    {
-      specifier: "@aurelienbbn/oxlint-plugin-tanstack-query",
-      rules: { "tanstack-query/no-query-cache-mutation": "error" },
-    },
-  ],
-});
-```
-
 </details>
 
 <details>

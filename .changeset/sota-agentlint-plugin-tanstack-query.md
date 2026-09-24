@@ -1,5 +1,0 @@
----
-"@aurelienbbn/agentlint-plugin-tanstack-query": minor
----
-
-Add two TanStack Query review rules and widen `query-state-coverage`. New: imperative-query-fetching (a literal `enabled: false` in query options, or `refetch()` called from an effect — put the inputs in the queryKey and derive `enabled`/`skipToken`; in `strictPreset`) and query-freshness-intent (`refetchOn*: false`, `retry: false|0`, `gcTime: 0`, or a server-rendered `QueryClient` without `staleTime` — state the freshness window; opt-in, in no preset). `query-state-coverage` now also triggers on explicit type arguments (`useQuery<T>(`), `useQueries`, `useSuspenseQueries`, and member calls (`trpc.x.useQuery(`); suspense hooks are reviewed against their Suspense fallback and error boundary, lazy queries against `isLoading` rather than `isPending`, and the guidance adds stale-data-after-failed-refetch and `isPlaceholderData` checks. Standard revision and detector version move to 2, so earlier acceptances of this rule need re-review.
