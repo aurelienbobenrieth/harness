@@ -9,19 +9,17 @@ const types = (version: string) => ({
 const document = (file: string) =>
   `<html><head><script src="https://cdn.shopify.com/shopifycloud/${file}"></script></head></html>`;
 
-it.each(["polaris.js", "polaris-1.js", "polaris-1.1.js", "polaris-1.1-rc.js"])(
-  "accepts the 1.x channel %s with 1.x types",
-  async (file) => {
-    const root = await createFixture({ ...types("1.1.0"), "index.html": document(file) });
-    expect(await polarisCdnTrack.run({ root })).toEqual([]);
-  },
-);
+it.each(["polaris.js", "polaris-1.js", "polaris-1.1.js"])("accepts the 1.x channel %s with 1.x types", async (file) => {
+  const root = await createFixture({ ...types("1.1.0"), "index.html": document(file) });
+  expect(await polarisCdnTrack.run({ root })).toEqual([]);
+});
 
 it.each([
-  ["polaris.js", "2.0.0-rc.0", 1, 2],
-  ["polaris-1.js", "2.0.0", 1, 2],
-  ["polaris-2.js", "1.1.0", 2, 1],
-])("reports %s loaded against @shopify/polaris-types %s", async (file, version, cdnMajor, typesMajor) => {
+  ["polaris.js", "2.0.0", 1, "polaris-2.js"],
+  ["polaris-1.js", "2.0.0", 1, "polaris-2.js"],
+  ["polaris-2.js", "1.1.0", 2, "polaris-1.js"],
+  ["polaris-1.js", "2.0.0-rc.0", 1, "polaris-2.0-rc.js"],
+])("reports %s loaded against @shopify/polaris-types %s", async (file, version, cdnMajor, expectedScript) => {
   const root = await createFixture({ ...types(version), "index.html": document(file) });
   expect(await polarisCdnTrack.run({ root })).toEqual([
     expect.objectContaining({
@@ -30,7 +28,7 @@ it.each([
       message: expect.stringContaining(`Loads Polaris ${cdnMajor}.x from ${file}`),
     }),
   ]);
-  expect((await polarisCdnTrack.run({ root }))[0]?.message).toContain(`load polaris-${typesMajor}.js`);
+  expect((await polarisCdnTrack.run({ root }))[0]?.message).toContain(`load ${expectedScript} or install`);
 });
 
 it("accepts a matching pinned major in a JSX root layout", async () => {
@@ -75,4 +73,18 @@ it("checks only the explicitly selected documents", async () => {
   });
   expect(await polarisCdnTrack.run({ root })).toHaveLength(1);
   expect(await polarisCdnTrack.run({ root, documentEntries: ["index.html"] })).toEqual([]);
+});
+
+it.each([
+  ["polaris-1.1-rc.js", "1.1.0"],
+  ["polaris-2.0-rc.js", "2.0.0-rc.0"],
+])("warns, without an error, on the release candidate %s with matching types %s", async (file, version) => {
+  const root = await createFixture({ ...types(version), "index.html": document(file) });
+  expect(await polarisCdnTrack.run({ root })).toEqual([
+    expect.objectContaining({
+      severity: "warning",
+      path: expect.stringContaining("index.html"),
+      message: expect.stringContaining(`release candidate ${file}`),
+    }),
+  ]);
 });

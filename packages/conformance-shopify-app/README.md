@@ -97,11 +97,12 @@ Static JSX/HTML inspection cannot establish generated markup, script execution, 
 
 Each document from the `app-bridge-script` discovery (or `documentEntries`) that loads `https://cdn.shopify.com/shopifycloud/polaris[-N[.M]][-rc].js` must load the major of the `@shopify/polaris-types` installed at the project root: Shopify [versions both in lockstep](https://shopify.dev/changelog/the-polaris-cdn-is-adopting-semantic-versioning). `polaris.js` never changes major on its own and reads as `1` ([served 1.1 on 2026-09-22](https://shopify.dev/changelog/polaris-cdn-1-1-is-now-stable)).
 
-| Situation                                       | Result |
-| ----------------------------------------------- | ------ |
-| CDN major ≠ installed types major               | ❌     |
-| types declared in `package.json`, not installed | ⚠️     |
-| no CDN script, or no types                      | silent |
+| Situation                                       | Result                                          |
+| ----------------------------------------------- | ----------------------------------------------- |
+| CDN major ≠ installed types major               | ❌ (fix names `polaris-N.M-rc.js` for RC types) |
+| any `-rc` channel, e.g. `polaris-2.0-rc.js`     | ⚠️ release candidates can change before stable  |
+| types declared in `package.json`, not installed | ⚠️                                              |
+| no CDN script, or no types                      | silent                                          |
 
 Scripts a provider injects at run time (for example an `AppProvider`) are invisible: pin the major in the served document or compare by hand.
 
@@ -505,6 +506,7 @@ Generated from package exports by `pnpm catalog`. Rule-specific options and limi
 
 ### Credited concepts
 
+- https://community.shopify.dev/t/polaris-2-0-release-candidate/37957 (inspiration: the 2.0 RC channel name; independently implemented)
 - https://github.com/Shopify/cli/blob/614187e5204ca6c4bc3c8418b8c6fcb224ab5dae/packages/app/src/cli/models/app/loader.ts (MIT concept; independently implemented)
 - https://shopify.dev/changelog/built-for-shopify-requirements-for-returns-and-exchanges-and-subscription-apps (inspiration; independently implemented)
 - https://shopify.dev/changelog/deprecating-the-usebuyerjourneyintercept-api-on-checkout-ui-extensions (inspiration; independently implemented)

@@ -16,6 +16,7 @@ description: Review a Shopify app against App Store, Built for Shopify, Polaris,
 ## Evidence owner
 
 - Native HTML, Polaris → scoped lint; reuse upstream a11y rules, no prose regexes or copy autofix.
+- App Home on an older Polaris major, or on Polaris React → flag the restyle migration and check its current BFS deadline; 2.0 changes styles, not the component API.
 - Manifest, extensions, built output → conformance, explicit deployment. Found script/scope/URL ≠ runtime behavior.
 - Copy, UX → scoped agentlint or direct review; findings aren't approval.
 - Headers, auth, webhooks, navigation, entitlements, keyboard, layout → app tests. Webhook controls execute app behavior: isolated handlers, fixtures.

@@ -9,6 +9,8 @@
  + selected design, security, performance, Flow, Events, and listing guidance
 ```
 
+**Polaris 2.0 is a restyle, not an API change.** It brings the refreshed admin's color, type, spacing, and icons; on 2026-09-24 the `@shopify/polaris-types` 2.0.0-rc.0 manifest listed the same components, attributes, events, and slots as 1.1. Adoption is explicit: switch the script to `polaris-2.0-rc.js` to test, then `polaris-2.js` once stable, with matching types (`polaris-cdn-track` enforces the pair and warns on RC channels). Shopify reports BFS apps must adopt the new design by 2027-05-01 ([announcement](https://community.shopify.dev/t/polaris-2-0-release-candidate/37957); not yet in the BFS requirements page). Fixed or sticky bottom UI uses `--shopify-safe-area-inset-bottom`. Known RC issue: the contextual save bar renders behind an open `s-app-window`.
+
 [Source ledger](../policy/shopify-requirements.json): URLs, review dates, hashes, applicability, limits. Review began 2026-09-05; sources added later carry their own date.
 
 > [!WARNING]

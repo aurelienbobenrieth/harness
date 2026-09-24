@@ -14,6 +14,13 @@ const polarisScript =
  * (https://shopify.dev/changelog/polaris-cdn-1-1-is-now-stable).
  */
 const legacyChannelMajor = 1;
+const prereleaseTypes = /^(\d+)\.(\d+)\.\d+-rc\b/u;
+
+/** The script a types version pairs with: the matching release-candidate channel for prerelease types, else the major channel. */
+function matchingScript(version: string, major: number): string {
+  const candidate = prereleaseTypes.exec(version);
+  return candidate === null ? `polaris-${major}.js` : `polaris-${candidate[1]}.${candidate[2]}-rc.js`;
+}
 
 function parseJson(text: string | undefined): Record<string, unknown> | undefined {
   if (text === undefined) return undefined;
@@ -33,11 +40,13 @@ function declaresTypes(manifest: Record<string, unknown> | undefined): boolean {
 
 /**
  * Compares the Polaris CDN major each App Home document loads with the major of the installed
- * `@shopify/polaris-types`, which Shopify versions in lockstep with the CDN. Documents that load no Polaris
- * script, including templates whose provider injects it at run time, stay silent.
+ * `@shopify/polaris-types`, which Shopify versions in lockstep with the CDN, and warns on release-candidate
+ * channels. Documents that load no Polaris script, including templates whose provider injects it at run time,
+ * stay silent.
  *
  * @attribution https://shopify.dev/changelog/the-polaris-cdn-is-adopting-semantic-versioning (inspiration; independently implemented)
  * @attribution https://shopify.dev/changelog/polaris-cdn-1-1-is-now-stable (inspiration; independently implemented)
+ * @attribution https://community.shopify.dev/t/polaris-2-0-release-candidate/37957 (inspiration: the 2.0 RC channel name; independently implemented)
  */
 export const polarisCdnTrack: ConformanceCheck = {
   id,
@@ -72,13 +81,21 @@ export const polarisCdnTrack: ConformanceCheck = {
     }
     const typesMajor = Number(/^(\d+)\./u.exec(version)?.[1]);
     for (const script of scripts) {
+      if (script.channel.endsWith("-rc.js"))
+        findings.push({
+          check: id,
+          docs,
+          path: script.file,
+          severity: "warning",
+          message: `Loads the release candidate ${script.channel}, which can change before its stable release. Test with it, then ship polaris-${script.major}.js once that major is stable.`,
+        });
       if (script.major === typesMajor) continue;
       findings.push({
         check: id,
         docs,
         path: script.file,
         severity: "error",
-        message: `Loads Polaris ${script.major}.x from ${script.channel} while ${typesPackage} ${version} describes major ${typesMajor}. Types and runtime components must share a major: load polaris-${typesMajor}.js or install ${typesPackage}@${script.major}.`,
+        message: `Loads Polaris ${script.major}.x from ${script.channel} while ${typesPackage} ${version} describes major ${typesMajor}. Types and runtime components must share a major: load ${matchingScript(version, typesMajor)} or install ${typesPackage}@${script.major}.`,
       });
     }
     return findings;
