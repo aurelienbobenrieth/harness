@@ -29,7 +29,7 @@ Honor the requested workflow and existing authorization. Routine inspection, rev
 
 Before an operation that would discard work or rewrite shared history, identify the exact refs and files affected and whether that effect is already authorized. Preserve recoverable state where practical. Request only missing authorization, with the concrete loss or shared-history effect explained. A command's name alone does not determine whether it loses work: unstaging a reviewed task hunk differs from discarding a worktree.
 
-When an authorized force update is necessary, use a lease bound to the remote revision inspected and stop if that revision changed. Do not repeatedly fetch and retry until somebody else's update is overwritten. Respect repository restrictions on protected branches.
+When an authorized force update is necessary, use a lease bound to the remote revision inspected and stop if that revision changed. Do not repeatedly fetch and retry until somebody else's update is overwritten. Respect repository restrictions on protected branches. Renaming a branch that heads an open PR closes that PR on GitHub; the head can't be moved, so a rename means a new PR.
 
 ## Pull requests
 
