@@ -14,14 +14,14 @@ flowchart LR
 
 ## Every package is a candidate or a draft
 
-**[policy/release.json](../policy/release.json) classifies all 15 packages; an unlisted addition or removal fails `pnpm release:check`.**
+**[policy/release.json](../policy/release.json) classifies all 18 packages; an unlisted addition or removal fails `pnpm release:check`.**
 
 | Class        | Count | Meaning                                                           | Boundary                                                  |
 | ------------ | ----: | ----------------------------------------------------------------- | --------------------------------------------------------- |
 | ✅ Candidate |     9 | Documented contracts + consumer checks. **Not stable readiness.** | Published by the release workflow.                        |
-| 🧪 Draft     |     6 | Preview with a material adoption limitation.                      | `private: true` required; selecting it for release fails. |
+| 🧪 Draft     |     9 | Preview with a material adoption limitation.                      | `private: true` required; selecting it for release fails. |
 
-Drafts: 5 agentlint plugins ([unreleased local API](compatibility.md#private-draft-boundary)) and `oxlint-plugin-tanstack-query` (rules untested against consumers). They pack and test locally; **candidates' runtime, optional, and peer dependencies cannot require one.** Parked outside the repo: 4 Shopify theme packages, both Lit plugins, `oio`.
+Drafts: 5 agentlint plugins ([unreleased local API](compatibility.md#private-draft-boundary)) `oxlint-plugin-tanstack-query`, both Cloudflare packages, and `oxlint-plugin-drizzle` (rules untested against real consumers). They pack and test locally; **candidates' runtime, optional, and peer dependencies cannot require one.** Parked outside the repo: 4 Shopify theme packages, both Lit plugins, `oio`.
 
 <details>
 <summary>How Changesets treats private drafts</summary>

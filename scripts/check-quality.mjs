@@ -7,7 +7,9 @@ const report = await runCoreConformanceReport({
   deadExports: { requireKnipConfig: true },
   duplication: {
     requireTool: true,
-    maxClones: 28,
+    // Each oxlint plugin keeps its own AST helpers so it publishes without a runtime helper dependency;
+    // those per-package copies are the reviewed baseline. Anything above it is new duplication.
+    maxClones: 37,
     minLines: 8,
     minTokens: 60,
     ignorePatterns: [

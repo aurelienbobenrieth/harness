@@ -4,7 +4,7 @@
 
 ```text
 candidate  █████████   9  public release candidates, tested as registry consumers
-draft      ██████      6  private: 5 agentlint plugins + oxlint-plugin-tanstack-query
+draft      █████████   9  private: 5 agentlint plugins, tanstack-query, cloudflare ×2, drizzle
 parked     ███████     7  outside this repo: 4 Shopify theme pkgs, 2 Lit plugins, oio
 ```
 

@@ -14,11 +14,11 @@ flowchart LR
 > [!NOTE]
 > **Not on npm yet.** The 9 candidates publish through one manual, approval-gated workflow. See [release](docs/release-readiness.md).
 
-## 15 packages, 3 maturity levels
+## 18 packages, 3 maturity levels
 
 ```text
 candidate  █████████        9  release candidates, consumer-tested
-draft      ██████           6  private: 5 agentlint plugins + oxlint-plugin-tanstack-query
+draft      █████████        9  private: 5 agentlint plugins, tanstack-query, cloudflare ×2, drizzle
 parked     ███████          7  outside this repo: 4 Shopify theme pkgs, 2 Lit plugins, oio
 ```
 
@@ -27,18 +27,21 @@ parked     ███████          7  outside this repo: 4 Shopify theme 
 | `oxlint-config`                   | preset                                       | config | ✅       |
 | `oxfmt-config`                    | preset                                       | config | ✅       |
 | `oxlint-plugin-core`              | rules · TypeScript                           |     15 | ✅       |
-| `oxlint-plugin-effect`            | rules · Effect                               |     32 | ✅       |
+| `oxlint-plugin-effect`            | rules · Effect                               |     34 | ✅       |
 | `oxlint-plugin-shopify-app`       | rules · Shopify apps & extensions            |     27 | ✅       |
 | `oxlint-plugin-xstate`            | rules · XState                               |     11 | ✅       |
 | `oxlint-plugin-type-evidence`     | rules · TS boundary & assertion contracts    |     10 | ✅       |
 | `oxlint-plugin-tanstack-query`    | rules · gaps the official plugin misses      |      8 | 🧪 draft |
+| `oxlint-plugin-cloudflare`        | rules · Workers, Durable Objects, Workflows  |      7 | 🧪 draft |
+| `oxlint-plugin-drizzle`           | rules · Drizzle schemas                      |      1 | 🧪 draft |
 | `agentlint-plugin-core`           | agent reviews · TypeScript                   |     24 | 🧪 draft |
 | `agentlint-plugin-effect`         | agent reviews · Effect                       |      3 | 🧪 draft |
 | `agentlint-plugin-tanstack-query` | agent reviews · TanStack Query               |      4 | 🧪 draft |
-| `agentlint-plugin-shopify-app`    | agent reviews · Shopify                      |     14 | 🧪 draft |
+| `agentlint-plugin-shopify-app`    | agent reviews · Shopify                      |     15 | 🧪 draft |
 | `agentlint-plugin-xstate`         | agent reviews · XState                       |      5 | 🧪 draft |
 | `conformance-core`                | checks · any repo, Vitest adapter            |      5 | ✅       |
-| `conformance-shopify-app`         | checks · Shopify app structure, Vitest suite |     10 | ✅       |
+| `conformance-shopify-app`         | checks · Shopify app structure, Vitest suite |     13 | ✅       |
+| `conformance-cloudflare`          | checks · Wrangler config, Hyperdrive         |      6 | 🧪 draft |
 
 All names are scoped `@aurelienbbn/…`. Each package README ends with its generated rule/check inventory. Why drafts stay private: [compatibility](docs/compatibility.md).
 
@@ -64,7 +67,7 @@ conformance-*         structural checks: manifests, layout, build output
 | `pnpm test:mutation`                           | mutation-tests the conformance-core kernel                                           |
 | `pnpm security:check`                          | audits every dependency class; needs network, so separate in CI                      |
 | `pnpm test:compatibility baseline` / `current` | installs the 9 packed candidates outside the workspace against public-registry tools |
-| `pnpm test:package`                            | exercises all 15 packed packages, drafts included, via the local agentlint archive   |
+| `pnpm test:package`                            | exercises all 18 packed packages, drafts included, via the local agentlint archive   |
 | `pnpm release:plan`                            | versions, draft exclusions, blockers. Changes nothing; publishing is CI-only         |
 | `pnpm catalog`                                 | regenerates rule/check inventories and credits (after build)                         |
 

@@ -15,40 +15,45 @@ flowchart LR
   U -- yes --> R
 ```
 
-**`pnpm catalog:check` enforces two-sided fixtures on all 153 rules and 15 checks.** A rule missing from its README's generated inventory can't ship.
+**`pnpm catalog:check` enforces two-sided fixtures on all 164 rules and 24 checks.** A rule missing from its README's generated inventory can't ship.
 
 ```text
- oxlint-plugin-effect            ████████████████████████████████  32
- oxlint-plugin-shopify-app       ███████████████████████████       27
- agentlint-plugin-core           ████████████████████████          24
- oxlint-plugin-core              ███████████████                   15
- agentlint-plugin-shopify-app    ██████████████                    14
- oxlint-plugin-xstate            ███████████                       11
- oxlint-plugin-type-evidence     ██████████                        10
- oxlint-plugin-tanstack-query    ████████                           8
- agentlint-plugin-xstate         █████                              5
- agentlint-plugin-tanstack-query ████                               4
- agentlint-plugin-effect         ███                                3
-                                                        rules  = 153
- conformance-shopify-app         ██████████                        10
- conformance-core                █████                              5
-                                                        checks =  15
+ oxlint-plugin-effect            ██████████████████████████████████ 34
+ oxlint-plugin-shopify-app       ███████████████████████████        27
+ agentlint-plugin-core           ████████████████████████           24
+ oxlint-plugin-core              ███████████████                    15
+ agentlint-plugin-shopify-app    ███████████████                    15
+ oxlint-plugin-xstate            ███████████                        11
+ oxlint-plugin-type-evidence     ██████████                         10
+ oxlint-plugin-tanstack-query    ████████                            8
+ oxlint-plugin-cloudflare        ███████                             7
+ agentlint-plugin-xstate         █████                               5
+ agentlint-plugin-tanstack-query ████                                4
+ agentlint-plugin-effect         ███                                 3
+ oxlint-plugin-drizzle           █                                   1
+                                                        rules  = 164
+ conformance-shopify-app         █████████████                      13
+ conformance-cloudflare          ██████                              6
+ conformance-core                █████                               5
+                                                        checks =  24
 ```
 
 ## Upstream owns the engine, Harness owns the delta
 
-| Upstream owner                                                                    | Harness delta                                                                                                  |
-| --------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
-| Oxlint built-ins + TypeScript                                                     | Conventions the strict preset can't express; the preset itself.                                                |
-| Oxlint `import/no-cycle`, `import/no-self-import`, `eslint/no-restricted-imports` | `withImportGraphLayer` (cycles), `layerDirectionOverride` (real direction). **No second graph engine.**        |
-| Knip                                                                              | `dead-exports` runs it, validates the report. **No reachability analysis.**                                    |
-| jscpd                                                                             | `duplication-budget`: clone budget + evidence failure. **No clone detection.**                                 |
-| TypeScript resolved config                                                        | `tsconfig-strictness`: resolved flags, explicit waivers.                                                       |
-| `@effect/tsgo`                                                                    | Only syntax and org policy it doesn't own.                                                                     |
-| `@tanstack/eslint-plugin-query`                                                   | Official rules; `query-fn-returns-value` is a syntactic fallback (typed rule can't run via Oxlint JS plugins). |
-| XState runtime/types + editor tooling                                             | Lifecycle, persistence, state-model policies with no CI lint equivalent.                                       |
-| Shopify schemas, CLI, types, guidance                                             | Cross-file contracts, finite AST checks. **No browser, copy, accessibility, or visual claims.**                |
-| Agentlint detector contract                                                       | Review prompts; private until a compatible engine ships.                                                       |
+| Upstream owner                                                                               | Harness delta                                                                                                                                                                                                                                                                                                                           |
+| -------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Oxlint built-ins + TypeScript                                                                | Conventions the strict preset can't express; the preset itself.                                                                                                                                                                                                                                                                         |
+| Oxlint `import/no-cycle`, `import/no-self-import`, `eslint/no-restricted-imports`            | `withImportGraphLayer` (cycles), `layerDirectionOverride` (real direction). **No second graph engine.**                                                                                                                                                                                                                                 |
+| Knip                                                                                         | `dead-exports` runs it, validates the report. **No reachability analysis.**                                                                                                                                                                                                                                                             |
+| jscpd                                                                                        | `duplication-budget`: clone budget + evidence failure. **No clone detection.**                                                                                                                                                                                                                                                          |
+| TypeScript resolved config                                                                   | `tsconfig-strictness`: resolved flags, explicit waivers.                                                                                                                                                                                                                                                                                |
+| `@effect/tsgo`                                                                               | Only syntax and org policy it doesn't own; `withEffectTsgoLayer` wires and settles it.                                                                                                                                                                                                                                                  |
+| `@tanstack/eslint-plugin-query`                                                              | Official rules; `query-fn-returns-value` is a syntactic fallback (typed rule can't run via Oxlint JS plugins).                                                                                                                                                                                                                          |
+| XState runtime/types + editor tooling                                                        | Lifecycle, persistence, state-model policies with no CI lint equivalent.                                                                                                                                                                                                                                                                |
+| Shopify schemas, CLI, types, guidance                                                        | Cross-file contracts, finite AST checks. **No browser, copy, accessibility, or visual claims.**                                                                                                                                                                                                                                         |
+| Wrangler (`types --check`, config validation, deploy), workerd, typed `no-floating-promises` | Runtime traps that compile and deploy: module-scope clients and state, detached `ctx` methods, Durable Object init, Workflow determinism, SQL binding, `mysql2` `disableEval`, timing-safe secret compare; config contracts for dates, logs, secrets, environments, Hyperdrive. **No schema, binding-existence, or `Env`-type checks.** |
+| drizzle-kit, eslint-plugin-drizzle, Postgres                                                 | `fk-column-indexed` only (Postgres; InnoDB indexes foreign keys itself). **No WHERE-less update/delete rules.**                                                                                                                                                                                                                         |
+| Agentlint detector contract                                                                  | Review prompts; private until a compatible engine ships.                                                                                                                                                                                                                                                                                |
 
 <details>
 <summary>Delta details</summary>
@@ -61,14 +66,29 @@ flowchart LR
 
 </details>
 
-## 13 Effect rules cut: typed diagnostics own them
+## 14 Effect rules cut: 8 owned by tsgo and the strict preset, 3 need the layer, 3 have no exact owner
 
-<details>
-<summary>The 13 removed rules</summary>
+`@effect/tsgo` 0.45.0's `recommended` oxlint preset alone doesn't cover every removal. `withEffectTsgoLayer` (`@aurelienbbn/oxlint-config`) turns on the four off-by-default diagnostics below.
 
-`matching-identifier`, `no-ambient-nondeterminism`, `no-cascading-layer-provide`, `no-effect-type-assertion`, `no-floating-effect`, `no-nested-layer-provide`, `no-plain-yield`, `no-raw-json-parse`, `no-raw-json-stringify`, `no-unsafe-error-channel`, `prefer-effect-fn`, `require-return-on-failure-yield`, `use-root-imports`
+| Removed rule                                            | tsgo owner                                                                                                                            | Wired by                         |
+| ------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------- |
+| `no-floating-effect`                                    | `floating-effect`                                                                                                                     | ✅ `recommended`                 |
+| `no-plain-yield`                                        | `missing-star-in-yield-effect-gen`                                                                                                    | ✅ `recommended`                 |
+| `require-return-on-failure-yield`                       | `missing-return-yield-star`                                                                                                           | ✅ `recommended`                 |
+| `prefer-effect-fn`                                      | `effect-fn-opportunity`                                                                                                               | ✅ `recommended`                 |
+| `no-raw-json-parse`, `no-raw-json-stringify`            | `prefer-schema-over-json`                                                                                                             | ✅ `recommended`                 |
+| `no-ambient-nondeterminism`                             | `global-date*`, `global-random*`, `crypto-random-uuid*`                                                                               | ✅ `recommended`                 |
+| `no-effect-type-assertion`                              | `unsafe-effect-type-assertion`                                                                                                        | ⚠️ `withEffectTsgoLayer` only    |
+| `no-unsafe-error-channel`                               | `any-unknown-in-error-context`                                                                                                        | ⚠️ `withEffectTsgoLayer` only    |
+| `matching-identifier`                                   | `deterministic-keys` (+ `class-self-mismatch`, in `recommended`)                                                                      | ⚠️ `withEffectTsgoLayer` only    |
+| `no-nested-layer-provide`, `no-cascading-layer-provide` | none exact: `multiple-effect-provide` and `strict-effect-provide` target `Effect.provide`, not `Layer.provide` nesting                | ❌ uncovered                     |
+| `use-root-imports`                                      | none: tsgo has no import-path diagnostic                                                                                              | ❌ uncovered                     |
+| `prefer-schema-decode-unknown`                          | `prefer-schema-over-json` for `JSON.parse`; Effect 4 typed decoders reject `unknown` input; `typescript/no-explicit-any` for `as any` | ✅ `recommended` + strict preset |
 
-</details>
+`no-unsafe-effect-body` stays, trimmed to its `throw` check: `try-catch-in-effect-gen` and `global-timers-in-effect` (both `recommended`) own the rest. Every remaining overlap with a Harness rule is settled in `withEffectTsgoLayer`'s table (`packages/oxlint-config/README.md`).
+
+> [!WARNING]
+> **The three uncovered removals are open gaps, not ownership.** Re-ship them or request `Layer.provide` coverage upstream in Effect-TS/tsgo.
 
 > [!NOTE]
 > Ownership audit, not usage evidence. Post-adoption false-positive, suppression, and finding rates decide which opinionated rules survive.
