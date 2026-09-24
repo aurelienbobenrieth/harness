@@ -76,6 +76,7 @@ CI runs Linux + Windows on Node 22/24 plus the declared runtime floors. A config
 
 | If you want…                        | Go to                                                                                        |
 | ----------------------------------- | -------------------------------------------------------------------------------------------- |
+| to add Harness to a project         | ask your agent to use the [install-harness](skills/install-harness/SKILL.md) skill           |
 | the philosophy in one page          | [operating model](docs/operating-model.md)                                                   |
 | what Harness owns vs upstream tools | [rule ownership](docs/rule-ownership.md)                                                     |
 | Shopify App Store / BFS coverage    | [Shopify guide](docs/shopify.md)                                                             |
