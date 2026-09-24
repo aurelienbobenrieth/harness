@@ -43,7 +43,7 @@ async function lintCode(ruleName: string, code: string, options: LintCodeOptions
   try {
     const { stdout, stderr } = await execFileAsync(
       process.execPath,
-      [oxlintBin, "--config", configPath, sourcePath, "--format", "json"],
+      [oxlintBin, "--threads=1", "--config", configPath, sourcePath, "--format", "json"],
       { cwd: packageRoot },
     );
     return { stdout, stderr, exitCode: 0 };
@@ -91,6 +91,7 @@ function escapeRegExp(value: string): string {
 
 function assertHealthyResult(result: LintResult): void {
   assert.equal(result.stderr, "", result.stderr);
+  assert.notEqual(result.stdout.trim(), "", `oxlint printed nothing (exit ${result.exitCode}): ${result.stderr}`);
   const output = JSON.parse(result.stdout) as {
     diagnostics: { code?: string; message: string; labels?: unknown[] }[];
   };

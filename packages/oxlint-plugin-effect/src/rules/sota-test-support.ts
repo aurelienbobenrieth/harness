@@ -25,7 +25,7 @@ export async function fixCode(ruleName: string, code: string, mode: FixMode = "f
   try {
     await execFileAsync(
       process.execPath,
-      [oxlintBin, "--config", configPath, mode === "fix" ? "--fix" : "--fix-suggestions", sourcePath],
+      [oxlintBin, "--threads=1", "--config", configPath, mode === "fix" ? "--fix" : "--fix-suggestions", sourcePath],
       { cwd: packageRoot },
     ).catch((error: unknown) => {
       if (typeof error === "object" && error !== null && "stdout" in error) return;
