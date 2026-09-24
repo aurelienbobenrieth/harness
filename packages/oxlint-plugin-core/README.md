@@ -1,55 +1,266 @@
 # @aurelienbbn/oxlint-plugin-core
 
-Custom oxlint rules for TypeScript projects.
+**15 oxlint rules for any TypeScript codebase: swallowed errors, flaky or hollow tests, test code in production, anonymous public contracts.**
 
-## Rules
+```sh
+pnpm add -D @aurelienbbn/oxlint-plugin-core oxlint   # oxlint >=1.82.0 <2.0.0
+```
 
-See the [registered contract inventory](#registered-contract-inventory) for current triggers.
+```json
+{
+  "jsPlugins": ["@aurelienbbn/oxlint-plugin-core"],
+  "rules": {
+    "core/no-discarded-caught-error": "error",
+    "core/no-weak-test-assertions": ["error", { "assertionHelpers": ["assertValid"] }],
+    "core/no-test-sleeps": "error"
+  }
+}
+```
 
-### Failure handling and test timing
+**No preset, no autofix.** Enable each rule by name; every fix needs a decision a tool can't make.
 
-- `core/no-discarded-caught-error` fires on a `catch` clause, an inline `.catch(fn)` callback, or an inline second argument of `.then` that never throws (nor returns `Promise.reject(...)`) and whose error binding is absent or only reaches `console.*` / `logger.*` / `log.*` calls. Passing the error to any other function, returning it, or testing it counts as handling. Escape hatch: a `REASON: <at least three words>` comment inside the handler (for promise callbacks also directly above the statement). Options: `logOnlyCallees`, `reasonMarker`, `includeTestFiles` (test files are exempt by default). A literally empty `catch {}` is left to `eslint/no-empty`. Capitalized receivers such as `Effect.catch(...)` are namespaces and are skipped; schema builders exposing an instance `.catch(fn)` need a reason or a disable comment.
-- `core/no-error-message-matching` fires when `.message` of an error-shaped value (a catch binding, a rejection-handler parameter, or a name like `e`, `err`, `error`, `cause`, `reason`, `ex`, `exception`, `*Error`) is compared with a string literal, fed to `includes` / `startsWith` / `endsWith` / `match` / `search` / `indexOf` / `RegExp#test` (also after `toLowerCase()`-style calls), or used as a `switch` discriminant. `String(error)`, `error.toString()` and `` `${error}` `` on a caught binding count too. Test files are exempt.
-- `core/no-test-sleeps` fires in `*.test.*` / `*.spec.*` files on `new Promise` executors whose `setTimeout` callback only resolves the promise, on importing `setTimeout` or `scheduler` from `node:timers/promises`, and on awaited `sleep` / `delay` / `wait` / `pause` calls with a numeric literal. Files that call `vi.useFakeTimers()` are skipped for the first and last shape because their timers are not wall-clock.
-- `core/no-weak-test-assertions` also treats as weak: an `expect` whose subject and expected values are all literals (`expect(true).toBe(true)`), an `expect` comparing an identifier or member path with itself (`expect(result).toEqual(result)`), and an `expect` on the direct result of a local `vi.fn()` binding (`expect(fn()).toBe(5)` after `mockReturnValue(5)`). A literal subject compared with a computed value (`expect(3).toBe(add(1, 2))`) stays strong.
-- `core/no-dead-comments` also reports change narration anchored at the start of a comment: `NEW:` / `Updated:` / `Fixed:`-style labels, `Previously this…` / `Formerly:` / `Was:`, `Added … as requested` / `for the review`, and, in line comments only, `Updated to…` / `Changed from…` / `Now returns…` / `No longer supports…`. Docblocks describing behavior ("Updated when the cache expires") and sentences that merely start with a similar word ("New customers receive…", "Previously seen cursors…") stay silent.
+<details>
+<summary>Rules by job, options, and the decision each fix needs</summary>
 
-### Test quality
+| Job          | Rules                                                                                                                                                                              |
+| ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 🧯 errors    | `no-discarded-caught-error`, `no-error-message-matching`                                                                                                                           |
+| 🧪 tests     | `no-weak-test-assertions`, `no-test-sleeps`, `no-stubbed-subject`, `no-ambient-nondeterminism-in-tests`, `no-vitest-mocking`, `no-vitest-in-source`, `no-test-logic-in-production` |
+| 📜 contracts | `no-exported-anonymous-object-return`, `no-multi-positional-parameters`, `no-mutable-exported-state`, `no-reexport-only-modules`, `no-let`                                         |
+| 💬 comments  | `no-dead-comments`                                                                                                                                                                 |
 
-- `core/no-weak-test-assertions` also treats as weak: a matcher whose arguments are all wildcards (`expect.anything()`, `expect.any(Object | Function | Array | String | Number | Boolean)`, `expect.objectContaining({})`, `expect.arrayContaining([])`), such as `toHaveBeenCalledWith(expect.any(Object))` or `toEqual(expect.anything())`; a bare `toHaveBeenCalled()` / `toBeCalled()`; `toBeInstanceOf(Object)`; and `expect(typeof x).toBe("<literal>")`. One concrete argument keeps the matcher strong: `toHaveBeenCalledWith(expect.any(String), 30)`, `toEqual({ id: expect.any(String), total: 30 })`, `toEqual(expect.any(Order))`. `.not.toHaveBeenCalled()` is left alone because "never called" is exact. A bare `toThrow()` is not counted here: `vitest/require-to-throw-message` already reports it, and `@aurelienbbn/oxlint-config` pins that rule for test files.
-- `core/no-stubbed-subject` fires in `<stem>.test.*` / `<stem>.spec.*` on `vi.spyOn(ns, "member")` when `ns` is a namespace or default import of the relative module with the same stem (`./cart`, `../cart.js`, `./cart/index` for `cart.test.ts`) and the spy receives canned behavior through `mockReturnValue`, `mockResolvedValue`, `mockRejectedValue` or `mockImplementation` (and their `Once` forms), chained or called on the spy's `const` binding. Pass-through spies, package imports and other modules stay silent.
-- `core/no-test-logic-in-production` fires outside test files, Vitest config and setup files, `/test-utils/` and `/testing/` (the paths `core/no-vitest-in-source` allows) on: comparing `process.env.NODE_ENV` or `import.meta.env.MODE` with `"test"`; reading `process.env.VITEST`, `process.env.VITEST_WORKER_ID`, `process.env.JEST_WORKER_ID` or `import.meta.vitest`; a value export named `__test__` / `__tests__` / `__testing__`, `_internal(s)`, `internals`, `testOnly*` or `*ForTest` / `*ForTests` / `*ForTesting`; and an export directly preceded by a comment such as "exported for testing" or "visible only for tests". Projects that use Vitest in-source testing turn the rule off for those files. Concept credit: "Test Logic in Production", G. Meszaros, _xUnit Test Patterns_.
-- `core/no-ambient-nondeterminism-in-tests` fires in test files on `toLocaleString` / `toLocaleDateString` / `toLocaleTimeString` without a locale, `localeCompare` without its second argument, `Intl.*Format` constructed without a locale, `Math.random()`, and on `new Date()` with no argument, `Date.now()` and `performance.now()` when the file never calls `vi.useFakeTimers` or `vi.setSystemTime`. Option `allowClock: true` waives the clock reads only. Shadowed `Date` / `Math` / `Intl` bindings stay silent. Concept credit: "Eradicating Non-Determinism in Tests" by Martin Fowler.
+| Rule                                 | Option                                       | Default                                 |
+| ------------------------------------ | -------------------------------------------- | --------------------------------------- |
+| `no-discarded-caught-error`          | `logOnlyCallees`                             | `["console", "logger", "log"]`          |
+|                                      | `reasonMarker`                               | `"REASON"`                              |
+|                                      | `includeTestFiles`                           | `false` (test files exempt)             |
+| `no-ambient-nondeterminism-in-tests` | `allowClock`                                 | `false`; `true` waives clock reads only |
+| `no-weak-test-assertions`            | `assertionHelpers`                           | `[]`                                    |
+| `no-vitest-mocking`                  | `forbidSpies`                                | `false` (`vi.fn`, `vi.spyOn` allowed)   |
+| `no-reexport-only-modules`           | `allow`                                      | `["index.ts"]`                          |
+| `no-multi-positional-parameters`     | `exemptFunctionNames`, `exemptFileBasenames` | `[]`, `[]`                              |
 
-The plugin ships no preset: every rule, these three included, is enabled by name in the consumer's `rules`.
+| Rule                                  | The decision its fix needs                                              |
+| ------------------------------------- | ----------------------------------------------------------------------- |
+| `no-ambient-nondeterminism-in-tests`  | the scenario's locale, frozen instant, or seed                          |
+| `no-dead-comments`                    | a bare TODO: track it or delete it                                      |
+| `no-discarded-caught-error`           | rethrow, branch on the error, or record a reason                        |
+| `no-error-message-matching`           | the stable discriminator (class, tag, code) depends on the error source |
+| `no-exported-anonymous-object-return` | the schema/type name and where it's exported                            |
+| `no-let`                              | restructure the value construction, not swap a keyword                  |
+| `no-multi-positional-parameters`      | update callers, pick property names                                     |
+| `no-mutable-exported-state`           | a factory, an immutable contract, or a dependency boundary              |
+| `no-reexport-only-modules`            | reroute every consumer to the owning module                             |
+| `no-stubbed-subject`                  | which collaborator to replace instead                                   |
+| `no-test-logic-in-production`         | an injected dependency or a public contract                             |
+| `no-test-sleeps`                      | a condition to poll or a fake-timer schedule                            |
+| `no-vitest-in-source`                 | the right test utility or dependency seam                               |
+| `no-vitest-mocking`                   | the dependency boundary and the fake                                    |
+| `no-weak-test-assertions`             | which observable outcome each test asserts                              |
 
-## Autofix
+</details>
 
-`core/no-ambient-nondeterminism-in-tests` is not autofixable because the right locale, frozen instant, or seed belongs to the scenario under test.
-`core/no-dead-comments` is not autofixable because a bare TODO needs a human decision between tracking it and deleting it.
-`core/no-discarded-caught-error` is not autofixable because choosing between rethrowing, branching on the error, and recording a reason is the decision the rule asks for.
-`core/no-error-message-matching` is not autofixable because the stable discriminator (error class, tag, or code) depends on the error source.
-`core/no-exported-anonymous-object-return` is not autofixable because naming a public contract requires choosing the schema/type name and export location.
-`core/no-let` is not autofixable because removing reassignment requires restructuring the value construction, not swapping a keyword.
-`core/no-multi-positional-parameters` is not autofixable because changing call signatures requires updating callers and choosing property names.
-`core/no-mutable-exported-state` is not autofixable because replacing shared mutable state requires choosing a factory, immutable contract, or dependency boundary.
-`core/no-reexport-only-modules` is not autofixable because rerouting imports to the owning modules requires updating every consumer.
-`core/no-stubbed-subject` is not autofixable because removing the stub means choosing which collaborator to replace instead.
-`core/no-test-logic-in-production` is not autofixable because the test-only branch or export has to be replaced by an injected dependency or a public contract.
-`core/no-test-sleeps` is not autofixable because the replacement is either a condition to poll or a fake-timer schedule, which only the test author knows.
-`core/no-vitest-in-source` is not autofixable because moving test-only APIs out of production source requires choosing the correct test utility or dependency seam.
-`core/no-vitest-mocking` is not autofixable because replacing mocks requires choosing the right dependency boundary and fake implementation.
-`core/no-weak-test-assertions` is not autofixable because pinning behavior requires deciding which observable outcome each test should assert.
+## 🧯 A caught error is handled or explained
 
-## Contract boundaries and migration
+```ts
+try {
+  await sync();
+} catch (error) {
+  console.error(error);
+  return [];
+} // ❌ only logged
+promise.catch(() => null); // ❌ discarded
+promise.catch(handleFailure); // ✅ handed to a function
+try {
+  access(path);
+  return true;
+} catch {
+  // REASON: a missing file is the negative answer here
+  return false; // ✅ reasoned
+}
 
-Named exported object contracts and object-style parameters are architectural policy. Public-return analysis covers direct exports, same-file export lists/aliases, const forwarding aliases, default identifiers, and explicit overload signatures. Nested helper returns remain private. External re-exports and package entrypoint traversal are not resolved. Externally imposed callback arities are exempt. `no-let` remains optional; deliberate local mutation can be clearer and faster. Re-export entrypoints use the `allow` option (`index.ts` by default).
+return err.message === "Not found"; // ❌ no-error-message-matching
+return error instanceof TimeoutError; // ✅ class, tag, or code
+```
 
-Mutable export detection handles forward exports without conflating local declarations. Module replacement through Vitest mock APIs is banned by default; `vi.fn` and `vi.spyOn` are allowed unless `forbidSpies: true`. Weak-assertion detection is per test, recognizes actual expect chains and meaningful snapshot/property assertions, and does not use arbitrary matcher-named methods as proof of behavior.
+<details>
+<summary><code>no-discarded-caught-error</code> and <code>no-error-message-matching</code> details</summary>
 
-Vitest test/expect/vi recognition supports named aliases, namespace imports, unshadowed globals, `each`, and conditional modifiers. Local shadows remain outside the Vitest rules. Fast-check assertions support imported aliases. A custom helper can be registered through `no-weak-test-assertions: ["error", { assertionHelpers: ["assertValidOrder"] }]`; this explicitly trusts calls with that local name, so its behavioral contract remains the consumer's responsibility. Cross-module wrapper inference is unsupported.
+`no-discarded-caught-error` covers `catch` clauses, inline `.catch(fn)`, and an inline second argument of `.then`, when the handler never throws (nor returns `Promise.reject(...)`) and the binding is absent or only reaches `console.*` / `logger.*` / `log.*`.
 
-Migration: `const read = () => ({ id: 1 }); export { read as load };` now needs a named return type just as a direct export does. `spec.each(rows)("exists", row => check(row).toBeDefined())` is now recognized when `spec`/`check` alias Vitest's `test`/`expect`; assert the observable value or register an actual assertion helper. Neither change has an autofix.
+```ts
+try {
+  return await load(id);
+} catch (error) {
+  throw new LoadError({ id, cause: error });
+} // ✅ rethrown
+try {
+  return await load();
+} catch (error) {
+  if (isNotFound(error)) return undefined;
+  throw error;
+} // ✅ inspected
+```
+
+| Case                                       | Behavior                                                                                                                                                     |
+| ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| counts as handling                         | passing the error to any non-log function, returning it, testing it                                                                                          |
+| escape hatch                               | `REASON: <≥ 3 words>` inside the handler; promise callbacks also directly above the statement. Placeholders (`todo`, `ignored`, `this is fine`…) don't count |
+| `catch {}` (literally empty)               | ⏭️ left to `eslint/no-empty`                                                                                                                                 |
+| `Effect.catch(...)`                        | ⏭️ capitalized receivers are namespaces, skipped                                                                                                             |
+| schema builders with instance `.catch(fn)` | ⚠️ need a reason or a disable comment                                                                                                                        |
+
+`no-error-message-matching`: `.message` compared with a string literal, fed to `includes` / `startsWith` / `endsWith` / `match` / `search` / `indexOf` / `RegExp#test` (also after `toLowerCase()`-style calls), or used as a `switch` discriminant. `String(error)`, `error.toString()`, `` `${error}` `` on a caught binding count too. Test files exempt. Error-shaped = catch binding, rejection-handler parameter, or a name like `e`, `err`, `error`, `cause`, `reason`, `ex`, `exception`, `*Error`, `*Err`, `*Exception`.
+
+</details>
+
+## 🧪 A test proves behavior, deterministically
+
+**`no-weak-test-assertions` judges per test: one strong assertion clears it.**
+
+| ❌ Weak                                    | ✅ Strong                                      |
+| ------------------------------------------ | ---------------------------------------------- |
+| `expect(load()).toBeDefined()`             | `expect(load()).toEqual({ id: 1 })`            |
+| `expect(() => run()).not.toThrow()`        | `expect(() => run()).toThrow("boom")`          |
+| `toHaveBeenCalledWith(expect.any(Object))` | `toHaveBeenCalledWith(expect.any(String), 30)` |
+
+```ts
+await new Promise((r) => setTimeout(r, 500)); // ❌ no-test-sleeps
+await vi.waitFor(() => expect(state()).toBe("done")); // ✅ poll the condition
+
+// cart.test.ts
+vi.spyOn(cart, "total").mockReturnValue(30); // ❌ no-stubbed-subject
+vi.spyOn(pricing, "rate").mockReturnValue(2); // ✅ another module
+
+export const send = (mail) => (process.env.NODE_ENV === "test" ? undefined : deliver(mail)); // ❌ no-test-logic-in-production
+```
+
+**Projects using Vitest in-source testing turn `no-test-logic-in-production` off for those files.**
+
+<details>
+<summary>Every weak shape, sleep shape, nondeterminism source, and test-only marker</summary>
+
+**Weak assertions**
+
+| ❌ Weak                                              | ✅ Strong                                           |
+| ---------------------------------------------------- | --------------------------------------------------- |
+| `.toBeTruthy()`                                      | an exact value                                      |
+| `expect(true).toBe(true)` (literal vs literal)       | `expect(3).toBe(add(1, 2))` (literal vs computed)   |
+| `expect(result).toEqual(result)` (value vs itself)   | `expect(render()).toMatchSnapshot()`                |
+| `expect(fn()).toBe(5)` after `fn.mockReturnValue(5)` | `fc.assert(fc.property(…))`                         |
+| `toEqual(expect.anything())`                         | `toEqual({ id: expect.any(String), total: 30 })`    |
+| bare `toHaveBeenCalled()` / `toBeCalled()`           | `.not.toHaveBeenCalled()` ("never called" is exact) |
+| `toBeInstanceOf(Object)`                             | `toEqual(expect.any(Order))`                        |
+| `expect(typeof x).toBe("string")`                    |                                                     |
+
+Wildcards = `expect.anything()`, `expect.any(Object | Function | Array | String | Number | Boolean)`, `expect.objectContaining({})`, `expect.arrayContaining([])`. **Bare `toThrow()` isn't counted:** `vitest/require-to-throw-message` owns it, pinned for test files by `@aurelienbbn/oxlint-config`.
+
+**Sleeps** (`*.test.*` / `*.spec.*`)
+
+```ts
+await new Promise((r) => setTimeout(r, 500)); // ❌ timer-only executor
+import { setTimeout as sleep } from "node:timers/promises"; // ❌ also `scheduler`
+await sleep(250); // ❌ sleep / delay / wait / pause + numeric literal
+```
+
+Files calling `vi.useFakeTimers()` skip the first and last shape: their timers aren't wall-clock.
+
+**Ambient nondeterminism** (concept: "Eradicating Non-Determinism in Tests", Martin Fowler)
+
+| ❌ Fires on                                                                     | Unless                                                                    |
+| ------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| `toLocaleString` / `toLocaleDateString` / `toLocaleTimeString` without a locale | —                                                                         |
+| `localeCompare` without its 2nd argument                                        | —                                                                         |
+| `Intl.*Format` constructed without a locale                                     | —                                                                         |
+| `Math.random()`                                                                 | —                                                                         |
+| `new Date()` (no arg), `Date.now()`, `performance.now()`                        | file calls `vi.useFakeTimers` / `vi.setSystemTime`, or `allowClock: true` |
+
+Shadowed `Date` / `Math` / `Intl` stay silent.
+
+**Stubbed subject** (`<stem>.test.*` / `<stem>.spec.*`)
+
+```ts
+import * as cart from "./cart"; // also ./cart.js, ../cart/index
+vi.spyOn(cart, "total"); // ✅ pass-through spy
+```
+
+Namespace or default import of the same-stem relative module; canned behavior via `mockReturnValue`, `mockResolvedValue`, `mockRejectedValue`, `mockImplementation` (and `…Once`), chained or on the spy's `const`. Package imports stay silent.
+
+**Test logic in production** (concept: "Test Logic in Production", G. Meszaros, _xUnit Test Patterns_). Silent in test files, Vitest config and setup files, `/test-utils/`, `/testing/` (the paths `no-vitest-in-source` allows).
+
+```ts
+export const send = (mail) => (process.env.NODE_ENV === "test" ? undefined : deliver(mail)); // ❌ also import.meta.env.MODE === "test"
+export const retries = process.env.VITEST ? 0 : 3; // ❌ also VITEST_WORKER_ID, JEST_WORKER_ID, import.meta.vitest
+export const __testing__ = { parse }; // ❌ name marks it test-only
+/** Visible only for unit tests. */
+export const parse = (input) => input; // ❌ comment marks it test-only
+```
+
+Test-only names: `__test__` / `__tests__` / `__testing__`, `_internal(s)`, `internals`, `testOnly*`, `*ForTest` / `*ForTests` / `*ForTesting`. Comments like "exported for testing" or "visible only for tests" directly above the export.
+
+**Vitest APIs:** `no-vitest-in-source` reports importing `vitest` from non-test source; `no-vitest-mocking` reports module replacement via Vitest mock APIs, plus `vi.fn` / `vi.spyOn` with `forbidSpies: true`.
+
+</details>
+
+## 📜 Public contracts are named
+
+```ts
+export const getUser = () => ({ id: user.id }); // ❌ no-exported-anonymous-object-return
+export const load: Load = () => ({ id: user.id }); // ✅ named contract
+
+const loadUser = (userId: UserId, includePosts: boolean) => userId; // ❌ no-multi-positional-parameters
+export function loadUser(input: { userId: UserId; includePosts: boolean }) {} // ✅ object input
+
+export let currentUserId = undefined; // ❌ no-mutable-exported-state
+export * from "./user.js"; // (whole file)                    // ❌ no-reexport-only-modules, unless listed in `allow`
+let total = 0; // ❌ no-let (also `var`)
+```
+
+## 💬 Comments describe code, not its history
+
+```text
+// Updated to use the new pricing API    ❌ change narration (line comments)
+// TODO: rename this contract            ❌ untracked
+// TODO(#123): rename this contract      ✅ tracked (also CART-42 or a link)
+/** Updated when the cache expires */    ✅ docblock describing behavior
+```
+
+<details>
+<summary>Every <code>no-dead-comments</code> shape</summary>
+
+| ❌ Fires                                                                                                 | ✅ Stays silent                                |
+| -------------------------------------------------------------------------------------------------------- | ---------------------------------------------- |
+| `// NEW:` / `// Updated:` / `// Fixed:` labels                                                           | `// New customers receive a welcome discount`  |
+| `// Previously this…` / `// Formerly:` / `// Was:`                                                       | `// Previously seen cursors are skipped`       |
+| `// Added … as requested` / `… for the review`                                                           | `// TODO CART-42: tighten the types` or a link |
+| line comments only: `// Updated to…` / `// Changed from…` / `// Now returns…` / `// No longer supports…` |                                                |
+
+Also closing-brace labels and placeholder scaffolding; narration counts only when anchored at the comment start.
+
+</details>
+
+## ⚠️ Migration
+
+| Now reports    | Example                                                                                                    | Fix (no autofix)                                                 |
+| -------------- | ---------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| aliased export | `const read = () => ({ id: 1 }); export { read as load };`                                                 | named return type, same as a direct export                       |
+| aliased Vitest | `spec.each(rows)("exists", row => check(row).toBeDefined())` when `spec` / `check` alias `test` / `expect` | assert the observable value, or register a real assertion helper |
+
+<details>
+<summary>Contract: what each rule does and doesn't resolve</summary>
+
+| Topic                  | Contract                                                                                                                                                                                                                                      |
+| ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| architectural policy   | named exported object contracts and object-style parameters are policy, not proof of a bug                                                                                                                                                    |
+| public-return analysis | ✅ direct exports, same-file export lists/aliases, const forwarding aliases, default identifiers, explicit overload signatures · ⏭️ nested helper returns stay private · ❌ external re-exports and package entrypoint traversal not resolved |
+| callback arity         | externally imposed callback arities exempt                                                                                                                                                                                                    |
+| `no-let`               | optional: deliberate local mutation can be clearer and faster                                                                                                                                                                                 |
+| mutable exports        | forward exports handled without conflating local declarations                                                                                                                                                                                 |
+| weak assertions        | judged per test; recognizes real `expect` chains and meaningful snapshot/property assertions; arbitrary matcher-named methods aren't proof                                                                                                    |
+| Vitest recognition     | named aliases, namespace imports, unshadowed globals, `each`, conditional modifiers. Local shadows stay outside the Vitest rules. Fast-check assertions support imported aliases                                                              |
+| `assertionHelpers`     | trusts calls with that local name: the helper's behavioral contract is on you. Cross-module wrapper inference unsupported                                                                                                                     |
+
+</details>
 
 <!-- harness-catalog:start -->
 

@@ -1,11 +1,18 @@
 # Security
 
-Keep vulnerability details private until maintainers have a fix or a coordinated disclosure plan. Do not put credentials, customer data, working exploits, or private project source in public issues.
+**Report privately: [Security tab](https://github.com/aurelienbobenrieth/harness/security) → Report a vulnerability.** Details stay private until a fix or coordinated disclosure.
 
-Use **Report a vulnerability** in this repository's [Security tab](https://github.com/aurelienbobenrieth/harness/security). If GitHub makes that route temporarily unavailable, open an issue containing only a request for a private reporting channel, or contact a maintainer through an already established private channel. This repository does not currently advertise a monitored security email address.
+> [!WARNING]
+> Never put credentials, customer data, working exploits, or private source code publicly.
 
-Private vulnerability reporting, vulnerability alerts, and Dependabot security updates were enabled and verified through the GitHub API on 2026-09-21; see [release readiness](docs/release-readiness.md).
+Include package + version, runtime, minimal reproduction, impact, suggested fix.
 
-A private report should include the affected package and version, supported runtime, a minimal reproduction, impact, and any suggested fix. Maintainers should confirm receipt, reproduce the report, agree a disclosure window with the reporter, and release an advisory with the fix. No response-time or support SLA is promised.
+Route down? An issue asking **only** for a private channel, or an established private channel. **No monitored security email.**
 
-Development currently targets the latest source and the candidate packages in [the release policy](policy/release.json). Draft packages are private and excluded from publication. Historical release branches have no promised security-backport window. Tool findings and passing conformance checks cover their documented contracts; they are not a complete security audit of a consumer application.
+```text
+confirm receipt ─▶ reproduce ─▶ agree disclosure window ─▶ advisory + fix      (no response-time or support SLA)
+```
+
+**Covered:** latest source, [release policy](policy/release.json) candidates. **Not:** private drafts, historical branches (no backports), a full audit of your app (checks cover only documented contracts).
+
+Private vulnerability reporting, alerts, Dependabot security updates: verified 2026-09-21 ([release readiness](docs/release-readiness.md)).

@@ -1,24 +1,108 @@
 # @aurelienbbn/agentlint-plugin-effect
 
-Private draft. Development links to the sibling agentlint workspace; packed evidence uses the reviewed local archive; public agentlint 0.1.5 exposes an incompatible API. See the [compatibility evidence](../../docs/compatibility.md#private-draft-boundary).
+**3 agentlint reviews for Effect: Schema-owned contracts, bounded retries, layers built once.**
 
-Custom agentlint rules for projects that use Effect.
+> [!WARNING]
+> **Private draft.** Built against the reviewed archive `local-packages/agentlint-current.tgz`; public agentlint 0.1.5 is API-incompatible. [Evidence](../../docs/compatibility.md#private-draft-boundary).
 
-## Presets
+## Quick start
 
-- `strictPreset`: enables `prefer-schema-contracts`. The opt-in review rules below stay out of every preset; register them explicitly.
+```sh
+agentlint init --preset "@aurelienbbn/agentlint-plugin-effect#starterPreset"
+agentlint rules test
+agentlint rules scan --review
+agentlint next --format json
+```
+
+`init` keeps an existing config and prints the install command; never installs. **Calibrate bindings before requiring `agentlint check --all`.**
+
+```ts
+import { defineConfig } from "@aurelienbbn/agentlint";
+import { layerIdentity, resiliencePolicy, strictPreset } from "@aurelienbbn/agentlint-plugin-effect";
+
+export default defineConfig({ extends: [strictPreset], rules: [layerIdentity, resiliencePolicy] });
+```
 
 ## Rules
 
-See the [registered contract inventory](#registered-contract-inventory) for current triggers.
+| Rule                      | strict | starter | Authority | Standard rev | Detector |
+| ------------------------- | :----: | :-----: | --------- | :----------: | :------: |
+| `prefer-schema-contracts` |   ✅   |   ✅    | agent     |      2       |    2     |
+| `resilience-policy`       |   🧪   |         | agent     |      1       |    1     |
+| `layer-identity`          |   🧪   |         | agent     |      1       |    1     |
 
-- `prefer-schema-contracts`: exported interfaces and exported object type aliases. Schema-derived spellings stay silent: `typeof X["Type"]` / `typeof X["Encoded"]`, `typeof X.Type` / `typeof X.Encoded`, `Schema.Schema.Type<typeof X>` / `Schema.Codec.Encoded<typeof X>`, and an empty `interface X extends Schema.Schema.Type<typeof XSchema> {}`.
-- `resilience-policy` (opt-in, in no preset): every `Effect.retry` / `Effect.retryOrElse` call, plus `Effect.tryPromise` and `HttpClient.get|post|put|patch|del|head|options|execute` calls whose enclosing statement or function shows neither a timeout nor a retry. Test files are excluded. `defineResiliencePolicy({ outboundCallPattern })` replaces the outbound call pattern. Effect-dialect sibling of `core/boundary-resilience`.
-- `layer-identity` (opt-in, in no preset): functions, arrows and methods that return a `Layer.*` expression. `Layer.succeed`, `Layer.empty`, `Layer.fresh` and `LayerMap` lookups stay silent. Test files are excluded. The judge counts call sites across the repository.
+✅ in preset · 🧪 opt-in, register explicitly. Presets ignore `**/*.d.ts`.
 
-## Contract boundaries and migration
+```ts
+export interface User {
+  id: string;
+} // ❌ prefer-schema-contracts
+export type User = (typeof User)["Type"]; // ✅ Schema-derived
 
-Exported declarations are inspected through the real parser's enclosing export statement. Schema ownership belongs at runtime boundaries; internal compile-time interfaces and generic helpers may remain manual. Effect 4 documentation (`effect/ai-docs/src/01_effect/02_schema/10_schema-basics.ts` in `effect@4.0.0-rc.115`) derives types with `typeof Contract["Type"]` and `typeof Contract["Encoded"]`; the dotted and `Schema.Schema.Type<typeof Contract>` spellings are recognized as well.
+Effect.tryPromise({ try: () => fetch(url), catch: toError }); // ❌ resilience-policy
+Effect.tryPromise({ try: () => fetch(url), catch: toError }).pipe(Effect.timeout("2 seconds")); // ✅
+
+const makeDbLayer = (config: DbConfig) => Layer.effect(Db, connect(config)); // ❌ layer-identity: new pool per call
+const makeConfigLayer = (config: DbConfig) => Layer.succeed(Config, config); // ✅
+```
+
+<details>
+<summary><code>prefer-schema-contracts</code>: fires, silent spellings, source</summary>
+
+Fires on exported interfaces and exported object type aliases, found through the real parser's enclosing export statement. Internal compile-time interfaces and generic helpers may stay manual.
+
+```ts
+export type User = (typeof User)["Type"]; // ✅ silent
+export type UserEncoded = typeof User.Encoded; // ✅ silent
+export type User = Schema.Schema.Type<typeof User>; // ✅ silent
+export type UserEncoded = Schema.Codec.Encoded<typeof User>; // ✅ silent
+export interface User extends Schema.Schema.Type<typeof UserSchema> {} // ✅ silent
+// also silent: typeof X["Encoded"], typeof X.Type
+```
+
+Spelling source: Effect 4 docs (`effect/ai-docs/src/01_effect/02_schema/10_schema-basics.ts` in `effect@4.0.0-rc.115`) derive types with `typeof Contract["Type"]` / `typeof Contract["Encoded"]`; dotted and `Schema.Schema.Type<typeof Contract>` spellings are recognized too.
+
+</details>
+
+<details>
+<summary><code>resilience-policy</code>: triggers and option</summary>
+
+| Fires on                                                                                   | Silent when                                              |
+| ------------------------------------------------------------------------------------------ | -------------------------------------------------------- |
+| every `Effect.retry` / `Effect.retryOrElse` call                                           | test file                                                |
+| `Effect.tryPromise`, `HttpClient.get\|post\|put\|patch\|del\|head\|options\|execute` calls | enclosing statement or function shows a timeout or retry |
+
+```ts
+request.pipe(Effect.retry(Schedule.exponential("100 millis"))); // ❌ fires: no bound
+```
+
+`defineResiliencePolicy({ outboundCallPattern })` replaces the outbound call pattern. Effect-dialect sibling of `core/boundary-resilience`.
+
+</details>
+
+<details>
+<summary><code>layer-identity</code>: triggers and silent cases</summary>
+
+Layers are memoized by reference: a factory called at two composition sites builds two pools. Fires on functions, arrows and methods returning a `Layer.*` expression. Silent: `Layer.succeed`, `Layer.empty`, `Layer.fresh`, `LayerMap` lookups, test files. The judge counts call sites across the repository.
+
+```ts
+const tenants = LayerMap.make((tenant: string) => Layer.effect(Db, connect(tenant))); // ✅ silent
+```
+
+</details>
+
+<details>
+<summary>Agentlint rule contract</summary>
+
+| Fact                | Detail                                                                                                                        |
+| ------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| rule shape          | `lifecycle`, `standard` (revision), `detector` (version), `binding` (id, authority, scope, material options)                  |
+| composing           | `defineConfig({ extends: [preset] })` or `defineConfig({ rules: [configuredRule] })`; repeated uses need distinct binding ids |
+| authority           | defaults permit agent acceptance; repository owners choose scope and can raise authority to `human`                           |
+| accepting a finding | requires matching current evidence **and** authority                                                                          |
+| fixtures            | `@aurelienbbn/agentlint/testing` runs the embedded activation/silence fixtures with the real parser                           |
+
+</details>
 
 <!-- harness-catalog:start -->
 
@@ -34,19 +118,6 @@ Generated from package exports by `pnpm catalog`. Rule-specific options and limi
 
 <!-- harness-catalog:end -->
 
-## Current rule contract
+## Credits
 
-Rules expose `lifecycle`, `standard` (revision), `detector` (version), and `binding` (id, authority, scope, material options). Presets use arrays of bindings: `defineConfig({ extends: [preset] })` or `defineConfig({ rules: [configuredRule] })`. Configure repeated uses with distinct binding ids. Repository owners choose scope and can raise authority to `human`; defaults permit agent acceptance. Acceptance requires matching current evidence and authority. `@aurelienbbn/agentlint/testing` runs the embedded activation/silence fixtures with the real parser.
-
-## Start with a focused review
-
-The opt-in `starterPreset` includes `preferSchemaContracts`. Install a compatible local draft of this package and agentlint, then run:
-
-```sh
-agentlint init --preset "@aurelienbbn/agentlint-plugin-effect#starterPreset"
-agentlint rules test
-agentlint rules scan --review
-agentlint next --format json
-```
-
-`init` preserves an existing config and prints the package installation command. It never installs packages itself. Inspect and calibrate the bindings before making `agentlint check --all` required. This gradual onboarding takes conceptual inspiration from desloppify by Peter O'Malley; no code or guidance was copied.
+`starterPreset` onboarding: conceptual inspiration from desloppify by Peter O'Malley; no code or guidance copied.

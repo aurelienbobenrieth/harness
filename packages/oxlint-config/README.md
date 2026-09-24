@@ -1,137 +1,254 @@
 # @aurelienbbn/oxlint-config
 
-Strict reusable oxlint config for TypeScript projects. The returned object works with Oxlint directly and with hosts such as Vite+ that consume `OxlintConfig`.
+**Strict oxlint for TypeScript: every stable category at `error`, type-aware, warnings denied, every rule conflict settled.**
 
-## Presets
-
-- `strictOxlintConfig`: baseline strict Oxlint config. Bans `@ts-ignore` and requires a description on `@ts-expect-error` via `typescript/ban-ts-comment`.
-- `defineStrictOxlintConfig(overrides)`: merge helper for project-specific overrides.
+```sh
+pnpm add -D @aurelienbbn/oxlint-config oxlint oxlint-tsgolint
+# oxlint >=1.82.0 <2.0.0 · oxlint-tsgolint ^7.0.2001 · Node ^22.19.0 || ^24.11.0
+```
 
 ```ts
+// oxlint.config.ts
 import { defineStrictOxlintConfig } from "@aurelienbbn/oxlint-config";
 import { defineConfig } from "oxlint";
 
 export default defineConfig(
   defineStrictOxlintConfig({
     ignorePatterns: ["dist/**"],
-    rules: { "id-length": "off" },
   }),
 );
 ```
 
-## Plugins
+Returns a plain `OxlintConfig`: works with oxlint directly or as Vite+'s `lint` config, no Vite+ dependency.
 
-`plugins` replaces the oxlint default set instead of extending it, so the preset lists every default plugin itself: `eslint`, `typescript`, `unicorn` and `oxc`, plus `node` and `promise`. The `vitest` plugin is enabled through an `overrides` entry for `testFileGlobs` (`**/*.{test,spec}.{ts,tsx,mts,cts,js,jsx,mjs,cjs}`) only, because rules such as `vitest/require-hook` report ordinary top-level calls in source files. Projects with another test layout add their own `overrides` entry with `plugins: ["vitest"]`.
+## 1 preset, 4 opt-ins
 
-Three `oxc` restriction rules are off because they ban modern syntax rather than defects: `oxc/no-async-await`, `oxc/no-optional-chaining`, `oxc/no-rest-spread-properties`.
+| Export                                                  | Adds                                                 |
+| ------------------------------------------------------- | ---------------------------------------------------- |
+| `strictOxlintConfig`                                    | the preset object                                    |
+| `defineStrictOxlintConfig(overrides?, options?)`        | preset + your overrides, cloned                      |
+| `withTanstackQueryLayer(config?, options?)`             | 🔌 official `@tanstack/eslint-plugin-query`, 7 rules |
+| `withImportGraphLayer(config?)`                         | 🔌 `import/no-cycle` + `import/no-self-import`       |
+| `layerDirectionOverride({ files, forbidden, message })` | 🔌 one `overrides` entry banning cross-layer imports |
+| `nurseryCandidateRules`                                 | 🔌 4 nursery rules to trial                          |
 
-`eslint/one-var` uses its `never` mode. Independent bindings stay as independent declarations instead of being joined into one comma-separated statement; grouping them does not establish correctness and makes later edits noisier.
+Also: `testFileGlobs`, `vagueTestTitlePattern`, `tanstackQueryRules`, `tanstackQueryPluginSpecifier`, `importGraphRules`, type `OxlintConfig`.
 
-## Resolved conflicts
+## What the preset sets
 
-With every category at `error`, some rules demand opposite edits of the same code and some report the same defect twice. The preset settles each case once so consumers do not rediscover it.
-
-| Off                                                       | Kept                                                 | Reason                                                                                                                                                     |
-| --------------------------------------------------------- | ---------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `eslint/no-ternary`                                       | `unicorn/prefer-ternary`, `eslint/no-nested-ternary` | Expression style is what a no-`let` codebase needs; nesting stays banned.                                                                                  |
-| `node/no-top-level-await`                                 | `unicorn/prefer-top-level-await`                     | Application entry points await at the top level. Libraries re-enable the node rule.                                                                        |
-| `vitest/no-importing-vitest-globals`                      | `vitest/prefer-importing-vitest-globals`             | Explicit imports keep test APIs visible to import-keyed rules.                                                                                             |
-| `vitest/prefer-to-be-truthy`, `vitest/prefer-to-be-falsy` | `vitest/prefer-strict-boolean-matchers`              | `toBe(true)` is the stricter assertion.                                                                                                                    |
-| `eslint/no-undefined`                                     | `unicorn/no-null`, `unicorn/no-useless-undefined`    | Banning both `null` and `undefined` leaves no way to express absence.                                                                                      |
-| `eslint/no-warning-comments`                              | none                                                 | It has no option that accepts the tracked `TODO(#123):` form. `core/no-dead-comments` from `@aurelienbbn/oxlint-plugin-core` reports untracked TODOs only. |
-| `eslint/default-case`                                     | `typescript/switch-exhaustiveness-check`             | A `default` on a union switch hides newly added members. See below.                                                                                        |
-| `eslint/require-await`                                    | `typescript/require-await`                           | Typed extension rule; the pair reports twice.                                                                                                              |
-| `eslint/no-implied-eval`                                  | `typescript/no-implied-eval`                         | Typed extension rule.                                                                                                                                      |
-| `eslint/prefer-promise-reject-errors`                     | `typescript/prefer-promise-reject-errors`            | Typed extension rule.                                                                                                                                      |
-| `eslint/no-throw-literal`                                 | `typescript/only-throw-error`                        | Typed extension rule.                                                                                                                                      |
-| `unicorn/prefer-includes`                                 | `typescript/prefer-includes`                         | Typed duplicate.                                                                                                                                           |
-| `unicorn/prefer-string-starts-ends-with`                  | `typescript/prefer-string-starts-ends-with`          | Typed duplicate.                                                                                                                                           |
-| `unicorn/prefer-array-find`                               | `typescript/prefer-find`                             | Typed duplicate.                                                                                                                                           |
-
-The typed side wins only because the preset sets `typeAware: true`. A project that turns type-aware linting off must re-enable the untyped rules.
-
-## Type-aware additions
-
-- `typescript/no-unnecessary-condition` is enabled by name while the nursery category stays off. It reports optional chains, nullish fallbacks and comparisons that the types prove useless. It needs `strictNullChecks`, and `noUncheckedIndexedAccess` to stay quiet on indexed access.
-- `typescript/switch-exhaustiveness-check` runs with `allowDefaultCaseForExhaustiveSwitch: false` and `requireDefaultForNonUnion: true`: a union switch lists every member without a `default`, any other switch needs one.
-- `nurseryCandidateRules` holds four more low-noise nursery rules that are not in the preset: `typescript/prefer-optional-chain`, `eslint/no-useless-assignment`, `eslint/no-unreachable-loop`, `promise/no-return-in-finally`. Spread it into `rules` to trial them.
-
-## TanStack Query layer
-
-`withTanstackQueryLayer(config, options)` is opt-in. It appends `@tanstack/eslint-plugin-query` to `jsPlugins` and sets `tanstackQueryRules` to `error`: `exhaustive-deps`, `infinite-query-property-order`, `mutation-property-order`, `no-rest-destructuring`, `no-unstable-deps`, `prefer-query-options`, `stable-query-client`, all under the `@tanstack/query/` prefix. Rules already set on `config` win over the layer.
-
-This package does not depend on the plugin. Install it in the consuming project:
-
-```sh
-pnpm add -D @tanstack/eslint-plugin-query
+```text
+correctness  ██████  error      style       ██████  error
+pedantic     ██████  error      suspicious  ██████  error
+perf         ██████  error      nursery     ░░░░░░  off (pending upgrade review)
+restriction  ██████  error
 ```
 
-```ts
-import { defineStrictOxlintConfig, withTanstackQueryLayer } from "@aurelienbbn/oxlint-config";
-import { defineConfig } from "oxlint";
+**`vitest` never runs on source files**, only on `testFileGlobs`: `vitest/require-hook` reports ordinary top-level calls.
 
-export default defineConfig(withTanstackQueryLayer(defineStrictOxlintConfig({ ignorePatterns: ["dist/**"] })));
+<details>
+<summary>Plugins, options, pinned rules</summary>
+
+| Key            | Value                                                                                                |
+| -------------- | ---------------------------------------------------------------------------------------------------- |
+| `plugins`      | `eslint`, `typescript`, `unicorn`, `oxc`, `node`, `promise`                                          |
+| `options`      | `typeAware: true`, `typeCheck: true`, `denyWarnings: true`, `reportUnusedDisableDirectives: "error"` |
+| `env`          | `builtin: true`, `node: true`                                                                        |
+| `overrides[0]` | `vitest` plugin on `testFileGlobs` = `**/*.{test,spec}.{ts,tsx,mts,cts,js,jsx,mjs,cjs}`              |
+
+`plugins` replaces oxlint's default set, so the four defaults (`eslint`, `typescript`, `unicorn`, `oxc`) are re-listed before `node` and `promise`. Other test layout: add an `overrides` entry with `plugins: ["vitest"]`.
+
+| Rule                                                                              | Setting                                                                         | Why                                                                             |
+| --------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| `typescript/ban-ts-comment`                                                       | `ts-ignore` banned, `ts-expect-error` needs description                         | a suppression says why                                                          |
+| `typescript/no-explicit-any`, `typescript/no-non-null-assertion`                  | `error`                                                                         | pinned by name                                                                  |
+| `unicorn/filename-case`                                                           | `kebabCase`                                                                     | one naming scheme                                                               |
+| `eslint/no-underscore-dangle`                                                     | allow `_tag`, `_tree`, `__dirname`                                              | tagged unions, Node globals                                                     |
+| `eslint/one-var`                                                                  | `never`                                                                         | grouping makes later edits noisier                                              |
+| `oxc/no-async-await`, `oxc/no-optional-chaining`, `oxc/no-rest-spread-properties` | `off`                                                                           | ban modern syntax, not defects                                                  |
+| `vitest/no-standalone-expect`                                                     | `off` (test files)                                                              |                                                                                 |
+| `typescript/no-unnecessary-condition`                                             | `error` by name (nursery off)                                                   | needs `strictNullChecks`; `noUncheckedIndexedAccess` keeps indexed access quiet |
+| `typescript/switch-exhaustiveness-check`                                          | `allowDefaultCaseForExhaustiveSwitch: false`, `requireDefaultForNonUnion: true` | union switch: every member, no `default`; other switch: `default` required      |
+
+`nurseryCandidateRules` (not in the preset; spread into `rules` to trial): `typescript/prefer-optional-chain`, `eslint/no-useless-assignment`, `eslint/no-unreachable-loop`, `promise/no-return-in-finally`.
+
+</details>
+
+## Every conflict is settled once
+
+| ❌ Off                                                    | ✅ Kept                                              | Why                                                                           |
+| --------------------------------------------------------- | ---------------------------------------------------- | ----------------------------------------------------------------------------- |
+| `eslint/no-ternary`                                       | `unicorn/prefer-ternary`, `eslint/no-nested-ternary` | no-`let` code needs expressions; nesting stays banned                         |
+| `node/no-top-level-await`                                 | `unicorn/prefer-top-level-await`                     | app entry points; libraries re-enable the node rule                           |
+| `vitest/no-importing-vitest-globals`                      | `vitest/prefer-importing-vitest-globals`             | imports stay visible to import-keyed rules                                    |
+| `vitest/prefer-to-be-truthy`, `vitest/prefer-to-be-falsy` | `vitest/prefer-strict-boolean-matchers`              | `toBe(true)` is stricter                                                      |
+| `eslint/no-undefined`                                     | `unicorn/no-null`, `unicorn/no-useless-undefined`    | banning both `null` and `undefined` leaves no way to express absence          |
+| `eslint/no-warning-comments`                              | —                                                    | rejects tracked `TODO(#123):`; `core/no-dead-comments` reports untracked only |
+| `eslint/default-case`                                     | `typescript/switch-exhaustiveness-check`             | `default` hides new union members                                             |
+| `eslint/require-await`                                    | `typescript/require-await`                           | typed extension                                                               |
+| `eslint/no-implied-eval`                                  | `typescript/no-implied-eval`                         | typed extension                                                               |
+| `eslint/prefer-promise-reject-errors`                     | `typescript/prefer-promise-reject-errors`            | typed extension                                                               |
+| `eslint/no-throw-literal`                                 | `typescript/only-throw-error`                        | typed extension                                                               |
+| `unicorn/prefer-includes`                                 | `typescript/prefer-includes`                         | typed duplicate                                                               |
+| `unicorn/prefer-string-starts-ends-with`                  | `typescript/prefer-string-starts-ends-with`          | typed duplicate                                                               |
+| `unicorn/prefer-array-find`                               | `typescript/prefer-find`                             | typed duplicate                                                               |
+
+> [!WARNING]
+> **The typed side wins only because `typeAware: true`.** Turn it off: re-enable the untyped rules.
+
+## Vague test titles fail
+
+```ts
+it("works", …)                            // ❌ bare "works" / "should work", any case
+it("adds items correctly", …)             // ❌ correctly / properly / as expected
+it("rejects improperly signed tokens", …) // ✅
 ```
 
-`@tanstack/query/no-void-query-fn` is left out: it needs the TypeScript checker, which oxlint does not expose to JS plugins, so it reports nothing there. oxlint JS plugins are alpha.
+<details>
+<summary>Test-file rules pinned by name, and the oxlint 1.82.0 <code>mustNotMatch</code> probe</summary>
 
-The wiring is not verified coverage. No repository fixture installs the official plugin. A one-off run with `@tanstack/eslint-plugin-query` 5.103.1 under oxlint 1.82.0 saw five of the seven rules report; `no-unstable-deps` and `infinite-query-property-order` were not exercised, and whether `no-rest-destructuring` needs type information under oxlint is unconfirmed. Re-check after upgrading either package.
+Pinned so an upstream category move can't drop them:
 
-`options.companionPlugins` is the extension point for plugins that cover what the official one does not, such as `@aurelienbbn/oxlint-plugin-tanstack-query`. Each entry is `{ specifier, rules }`; the specifier is appended to `jsPlugins` after the official plugin and the rules are merged after the official rules.
+| Rule                              | Owns                                                                                        |
+| --------------------------------- | ------------------------------------------------------------------------------------------- |
+| `vitest/require-to-throw-message` | bare `toThrow()` / `rejects.toThrow()` (`core/no-weak-test-assertions` skips this)          |
+| `vitest/prefer-called-with`       | bare `toHaveBeenCalled()`: makes existing interaction assertions exact, doesn't create them |
+| `vitest/valid-title`              | `mustNotMatch: vagueTestTitlePattern`                                                       |
 
-## Test-file rules pinned by name
+Whether to assert a call at all: agentlint `core/test-behavior-coverage`. `toHaveBeenCalledWith(expect.anything())`: `core/no-weak-test-assertions`.
 
-The `testFileGlobs` override sets three `vitest` rules explicitly, so an upstream category move cannot drop them silently.
+| `mustNotMatch` form (oxlint 1.82.0)    | Fires?           |
+| -------------------------------------- | ---------------- |
+| plain string                           | ✅               |
+| `{ it: "<regex>" }`                    | ✅               |
+| `[regex, message]` tuple               | ✅               |
+| any form + non-empty `disallowedWords` | ❌ ignored       |
+| pattern with `\b` or `\W`              | ❌ never matches |
 
-- `vitest/require-to-throw-message` owns the bare `expect(fn).toThrow()` and `rejects.toThrow()` case. `core/no-weak-test-assertions` from `@aurelienbbn/oxlint-plugin-core` deliberately does not report it a second time.
-- `vitest/prefer-called-with` reports a bare `toHaveBeenCalled()`. It does not create interaction assertions; it makes the existing ones exact, which is what a test needs when the call is the contract. Whether an interaction should be asserted at all is a review question for agentlint `core/test-behavior-coverage`, and the lazy way out, `toHaveBeenCalledWith(expect.anything())`, is reported by `core/no-weak-test-assertions`.
-- `vitest/valid-title` runs with `mustNotMatch: vagueTestTitlePattern`. It reports titles that are only `works` / `should work` (any case) and titles containing the words `correctly`, `properly` or `as expected`. `rejects improperly signed tokens` and `works offline` pass.
+So filler words share one pattern with `[^a-z]` word edges. **Overriding: keep one `mustNotMatch`, leave `disallowedWords` unset.** `src/index.test.ts` runs the installed oxlint against these cases.
 
-`vagueTestTitlePattern` is one string on purpose. Probed with oxlint 1.82.0 in a temp directory: `mustNotMatch` fires as a string, as `{ it: "<regex>" }` and as a `[regex, message]` tuple, but it is ignored entirely as soon as `disallowedWords` is non-empty, and patterns written with `\b` or `\W` never match. The filler words therefore live in the same pattern with `[^a-z]` word edges. A project that overrides the rule keeps to a single `mustNotMatch` and leaves `disallowedWords` unset. `src/index.test.ts` runs the installed oxlint against these cases.
+</details>
 
-## Layer direction recipe
-
-`layerDirectionOverride({ files, forbidden, message })` returns an `overrides` entry that forbids a declared layer from importing the listed modules through `eslint/no-restricted-imports` `patterns`. There is no default layer map: a project that declares no layers gets no rule.
+## Opt-in layers
 
 ```ts
-import { defineStrictOxlintConfig, layerDirectionOverride } from "@aurelienbbn/oxlint-config";
+import {
+  defineStrictOxlintConfig,
+  layerDirectionOverride,
+  withImportGraphLayer,
+  withTanstackQueryLayer,
+} from "@aurelienbbn/oxlint-config";
 import { defineConfig } from "oxlint";
 
 export default defineConfig(
-  defineStrictOxlintConfig({
-    overrides: [
-      layerDirectionOverride({
-        files: ["**/domain/**"],
-        forbidden: ["**/infra/**", "**/http/**", "express", "@prisma/client"],
-        message:
-          "Domain code never imports infrastructure. Pass the data in, depend on a port the domain owns and let infrastructure implement it, or move this file to the layer it belongs to.",
+  withImportGraphLayer(
+    withTanstackQueryLayer(
+      defineStrictOxlintConfig({
+        overrides: [
+          layerDirectionOverride({
+            files: ["**/domain/**"],
+            forbidden: ["**/infra/**", "express"],
+            message: "Domain never imports infrastructure.",
+          }),
+        ],
       }),
-    ],
-  }),
+    ),
+  ),
 );
 ```
 
-`forbidden` takes gitignore-style globs for paths and bare names for packages; both the relative import and the package import are reported. `message` carries the fix direction, because the rule cannot know which of the three moves is right. oxlint replaces rule options instead of merging them: when two `overrides` entries match a file the later `eslint/no-restricted-imports` wins, and either one replaces a root-level `eslint/no-restricted-imports`. Give each layer glob a single entry that lists everything the layer must not reach.
+**Rules already set on `config` win over any layer.**
 
-## Import graph layer
+> [!WARNING]
+> **oxlint replaces rule options, it doesn't merge them.** Two `overrides` matching one file: the later `eslint/no-restricted-imports` wins, and either replaces a root-level one. One entry per layer glob, listing everything it must not reach.
 
-`withImportGraphLayer(config)` is opt-in. It appends the `import` plugin and spreads `importGraphRules`, which turns on exactly two rules: `import/no-cycle` and `import/no-self-import`. Cycles arrive through convenience imports between sibling modules and surface later as `undefined` at module initialization and as modules that cannot be tested alone. Rules already set on `config` win over the layer.
+<details>
+<summary>TanStack Query layer: install, probe results, companion plugins</summary>
 
-```ts
-import { defineStrictOxlintConfig, withImportGraphLayer } from "@aurelienbbn/oxlint-config";
-import { defineConfig } from "oxlint";
-
-export default defineConfig(withImportGraphLayer(defineStrictOxlintConfig({ ignorePatterns: ["dist/**"] })));
+```sh
+pnpm add -D @tanstack/eslint-plugin-query   # not a dependency of this package
 ```
 
-The plugin cannot simply be added to `plugins`: the preset sets whole categories to `error`, so loading it would switch on every `import/*` rule, including pairs that contradict each other (`import/no-default-export` and `import/prefer-default-export`, `import/no-named-export`, `import/group-exports`). `importGraphRules` therefore pins all 33 `import/*` rules of oxlint 1.82.0: two at `error`, 31 at `off`. A project that wants another one sets it in `rules`.
+Appends the plugin to `jsPlugins`, sets `tanstackQueryRules` to `error`.
 
-`import/no-cycle` ignores cycles made only of `import type` by default (`ignoreTypes`); they vanish at runtime. It resolves files across the project, which makes it the most expensive rule of the plugin; that cost is why the layer is opt-in. Path aliases resolve only when oxlint finds the tsconfig that declares them.
+| `@tanstack/query/…`             | Reported in probe¹                                                  |
+| ------------------------------- | ------------------------------------------------------------------- |
+| `exhaustive-deps`               | ✅                                                                  |
+| `mutation-property-order`       | ✅                                                                  |
+| `no-rest-destructuring`         | ✅ (needs type info under oxlint? unconfirmed)                      |
+| `prefer-query-options`          | ✅                                                                  |
+| `stable-query-client`           | ✅                                                                  |
+| `infinite-query-property-order` | ⚠️ not exercised                                                    |
+| `no-unstable-deps`              | ⚠️ not exercised                                                    |
+| `no-void-query-fn`              | ❌ left out: needs the TS checker, not exposed to oxlint JS plugins |
 
-Upgrade step: a rule that a newer oxlint adds to the `import` plugin is not in `importGraphRules`, so its category would enable it. After every oxlint upgrade run `pnpm exec oxlint --rules` (or `--rules -f json`), compare the `import` rows with `importGraphRules`, and pin each new rule to `off`. In this repository `src/index.test.ts` makes that comparison against the installed oxlint and fails until the list matches; consumers pinned to another oxlint version do the check by hand.
+¹ `@tanstack/eslint-plugin-query` 5.103.1 under oxlint 1.82.0, one-off. **Wiring, not verified coverage:** no repo fixture installs the official plugin; oxlint JS plugins are alpha. Re-check after upgrading either.
 
-## Contract boundaries and migration
+`options.companionPlugins`: `{ specifier, rules }[]`. Specifier appended to `jsPlugins` after the official plugin; rules merge after the official rules.
 
-Defaults remain opinionated for this project's Node/TypeScript stack. Browser projects should explicitly override `env.node` and enable their browser environment. The nursery category is off pending deliberate upgrade review, apart from the rule named under type-aware additions; broad stable categories remain enabled. Blanket Jest-namespace assertion disables were removed. `defineStrictOxlintConfig(overrides, { replaceLists: true })` replaces supplied lists, including plugins; normal calls merge them. Returned nested rule options are independent clones.
+```ts
+withTanstackQueryLayer(config, {
+  companionPlugins: [
+    {
+      specifier: "@aurelienbbn/oxlint-plugin-tanstack-query",
+      rules: { "tanstack-query/no-query-cache-mutation": "error" },
+    },
+  ],
+});
+```
 
-Public types come from `oxlint`. Vite+ re-exports the same contract, so a consumer can also pass the returned object as its `lint` configuration without adding a Vite+ dependency here. The [compatibility matrix](../../docs/compatibility.md) records supported peers and tests the packed config with both baseline and current compatible runners, including type-aware linting.
+</details>
+
+<details>
+<summary>Layer direction: fields</summary>
+
+One `overrides` entry using `eslint/no-restricted-imports` `patterns`. **No default layer map:** no layers, no rule.
+
+| Field       | Takes                                                                                              |
+| ----------- | -------------------------------------------------------------------------------------------------- |
+| `files`     | globs of the protected layer                                                                       |
+| `forbidden` | gitignore-style globs for paths, bare names for packages; relative and package imports both report |
+| `message`   | the fix direction: the rule can't know which of the three moves is right                           |
+
+</details>
+
+<details>
+<summary>Import graph layer: why opt-in, upgrade checklist</summary>
+
+Cycles creep in through convenience imports between siblings, then surface as `undefined` at module init and untestable modules.
+
+```text
+import rules in oxlint 1.82.0   33
+  error  ██                      2   import/no-cycle, import/no-self-import
+  off    ███████████████████████ 31  pinned off in importGraphRules
+```
+
+Adding `"import"` to `plugins` alone switches on all 33 (whole categories are enabled), including contradicting pairs: `import/no-default-export` vs `import/prefer-default-export`, `import/no-named-export`, `import/group-exports`. Want another: set it in `rules`.
+
+| Behavior         | Detail                                                        |
+| ---------------- | ------------------------------------------------------------- |
+| type-only cycles | ignored (`ignoreTypes`): gone at runtime                      |
+| cost             | resolves files project-wide, the plugin's most expensive rule |
+| path aliases     | resolve only when oxlint finds the declaring tsconfig         |
+
+**After every oxlint upgrade**, a new `import/*` rule missing from `importGraphRules` turns on via its category:
+
+- [ ] `pnpm exec oxlint --rules` (or `--rules -f json`)
+- [ ] compare `import` rows with `importGraphRules`
+- [ ] pin each new rule `off`
+
+Here `src/index.test.ts` fails until the list matches the installed oxlint. Consumers on another oxlint check by hand.
+
+</details>
+
+## Contract & migration
+
+| Topic                   | Contract                                                                                                                        |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| target                  | Node/TypeScript. Browser: override `env.node`, enable the browser env                                                           |
+| nursery                 | off pending upgrade review, except `typescript/no-unnecessary-condition`                                                        |
+| Jest-namespace disables | ⚠️ removed                                                                                                                      |
+| lists                   | `plugins`, `jsPlugins`, `ignorePatterns`, `overrides` merge deduplicated; `{ replaceLists: true }` replaces any list you supply |
+| objects                 | `categories`, `env`, `options`, `rules`, `settings` merge key by key                                                            |
+| isolation               | nested rule options are independent clones                                                                                      |
+| types                   | from `oxlint`; Vite+ re-exports the same contract                                                                               |
+| compatibility           | [matrix](../../docs/compatibility.md) tests the packed config on baseline and current runners, type-aware included              |

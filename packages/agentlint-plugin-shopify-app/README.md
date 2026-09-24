@@ -1,57 +1,159 @@
 # @aurelienbbn/agentlint-plugin-shopify-app
 
-Private draft. Development links to the sibling agentlint workspace; packed evidence uses the reviewed local archive; public agentlint 0.1.5 exposes an incompatible API. See the [compatibility evidence](../../docs/compatibility.md#private-draft-boundary).
+**14 agentlint reviews for Shopify apps and extensions: a deterministic trigger finds the spot, a reviewer checks it against Shopify's own guidance.**
 
-Custom agentlint rules for Shopify app and extension code. Deterministic triggers schedule contextual reviews. A finding identifies something to inspect; it does not establish a policy violation. Resolutions in `.agentlint/acceptances.jsonl` can preserve review evidence, but neither an accepted resolution nor a clean run proves App Store or Built for Shopify eligibility.
+> [!WARNING]
+> **Private draft.** Built against the reviewed archive `local-packages/agentlint-current.tgz`; public agentlint 0.1.5 is API-incompatible. [Evidence](../../docs/compatibility.md#private-draft-boundary).
 
-## Rules
+**A finding is something to inspect, not a policy violation.** Resolutions in `.agentlint/acceptances.jsonl` keep review evidence; neither they nor a clean run prove App Store or Built for Shopify eligibility.
 
-See the [registered contract inventory](#registered-contract-inventory) for current triggers.
+## Quick start
 
-## Configuration
+```sh
+agentlint init --preset "@aurelienbbn/agentlint-plugin-shopify-app#starterPreset"
+agentlint rules test
+agentlint rules scan --review
+agentlint next --format json
+```
 
-Every rule exports a `defineX(options)` factory next to its default instance; register the configured instance under the same rule id:
+`init` keeps an existing config and prints the install command; never installs. **Calibrate bindings before requiring `agentlint check --all`.**
 
 ```ts
 import { defineConfig } from "@aurelienbbn/agentlint";
-import { defineNoPressureCopy, defineSettingsSaveBar } from "@aurelienbbn/agentlint-plugin-shopify-app";
+import { checkoutExtensionPreset, shopifyAppPreset } from "@aurelienbbn/agentlint-plugin-shopify-app";
 
-export default defineConfig({
-  rules: [
-    defineNoPressureCopy({
-      languages: ["en", "fr"],
-      additionalPatterns: [/última oportunidad/iu],
-    }),
-    defineSettingsSaveBar({ saveBarMarkerPattern: /useSaveBar/ }),
-  ],
-});
+export default defineConfig({ extends: [shopifyAppPreset, checkoutExtensionPreset] });
 ```
 
-Options: `no-pressure-copy` (`languages`, `additionalPatterns`), `session-token-auth` (`identityKeyPattern`), `settings-save-bar` (`formElementPattern`, `saveBarMarkerPattern`), `checkout-network-discipline` (`networkCallPattern`), `admin-api-loop-review` (`graphqlCalleePattern`), `webhook-handler-review` (`topicPattern`), `scope-change-review` (`manifestPattern`). Stateful regular expressions are reset before each match.
+## Rules
 
-The App Home component reviews match exact JSX grammar names. They do not resolve imports, wrappers, dynamic components, spread props, or generated templates. Configure `elementNamePattern` to identify your own reviewed wrappers. Matching component names from another Shopify surface does not establish that App Home guidance applies there: scope these rules to the appropriate files.
+| Rule                          | `shopifyApp` | `appServer` | `checkoutExtension` | `starter` | Rev  | Options                                              |
+| ----------------------------- | :----------: | :---------: | :-----------------: | :-------: | :--: | ---------------------------------------------------- |
+| `session-token-auth`          |      ✅      |             |                     |    ✅     | 2 ⚠️ | `identityKeyPattern`                                 |
+| `form-error-recovery`         |      ✅      |             |                     |    ✅     |  1   | `errorAttribute`                                     |
+| `action-label-clarity`        |      ✅      |             |                     |           |  1   | `ambiguousLabelPatterns`                             |
+| `banner-usage`                |      ✅      |             |                     |           |  1   |                                                      |
+| `destructive-action-review`   |      ✅      |             |                     |           |  1   | `toneAttribute`, `destructiveTone`                   |
+| `modal-workflow-review`       |      ✅      |             |                     |           |  1   |                                                      |
+| `no-pressure-copy`            |      ✅      |             |                     |           |  1   | `languages` (`en`, `fr`, `de`), `additionalPatterns` |
+| `review-solicitation`         |      ✅      |             |                     |           |  1   | `additionalPatterns`, `useDefaultPatterns`           |
+| `settings-save-bar`           |      ✅      |             |                     |           | 1 ⚠️ | `formElementPattern`, `saveBarMarkerPattern`         |
+| `admin-api-loop-review`       |              |     ✅      |                     |           |  1   | `graphqlCalleePattern`                               |
+| `webhook-handler-review`      |              |     ✅      |                     |           |  1   | `topicPattern`                                       |
+| `checkout-network-discipline` |              |             |         ✅          |           | 2 ⚠️ | `networkCallPattern`                                 |
+| `scope-change-review` 🧪      |              |             |                     |           |  1   | `manifestPattern`                                    |
+| `app-ux-review` 🧪            |              |             |                     |           |  1   | `targets`, `elementNamePattern`                      |
 
-| Review                      | Trigger                                                                                          | Additional options and boundary                                                                                                                                              |
-| --------------------------- | ------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `action-label-clarity`      | Configured ambiguous literal text directly inside `s-button` or `s-link`                         | `ambiguousLabelPatterns` replaces a small English default lexicon. Translation helpers and arbitrary strings are not analyzed.                                               |
-| `banner-usage`              | `s-banner`, including one with `dismissible`                                                     | Requires rendered context and dismissal persistence evidence; a correct prop cannot establish either.                                                                        |
-| `destructive-action-review` | `s-button` or `s-clickable` with literal `tone="critical"`                                       | `toneAttribute`, `destructiveTone`. Dynamic tones need separate review.                                                                                                      |
-| `form-error-recovery`       | Known Polaris input control with a possibly active `error` prop                                  | `errorAttribute`. Empty, false, null, and undefined literals remain silent; runtime expressions schedule review.                                                             |
-| `modal-workflow-review`     | `s-modal` or `s-app-window`                                                                      | Reviews entry paths, task fit, dismissal, and recovery; structural slot rules are separate.                                                                                  |
-| `review-solicitation`       | Specific review-request phrases in JSX text or strings                                           | `additionalPatterns`, `useDefaultPatterns`; English, French, and German phrase defaults are partial lexicons. Neutral requests still require placement and incentive review. |
-| `app-ux-review`             | Explicit filename-to-purpose targets and a matching page component, or a configured file trigger | `targets`, `elementNamePattern`. Dormant by default and excluded from presets.                                                                                               |
+Presets are `<name>Preset`. 🧪 in no preset: register `scopeChangeReview` / a configured `defineAppUxReview(...)`. All rules: agent authority, detector 1. Presets ignore `**/*.d.ts`. ⚠️ see [migration](#migration).
 
-### Server-side reviews
+| Preset                    | Scope                                           | Narrow it to                                                                             |
+| ------------------------- | ----------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| `shopifyAppPreset`        | `**/*.{ts,tsx,js,jsx}` + `**/locales/**/*.json` | your App Home source, when the repo holds several Shopify surfaces                       |
+| `appServerPreset`         | `**/*.{ts,tsx,js,jsx}`, tests excluded          | server code (`app/routes/**`, `app/**/*.server.*`, workers) beside other GraphQL clients |
+| `checkoutExtensionPreset` | `extensions/**/*.{ts,tsx,js,jsx}`               |                                                                                          |
 
-| Review                   | Trigger                                                                                                                                                                                                                                                | Additional options and boundary                                                                                                                                                                                                                                                   |
-| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `admin-api-loop-review`  | A call whose callee is `admin.graphql`, `client.request`, or `client.query` (optionally qualified) inside a `for`/`for…of`/`while`/`do` body, or inside a callback passed to `.map`, `.forEach`, or `.flatMap`                                         | `graphqlCalleePattern` adds project wrappers. A `for…of` iterable, a `for` initializer, and functions merely defined inside a loop stay silent. Imports and aliases are not resolved. Bounded pagination is legitimate: the finding asks for the bound and the throttle handling. |
-| `webhook-handler-review` | Once per file: an `authenticate.webhook` call, an `X-Shopify-Hmac-Sha256`/`X-Shopify-Topic`/`X-Shopify-Webhook-Id` string literal, or a known webhook topic literal (`orders/create`, `APP_UNINSTALLED`) used as a `switch` case or comparison operand | `topicPattern` replaces the default topic lexicon. Test files are excluded. Constant-time database work inline passes; deduplication or queueing in another file is evidence the reviewer cites, not something the trigger resolves.                                              |
-| `scope-change-review`    | **Opt-in (MAYBE).** Change rule: a `shopify.app.toml` or `shopify.app.<name>.toml` whose `[access_scopes]` `scopes`/`optional_scopes` (or legacy top-level `scopes`) gained entries since the Git baseline                                             | `manifestPattern`. In no preset. Removed, reordered, or demoted scopes stay silent; unchanged manifests are never inventoried, even with `--all`. It reads two known keys and is not a TOML parser. Scope necessity is judged, never proven.                                      |
+Every rule exports a `defineX(options)` factory; register the configured instance under the same rule id. Stateful regular expressions are reset before each match.
 
-### Route and extension reviews
+```ts
+defineNoPressureCopy({ languages: ["en", "fr"], additionalPatterns: [/última oportunidad/iu] });
+defineSettingsSaveBar({ saveBarMarkerPattern: /useSaveBar/ });
+```
 
-Select review areas using project knowledge. A page target reports at its first matching `s-page`; a `trigger: "file"` target reports at the TypeScript/JavaScript program node, which supports extension entry points without page JSX. Each trigger reports once per file and combines matching areas. Unknown purpose is not inferred from filenames.
+## What fires
+
+```tsx
+<form data-save-bar>…</form>           // ✅ direct literal attribute
+<form title="SaveBar">…</form>          // ❌ a mention isn't a marker
+<form data-save-bar={false}>…</form>    // ❌ false or dynamic values don't count
+```
+
+```ts
+for (const id of ids) await admin.graphql(QUERY, { variables: { id } }); // ❌ admin-api-loop-review
+for (const edge of (await admin.graphql(QUERY)).edges) {
+  total += edge.node.count;
+} // ✅ the iterable
+```
+
+**A save bar elsewhere in the source no longer suppresses a form's review.** **App Home rules match exact JSX names:** no import, wrapper or spread resolution; set `elementNamePattern` for your reviewed wrappers.
+
+<details>
+<summary>Copy, auth and forms: triggers and boundaries</summary>
+
+| Rule                  | Fires on                                                                                                 | Boundary                                                                                                                     |
+| --------------------- | -------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `no-pressure-copy`    | urgency, scarcity or outcome-guarantee wording in JSX text or strings                                    | default lexicons: `en`, `fr`, `de`                                                                                           |
+| `session-token-auth`  | `document.cookie`; `localStorage` / `sessionStorage` `getItem` / `setItem` with an identity-carrying key | `identityKeyPattern` default: token/session/auth/jwt/credential/api-key. Lexical candidates, not authentication verification |
+| `settings-save-bar`   | a `<form>` / `<Form>` opening element without its own save-bar marker                                    | a custom `saveBarMarkerPattern` stays a trusted escape hatch over the opening element                                        |
+| `review-solicitation` | specific review-request phrases in JSX text or strings                                                   | English, French and German defaults are partial lexicons; neutral requests still need placement and incentive review         |
+
+Recognized save-bar markers don't prove dirty-state or navigation behavior: exercise those states with a route review.
+
+`session-token-auth` also asks that offline tokens are read through the library's session storage: copies kept elsewhere go stale under the `expiringOfflineAccessTokens` future flag. Guidance uses current ID token terminology; the rule ID stays `session-token-auth`.
+
+English style and readability scores are never treated as universal locale or accessibility requirements.
+
+</details>
+
+<details>
+<summary>App Home components: triggers and boundaries</summary>
+
+They don't resolve imports, wrappers, dynamic components, spread props or generated templates. A name matching another Shopify surface doesn't make App Home guidance apply there: scope these rules to the right files.
+
+| Rule                        | Fires on                                                                 | Boundary                                                                                                                     |
+| --------------------------- | ------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------- |
+| `action-label-clarity`      | configured ambiguous literal text directly inside `s-button` or `s-link` | `ambiguousLabelPatterns` replaces a small English default lexicon; translation helpers and arbitrary strings aren't analyzed |
+| `banner-usage`              | `s-banner`, including `dismissible`                                      | needs rendered context and dismissal-persistence evidence; a correct prop can't establish either                             |
+| `destructive-action-review` | `s-button` or `s-clickable` with literal `tone="critical"`               | dynamic tones need separate review                                                                                           |
+| `form-error-recovery`       | a known Polaris input control with a possibly active `error` prop        | empty, `false`, `null`, `undefined` literals stay silent; runtime expressions schedule review                                |
+| `modal-workflow-review`     | `s-modal` or `s-app-window`                                              | reviews entry paths, task fit, dismissal, recovery; structural slot rules are separate                                       |
+
+The Text field reference encourages feedback during typing; the Alerts guide recommends errors after blur. `form-error-recovery` exposes that difference and asks for untouched, typing, blur, submission and recovery evidence. It doesn't ban `onInput` or certify validation timing from a prop.
+
+</details>
+
+<details>
+<summary>Server: loops, webhooks, scopes</summary>
+
+| Rule                     | Fires on                                                                                                                                                                                                                      | Stays silent                                                                                       |
+| ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| `admin-api-loop-review`  | `admin.graphql`, `client.request` or `client.query` (optionally qualified) inside a `for` / `for…of` / `while` / `do` body, or a `.map` / `.forEach` / `.flatMap` callback                                                    | a `for…of` iterable, a `for` initializer, functions merely defined inside a loop; test files       |
+| `webhook-handler-review` | once per file: `authenticate.webhook`, an `X-Shopify-Hmac-Sha256` / `X-Shopify-Topic` / `X-Shopify-Webhook-Id` string, or a known topic literal (`orders/create`, `APP_UNINSTALLED`) as a `switch` case or comparison operand | test files                                                                                         |
+| `scope-change-review` 🧪 | change rule: `shopify.app.toml` / `shopify.app.<name>.toml` whose `[access_scopes]` `scopes` / `optional_scopes` (or legacy top-level `scopes`) gained entries since the Git baseline                                         | removed, reordered or demoted scopes; unchanged manifests are never inventoried, even with `--all` |
+
+| Limit                    |                                                                                                                                                                                                    |
+| ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `admin-api-loop-review`  | `graphqlCalleePattern` adds project wrappers; imports and aliases aren't resolved. Bounded pagination is legitimate: the finding asks for the bound and the throttle handling                      |
+| `webhook-handler-review` | `topicPattern` replaces the default topic lexicon. Constant-time database work inline passes; dedup or queueing in another file is evidence the reviewer cites, not something the trigger resolves |
+| `scope-change-review`    | reads two known keys; not a TOML parser. Scope necessity is judged, never proven                                                                                                                   |
+
+</details>
+
+## Checkout: first paint waits on nothing avoidable
+
+`checkout-network-discipline` fires on `fetch` (bare or `window.` / `globalThis.` / `self.`-qualified) and `shopify.query()` under `extensions/**`; `networkCallPattern` adds a project fetch wrapper. **The trigger can't establish latency: review measured request and rendering timings against both performance sources.** Keep network calls out of module scope.
+
+<details>
+<summary>What the checkout sources say</summary>
+
+| Source                                                                                                            | Says                                                                                                                                                                                                                   |
+| ----------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Checkout extension performance](https://shopify.dev/docs/apps/build/checkout/extension-performance)              | load necessary initial data in the extension callback before first paint, so Shopify's loading skeleton stays until stable content is ready                                                                            |
+| [Checkout best practices](https://shopify.dev/docs/apps/launch/shopify-app-store/best-practices#18-checkout-apps) | response time below one second; initial skeletons                                                                                                                                                                      |
+| [Checkout capabilities](https://shopify.dev/docs/apps/build/checkout/capabilities)                                | backend trusts only verified session-token claims · no buyer-callable sensitive endpoint · answers with `Access-Control-Allow-Origin: *` · doesn't expect `logged_in_customer_id` on App Proxy calls from an extension |
+
+</details>
+
+## `app-ux-review` 🧪: you map files to review areas
+
+**Dormant by default; purpose is never inferred from filenames.** Prefer narrowly configured rules over stretching the App Home preset across checkout, admin and Sidekick extensions.
+
+```text
+areas  home · onboarding · navigation · responsive · premium · visual-editor · inputs
+       collections · content · copy-mechanics · checkout · admin-extension · sidekick
+```
+
+<details>
+<summary>Configuration and reporting</summary>
 
 ```ts
 import { defineConfig } from "@aurelienbbn/agentlint";
@@ -62,72 +164,71 @@ export default defineConfig({
   rules: [
     defineAppUxReview({
       targets: [
-        {
-          filenamePattern: /\/routes\/app\._index\.tsx$/,
-          areas: ["home", "onboarding", "responsive", "content"],
-        },
-        { filenamePattern: /\/routes\/app\.editor\.tsx$/, areas: ["visual-editor", "inputs"] },
-        {
-          filenamePattern: /\/extensions\/checkout\/src\/index\.tsx$/,
-          areas: ["checkout"],
-          trigger: "file",
-        },
-        {
-          filenamePattern: /\/extensions\/sidekick\/src\/index\.ts$/,
-          areas: ["sidekick"],
-          trigger: "file",
-        },
+        { filenamePattern: /\/app\._index\.tsx$/, areas: ["home", "responsive"] },
+        { filenamePattern: /editor\.tsx$/, areas: ["visual-editor"] },
+        { filenamePattern: /extensions\/admin\//, areas: ["admin-extension"], trigger: "file" },
+        { filenamePattern: /sidekick\.ts$/, areas: ["sidekick"], trigger: "file" },
       ],
     }),
   ],
 });
 ```
 
-Available areas: `home`, `onboarding`, `navigation`, `responsive`, `premium`, `visual-editor`, `inputs`, `collections`, `content`, `copy-mechanics`, `checkout`, `admin-extension`, `sidekick`. The finding names the areas applicable to that file. Review only those areas, attach source revision and browser or runtime observations, and record unresolved states. This rule does not read manifests or discover extension targets. Prefer narrowly configured rules over extending the whole App Home preset across checkout, admin, and Sidekick extensions.
+| Target kind       | Reports at                                                      |
+| ----------------- | --------------------------------------------------------------- |
+| page (default)    | the first matching `s-page`                                     |
+| `trigger: "file"` | the TS/JS program node: extension entry points without page JSX |
 
-## Presets
+Each trigger reports once per file, combining matching areas; the finding names only those areas. Review them, attach the source revision and browser or runtime observations, and record unresolved states. The rule doesn't read manifests or discover extension targets.
 
-- `shopifyAppPreset`: nine App Home and copy/auth/form reviews over `**/*.{ts,tsx,js,jsx}` and locale JSON. Scope the preset to your App Home source when a repository contains multiple Shopify surfaces.
-- `appServerPreset`: `admin-api-loop-review` and `webhook-handler-review` over `**/*.{ts,tsx,js,jsx}`, test files excluded. Scope it to server code (`app/routes/**`, `app/**/*.server.*`, workers) in repositories that also hold other GraphQL clients.
-- `checkoutExtensionPreset`: `checkout-network-discipline` scoped to `extensions/**`.
-- `scope-change-review` belongs to no preset; register `scopeChangeReview` explicitly.
+</details>
 
-```ts
-import { defineConfig } from "@aurelienbbn/agentlint";
-import { checkoutExtensionPreset, shopifyAppPreset } from "@aurelienbbn/agentlint-plugin-shopify-app";
+## Migration
 
-export default defineConfig({
-  extends: [shopifyAppPreset, checkoutExtensionPreset],
-});
-```
+| Rule                                                         | Change                                                                             |
+| ------------------------------------------------------------ | ---------------------------------------------------------------------------------- |
+| ⚠️ `checkout-network-discipline`, `session-token-auth` rev 2 | added the capabilities security checks and the offline-token session-storage check |
+| ⚠️ `settings-save-bar`                                       | only a direct literal `data-save-bar` on the form suppresses review                |
 
-## Contract boundaries and migration
+Requirement IDs and evidence boundaries: [`policy/shopify-requirements.json`](../../policy/shopify-requirements.json) and the repository Shopify checks.
 
-A save bar elsewhere in the source no longer suppresses a form's review. The default now recognizes an actual direct `data-save-bar` attribute with literal presence; a title that mentions `SaveBar`, a false JSX value, or a dynamic value does not suppress review. A custom `saveBarMarkerPattern` remains a trusted project escape hatch over the opening element. Recognized markers do not prove dirty-state or navigation behavior; exercise those states with a route review.
+<details>
+<summary>Agentlint rule contract</summary>
 
-The checkout review includes `shopify.query()` and follows the dedicated performance guide: necessary initial data loads in the extension callback before first paint so Shopify's loading skeleton remains until stable content is ready. The broader [checkout best practices](https://shopify.dev/docs/apps/launch/shopify-app-store/best-practices#18-checkout-apps) set a response-time target below one second and recommend initial skeletons. Review measured request and rendering timings against both sources; the trigger cannot establish latency. Keep network calls out of module scope.
+| Fact                | Detail                                                                                                                        |
+| ------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| rule shape          | `lifecycle`, `standard` (revision), `detector` (version), `binding` (id, authority, scope, material options)                  |
+| composing           | `defineConfig({ extends: [preset] })` or `defineConfig({ rules: [configuredRule] })`; repeated uses need distinct binding ids |
+| authority           | defaults permit agent acceptance; repository owners choose scope and can raise authority to `human`                           |
+| accepting a finding | requires matching current evidence **and** authority                                                                          |
+| fixtures            | `@aurelienbbn/agentlint/testing` runs the embedded activation/silence fixtures with the real parser                           |
 
-The Text field reference encourages feedback during typing, while the Alerts guide recommends errors after blur. The form review exposes this difference and asks for untouched, typing, blur, submission, and recovery evidence. It does not ban `onInput` or certify validation timing from a prop.
+</details>
 
-The checkout review also carries the [capabilities](https://shopify.dev/docs/apps/build/checkout/capabilities) security checks: the backend trusts only verified session-token claims, exposes no buyer-callable sensitive endpoint, answers with `Access-Control-Allow-Origin: *`, and does not expect `logged_in_customer_id` on App Proxy calls made from an extension. `session-token-auth` additionally asks that offline tokens are read through the library's session storage, because copies kept elsewhere go stale under the `expiringOfflineAccessTokens` future flag. Both standards moved to revision 2 with these checks.
+## Sources
 
-Authentication guidance uses the current ID token terminology while preserving the `session-token-auth` rule ID. Cookie and storage triggers remain lexical candidates, not authentication verification. English copy style and readability scores are never treated as universal locale or accessibility requirements.
+Independently implemented from Shopify's official documentation; no Shopify code or templates vendored. Greppable `@attribution` tags mark source concepts in implementation files. `starterPreset` onboarding: conceptual inspiration from desloppify by Peter O'Malley; no code or guidance copied.
 
-## Sources and attribution
+<details>
+<summary>Inspected pages, by date and rule</summary>
 
-The rules independently implement review triggers and guidance inspired by Shopify's official documentation, inspected on 2026-09-05. No Shopify source code or documentation templates are vendored. Greppable `@attribution` tags identify the source concepts in implementation files.
+| Inspected  | Source                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | Feeds                                                                              |
+| ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| 2026-09-05 | [Built for Shopify requirements](https://shopify.dev/docs/apps/launch/built-for-shopify/requirements), [App Store requirements](https://shopify.dev/docs/apps/launch/shopify-app-store/app-store-requirements)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                | applicability and numbered obligations                                             |
+| 2026-09-05 | [Content](https://shopify.dev/docs/apps/design/content), [Marketing](https://shopify.dev/docs/apps/design/user-experience/marketing), [Alerts](https://shopify.dev/docs/apps/design/user-experience/alerts), [Forms](https://shopify.dev/docs/apps/design/user-experience/forms)                                                                                                                                                                                                                                                                                                                                                                                                              | readable actions, restrained promotion, understandable feedback, organized editing |
+| 2026-09-05 | [Voice and tone](https://shopify.dev/docs/apps/design/content/voice-and-tone), [Grammar and mechanics](https://shopify.dev/docs/apps/design/content/grammar-and-mechanics)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | situation-appropriate copy, locale-specific mechanics                              |
+| 2026-09-05 | [App structure](https://shopify.dev/docs/apps/design/app-structure)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           | rendered review of admin extension size and workflow fit                           |
+| 2026-09-05 | [App Home](https://shopify.dev/docs/apps/design/user-experience/app-home-page), [Onboarding](https://shopify.dev/docs/apps/design/user-experience/onboarding), [Navigation](https://shopify.dev/docs/apps/design/navigation), [Layout](https://shopify.dev/docs/apps/design/layout)                                                                                                                                                                                                                                                                                                                                                                                                           | route-level review areas                                                           |
+| 2026-09-05 | Polaris [Button](https://shopify.dev/docs/api/app-home/latest/web-components/actions/button), [Banner](https://shopify.dev/docs/api/app-home/latest/web-components/feedback-and-status-indicators/banner), [Modal](https://shopify.dev/docs/api/app-home/latest/web-components/overlays/modal), [Text field](https://shopify.dev/docs/api/app-home/latest/web-components/forms/text-field)                                                                                                                                                                                                                                                                                                    | component intent and behavior                                                      |
+| 2026-09-05 | Polaris [Switch](https://shopify.dev/docs/api/app-home/latest/web-components/forms/switch), [Color picker](https://shopify.dev/docs/api/app-home/latest/web-components/forms/color-picker), [Table](https://shopify.dev/docs/api/app-home/latest/web-components/layout-and-structure/table), [Choice list](https://shopify.dev/docs/api/app-home/latest/web-components/forms/choice-list), [Menu](https://shopify.dev/docs/api/app-home/latest/web-components/actions/menu), [Tooltip](https://shopify.dev/docs/api/app-home/latest/web-components/typography-and-content/tooltip), [Paragraph](https://shopify.dev/docs/api/app-home/latest/web-components/typography-and-content/paragraph) | targeted input, collection and content review                                      |
+| 2026-09-05 | [Checkout extension performance](https://shopify.dev/docs/apps/build/checkout/extension-performance), [Checkout best practices](https://shopify.dev/docs/apps/launch/shopify-app-store/best-practices#18-checkout-apps)                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | initial rendering sequence, measured response-time target                          |
+| 2026-09-05 | [ID tokens](https://shopify.dev/docs/apps/build/authentication-authorization/id-tokens), [Save Bar API](https://shopify.dev/docs/api/app-home/latest/apis/user-interface-and-interactions/save-bar-api)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | current platform guidance                                                          |
+| 2026-09-19 | [Admin GraphQL API](https://shopify.dev/docs/api/admin-graphql/latest), [API limits](https://shopify.dev/docs/api/usage/limits), [bulk operations](https://shopify.dev/docs/api/usage/bulk-operations/queries), [idempotency](https://shopify.dev/docs/api/usage/implementing-idempotency)                                                                                                                                                                                                                                                                                                                                                                                                    | `admin-api-loop-review`                                                            |
+| 2026-09-19 | [HTTPS webhook delivery](https://shopify.dev/docs/apps/build/webhooks/subscribe/https), [duplicate webhooks](https://shopify.dev/docs/apps/build/webhooks/ignore-duplicates), [webhook best practices](https://shopify.dev/docs/apps/build/webhooks/best-practices), [`authenticate.webhook`](https://shopify.dev/docs/api/shopify-app-react-router/latest/authenticate/webhook)                                                                                                                                                                                                                                                                                                              | `webhook-handler-review`                                                           |
+| 2026-09-19 | [access scope management](https://shopify.dev/docs/apps/build/authentication-authorization/app-installation/manage-access-scopes), [protected customer data](https://shopify.dev/docs/apps/launch/protected-customer-data)                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | `scope-change-review`                                                              |
+| 2026-09-19 | [checkout capabilities](https://shopify.dev/docs/apps/build/checkout/capabilities), [`shopify-app-js` future flags](https://github.com/Shopify/shopify-app-js)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                | extended checkout and authentication guidance                                      |
 
-- [Built for Shopify requirements](https://shopify.dev/docs/apps/launch/built-for-shopify/requirements) and [App Store requirements](https://shopify.dev/docs/apps/launch/shopify-app-store/app-store-requirements): applicability and numbered obligations.
-- [Content](https://shopify.dev/docs/apps/design/content), [Marketing](https://shopify.dev/docs/apps/design/user-experience/marketing), [Alerts](https://shopify.dev/docs/apps/design/user-experience/alerts), and [Forms](https://shopify.dev/docs/apps/design/user-experience/forms): readable actions, restrained promotion, understandable feedback, and organized editing.
-- [Voice and tone](https://shopify.dev/docs/apps/design/content/voice-and-tone) and [Grammar and mechanics](https://shopify.dev/docs/apps/design/content/grammar-and-mechanics): situation-appropriate copy and locale-specific mechanics; [App structure](https://shopify.dev/docs/apps/design/app-structure): rendered review of admin extension size and workflow fit.
-- [App Home](https://shopify.dev/docs/apps/design/user-experience/app-home-page), [Onboarding](https://shopify.dev/docs/apps/design/user-experience/onboarding), [Navigation](https://shopify.dev/docs/apps/design/navigation), and [Layout](https://shopify.dev/docs/apps/design/layout): route-level review areas.
-- Polaris [Button](https://shopify.dev/docs/api/app-home/latest/web-components/actions/button), [Banner](https://shopify.dev/docs/api/app-home/latest/web-components/feedback-and-status-indicators/banner), [Modal](https://shopify.dev/docs/api/app-home/latest/web-components/overlays/modal), and [Text field](https://shopify.dev/docs/api/app-home/latest/web-components/forms/text-field): component intent and behavior.
-- Polaris [Switch](https://shopify.dev/docs/api/app-home/latest/web-components/forms/switch), [Color picker](https://shopify.dev/docs/api/app-home/latest/web-components/forms/color-picker), [Table](https://shopify.dev/docs/api/app-home/latest/web-components/layout-and-structure/table), [Choice list](https://shopify.dev/docs/api/app-home/latest/web-components/forms/choice-list), [Menu](https://shopify.dev/docs/api/app-home/latest/web-components/actions/menu), [Tooltip](https://shopify.dev/docs/api/app-home/latest/web-components/typography-and-content/tooltip), and [Paragraph](https://shopify.dev/docs/api/app-home/latest/web-components/typography-and-content/paragraph): targeted input, collection, and content review.
-- [Checkout extension performance](https://shopify.dev/docs/apps/build/checkout/extension-performance) and [Checkout best practices](https://shopify.dev/docs/apps/launch/shopify-app-store/best-practices#18-checkout-apps): initial rendering sequence and measured response-time target. [ID tokens](https://shopify.dev/docs/apps/build/authentication-authorization/id-tokens) and [Save Bar API](https://shopify.dev/docs/api/app-home/latest/apis/user-interface-and-interactions/save-bar-api): current platform guidance.
-
-- Server-side reviews, inspected on 2026-09-19: [Admin GraphQL API](https://shopify.dev/docs/api/admin-graphql/latest), [API limits](https://shopify.dev/docs/api/usage/limits), [bulk operations](https://shopify.dev/docs/api/usage/bulk-operations/queries), and [idempotency](https://shopify.dev/docs/api/usage/implementing-idempotency) for `admin-api-loop-review`; [HTTPS webhook delivery](https://shopify.dev/docs/apps/build/webhooks/subscribe/https), [duplicate webhooks](https://shopify.dev/docs/apps/build/webhooks/ignore-duplicates), [webhook best practices](https://shopify.dev/docs/apps/build/webhooks/best-practices), and [`authenticate.webhook`](https://shopify.dev/docs/api/shopify-app-react-router/latest/authenticate/webhook) for `webhook-handler-review`; [access scope management](https://shopify.dev/docs/apps/build/authentication-authorization/app-installation/manage-access-scopes) and [protected customer data](https://shopify.dev/docs/apps/launch/protected-customer-data) for `scope-change-review`; [checkout capabilities](https://shopify.dev/docs/apps/build/checkout/capabilities) and the [`shopify-app-js` future flags](https://github.com/Shopify/shopify-app-js) for the extended checkout and authentication guidance.
-
-Requirement IDs and evidence boundaries are governed by [`policy/shopify-requirements.json`](../../policy/shopify-requirements.json) and the repository Shopify checks.
+</details>
 
 <!-- harness-catalog:start -->
 
@@ -189,20 +290,3 @@ Generated from package exports by `pnpm catalog`. Rule-specific options and limi
 - https://shopify.dev/docs/apps/launch/shopify-app-store/best-practices#18-checkout-apps (inspiration; independently implemented)
 
 <!-- harness-catalog:end -->
-
-## Current rule contract
-
-Rules expose `lifecycle`, `standard` (revision), `detector` (version), and `binding` (id, authority, scope, material options). Presets use arrays of bindings: `defineConfig({ extends: [preset] })` or `defineConfig({ rules: [configuredRule] })`. Configure repeated uses with distinct binding ids. Repository owners choose scope and can raise authority to `human`; defaults permit agent acceptance. Acceptance requires matching current evidence and authority. `@aurelienbbn/agentlint/testing` runs the embedded activation/silence fixtures with the real parser.
-
-## Start with a focused review
-
-The opt-in `starterPreset` includes `sessionTokenAuth`, `formErrorRecovery`. Install a compatible local draft of this package and agentlint, then run:
-
-```sh
-agentlint init --preset "@aurelienbbn/agentlint-plugin-shopify-app#starterPreset"
-agentlint rules test
-agentlint rules scan --review
-agentlint next --format json
-```
-
-`init` preserves an existing config and prints the package installation command. It never installs packages itself. Inspect and calibrate the bindings before making `agentlint check --all` required. This gradual onboarding takes conceptual inspiration from desloppify by Peter O'Malley; no code or guidance was copied.

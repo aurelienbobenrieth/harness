@@ -1,38 +1,88 @@
 # Agentlint contract
 
-The five active agentlint plugins target the local standard/detector/binding API. This is a breaking draft migration, without an adapter for the former flat rules, object-map config, or ledger records.
+**The 5 active agentlint plugins target the local standard / detector / binding API.** Breaking draft migration: no adapter for the former flat rules, object-map config, or ledger records.
 
-## API and execution
+> [!WARNING]
+> **The local archive says `0.1.5`; it is not registry `0.1.5`.** Pre-release engine, incompatible with the public API. Plugins stay private until a compatible engine is published.
 
-- Every rule has a standard revision and detector version, initially 1 for this new contract. Bump the appropriate version when meaning or detection changes after adoption.
-- Configurations compose arrays or `extends`. Each binding id must be unique. Scope and authority belong to the repository; defaults permit an agent to accept.
-- Factory options participate in the binding digest, including regular expression source/flags and array order. Factories snapshot input options. Stateful patterns start from the beginning for each match.
-- File-local visitors explicitly opt into `scan: "file"`. `registry-drift` declares its registry file as a dependency, which forces complete evidence and invalidates acceptance when the registry changes. Missing or malformed registry evidence fails instead of silently skipping.
+## An acceptance holds only while its inputs match
 
-## Relevance decisions
+```mermaid
+flowchart LR
+  S["standard revision"] --> K{all match?}
+  D["detector version"] --> K
+  B["binding digest"] --> K
+  E["reviewEpoch"] --> K
+  R["declared dependencies"] --> K
+  K -- yes --> A[acceptance holds]
+  K -- no --> F[finding reopens]
+```
 
-| Plugin         | Rules                                                                                                     | Decision and limits                                                                                                                                                                                           |
-| -------------- | --------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| core           | abstraction-earns-keep                                                                                    | Keep as review. Public adapters, tracing and runtime boundaries justify delegation; an interface name does not prove an unnecessary abstraction.                                                              |
-| core           | boundary-resilience                                                                                       | Keep. Explicit deadlines and recovery deserve review. Name matching does not resolve wrappers or import aliases.                                                                                              |
-| core           | bounded-data-access                                                                                       | Keep for data-access code. A cursor/filter alone does not prove bounded cardinality.                                                                                                                          |
-| core           | bounded-work                                                                                              | Keep for execution paths. Ignore strings/comments and separate nested routines; preserve I/O callbacks when inspecting fan-out. This is a syntactic prompt, not a complexity proof.                           |
-| core           | comment-signal                                                                                            | Optional editorial review. Preserve type-only JavaScript JSDoc and constraint documentation.                                                                                                                  |
-| core           | test-behavior-coverage                                                                                    | Keep for tests. It measures file-level mock/assertion density, not coverage or per-test adequacy.                                                                                                             |
-| effect         | prefer-schema-contracts                                                                                   | Keep at runtime trust/persistence/wire boundaries. Exported helper types, visitors and callbacks can remain compile-time interfaces.                                                                          |
-| tanstack-query | query-state-coverage, mutation-state-coverage                                                             | Keep for user-facing query and mutation hooks. Suspense/error boundaries can own query states; mutation review also covers pending, error, retry, success, duplicate-submission, and paused/offline behavior. |
-| xstate         | actor-cleanup, derived-boolean-context, machine-failure-coverage                                          | Keep for machines and actor owners. A lexical trigger cannot establish lifecycle ownership, reachability or guard correctness.                                                                                |
-| shopify-app    | action-label-clarity, banner-usage, destructive-action-review, form-error-recovery, modal-workflow-review | Keep for the configured App Home surface; source structure schedules review, browser evidence establishes interaction.                                                                                        |
-| shopify-app    | no-pressure-copy, review-solicitation                                                                     | Keep with explicit language/surface scope. Lexicons are partial and neutral review requests still need placement/incentive review.                                                                            |
-| shopify-app    | session-token-auth, settings-save-bar, checkout-network-discipline                                        | Keep in their matching runtime/surface. Storage for draft UI state is distinct from stored identity.                                                                                                          |
-| shopify-app    | app-ux-review                                                                                             | Keep opt-in. Empty route targets intentionally produce no findings; configured targets have parser integration tests.                                                                                         |
+**Rules bump their own versions; the repository owns bindings, authority, and `reviewEpoch`. The engine uses no clock.**
 
-## Local installation boundary
+<details>
+<summary>Lever owners and execution rules</summary>
 
-Development manifests install the hash-pinned `local-packages/agentlint-current.tgz` archive, so a clean Harness checkout does not depend on a sibling repository. The archive retains version 0.1.5 because the engine is still a pre-release draft; this does **not** mean compatibility with registry 0.1.5.
+| Lever               | Owner      | Rule                                                                                                                           |
+| ------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| standard revision   | rule       | Starts at `1`. Bump when meaning changes after adoption.                                                                       |
+| detector version    | rule       | Starts at `1`. Bump when detection changes after adoption.                                                                     |
+| binding             | repository | Arrays or `extends`; unique ids. Repository owns scope and authority. Mechanically evidenced rules may allow agent acceptance. |
+| binding digest      | engine     | Includes factory options: regex source/flags, array order. Factories snapshot options.                                         |
+| `reviewEpoch`       | repository | Bump to invalidate compatible decisions when a policy period changes. **No clock.**                                            |
+| declared dependency | rule       | `registry-drift` declares its registry file: complete evidence required; registry change reopens.                              |
 
-The engine passes its separate fresh npm tarball smoke test, with strict TypeScript and the finding/acceptance workflow. The six-archive harness test uses local runtime dependencies; the separate package consumer below verifies a fresh installation of the active harness graph. Keep these plugins private until the engine has an installable published version, then update all five peer/dev contracts and rerun packed consumer checks. Earlier registry-profile or historical tarball results do not certify this new graph.
+Evidence fingerprint and sufficient authority must also match. **Architectural and invariant trade-offs default to human authority.**
 
-Validation includes typed builds, existing rule tests, real-parser positive/negative fixtures, configured-route integration, option identity/determinism, registry dependency invalidation, and the CLI's current JSONL envelope. Guidance review here establishes applicability to the current code/API, not renewed Shopify certification or exhaustive external policy compliance.
+- `scan: "file"` is opt-in for file-local visitors.
+- Missing or malformed registry evidence **fails**, never skips.
+- Stateful regex patterns restart for each match.
+- `relatedFiles`: declared dependencies or files from the normalized change, carried as reading context, never correctness evidence.
 
-The full package consumer packs only `packages/*`, excluding the private workspace root. Fresh pnpm installation, dependency audit, strict TypeScript, runtime exports, lint runners and scaffold checks pass. The local Agentlint archive and harness now share Effect and both Node platform packages at `4.0.0-rc.115`, removing the stale runtime mismatch. No `skipLibCheck` or declaration exemption is used.
+</details>
+
+## Every rule is a review prompt, never a verdict
+
+| Rules                                                                                                                           | Limit                                                                                  |
+| ------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| core `abstraction-earns-keep`                                                                                                   | Adapters, tracing, runtime boundaries justify delegation; a name proves nothing.       |
+| core `boundary-resilience`                                                                                                      | Name matching misses wrappers and import aliases.                                      |
+| core `bounded-data-access` (data-access code)                                                                                   | A cursor/filter alone doesn't prove bounded cardinality.                               |
+| core `bounded-work` (execution paths)                                                                                           | Syntactic prompt, not a complexity proof. Skips strings/comments.                      |
+| core `comment-signal` (optional)                                                                                                | Keeps type-only JSDoc and constraint docs.                                             |
+| core `change-scatter-review`, `single-use-extraction-review`, `precision-boundary-review` (opt-in, human)                       | Call counts, repeated tokens, unit suffixes: evidence, not verdicts.                   |
+| core `protected-invariant-change`, `hotspot-change-review` (opt-in, human)                                                      | Repository config; **empty defaults = no findings**.                                   |
+| core `test-behavior-coverage` (tests)                                                                                           | File-level mock/assertion density, not coverage.                                       |
+| effect `prefer-schema-contracts`                                                                                                | Runtime trust, persistence, wire only; helper types stay compile-time.                 |
+| tanstack-query `query-state-coverage`, `mutation-state-coverage`                                                                | Boundaries can own query states. Mutations: pending, error, retry, duplicate, offline. |
+| xstate `actor-cleanup`, `derived-boolean-context`, `machine-failure-coverage`                                                   | Lexical: can't prove lifecycle, reachability, guards.                                  |
+| shopify-app `action-label-clarity`, `banner-usage`, `destructive-action-review`, `form-error-recovery`, `modal-workflow-review` | Configured App Home only; browser evidence proves interaction.                         |
+| shopify-app `no-pressure-copy`, `review-solicitation`                                                                           | Partial lexicons; neutral asks still need placement review.                            |
+| shopify-app `session-token-auth`, `settings-save-bar`, `checkout-network-discipline`                                            | Draft UI storage ≠ stored identity.                                                    |
+| shopify-app `app-ux-review` (opt-in)                                                                                            | **Empty route targets = no findings.**                                                 |
+
+## Clean checkouts install a pinned archive, not a sibling repo
+
+`local-packages/agentlint-current.tgz`: sha512 must match `localAgentlint.integrity` in [`policy/compatibility.json`](../policy/compatibility.json).
+
+```text
+ agentlint-current.tgz
+   ├─▶ engine smoke ....... fresh npm tarball · strict TS · finding/acceptance workflow
+   ├─▶ six-archive test ... engine + 5 plugins, local runtime deps  (pnpm test:agentlint-current)
+   └─▶ package consumer ... fresh install of the active graph       (pnpm test:package)
+```
+
+**Going public:** engine publishes → update all 5 plugins' peer/dev contracts → rerun packed consumer checks.
+
+<details>
+<summary>What validation proves, and what it doesn't</summary>
+
+Package consumer packs only `packages/*` (private root excluded). Passes: fresh pnpm install, dependency audit, strict TypeScript (no `skipLibCheck`, no declaration exemption), runtime exports, lint runners, scaffold checks. Archive and harness share Effect and both Node platform packages at `4.0.0-rc.115` (stale runtime mismatch removed).
+
+Validation: typed builds, rule tests, real-parser positive/negative fixtures, configured-route integration, option identity/determinism, registry dependency invalidation, the CLI's current JSONL envelope.
+
+Establishes applicability to the current code/API. Does **not** establish renewed Shopify certification, exhaustive external policy compliance, or that earlier registry-profile/historical tarball results certify this graph.
+
+Rule details: `bounded-work` separates nested routines and preserves I/O callbacks when inspecting fan-out. `tanstack-query` mutation review also covers success.
+
+</details>

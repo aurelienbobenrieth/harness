@@ -1,11 +1,11 @@
 ## Behavior
 
-Explain the problem and the resulting behavior. Include a small before/after example when useful.
+<!-- Problem → new behavior. Small before/after example if it helps. -->
 
 ## Evidence
 
-Record the commands run, their result, and any remaining coverage limit. Link the regression or consumer case that establishes the change.
+<!-- Commands run + result. Link the regression or consumer case that proves it. Name any coverage gap or skipped check. -->
 
 ## Compatibility
 
-Identify changed diagnostics, options, exports, or dependency requirements. Include the changeset and migration guidance when applicable.
+<!-- Changed diagnostics, options, exports, or dependency requirements. Changeset + migration guidance, or "none". -->

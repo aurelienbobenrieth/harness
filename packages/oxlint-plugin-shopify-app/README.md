@@ -1,33 +1,28 @@
 # @aurelienbbn/oxlint-plugin-shopify-app
 
-Custom oxlint rules for Shopify app and extension code. Rules implement static portions of Shopify requirements and Polaris component guidance. Passing lint does not establish App Store or Built for Shopify eligibility.
+**27 oxlint rules for Shopify apps and extensions: the static slice of App Store, Built for Shopify, Admin API, and Polaris App Home requirements.**
 
-## Rules
-
-See the [registered contract inventory](#registered-contract-inventory) for current triggers.
-
-## Scoping
-
-Copy the tested [App Home recipe](../../examples/shopify/app-home.oxlintrc.json) into your project and run it over App Home source paths. It combines Polaris contracts with upstream native HTML accessibility rules:
+> [!WARNING]
+> **Passing lint doesn't make an app App Store or Built for Shopify eligible.** These rules implement the statically checkable parts only.
 
 ```sh
-oxlint --config app-home.oxlintrc.json app
+pnpm add -D @aurelienbbn/oxlint-plugin-shopify-app oxlint   # oxlint >=1.82.0 <2.0.0
 ```
 
-Rules do not infer the app category or extension target. Keep this recipe scoped to App Home; checkout and customer-account components have different contracts. Enable additional policies only after selecting the applicable category and source paths:
+No preset, **no autofix**: every change means choosing an API, content, layout, or runtime policy.
 
-| Optional rule                     | Scope decision                                                                                                                                                                                                               |
-| --------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `no-draft-order-custom-discounts` | Discount-app automation subject to Built for Shopify 5.5.2. Keep merchant-driven draft-order workflows outside this policy.                                                                                                  |
-| `no-asset-api-theme-writes`       | App code subject to Built for Shopify 3.2.2 after reviewing its page-builder, backup/restore, SEO, content-locking and developer-tooling exceptions.                                                                         |
-| `no-admin-rest-api`               | New public apps subject to the GraphQL-only policy; see migration boundaries below.                                                                                                                                          |
-| `require-fetch-abort-signal`      | Explicit checkout extension source directories where cancellation is part of the request policy, such as `extensions/checkout-banner/src/**`. Pair it with runtime deadline evidence; a signal does not establish a timeout. |
+## 27 rules, 4 scopes
 
-Use oxlint `overrides` for those selected paths. A blanket `extensions/**` override cannot distinguish checkout, customer-account, admin, Function and theme surfaces. In particular, keep `require-fetch-abort-signal` off admin UI extensions: a relative `fetch("/api/...")` to the app's own domain is their [documented auto-authenticated path](https://shopify.dev/docs/api/admin-extensions/latest/network-features), and cancellation is a checkout and customer-account request policy. The [Built for Shopify requirements](https://shopify.dev/docs/apps/launch/built-for-shopify/requirements) define category applicability and exceptions.
+```text
+server baseline   ███████          7   every app, server + route source
+App Home recipe   █████████████   13   + 14 jsx-a11y, App Home paths only
+category opt-in   ████             4   overrides on the paths the BFS category covers
+other opt-in      ███              3   Function source · 2 candidates, off by default
+```
 
-## Server and API baseline
+**Rules never infer the app category or extension target.** You decide, then scope with `overrides`.
 
-These rules need no category decision and belong in every Shopify app configuration, scoped to app server and route source:
+## Server baseline: every app, no decision needed
 
 ```json
 {
@@ -44,45 +39,189 @@ These rules need no category decision and belong in every Shopify app configurat
 }
 ```
 
-| Rule                                   | Trigger                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| -------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `no-script-tag-api`                    | `scriptTagCreate`/`scriptTagUpdate` mutations, REST `script_tags` requests and generated Script Tag document imports. Script tags [stop running on 2027-03-01](https://shopify.dev/changelog/online-store-script-tags-deprecation), so the rule is part of the baseline instead of a Built for Shopify category opt-in.                                                                                                                                                                                                                             |
-| `require-mutation-user-errors`         | A top-level mutation field in a GraphQL string or template whose selection has no `userErrors` or `*UserErrors` field. Same-document fragments are followed; unknown fragments, interpolations inside the field and unparsable text stay silent. Option `ignoreMutations` lists payloads without the field; use overrides to exclude non-Shopify GraphQL clients.                                                                                                                                                                                   |
-| `require-idempotent-mutations`         | One of the 17 refund, inventory and location mutations listed in the [idempotency changelog](https://shopify.dev/changelog/making-idempotency-mandatory-for-inventory-adjustments-and-refund-mutations) without `@idempotent` on the field (`missingIdempotent`), or with a string-literal key (`literalIdempotencyKey`). The list lives in one dated table in the rule source (published 2025-12-12, reviewed 2026-09-20). Option `since` names the Admin API version the project pins; a value below `2026-04` silences `missingIdempotent` only. |
-| `no-swallowed-auth-response`           | `authenticate.admin/webhook/flow/fulfillmentService/pos`, `authenticate.public.*`, `billing.require/request/cancel/updateUsageCappedAmount`, `scopes.request`, or a `redirect` destructured from `authenticate.admin`, inside a `try` of the same function whose `catch` has neither a `throw` nor an `instanceof Response` test.                                                                                                                                                                                                                   |
-| `no-hardcoded-billing-test-mode`       | Literal `isTest: true` in the first argument of `billing.require/request/check/cancel/createUsageRecord`, or literal `test: true` on `appSubscriptionCreate`/`appPurchaseOneTimeCreate`. Test and fixture files are skipped.                                                                                                                                                                                                                                                                                                                        |
-| `webhook-hmac-verification-shape`      | Only in files containing the `X-Shopify-Hmac-SHA256` header name: `.update(JSON.stringify(...))` on a `createHmac` chain, and `createHmac` without any `timingSafeEqual`/`safeCompare` identifier. Option `safeCompareNames` replaces the accepted names. Verification delegated to another file and OAuth `hmac` query checks stay silent.                                                                                                                                                                                                         |
-| `no-router-redirect-in-embedded-route` | A `redirect` imported from `react-router` or `@remix-run/{node,server-runtime,cloudflare}` called in a module that also calls `authenticate.admin`, or called anywhere with an `https://` or `shopify://` destination. Relative redirects usually still work, so configure it as `warn`.                                                                                                                                                                                                                                                            |
+```ts
+`mutation($id: ID!, $tags: [String!]!) { tagsAdd(id: $id, tags: $tags) { node { id } } }`; // ❌ no userErrors
+`mutation { tagsAdd(id: 1, tags: []) { node { id } userErrors { field message } } }`; // ✅
 
-Opt-in rules outside the baseline:
+`mutation($input: RefundInput!) { refundCreate(input: $input) { refund { id } userErrors { message } } }`; // ❌ missingIdempotent
+`mutation($input: RefundInput!) { refundCreate(input: $input) @idempotent(key: "4f5b6ebf-143c-4da5-8d0f-fb8553bfd85d") { refund { id } } }`; // ❌ literalIdempotencyKey
+`mutation($input: RefundInput!, $key: String!) { refundCreate(input: $input) @idempotent(key: $key) { refund { id } } }`; // ✅
 
-| Rule                                    | Trigger and scope                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
-| --------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `functions-no-unavailable-runtime-apis` | Async functions, top-level `await`, `.then()` on call results, unshadowed `Promise`, `setTimeout`, `setInterval`, `fetch`, `crypto`, `URL`, `URLSearchParams`, `process`, `Buffer`, `require`, `node:` imports, `Date.now()`, zero-argument `Date`, `Math.random()` and `performance.now()`. Enable it through `overrides` on JavaScript Function source only, such as `extensions/volume-discount/src/**`; every other surface legitimately uses these APIs.                                                                                               |
-| `no-stale-api-version-in-source`        | Candidate rule, off by default. `/api/<version>/` in string or template literals, string `apiVersion` properties and `ApiVersion.<Month><YY>` members. Without options it reports only `unstable` outside tests; options `minimumApiVersion` and `maximumApiVersion` add reviewed bounds. No clock-derived verdicts.                                                                                                                                                                                                                                        |
-| `no-session-or-token-logging`           | Candidate rule, off by default. `console`, `logger` or `log` calls whose arguments expose `session`, `accessToken`, `access_token`, `sessionToken` or `idToken` (identifier, shorthand, terminal member, spread, template hole or `JSON.stringify`), or a `payload` destructured from `authenticate.webhook`. Options `loggerObjects`, `sensitiveNames` and `webhookPayloadNames` replace the defaults. The detector is domain-neutral apart from the webhook payload hook, so it can move to a core secrets-in-logs rule; prefer that rule once it exists. |
+try {
+  const { admin } = await authenticate.admin(request);
+  return admin;
+} catch (error) {
+  return data({ error: "Something went wrong" }, { status: 500 });
+} // ❌ swallows the Response
+try {
+  await authenticate.admin(request);
+} catch (error) {
+  if (error instanceof Response) throw error;
+  return null;
+} // ✅
 
-## Autofix
+await billing.require({ plans: [PRO], isTest: true, onFailure }); // ❌ never bills
+```
 
-No rule is autofixable: changes require choosing an API, content, layout, or runtime policy.
+**Idempotency list: one dated table in the rule source.** Published 2025-12-12, reviewed 2026-09-20, required from Admin API `2026-04`. Script tags [stop running on 2027-03-01](https://shopify.dev/changelog/online-store-script-tags-deprecation): baseline, not a BFS opt-in.
 
-## Contract boundaries and migration
+<details>
+<summary>Exact triggers, silent cases, options</summary>
 
-GraphQL restrictions inspect parsed mutation fields. Draft-order response selections mentioning appliedDiscount do not constitute discount inputs; variable-supplied mutation inputs still need boundary review. REST Asset API GETs are allowed, while recognized write methods are reported. Script Tag imports are scoped to generated/admin sources, and incidental URL strings are not API calls.
+| Rule                                             | ❌ Fires on                                                                                                                                                                                                                                                                                                                                                                |
+| ------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `no-script-tag-api`                              | `scriptTagCreate` / `scriptTagUpdate` mutations, REST `script_tags` requests, generated Script Tag document imports                                                                                                                                                                                                                                                        |
+| `require-mutation-user-errors`                   | a top-level mutation field in a GraphQL string or template whose selection has no `userErrors` / `*UserErrors` field                                                                                                                                                                                                                                                       |
+| `require-idempotent-mutations`                   | one of the 17 refund, inventory and location mutations in the [idempotency changelog](https://shopify.dev/changelog/making-idempotency-mandatory-for-inventory-adjustments-and-refund-mutations) without `@idempotent` (`missingIdempotent`), or with a string-literal key (`literalIdempotencyKey`)                                                                       |
+| `no-swallowed-auth-response`                     | `authenticate.admin/webhook/flow/fulfillmentService/pos`, `authenticate.public.*`, `billing.require/request/cancel/updateUsageCappedAmount`, `scopes.request`, or a `redirect` destructured from `authenticate.admin`, inside a `try` of the same function whose `catch` has neither a `throw` nor an `instanceof Response` test. These throw a `Response` as control flow |
+| `no-hardcoded-billing-test-mode`                 | literal `isTest: true` in the first argument of `billing.require/request/check/cancel/createUsageRecord`, or literal `test: true` on `appSubscriptionCreate` / `appPurchaseOneTimeCreate`                                                                                                                                                                                  |
+| `webhook-hmac-verification-shape`                | in files containing the `X-Shopify-Hmac-SHA256` header name only: `.update(JSON.stringify(...))` on a `createHmac` chain; `createHmac` without any `timingSafeEqual` / `safeCompare` identifier                                                                                                                                                                            |
+| `no-router-redirect-in-embedded-route` ⚠️ `warn` | `redirect` from `react-router` or `@remix-run/{node,server-runtime,cloudflare}` called in a module that also calls `authenticate.admin`, or anywhere with an `https://` or `shopify://` destination. Relative redirects usually still work, hence `warn`                                                                                                                   |
 
-Fetch cancellation requires an explicit usable signal shape or a recognized Request-owned signal. Unknown options variables and later overriding spreads are not treated as proof; a signal alone is not a deadline. Modal slots must use allowed action slots and headings must be nonempty. Viewport policy permits maximum-scale values of at least five and rejects user-scalable=no/0. These static checks do not certify Built for Shopify acceptance.
+| Rule                              | ⏭️ Silent on                                                                                              | Option (default)                                                                                                      |
+| --------------------------------- | --------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `require-mutation-user-errors`    | unknown fragments, interpolations inside the field, unparsable text. Same-document fragments are followed | `ignoreMutations` (`[]`): payloads without the field. Exclude non-Shopify GraphQL clients via `overrides`             |
+| `require-idempotent-mutations`    | —                                                                                                         | `since` (unset): the Admin API version you pin, `YYYY-01/04/07/10`. Below `2026-04` silences `missingIdempotent` only |
+| `no-hardcoded-billing-test-mode`  | test and fixture files                                                                                    | —                                                                                                                     |
+| `webhook-hmac-verification-shape` | verification delegated to another file; OAuth `hmac` query checks                                         | `safeCompareNames` (`["timingSafeEqual", "safeCompare"]`), replaced not merged                                        |
 
-Enable `shopify-app/no-admin-rest-api` for new public apps subject to Shopify's GraphQL-only policy. It recognizes runtime REST resource imports from `@shopify/shopify-api/rest/admin`, dynamic imports and unshadowed `require`, plus unshadowed global `fetch` calls with recognizable REST Admin URLs. GraphQL, Storefront/Ajax APIs, type-only imports, unrelated hosts and shadowed functions remain allowed. SDK instances, wrappers, dynamically selected API versions and resource names require review. Existing public apps and custom apps need an explicit migration decision before enabling this rule.
+The 17 mutations needing `@idempotent`: `refundCreate` · `inventoryShipmentReceive` · `inventoryAdjustQuantities` · `inventoryMoveQuantities` · `inventorySetQuantities` · `inventorySetOnHandQuantities` · `inventoryShipmentCreateInTransit` · `inventoryShipmentCreate` · `inventoryTransferCreate` · `inventoryTransferCreateAsReadyToShip` · `inventoryTransferDuplicate` · `inventoryTransferSetItems` · `inventorySetScheduledChanges` · `inventoryActivate` · `inventoryShipmentAddItems` · `locationActivate` · `locationDeactivate`
 
-The new Polaris contracts target App Home v1.0 JSX. They inspect intrinsic elements, static literals and inline object spreads in effective override order. Runtime expressions, later unknown spreads, translated strings and custom component output remain review inputs; a silent diagnostic is not proof of their rendered state. Labels reject known null, boolean and empty values. Fields use `label`; switch and drop zone can use their documented `accessibilityLabel` alternative. Hiding a field label with `labelAccessibilityVisibility=exclusive` does not remove its need for a name. Button and clickable rules inspect direct content, including fragments; icon elements and empty literals do not name an action. Other nested elements and user components need rendered accessibility checks.
+</details>
 
-`s-action-slot-contract` checks unconditional direct page/modal children, including fragments. A primary slot accepts one `s-button` with `variant=primary`; secondary slots accept secondary/auto buttons, with button groups also accepted on pages. Conditional rendering, wrappers and group contents still need review. `s-page-aside-visible` reports an aside rendered directly under a page whose explicit width is small or large. `s-button-submit-no-navigation` catches static navigation or command props that override submit/reset behavior. `s-tooltip-no-interactive-content` checks unconditional intrinsic descendants, stopping at user component boundaries. `s-money-field-no-currency-symbol` recognizes Unicode currency symbols in literal labels/placeholders; it does not inspect translations or financial arithmetic.
+## App Home recipe: Polaris + native a11y
 
-## Attribution and source boundaries
+Copy the tested [App Home recipe](../../examples/shopify/app-home.oxlintrc.json); run it on App Home source only:
 
-These rules independently implement concepts from Shopify's [REST Admin migration policy](https://shopify.dev/docs/api/admin-rest), Polaris [Button](https://shopify.dev/docs/api/app-home/latest/web-components/actions/button), [Clickable](https://shopify.dev/docs/api/app-home/latest/web-components/actions/clickable), [Spinner](https://shopify.dev/docs/api/app-home/latest/web-components/feedback-and-status-indicators/spinner), [form components](https://shopify.dev/docs/api/app-home/latest/web-components#forms), [Page](https://shopify.dev/docs/api/app-home/latest/web-components/layout-and-structure/page), [Modal](https://shopify.dev/docs/api/app-home/latest/web-components/overlays/modal), [Tooltip](https://shopify.dev/docs/api/app-home/latest/web-components/typography-and-content/tooltip), and [Money field](https://shopify.dev/docs/api/app-home/latest/web-components/forms/money-field) documentation, reviewed on 2026-09-05. The server and API rules independently implement concepts from Shopify's [Admin GraphQL reference](https://shopify.dev/docs/api/admin-graphql/latest), [idempotency changelog](https://shopify.dev/changelog/making-idempotency-mandatory-for-inventory-adjustments-and-refund-mutations) and [idempotency guide](https://shopify.dev/docs/api/usage/implementing-idempotency), the control flow of [`shopify-app-js`](https://github.com/Shopify/shopify-app-js), the [React Router app template](https://github.com/Shopify/shopify-app-template-react-router) guidance, the [billing API reference](https://shopify.dev/docs/api/shopify-app-react-router/latest/apis/billing), [webhook HTTPS delivery](https://shopify.dev/docs/apps/build/webhooks/subscribe/https), [JavaScript for Functions](https://shopify.dev/docs/apps/build/functions/programming-languages/javascript-for-functions) and [Function input/output limits](https://shopify.dev/docs/apps/build/functions/input-output), [API versioning](https://shopify.dev/docs/api/usage/versioning), [protected customer data](https://shopify.dev/docs/apps/launch/protected-customer-data) and the [Script Tag deprecation changelog](https://shopify.dev/changelog/online-store-script-tags-deprecation), reviewed on 2026-09-20. Source code carries greppable `@attribution` tags. No source implementation or prose is vendored.
+```sh
+oxlint --config app-home.oxlintrc.json app
+```
 
-Native HTML accessibility belongs in upstream `jsx-a11y` rules. Polaris property unions belong in Shopify's component types. Visual contrast, attention, copy quality, keyboard behavior, responsive layout and runtime API behavior need semantic review or browser/runtime evidence. Conflicting Page breadcrumb and Select option-content guidance means no blanket restriction is added for those cases.
+```text
+app-home.oxlintrc.json
+├── jsx-a11y (14 upstream rules)   native HTML accessibility
+└── shopify-app (13 rules)         Polaris App Home v1.0 contracts
+      no-nav-emoji · no-viewport-zoom-disable · s-action-slot-contract
+      s-button-accessible-name · s-button-submit-no-navigation · s-clickable-accessible-name
+      s-form-control-label-required · s-modal-actions-use-slots · s-modal-heading-required
+      s-money-field-no-currency-symbol (warn) · s-page-aside-visible
+      s-spinner-accessible-label · s-tooltip-no-interactive-content
+```
+
+**Keep this recipe on App Home.** Checkout and customer-account components have different contracts.
+
+```tsx
+<s-button icon="edit" />                                     // ❌ s-button-accessible-name
+<s-button icon="edit" accessibilityLabel="Edit product" />   // ✅
+
+<s-text-field labelAccessibilityVisibility="exclusive" />        // ❌ hiding the label doesn't remove the need for one
+<s-search-field label="Search" labelAccessibilityVisibility="exclusive" /> // ✅
+
+<s-money-field label="Price ($)" />                              // ❌ currency formatting is component-owned
+```
+
+**Static only: a silent diagnostic is not proof of the rendered state.**
+
+<details>
+<summary>Per-rule contracts and what static checks miss</summary>
+
+| Rule                                                      | Contract                                                                                                                                                                                        |
+| --------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `s-action-slot-contract`                                  | unconditional direct page/modal children, fragments included. `primary-action`: one `s-button` with `variant=primary`. Secondary slots: secondary/auto buttons; pages also accept button groups |
+| `s-modal-actions-use-slots`                               | modal action buttons use the modal action slots. Options `components` (`["s-modal"]`), `actionElements` (`["s-button", "button"]`)                                                              |
+| `s-modal-heading-required`                                | nonempty `heading` on modals. Option `components` (`["s-modal"]`)                                                                                                                               |
+| `s-page-aside-visible`                                    | an aside rendered directly under a page whose explicit `inlineSize` is small or large (it won't render)                                                                                         |
+| `s-button-submit-no-navigation`                           | static `href` / `commandFor` that override submit/reset behavior                                                                                                                                |
+| `s-button-accessible-name`, `s-clickable-accessible-name` | direct content, fragments included; icon elements and empty literals don't name an action                                                                                                       |
+| `s-form-control-label-required`                           | fields use `label`; switch and drop zone may use their documented `accessibilityLabel` instead. Known `null`, boolean and empty values are rejected                                             |
+| `s-spinner-accessible-label`                              | nonempty `accessibilityLabel`                                                                                                                                                                   |
+| `s-tooltip-no-interactive-content`                        | unconditional intrinsic descendants; stops at user component boundaries                                                                                                                         |
+| `s-money-field-no-currency-symbol`                        | Unicode currency symbols in literal labels/placeholders. Doesn't inspect translations or financial arithmetic                                                                                   |
+| `no-viewport-zoom-disable`                                | `maximum-scale` below 5, `user-scalable=no` / `0`                                                                                                                                               |
+| `no-nav-emoji`                                            | emoji in nav labels. Option `navComponents` (`["s-app-nav", "ui-nav-menu"]`)                                                                                                                    |
+
+Rules read intrinsic elements, static literals, and inline object spreads in effective override order.
+
+| ✅ Checked                                          | ⚠️ Still needs review or rendered checks                                                       |
+| --------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| intrinsic elements, static literals, inline spreads | runtime expressions, later unknown spreads, translated strings, custom component output        |
+| direct children and fragments                       | conditional rendering, wrappers, button-group contents, other nested elements, user components |
+
+</details>
+
+## Category opt-ins: decide first
+
+| Rule                              | Turn it on for                                                                                                                                  |
+| --------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| `no-draft-order-custom-discounts` | discount-app automation under Built for Shopify 5.5.2. Keep merchant-driven draft-order workflows outside it                                    |
+| `no-asset-api-theme-writes`       | app code under Built for Shopify 3.2.2, after reviewing its page-builder, backup/restore, SEO, content-locking and developer-tooling exceptions |
+| `no-admin-rest-api`               | new public apps under the GraphQL-only policy. **Existing public and custom apps: explicit migration decision first**                           |
+| `require-fetch-abort-signal`      | explicit checkout extension dirs where cancellation is request policy. Pair it with runtime deadline evidence: **a signal isn't a timeout**     |
+
+> [!WARNING]
+> **Never scope with a blanket `extensions/**`:** it can't tell checkout, customer-account, admin, Function and theme surfaces apart.
+
+<details>
+<summary>Admin extensions, allowed vs reported, <code>no-admin-rest-api</code> scope</summary>
+
+Keep `require-fetch-abort-signal` off admin UI extensions: a relative `fetch("/api/...")` to the app's own domain is their [documented auto-authenticated path](https://shopify.dev/docs/api/admin-extensions/latest/network-features); cancellation is a checkout and customer-account policy. Category applicability and exceptions: [Built for Shopify requirements](https://shopify.dev/docs/apps/launch/built-for-shopify/requirements).
+
+| Rule                              | ✅ Allowed                                                           | ❌ Reported                                                              | ⚠️ Review input                                                     |
+| --------------------------------- | -------------------------------------------------------------------- | ------------------------------------------------------------------------ | ------------------------------------------------------------------- |
+| `no-draft-order-custom-discounts` | response selections mentioning `appliedDiscount` (not an input)      | draft-order mutations applying custom discounts (parsed mutation fields) | variable-supplied mutation inputs                                   |
+| `no-asset-api-theme-writes`       | REST Asset API `GET`                                                 | recognized write methods; theme file mutations                           | —                                                                   |
+| `require-fetch-abort-signal`      | an explicit usable signal shape; a recognized `Request`-owned signal | `fetch` (direct or `window` / `globalThis` / `self`) without one         | unknown options variables and later overriding spreads aren't proof |
+
+`no-admin-rest-api`:
+
+| ❌ Reports                                                                                                  | ✅ Allowed                                       | ⚠️ Needs review                                      |
+| ----------------------------------------------------------------------------------------------------------- | ------------------------------------------------ | ---------------------------------------------------- |
+| runtime REST resource imports from `@shopify/shopify-api/rest/admin`, dynamic imports, unshadowed `require` | GraphQL, Storefront/Ajax APIs, type-only imports | SDK instances, wrappers                              |
+| unshadowed global `fetch` with a recognizable REST Admin URL                                                | unrelated hosts, shadowed functions              | dynamically selected API versions and resource names |
+
+</details>
+
+## Other opt-ins
+
+`functions-no-unavailable-runtime-apis` on **JS Function source only**. 🧪 `no-stale-api-version-in-source` and `no-session-or-token-logging` are candidates, off by default.
+
+<details>
+<summary>Triggers and options</summary>
+
+| Rule                                    | Status                                                                                | ❌ Fires on                                                                                                                                                                                                                                                                         | Options (default)                                                                                                                                 |
+| --------------------------------------- | ------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `functions-no-unavailable-runtime-apis` | opt-in, **JS Function source only**; every other surface uses these APIs legitimately | async functions, top-level `await`, `.then()` on call results, unshadowed `Promise`, `setTimeout`, `setInterval`, `fetch`, `crypto`, `URL`, `URLSearchParams`, `process`, `Buffer`, `require`, `node:` imports, `Date.now()`, zero-arg `Date`, `Math.random()`, `performance.now()` | —                                                                                                                                                 |
+| `no-stale-api-version-in-source`        | 🧪 candidate, off by default                                                          | `/api/<version>/` in string/template literals, string `apiVersion` properties, `ApiVersion.<Month><YY>` members. No options → only `unstable` outside tests. No clock-derived verdicts                                                                                              | `minimumApiVersion`, `maximumApiVersion` (unset): reviewed bounds                                                                                 |
+| `no-session-or-token-logging`           | 🧪 candidate, off by default                                                          | `console` / `logger` / `log` calls exposing `session`, `accessToken`, `access_token`, `sessionToken`, `idToken` (identifier, shorthand, terminal member, spread, template hole, `JSON.stringify`), or a `payload` destructured from `authenticate.webhook`                          | `loggerObjects` (`["console", "logger", "log"]`), `sensitiveNames` (the 5 above), `webhookPayloadNames` (`["payload"]`), each replaced not merged |
+
+`no-session-or-token-logging` is domain-neutral apart from the webhook payload hook: **prefer a core secrets-in-logs rule once one exists.**
+
+</details>
+
+<details>
+<summary>Out of scope, and who owns it</summary>
+
+| Concern                                                                                       | Owner                                                                              |
+| --------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| native HTML accessibility                                                                     | upstream `jsx-a11y` rules                                                          |
+| Polaris property unions                                                                       | Shopify's component types                                                          |
+| contrast, attention, copy quality, keyboard behavior, responsive layout, runtime API behavior | semantic review or browser/runtime evidence                                        |
+| Page breadcrumbs, Select option content                                                       | ❌ no blanket rule: Shopify's guidance conflicts                                   |
+| Script Tag scope                                                                              | imports scoped to generated/admin sources; incidental URL strings aren't API calls |
+
+</details>
+
+**Every rule independently implements Shopify documentation concepts; source carries greppable `@attribution` tags; no implementation or prose vendored.**
+
+<details>
+<summary>Sources, by review date</summary>
+
+| Reviewed                  | Sources                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-09-05 · Polaris      | [REST Admin migration policy](https://shopify.dev/docs/api/admin-rest), [Button](https://shopify.dev/docs/api/app-home/latest/web-components/actions/button), [Clickable](https://shopify.dev/docs/api/app-home/latest/web-components/actions/clickable), [Spinner](https://shopify.dev/docs/api/app-home/latest/web-components/feedback-and-status-indicators/spinner), [form components](https://shopify.dev/docs/api/app-home/latest/web-components#forms), [Page](https://shopify.dev/docs/api/app-home/latest/web-components/layout-and-structure/page), [Modal](https://shopify.dev/docs/api/app-home/latest/web-components/overlays/modal), [Tooltip](https://shopify.dev/docs/api/app-home/latest/web-components/typography-and-content/tooltip), [Money field](https://shopify.dev/docs/api/app-home/latest/web-components/forms/money-field)                                                                                                                                                                                                                                                                                                           |
+| 2026-09-20 · server & API | [Admin GraphQL reference](https://shopify.dev/docs/api/admin-graphql/latest), [idempotency changelog](https://shopify.dev/changelog/making-idempotency-mandatory-for-inventory-adjustments-and-refund-mutations), [idempotency guide](https://shopify.dev/docs/api/usage/implementing-idempotency), control flow of [`shopify-app-js`](https://github.com/Shopify/shopify-app-js), [React Router app template](https://github.com/Shopify/shopify-app-template-react-router), [billing API reference](https://shopify.dev/docs/api/shopify-app-react-router/latest/apis/billing), [webhook HTTPS delivery](https://shopify.dev/docs/apps/build/webhooks/subscribe/https), [JavaScript for Functions](https://shopify.dev/docs/apps/build/functions/programming-languages/javascript-for-functions), [Function input/output limits](https://shopify.dev/docs/apps/build/functions/input-output), [API versioning](https://shopify.dev/docs/api/usage/versioning), [protected customer data](https://shopify.dev/docs/apps/launch/protected-customer-data), [Script Tag deprecation changelog](https://shopify.dev/changelog/online-store-script-tags-deprecation) |
+
+</details>
 
 <!-- harness-catalog:start -->
 

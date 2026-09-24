@@ -1,36 +1,19 @@
 # @aurelienbbn/conformance-shopify-app
 
-Structural checks and explicit evidence evaluators for Shopify apps. Repository checks inspect manifests, files, and build output through plain functions or a Vitest adapter. Separate APIs evaluate supplied HTTP responses and performance measurements.
+**10 static checks for Shopify app repos, plus 4 evaluators for evidence you supply.**
 
-## Checks
-
-- `compliance-webhooks`: app TOML must declare `customers/data_request`, `customers/redact`, and `shop/redact` under `webhooks.subscriptions` with nonempty delivery URIs. This checks the [App Store compliance-topic contract](https://shopify.dev/docs/apps/build/webhooks/subscribe); source mentions and unrelated tables do not register subscriptions.
-- `app-bridge-script`: every selected embedded document must load `cdn.shopify.com/shopifycloud/app-bridge.js` as its first head script. Explicit `platformMarkers` can document an integration exception; none are accepted by default.
-- `functions-localization`: extensions using `t:` translation keys must ship `locales/` with exactly one `<lang>.default.json` and complete keys; missing keys in non-default locales are warnings.
-- `checkout-bundle-size`: recursive raw JavaScript totals for checkout extension build directories must stay within the configured budget (64 KB by default). Option `checkoutBundleLimitKb` sets a stricter budget; Shopify CLI decides deployment acceptance.
-- `app-url-security`: app URLs and configured OAuth/customer callback URLs must declare HTTPS without credentials. Customer JavaScript origins cannot include paths, queries, or fragments. This does not verify TLS certificates or require an OAuth table for apps using another installation contract.
-- `webhook-subscription-contract`: actual webhook array tables must declare nonempty topic arrays and a supported delivery URI. HTTPS, root-relative paths, Google Pub/Sub, and Shopify EventBridge destinations are recognized; fragments and credential-bearing HTTPS URLs fail. Cloud resource existence, webhook signatures, processing, and legal compliance need separate evidence.
-- `api-version-contract`: webhook and versioned extension manifests must declare quarterly API versions. `minimumApiVersion` and `maximumApiVersion` enforce a reviewed deployment range. Without explicit bounds, this checks syntax only; `unstable` warns. With either bound, `unstable` fails. No lifecycle deadline is guessed from the system clock, and a date-shaped version is not evidence of current availability. The literal `apiVersion` in the app server module (`shopify.server.*` at the root, in `app/`, or in `src/`; override with `serverEntries`) is held to the same syntax and bounds, and a **warning** reports when it differs from a selected manifest's `[webhooks] api_version`, because webhook payloads and Admin queries would then follow different schemas. `ApiVersion.July26` resolves through the enum's month-and-year naming; `LATEST_API_VERSION` and other dynamic values are not resolved and stay silent.
-- `built-for-shopify-extensions`: opt-in category prerequisites inspect declared extension types and targets. Reviews require a Flow trigger and customer details block; invoices require both order print surfaces; advertising, email marketing, forms, and SMS marketing require a segment action; subscriptions require a Customer Account target and a literal theme section block schema that permits product templates. This is partial structural coverage: extension functionality and category eligibility still require review.
-
-- `listing-inputs`: explicitly supplied listing text, image paths, alt text, and screenshot collections must meet the documented quantitative guidance. It inspects PNG/JPEG header dimensions and detects exact duplicate bytes. See the listing options and limits below.
-
-### Optional checks
-
-`optionalShopifyAppChecks` are exported and catalogued but excluded from `shopifyAppChecks`, the Vitest adapter's default, and `runShopifyAppConformance`'s default. Opt in by passing a check list:
-
-```ts
-import { optionalShopifyAppChecks, shopifyAppChecks } from "@aurelienbbn/conformance-shopify-app";
-import { shopifyAppConformance } from "@aurelienbbn/conformance-shopify-app/vitest";
-
-shopifyAppConformance({ root: process.cwd() }, [...shopifyAppChecks, ...optionalShopifyAppChecks]);
+```text
+ repo on disk ─────▶ shopifyAppChecks (9 default + 1 opt-in) ─▶ findings[]   Vitest or plain function
+ Response / handler ▶ evaluateShopifyIframeProtection          ─▶ findings[]   called from your tests
+                      probeShopifyWebhookHmac
+ metrics JSON ──────▶ evaluateShopifyPerformance               ─▶ passed | failed | incomplete
+                      evaluateShopifyStorefrontPerformance
 ```
 
-- `extension-capability-contract` (**MAYBE, opt-in**): for UI extensions with a `purchase.*` or `customer-account.*` target, source under the extension's `src/` that calls `fetch()`, runs a Storefront API `query` (`shopify.query`, `useApi().query`, or `query` destructured from `useApi()`), or intercepts the buyer journey (`useBuyerJourneyIntercept`, `buyerJourney.intercept`) must be matched by `network_access`, `api_access`, or `block_progress = true` under `[extensions.capabilities]`. A missing declaration is reported as a contract mismatch between source and manifest. Shopify's [capabilities documentation](https://shopify.dev/docs/apps/build/checkout/capabilities) states the requirement, but the exact runtime behaviour without the capability was not verified against a dev store, so the finding makes no claim about a runtime failure. `block_progress` declared with an extension `api_version` of 2026-07 or later produces a warning that cites the [deprecation notice](https://shopify.dev/changelog/deprecating-the-usebuyerjourneyintercept-api-on-checkout-ui-extensions). Admin extensions are skipped: their app-domain `fetch` needs no capability. The scan is lexical: comments and quoted strings are ignored, files that bind or import their own `fetch` are skipped, and wrappers, re-exports, and code outside `src/` are not followed. Declared-but-unused capabilities are deliberately not reported, since shared packages outside the extension directory can own the call.
+> [!WARNING]
+> **A static preflight, not Shopify approval.** Shopify's review and deployment systems stay authoritative.
 
-Findings carry a severity (`error`/`warning`) and the shopify.dev URL that justifies them. Warnings never fail the suite.
-
-## Vitest usage
+## One file, nine tests
 
 ```ts
 // conformance.test.ts
@@ -39,137 +22,398 @@ import { shopifyAppConformance } from "@aurelienbbn/conformance-shopify-app/vite
 shopifyAppConformance({ root: process.cwd() });
 ```
 
-## Programmatic usage
+**Errors fail; warnings print and never fail the suite.** `vitest` is an optional peer; Node `^22.19.0 || ^24.11.0`.
 
 ```ts
-import { runShopifyAppConformance } from "@aurelienbbn/conformance-shopify-app";
+import { runShopifyAppConformance, runShopifyAppConformanceReport } from "@aurelienbbn/conformance-shopify-app";
 
 const findings = await runShopifyAppConformance({ root: process.cwd() });
+const report = await runShopifyAppConformanceReport({ root: process.cwd() }); // { appManifests, findings }
 ```
 
-## Contract boundaries and migration
+- Findings: `check`, `severity` (`error` | `warning`), `message`, optional `path`, the justifying shopify.dev `docs` URL.
+- `appManifests` in the report names the deployment scope.
+- Optional second argument everywhere: a check list replacing `shopifyAppChecks`.
 
-App configuration is parsed as TOML. Each deployment manifest must contain its own compliance topics; topics are not pooled across environments. App Bridge requires a real CDN script in the document head, or an explicitly configured injector marker. Markers are an explicit project integration exception, not proof of served markup.
+## What a run catches
 
-Use `appManifest: "shopify.app.production.toml"` to scope both webhook and embedded-App-Bridge ownership to one deployment. Unset inspects CLI-compatible app manifests at the project root: `shopify.app.toml` or one environment suffix containing ASCII letters, digits, hyphens or underscores. Backup-style names such as `shopify.app.prod.backup.toml` are ignored during discovery and rejected as explicit selectors. Rename multi-part environment names to a CLI-compatible form such as `shopify.app.production-eu.toml`. A missing selected manifest is an error; invalid selectors are rejected. `runShopifyAppConformanceReport(options)` returns the selected `appManifests` alongside `findings`, so a saved report identifies its deployment scope. It remains a static preflight.
+```text
+appManifests: [shopify.app.toml]          (minimumApiVersion: "2025-10", messages trimmed)
 
-Migration: move stray `compliance_topics` fields into `[[webhooks.subscriptions]]` and give each subscription a nonempty `uri`. A topic mentioned without its subscription destination no longer passes. Select the deployment under review when local configurations intentionally omit deployment contracts.
+❌ compliance-webhooks   shopify.app.toml   must declare compliance topic "customers/data_request" in webhooks.subscriptions with a nonempty uri…
+❌ compliance-webhooks   shopify.app.toml   … "customers/redact" …
+❌ compliance-webhooks   shopify.app.toml   … "shop/redact" …
+❌ app-bridge-script     app/root.tsx       Load https://cdn.shopify.com/shopifycloud/app-bridge.js as the first script in this document head…
+❌ app-url-security      shopify.app.toml   application_url: Set an absolute HTTPS URL without embedded credentials…
+❌ api-version-contract  shopify.app.toml   webhooks.api_version: Version 2025-07 is below the configured minimum 2025-10…
+⚠️ api-version-contract  app/shopify.server.ts  apiVersion: The app server requests Admin API 2025-10 while shopify.app.toml delivers webhooks at 2025-07…
+```
 
-Checkout budgets identify `purchase.checkout.*` targets from extension TOML and require built output. All `.js` files under that extension's `dist` are counted recursively (up to ten directory levels) as a conservative raw-byte total; this is not an entry-graph or compressed-transfer measurement. Shopify CLI remains the deployment authority. Function translations must resolve to owned string properties.
+## Checks
 
-Extension checks follow selected manifests' `extension_directories` paths or positive glob patterns. Missing or empty lists use `extensions/*`, and each directory pattern matches `*.extension.toml` immediately inside it, following the reviewed Shopify CLI behavior. Recursive discovery requires an explicit `**`; nested examples cannot satisfy prerequisites by accident. Alternate manifest basenames are supported. Dependency manifests are excluded, while explicitly selected directories named `dist` remain eligible. Paths outside the project and invalid TOML are errors. Category prerequisites are evaluated separately for each deployment, so one environment cannot supply another's missing extension. A literal Liquid schema is only a prerequisite; Theme Check and a served product-page review remain necessary.
+| Check                           | Missing evidence                                | Does not prove                      |
+| ------------------------------- | ----------------------------------------------- | ----------------------------------- |
+| `compliance-webhooks`           | ⚠️ no manifest · ❌ selected missing / bad TOML | delivery, legal compliance          |
+| `app-bridge-script`             | ⚠️ no document found · ❌ explicit one missing  | generated markup, route coverage    |
+| `functions-localization`        | ❌ 0 or 2+ default locales, bad JSON            | translation quality                 |
+| `checkout-bundle-size`          | ❌ no built JavaScript                          | compressed size, CLI acceptance     |
+| `app-url-security`              | ❌ missing / bad manifest                       | TLS certificates, reachability      |
+| `webhook-subscription-contract` | ❌ missing / bad manifest                       | cloud resources, signatures         |
+| `api-version-contract`          | ❌ explicit `serverEntries` match nothing       | current version availability        |
+| `built-for-shopify-extensions`  | silent when unset                               | functionality, category eligibility |
+| `listing-inputs`                | silent when unset; `{}` proves nothing          | meaning, image quality              |
+| `extension-capability-contract` | 🔒 opt-in, see below                            | runtime failure                     |
 
-API versions are checked per extension after applying its override to the root default. Function localization reads only actual function names and effective descriptions. Checkout budgets inspect actual `ui_extension` targeting entries. Names or targets in unrelated settings do not activate these contracts. Both unified `[[extensions]]` files and standalone root extension tables are supported for these recognized types.
+```ts
+import { optionalShopifyAppChecks, shopifyAppChecks } from "@aurelienbbn/conformance-shopify-app";
 
-Use `documentEntries: ["app/root.tsx"]` when the served documents differ from the common entry filenames or the repository includes unused examples. Empty selectors and empty injector markers are rejected. A missing explicit document fails; no automatically discovered document produces a warning. Static JSX/HTML inspection cannot establish generated markup, script execution, or coverage of routes omitted by the caller.
+shopifyAppConformance({ root: process.cwd() }, [...shopifyAppChecks, ...optionalShopifyAppChecks]);
+```
+
+<details>
+<summary>Per-check rules, discovery, and limits</summary>
+
+### compliance-webhooks
+
+Checks the [App Store compliance-topic contract](https://shopify.dev/docs/apps/build/webhooks/subscribe) under `webhooks.subscriptions`, each with a nonempty `uri`. **Each deployment manifest holds its own topics: no pooling across environments.** Source mentions and unrelated tables register nothing. Also unproven: processing.
+
+### app-bridge-script
+
+Every selected embedded document loads `https://cdn.shopify.com/shopifycloud/app-bridge.js` as its first `<head>` script (comments ignored). Skipped when every selected manifest sets `embedded = false`.
+
+| Option            | Default                                                                     | Rule                                                                                                                                |
+| ----------------- | --------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `documentEntries` | discover `index.html`, `root.tsx/jsx`, `__root.tsx/jsx` up to 4 levels deep | project-relative; empty list or path outside the project throws; use when served documents differ or the repo ships unused examples |
+| `platformMarkers` | none accepted                                                               | explicit integration exception, **not proof of served markup**; empty markers throw                                                 |
+
+Static JSX/HTML inspection cannot establish generated markup, script execution, or coverage of routes the caller omits.
+
+### functions-localization
+
+Function extensions whose actual `name` or effective `description` starts with `t:` ship `locales/` with exactly one `<lang>.default.json`; keys resolve to owned string properties. Missing key: ❌ in the default locale, ⚠️ in others.
+
+### checkout-bundle-size
+
+`ui_extension` entries whose `targeting` includes `purchase.checkout.*`. Sums every `.js` under that extension's `dist/`, recursively (≤ 10 levels): a conservative raw-byte total, not an entry graph or compressed transfer. `checkoutBundleLimitKb`: default `64`, must be `> 0` and `≤ 64` (stricter only), else throws. Shopify CLI decides deployment acceptance.
+
+### app-url-security
+
+| Field                                                         | Rule                                                                           |
+| ------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| `application_url`                                             | absolute HTTPS, no credentials                                                 |
+| `auth.redirect_urls`                                          | when `[auth]` exists: nonempty array, each HTTPS                               |
+| `customer_authentication.redirect_uris`                       | when the table exists: nonempty HTTPS array                                    |
+| `customer_authentication.logout_urls` · `.javascript_origins` | when present: nonempty HTTPS arrays; origins carry no path, query, or fragment |
+
+No OAuth table required for apps using another installation contract.
+
+### webhook-subscription-contract
+
+Actual `[[webhooks.subscriptions]]` array tables need nonempty `topics` / `compliance_topics` (compliance limited to the three privacy topics) and a delivery URI: `https://…` (no fragment or credentials), root-relative `/webhooks/…` (no fragment), `pubsub://project:topic`, or a Shopify EventBridge ARN. Anything else ❌. Also unproven: processing, legal compliance.
+
+### api-version-contract
+
+**No lifecycle deadline guessed from the system clock; a date-shaped version is not evidence of availability.**
+
+| Bounds set                                     | `YYYY-01/04/07/10` | `unstable` | out of range |
+| ---------------------------------------------- | ------------------ | ---------- | ------------ |
+| neither                                        | ✅ syntax only     | ⚠️ warning | —            |
+| `minimumApiVersion` and/or `maximumApiVersion` | ✅                 | ❌ error   | ❌ error     |
+
+- Bounds must be ordered quarterly versions, else throws.
+- Webhook and versioned extension manifests: each extension's override applies over the root default; `ui_extension` / `function` entries must resolve to a version.
+- The literal `apiVersion` in the server module (`serverEntries`, default `shopify.server.*` at root, `app/`, `src/`) meets the same syntax and bounds. ⚠️ when it differs from a selected manifest's `[webhooks] api_version`: webhook payloads and Admin queries would follow different schemas.
+- `"2026-07"` and `ApiVersion.July26` read as `2026-07`; `"unstable"` / `ApiVersion.Unstable` as `unstable`; `LATEST_API_VERSION` and other dynamic values stay silent.
+
+### built-for-shopify-extensions
+
+Opt-in via `builtForShopifyCategories`; unknown categories throw. **Partial structural coverage: presence is only a prerequisite.** Evaluated per deployment: one environment cannot supply another's extension.
+
+| Category                                                      | Requires                                                                                                        |
+| ------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| `product-reviews`                                             | Flow trigger + `admin.customer-details.block.render`                                                            |
+| `invoices`                                                    | `admin.order-details.print-action.render` + `admin.order-index.selection-print-action.render`                   |
+| `advertising` · `email-marketing` · `forms` · `sms-marketing` | segment action `admin.customer-segment-details.action.render`                                                   |
+| `subscriptions`                                               | a `customer-account.*.render` target + a theme app block whose literal section schema permits product templates |
+
+A literal Liquid schema is only a prerequisite: Theme Check and a served product-page review remain necessary.
+
+### extension-capability-contract (opt-in)
+
+`optionalShopifyAppChecks`: exported and catalogued, excluded from `shopifyAppChecks` and every default. For UI extensions targeting `purchase.*` or `customer-account.*`, source under `src/` must match `[extensions.capabilities]`:
+
+| Source uses                                                                                 | Requires                |
+| ------------------------------------------------------------------------------------------- | ----------------------- |
+| `fetch()`                                                                                   | `network_access = true` |
+| Storefront `query`: `shopify.query`, `useApi().query`, `query` destructured from `useApi()` | `api_access = true`     |
+| `useBuyerJourneyIntercept`, `buyerJourney.intercept`                                        | `block_progress = true` |
+
+- A missing declaration is a ❌ source/manifest mismatch. Shopify's [capabilities documentation](https://shopify.dev/docs/apps/build/checkout/capabilities) states the requirement; runtime behavior without it was not verified on a dev store, so **the finding claims no runtime failure**.
+- `block_progress` with extension `api_version` ≥ `2026-07` → ⚠️ citing the [deprecation notice](https://shopify.dev/changelog/deprecating-the-usebuyerjourneyintercept-api-on-checkout-ui-extensions).
+- Lexical scan of `.ts .tsx .js .jsx .mjs` up to 10 levels under `src/`; skips `*.test.*`, `*.spec.*`, `.d.ts`, comments, quoted strings, and files that bind or import their own `fetch`. Wrappers, re-exports, and code outside `src/` are not followed.
+- Admin extensions skipped: app-domain `fetch` needs no capability.
+- Declared-but-unused capabilities not reported: shared packages outside the extension can own the call.
+
+### Which manifests get read
+
+```text
+appManifest set?
+ ├─ yes ─▶ exactly that root file ── missing = ❌ error · invalid selector = throws
+ └─ no ──▶ every root shopify.app.toml / shopify.app.<env>.toml
+             <env> = ASCII letters, digits, -, _
+             shopify.app.prod.backup.toml ─▶ ignored (rejected as explicit selector)
+```
+
+`appManifest` scopes webhook and embedded-App-Bridge ownership to one deployment. App configuration is parsed as TOML.
+
+### Which extensions get read
+
+```text
+selected manifest
+ └─ extension_directories   (missing or empty ─▶ ["extensions/*"])
+     └─ each pattern ─▶ <pattern>/*.extension.toml, immediately inside
+                          recursion only with an explicit **
+```
+
+- Follows the reviewed Shopify CLI behavior: nested examples cannot satisfy prerequisites by accident.
+- Alternate manifest basenames supported. Dependency manifests (`node_modules`) excluded; explicitly selected directories named `dist` stay eligible.
+- Paths outside the project, negated or absolute patterns, invalid TOML → ❌.
+- Unified `[[extensions]]` files and standalone root extension tables both supported.
+- Contracts activate only from real fields (function names/descriptions, `ui_extension` targeting), never from names or targets in unrelated settings.
+
+</details>
+
+## Options
+
+| Option                                    | Default                                                            | Used by                        |
+| ----------------------------------------- | ------------------------------------------------------------------ | ------------------------------ |
+| `root`                                    | required                                                           | all                            |
+| `appManifest`                             | every CLI-compatible root manifest                                 | all manifest checks            |
+| `documentEntries`                         | discovered layouts                                                 | `app-bridge-script`            |
+| `platformMarkers`                         | `[]`                                                               | `app-bridge-script`            |
+| `checkoutBundleLimitKb`                   | `64`                                                               | `checkout-bundle-size`         |
+| `minimumApiVersion` · `maximumApiVersion` | unset (syntax only)                                                | `api-version-contract`         |
+| `serverEntries`                           | `shopify.server.*`, `app/shopify.server.*`, `src/shopify.server.*` | `api-version-contract`         |
+| `builtForShopifyCategories`               | `[]`                                                               | `built-for-shopify-extensions` |
+| `listing`                                 | unset                                                              | `listing-inputs`               |
 
 ```ts
 const findings = await runShopifyAppConformance({
   root: process.cwd(),
   appManifest: "shopify.app.production.toml",
-  documentEntries: ["app/root.tsx"],
+  documentEntries: ["index.html"],
   minimumApiVersion: "2025-10",
   maximumApiVersion: "2026-07",
   builtForShopifyCategories: ["product-reviews"],
 });
 ```
 
-The example's version range was reviewed on September 5, 2026. Maintain it against Shopify's current version schedule; it is not a perpetual default. Supported categories are `advertising`, `email-marketing`, `forms`, `sms-marketing`, `invoices`, `product-reviews`, and `subscriptions`. Conditional web-pixel requirements, minimum scopes, API behavior, app listing content, installation, privacy processing, and live performance are not inferred from filenames.
+> [!IMPORTANT]
+> Version range reviewed September 5, 2026. Maintain it against Shopify's schedule: not a perpetual default.
 
-These checks independently implement concepts from Shopify's [App Store requirements](https://shopify.dev/docs/apps/launch/shopify-app-store/app-store-requirements), [Built for Shopify requirements](https://shopify.dev/docs/apps/launch/built-for-shopify/requirements), [app configuration](https://shopify.dev/docs/apps/build/cli-for-apps/app-configuration), [API versioning](https://shopify.dev/docs/api/usage/versioning), and [theme app extension configuration](https://shopify.dev/docs/apps/build/online-store/theme-app-extensions/configuration). Discovery and per-entry defaults were verified against the MIT-licensed Shopify CLI's [configuration selection](https://github.com/Shopify/cli/blob/614187e5204ca6c4bc3c8418b8c6fcb224ab5dae/packages/app/src/cli/models/project/config-selection.ts) and [extension loader](https://github.com/Shopify/cli/blob/614187e5204ca6c4bc3c8418b8c6fcb224ab5dae/packages/app/src/cli/models/app/loader.ts), then independently implemented. Source code carries greppable `@attribution` tags. Shopify's review and deployment systems remain authoritative.
+Never inferred from filenames: web-pixel requirements, minimum scopes, API behavior, listing content, installation, privacy processing, live performance.
 
-## Supplied performance evidence
+## Listing inputs: only fields you pass
 
-`evaluateShopifyPerformance` compares normalized measurements with the reviewed [Built for Shopify thresholds](https://shopify.dev/docs/apps/launch/built-for-shopify/requirements). Select applicable metrics through `required`; `shopifyPerformanceCriteria` exports their IDs, units, statistics, sample minimums, and boundaries. Supported groups cover admin Web Vitals, carrier latency and success/failure ratios, and fulfillment volume, completion, callbacks, tracking, and response times.
+`{ listing: {} }` is no evidence of a complete listing. Source: Shopify's [listing best practices](https://shopify.dev/docs/apps/launch/shopify-app-store/best-practices).
 
-```ts
-import { readFile } from "node:fs/promises";
-import { evaluateShopifyPerformance } from "@aurelienbbn/conformance-shopify-app";
+| Field                                   | Limit                                                     |
+| --------------------------------------- | --------------------------------------------------------- |
+| `appName` · `introduction` · `details`  | ≤ 30 · 100 · 500 Unicode code points (`appName` nonempty) |
+| `features[]`                            | ≤ 80 each                                                 |
+| `searchTerms` · `integrations`          | ≤ 5 · ≤ 6 nonempty strings                                |
+| `structuredFeatures`                    | ≤ 25 nonempty features per unique category                |
+| `appIcon`                               | PNG/JPEG 1200×1200                                        |
+| `featureImage` · `desktopScreenshots[]` | 1600×900 + alt; 3–6 screenshots                           |
+| all images                              | inside project; no byte-identical duplicates              |
 
-const measurements = JSON.parse(await readFile("artifacts/normalized-shopify-metrics.json", "utf8"));
-const report = evaluateShopifyPerformance(measurements, {
-  required: ["admin-lcp", "admin-cls", "admin-inp"],
-  appId: "your-app-client-id",
-  now: new Date().toISOString(),
-  maxAgeDays: 1,
-});
-```
-
-Each `ShopifyPerformanceMeasurement` identifies its metric, value, sample count, unit/statistic, app, source (`shopify-dashboard` or `observability`), artifact reference, and exact 28-day UTC window. Timestamps use canonical ISO form such as `2026-09-05T00:00:00.000Z`. Ratios also require integer `qualifyingSamples`; `value` must agree with `qualifyingSamples * 100 / samples` within numerical tolerance; supply the unrounded percentage. Completion requires `excludedRecentDays: 7`; tracking requires `withinHours: 1`; fulfillment and cancellation responses require `withinHours: 24`. The one-day default freshness limit is a caller policy, adjustable through `maxAgeDays`.
-
-A report passes only when every selected metric passes. Missing, duplicated, stale, mismatched, or insufficient measurements are `incomplete`; an observed threshold violation is `failed` and takes precedence in the overall status. Invalid options, unknown metric IDs, and malformed outer evidence throw. Carrier latency boundaries intentionally differ: `checkout-carrier-latency` permits 500 ms, while `carrier-latency` requires less than 500 ms. Neither selecting metrics nor supplying a source label proves category applicability, trustworthy telemetry, complete populations, or Shopify approval.
-
-`evaluateShopifyStorefrontPerformance` accepts `{ baseline, installed }`, each shaped as `ShopifyStorefrontRun`. Provide matching `store`, `theme`, and `runner` identifiers, `device: "mobile"`, distinct artifact `reference` values, and nonempty 0–100 score arrays under `pages.home`, `pages.product`, and `pages.collection`.
-
-```ts
-import { evaluateShopifyStorefrontPerformance } from "@aurelienbbn/conformance-shopify-app";
-
-const runs = JSON.parse(await readFile("artifacts/normalized-storefront-runs.json", "utf8"));
-const storefront = evaluateShopifyStorefrontPerformance(runs);
-```
-
-The evaluator averages repeated scores for each page type, then applies Shopify's [17% home, 40% product, and 43% collection weights](https://shopify.dev/docs/apps/build/performance/storefront). Its `reduction` is baseline minus installed score. The budget is 10 points, with only a bounded allowance for floating-point roundoff; a negative result indicates improvement. Missing, invalid, or mismatched runs remain `incomplete`. It does not launch Lighthouse, verify matching page URLs or representative app configuration, enforce freshness, or authenticate artifacts. Both performance APIs are explicit calls outside `shopifyAppChecks`.
-
-## Optional listing inputs
-
-Pass `listing` to check supplied fields against Shopify's [listing best practices](https://shopify.dev/docs/apps/launch/shopify-app-store/best-practices). Omitted fields are not assessed; `{ listing: {} }` establishes no evidence of a complete listing. Text limits are 30 Unicode code points for `appName`, 100 for `introduction`, 500 for `details`, and 80 per `features` entry. Shopify's own editor remains authoritative for its character counter.
-
-Optional `searchTerms` accepts at most five nonempty strings, and `integrations` accepts at most six. `structuredFeatures` accepts `{ category, features }` entries with at most 25 nonempty feature strings per category. Categories must be nonempty and unique after Unicode compatibility normalization, trimming, and lowercasing; separate declarations cannot divide one category's budget. These checks count supplied choices; they do not verify category membership, integration eligibility, search relevance, complete words, or merchant-facing meaning.
+<details>
+<summary>Example, image reader, and what counts don't prove</summary>
 
 ```ts
 const findings = await runShopifyAppConformance({
   root: process.cwd(),
   listing: {
-    appName: "Stock Desk",
-    appIcon: "listing/icon.png",
-    featureImage: { path: "listing/feature.jpg", alt: "Inventory summary and reorder suggestions" },
+    appIcon: "icon.png",
     desktopScreenshots: [
-      { path: "listing/overview.png", alt: "Inventory overview with low-stock products" },
-      { path: "listing/reorder.png", alt: "Reorder quantities for selected products" },
-      { path: "listing/history.png", alt: "Completed purchase orders" },
+      { path: "one.png", alt: "Fixture view" },
+      { path: "two.png", alt: "Fixture view" },
+      { path: "three.jpg", alt: "Fixture view" },
     ],
   },
 });
 ```
 
-Icons require PNG or JPEG header dimensions of 1200×1200. Feature images and desktop screenshots require 1600×900 and nonempty alt text; a supplied desktop collection must contain 3–6 images. Paths must resolve to regular files inside the project. Exact SHA-256 duplicate bytes fail across the configured image collection, including copies saved under different filenames. This covers only an observable subset of [App Store requirement 4.4.5](https://shopify.dev/docs/apps/launch/shopify-app-store/app-store-requirements#provide-clear-assets-and-descriptions); recompressed or visually similar copies still need review.
+- `structuredFeatures` entries are `{ category, features }`; categories must be nonempty and unique after NFKC normalization, trim, and lowercase, so separate declarations cannot split one budget.
+- Alt text must be nonempty. Image paths must be regular files. Duplicates: exact SHA-256 across the collection, even under different filenames.
+- Shopify's editor stays authoritative for its character counter. Counts don't verify category membership, integration eligibility, search relevance, complete words, or merchant-facing meaning.
 
-The independent header reader follows [PNG IHDR](https://www.w3.org/TR/png-3/#11IHDR) and [JPEG SOF](https://www.w3.org/Graphics/JPEG/itu-t81.pdf) layout specifications. It does not decode pixels, validate image payloads or CRCs, apply EXIF orientation, or support deferred JPEG heights. Other formats and unreadable dimension headers fail this preflight because their dimensions are unverified. A metadata-only fixture can pass its dimension check; preview and validate complete image files before upload. Semantic image quality, readable alt text, privacy, pricing claims, trademarks, and perceptual uniqueness are separate review tasks. Mobile/POS screenshot coverage is not inferred from a desktop collection.
+The independent header reader follows the [PNG IHDR](https://www.w3.org/TR/png-3/#11IHDR) and [JPEG SOF](https://www.w3.org/Graphics/JPEG/itu-t81.pdf) layouts.
 
-## Supplied HTTP responses and isolated webhook handlers
+| ✅ Does                                                           | ❌ Doesn't                                            |
+| ----------------------------------------------------------------- | ----------------------------------------------------- |
+| read PNG/JPEG header dimensions                                   | decode pixels, validate payloads or CRCs              |
+| fail other formats and unreadable headers (dimensions unverified) | apply EXIF orientation, support deferred JPEG heights |
+| detect byte-identical copies                                      | catch recompressed or visually similar copies         |
 
-`evaluateShopifyIframeProtection` checks an actual supplied response header against Shopify's [iframe protection guidance](https://shopify.dev/docs/apps/build/security/set-up-iframe-protection). For embedded apps, pass a canonical shop domain obtained from verified authentication. The enforced `frame-ancestors` must contain exactly that shop's HTTPS origin and `https://admin.shopify.com`. Missing or report-only headers, duplicate directives, wildcards, unrelated tenants, and nonstandard whitespace fail. Other directives and additional policies without `frame-ancestors` are allowed; each policy that declares it must follow the strict shape. Standalone `'none'` guidance produces warnings because Shopify describes it as a recommendation.
+A metadata-only fixture can pass its dimension check: preview and validate complete image files before upload. Covers only an observable subset of [App Store requirement 4.4.5](https://shopify.dev/docs/apps/launch/shopify-app-store/app-store-requirements#provide-clear-assets-and-descriptions). Semantic image quality, readable alt text, privacy, pricing claims, trademarks, perceptual uniqueness, and mobile/POS screenshot coverage are separate review tasks.
+
+</details>
+
+## Evidence evaluators: call them yourself
+
+Outside `shopifyAppChecks`. **None collects telemetry, authenticates artifacts, or awards Shopify status.**
+
+| API                                    | You supply                             | Passes when                                                          | Does not prove                   |
+| -------------------------------------- | -------------------------------------- | -------------------------------------------------------------------- | -------------------------------- |
+| `evaluateShopifyIframeProtection`      | a response + authenticated shop        | enforced `frame-ancestors` = that shop + `https://admin.shopify.com` | route coverage, browser behavior |
+| `probeShopifyWebhookHmac`              | isolated handler + signed fixture      | 2xx when valid, 401 for missing, malformed, body-mismatched HMAC     | timing safety, side effects      |
+| `evaluateShopifyPerformance`           | normalized 28-day measurements         | every `required` metric meets its BFS threshold                      | telemetry trust, approval        |
+| `evaluateShopifyStorefrontPerformance` | baseline + installed Lighthouse scores | weighted score drop ≤ 10 points                                      | freshness, representative config |
+
+**Test every relevant HTML route with ≥ 2 authenticated shops, and each compliance topic through its actual handler.**
+
+<details>
+<summary>Evaluator details: examples, rejection rules, metric thresholds</summary>
+
+### HTTP helpers
+
+Each returns `findings[]`; invalid fixtures throw.
 
 ```ts
 import { evaluateShopifyIframeProtection, probeShopifyWebhookHmac } from "@aurelienbbn/conformance-shopify-app";
 
 expect(
   evaluateShopifyIframeProtection({
-    response: await localAppHandler(authenticatedHtmlRequest),
+    response: new Response("<html></html>", {
+      headers: {
+        "content-security-policy": "frame-ancestors https://fixture-store.myshopify.com https://admin.shopify.com;",
+      },
+    }),
     embedded: true,
-    authenticatedShopDomain: authenticatedSession.shop,
+    authenticatedShopDomain: "fixture-store.myshopify.com",
   }),
 ).toEqual([]);
 
 expect(
   await probeShopifyWebhookHmac({
-    handleRequest: isolatedAppHandler,
     request: new Request("http://localhost/webhooks/privacy", {
       method: "POST",
       headers: {
         "x-shopify-topic": "shop/redact",
-        "x-shopify-shop-domain": "fixture-shop.myshopify.com",
+        "x-shopify-shop-domain": "fixture-store.myshopify.com",
       },
-      body: JSON.stringify({ shop_id: 1, shop_domain: "fixture-shop.myshopify.com" }),
+      body: JSON.stringify({ shop_id: 1, shop_domain: "fixture-store.myshopify.com" }),
     }),
-    fixtureSigningSecret: "isolated-handler-test-secret",
+    fixtureSigningSecret: "local-test-secret",
+    handleRequest: verifiedHandler,
   }),
 ).toEqual([]);
 ```
 
-`probeShopifyWebhookHmac` independently implements Shopify's [privacy webhook rejection contract](https://shopify.dev/docs/apps/build/compliance/privacy-law-compliance) and [raw-body verification guidance](https://shopify.dev/docs/apps/build/webhooks/verify-deliveries). It calls the injected handler four times: a valid signed control must return 2xx, then missing, malformed, and body-mismatched signatures must return 401. The body mismatch preserves valid JSON while changing the signed bytes. An always-rejecting route fails its control. Wire isolated test data and the same fixture signing secret into the handler; the helper performs no network requests itself.
+**Iframe** ([guidance](https://shopify.dev/docs/apps/build/security/set-up-iframe-protection)):
 
-These APIs are invoked explicitly, outside the repository checks array. Test every relevant HTML route with at least two authenticated shops and exercise each compliance topic using its actual handler. One response cannot prove route coverage, browser behavior, or deployment correctness. HMAC response assertions cannot prove timing safety, absence of handler side effects, or successful privacy processing; assert those separately against the fixture dependencies.
+- `authenticatedShopDomain` comes from verified authentication and must be a canonical `<name>.myshopify.com`, else throws.
+- Fails: missing or report-only header, duplicate directives, wildcards, `self`, other tenants, non-ASCII / nonstandard whitespace.
+- Other directives, and extra policies without `frame-ancestors`, are allowed; each policy declaring it follows the strict shape.
+- Standalone apps (`embedded: false`) get ⚠️ warnings toward `'none'`: Shopify frames it as a recommendation.
+- Also unproven: deployment correctness.
+
+**HMAC** ([privacy webhook rejection](https://shopify.dev/docs/apps/build/compliance/privacy-law-compliance), [raw-body verification](https://shopify.dev/docs/apps/build/webhooks/verify-deliveries)): 4 calls to your injected handler, no network requests of its own.
+
+```text
+valid-control          signed body            ─▶ expect 2xx   (an always-rejecting route fails here)
+missing-hmac           no header              ─▶ expect 401
+malformed-hmac         "invalid-hmac"         ─▶ expect 401
+body-mismatched-hmac   body + "\n", old sig   ─▶ expect 401   (still valid JSON, different signed bytes)
+```
+
+- Fixture: POST, valid JSON, canonical shop domain, one of the three privacy topics in `X-Shopify-Topic`, nonempty `fixtureSigningSecret` wired into the handler. Never a production secret.
+- Handlers that throw fail. Also unproven: privacy processing, live delivery. Assert timing safety and side effects against the fixture dependencies.
+
+### evaluateShopifyPerformance
+
+Compares against the reviewed [Built for Shopify thresholds](https://shopify.dev/docs/apps/launch/built-for-shopify/requirements). `shopifyPerformanceCriteria` exports every ID, unit, statistic, sample minimum, and boundary.
+
+```ts
+import { evaluateShopifyPerformance } from "@aurelienbbn/conformance-shopify-app";
+
+const report = evaluateShopifyPerformance(evidence, {
+  required: ["admin-lcp", "admin-cls", "admin-inp"],
+  appId: "app-under-review",
+  now: "2026-09-05T00:00:00.000Z",
+});
+// report.status: passed | failed | incomplete · report.results[]: { metric, requirement, status, message }
+```
+
+| Metric                         | BFS   | Statistic | Pass when |         Min samples | Extra field                    |
+| ------------------------------ | ----- | --------- | --------- | ------------------: | ------------------------------ |
+| `admin-lcp`                    | 2.1.1 | p75 ms    | ≤ 2500    |                 100 |                                |
+| `admin-cls`                    | 2.1.2 | p75 score | ≤ 0.1     |                 100 |                                |
+| `admin-inp`                    | 2.1.3 | p75 ms    | ≤ 200     |                 100 |                                |
+| `checkout-carrier-latency`     | 2.3.1 | p95 ms    | **≤ 500** |                1000 |                                |
+| `carrier-latency`              | 5.4.1 | p95 ms    | **< 500** |                1000 |                                |
+| `checkout-carrier-failure`     | 2.3.1 | ratio %   | ≤ 0.1     |                1000 | `qualifyingSamples` = failures |
+| `carrier-success`              | 5.4.2 | ratio %   | ≥ 99.9    |                1000 |                                |
+| `fulfillment-volume`           | 5.8.1 | count     | ≥ 100     | `samples` = `value` |                                |
+| `fulfillment-completion`       | 5.8.2 | ratio %   | ≥ 97      |                   1 | `excludedRecentDays: 7`        |
+| `fulfillment-callback-success` | 5.8.3 | ratio %   | ≥ 99      |                   1 |                                |
+| `fulfillment-tracking`         | 5.8.5 | ratio %   | ≥ 80      |                   1 | `withinHours: 1`               |
+| `fulfillment-response`         | 5.8.6 | ratio %   | ≥ 95      |                   1 | `withinHours: 24`              |
+| `cancellation-response`        | 5.8.7 | ratio %   | ≥ 99      |                   1 | `withinHours: 24`              |
+
+The two carrier-latency boundaries differ on purpose.
+
+- `ShopifyPerformanceMeasurement`: `metric`, `value`, `samples`, `unit`, `statistic`, `appId`, `source` (`shopify-dashboard` | `observability`), artifact `reference`, exact 28-day UTC window (`windowStart`, `windowEnd`) in canonical ISO form like `2026-09-05T00:00:00.000Z`.
+- Ratios need integer `qualifyingSamples`; `value` must equal `qualifyingSamples * 100 / samples` within 1e-9: **supply the unrounded percentage.**
+- Freshness: window ends at or before `now` and within `maxAgeDays` (default 1, a caller policy, not a Shopify rule).
+
+| Outcome         | Trigger                                                                                                                                    |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| 💥 throws       | invalid options (`now`, `appId`, negative `maxAgeDays`), empty/duplicate/unknown `required`, evidence not an array of known-metric records |
+| ⚠️ `incomplete` | missing, duplicated, stale, mismatched (app, unit, statistic, source), out-of-range, or insufficient measurement                           |
+| ❌ `failed`     | an observed threshold violation; wins over `incomplete` overall                                                                            |
+| ✅ `passed`     | every selected metric passes                                                                                                               |
+
+Selecting metrics or labeling a source proves neither category applicability, trustworthy telemetry, complete populations, nor Shopify approval.
+
+### evaluateShopifyStorefrontPerformance
+
+```ts
+import { evaluateShopifyStorefrontPerformance } from "@aurelienbbn/conformance-shopify-app";
+
+const storefront = evaluateShopifyStorefrontPerformance({ baseline, installed }); // { status, reduction?, message }
+```
+
+Input: `{ baseline, installed }`, each a `ShopifyStorefrontRun` with matching `store`, `theme`, `runner`, `device: "mobile"`, distinct artifact `reference`s, and nonempty 0–100 score arrays for `pages.home`, `pages.product`, `pages.collection`.
+
+```text
+per page: average repeated scores, then weight
+  home        ███▍              17%
+  product     ████████          40%
+  collection  ████████▌         43%
+
+reduction = baseline − installed      ≤ 10 points ─▶ passed    (negative = improvement)
+                                       > 10 points ─▶ failed    (bounded floating-point allowance)
+missing · invalid · mismatched runs ──────────────▶ incomplete
+```
+
+Weights from [Shopify's storefront performance guide](https://shopify.dev/docs/apps/build/performance/storefront). Doesn't launch Lighthouse, verify matching page URLs or representative app configuration, enforce freshness, or authenticate artifacts.
+
+</details>
+
+## Migration
+
+| Change                                                         | Migrate by                                                                                   |
+| -------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| topic without a subscription destination no longer passes      | move stray `compliance_topics` into `[[webhooks.subscriptions]]`, each with a nonempty `uri` |
+| topics not pooled across deployment manifests                  | select the deployment under review (`appManifest`) when local configs omit contracts         |
+| backup-style manifest names ignored / rejected                 | rename to a CLI-compatible form, e.g. `shopify.app.production-eu.toml`                       |
+| empty `documentEntries` / `platformMarkers`, invalid selectors | pass real values: they throw                                                                 |
+
+## Sources
+
+Independent implementations of Shopify's [App Store requirements](https://shopify.dev/docs/apps/launch/shopify-app-store/app-store-requirements), [Built for Shopify requirements](https://shopify.dev/docs/apps/launch/built-for-shopify/requirements), [app configuration](https://shopify.dev/docs/apps/build/cli-for-apps/app-configuration), [API versioning](https://shopify.dev/docs/api/usage/versioning), and [theme app extension configuration](https://shopify.dev/docs/apps/build/online-store/theme-app-extensions/configuration). Discovery defaults verified against the MIT-licensed Shopify CLI's [configuration selection](https://github.com/Shopify/cli/blob/614187e5204ca6c4bc3c8418b8c6fcb224ab5dae/packages/app/src/cli/models/project/config-selection.ts) and [extension loader](https://github.com/Shopify/cli/blob/614187e5204ca6c4bc3c8418b8c6fcb224ab5dae/packages/app/src/cli/models/app/loader.ts). Source carries greppable `@attribution` tags.
 
 <!-- harness-catalog:start -->
 

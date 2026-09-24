@@ -10,4 +10,4 @@ Migrate all rule exports and presets to versioned standards, detectors, reposito
 
 Move Liquid reviews to change detectors with a plugin-owned Liquid parser and explicit Git baselines. Registry drift uses repository dependency snapshots instead of ambient filesystem reads. Fix repeated JSON occurrence keys, comments mistaken for executable work or visible copy, callback fan-out detection, and JavaScript type-only JSDoc review noise. Clarify valid public adapters and compile-time contracts in guidance.
 
-These remain private draft plugins. Local development links to the sibling agentlint workspace; registry compatibility is not established by this migration.
+These remain private draft plugins. Development installs the reviewed archive `local-packages/agentlint-current.tgz`; registry compatibility is not established by this migration.

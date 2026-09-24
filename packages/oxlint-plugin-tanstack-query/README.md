@@ -1,10 +1,11 @@
 # @aurelienbbn/oxlint-plugin-tanstack-query
 
-Custom oxlint rules for TanStack Query v5. The plugin covers failure modes that compile, type-check and stay silent in production, and that `@tanstack/eslint-plugin-query` does not report. It never re-implements an official rule: load the official plugin next to this one through oxlint `jsPlugins`.
+**8 oxlint rules for TanStack Query v5 bugs that compile, type-check, stay silent in production, and slip past `@tanstack/eslint-plugin-query`.**
 
-Private draft: the package is versioned and tested in this repository but not a release candidate.
+> [!WARNING]
+> **Private draft.** Versioned and tested in this repo, not a release candidate.
 
-## Usage
+**Never re-implements an official rule.** Load the official plugin alongside via `jsPlugins`, or let `withTanstackQueryLayer` from `@aurelienbbn/oxlint-config` wire both via `companionPlugins`.
 
 ```json
 {
@@ -26,30 +27,162 @@ Private draft: the package is versioned and tested in this repository but not a 
 }
 ```
 
-The plugin ships no preset; every rule is enabled by name.
+Peer: oxlint >=1.82.0 <2.0.0. No preset. **No autofix:** each rewrite depends on the data and the component.
 
-## Rules
+```text
+everywhere  ██████   6
+opt-in      ██       2   no-query-data-sync-effect (borderline for form drafts) · test-query-client-hygiene (test files only)
+```
 
-See the [registered contract inventory](#registered-contract-inventory) for the one-line contracts. None of the rules has an autofix: each correct rewrite depends on the data and the component.
+## 🚨 Failures must reach the query
 
-- `no-swallowed-query-fn-error`: triggers on a `queryFn` / `mutationFn` whose own `try` block decides the result (it returns, assigns an outer variable, or is the last statement) while the `catch` block never throws or returns `Promise.reject(...)`, and on a returned, awaited or chained `.catch(handler)` whose handler never throws. A conditional rethrow passes. Guards around side effects and detached `void promise.catch(...)` statements are ignored.
-- `require-fetch-status-check-in-query-fn`: triggers on a call to the global `fetch` (also `window.`, `globalThis.`, `self.`) inside a `queryFn` / `mutationFn` that contains no `.ok` / `.status` read, no `{ ok }` / `{ status }` destructuring and no `throw`. Silent when the response is handed to another function (`parse(await fetch(...))`, `.then(handleResponse)`, `decode(response)`), for a shadowed or imported `fetch`, and for clients that throw by default (`ky`, `axios`, `api.get`).
-- `no-query-cache-mutation`: triggers when the first parameter of a `setQueryData` / `setQueriesData` updater, the first parameter of a query `select`, or a variable initialised from `getQueryData(...)` is mutated in place: `push`, `pop`, `shift`, `unshift`, `splice`, `sort`, `reverse`, `fill`, `copyWithin`, member assignment, `++` / `--`, `delete`, or `Object.assign(value, ...)`. `select` is recognised next to `queryKey` / `queryFn` or as a direct option of an imported query hook or `queryOptions` / `infiniteQueryOptions`. Copies and immer drafts are different bindings and pass; aliases of the cached value are not tracked.
-- `require-optimistic-update-guards`: triggers on an `onMutate` handler (next to `mutationFn`, or an option of imported `useMutation` / `mutationOptions`) that calls `setQueryData` / `setQueriesData`. Reports a missing cancellation when the handler calls nothing whose name contains `cancel`, and a missing settlement when the same options object has neither `onError` nor `onSettled`. `onSettled` alone is enough. The settlement check is skipped when the options object contains a spread.
-- `no-query-data-in-use-state`: triggers on `useState(initial)` (React or Preact, aliases and `React.useState` included) when `initial` reads `data` from `useQuery`, `useInfiniteQuery` or `useQueries` imported from a TanStack Query package: destructured `data` with alias or default, or `result.data`. Suspense hooks and queries with a literal `initialData` are exempt because their data is defined on first render.
-- `query-fn-returns-value`: triggers on a block-bodied `queryFn` with no `return <value>` that does not end in a `throw`, and on every `return;`, `return undefined` or `return void ...` in a `queryFn`. Expression-bodied arrows and `mutationFn` are never reported. Use the official `no-void-query-fn` instead when linting with type information under ESLint.
-- `no-query-data-sync-effect` (opt-in): triggers on a `useEffect` / `useLayoutEffect` callback that passes the same query data to a `useState` setter. Initialising a form draft this way is a known borderline case, so enable it deliberately; the recommended fix is still to derive during render or split the component.
-- `test-query-client-hygiene` (opt-in, test files only): triggers on `new QueryClient(...)` imported from a TanStack Query package in files matching `testFilePattern` (default: `*.test.*`, `*.spec.*`, `__tests__/`). Reports a client created at module scope or directly in a `describe` callback unless that variable is `.clear()`ed somewhere in the file, and a client created without an explicit `defaultOptions.queries.retry`. Non-literal or spread options are not judged. Set `testFilePattern` to include test utilities.
+```ts
+queryFn: async () => {
+  try {
+    return await api.getTodos();
+  } catch (error) {
+    console.error(error);
+  }
+}; // ❌ swallowed
+queryFn: () => api.getTodos().catch(() => []); // ❌ returned .catch that never throws
+queryFn: () => fetch("/api/todos").then((response) => response.json()); // ❌ no status check
+queryFn: async () => {
+  const response = await fetch("/api/todos");
+  if (!response.ok) throw new Error("Request failed");
+  return response.json();
+}; // ✅
+```
 
-`queryFn`, `mutationFn` and `onMutate` values are resolved one hop to a same-file function declaration or `const` function.
+Typed ESLint? Use the official `no-void-query-fn` instead of `query-fn-returns-value`.
 
-## Contract boundaries
+<details>
+<summary>Exact triggers and silent cases</summary>
 
-Rules that match option names (`queryFn`, `mutationFn`, `select`, `onMutate`, `setQueryData`) only run in files that import from `@tanstack/query-core` or an `@tanstack/*-query` adapter; rules that match hooks, option helpers or `QueryClient` resolve the binding through those imports, including aliases, namespace imports and lexical shadows. Wrapper hooks re-exported from project modules are outside the contract. All checks are syntactic and per file.
+```ts
+queryFn: async () => {
+  try {
+    return await api.getTodo();
+  } catch (error) {
+    if (isNotFound(error)) return null;
+    throw error;
+  }
+}; // ✅ conditional rethrow
+queryFn: async () => parseResponse(await fetch("/api/a")); // ✅ handed to another function
+```
 
-## Credits
+| Rule                                     | ❌ Fires on                                                                                                                                                                                                                                                           | ⏭️ Silent on                                                                                                                                                                        |
+| ---------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `no-swallowed-query-fn-error`            | a `queryFn` / `mutationFn` whose own `try` decides the result (returns, assigns an outer variable, or is the last statement) while `catch` never throws or returns `Promise.reject(...)`; a returned, awaited or chained `.catch(handler)` whose handler never throws | conditional rethrow; guards around side effects; detached `void promise.catch(...)`                                                                                                 |
+| `require-fetch-status-check-in-query-fn` | global `fetch` (also `window.`, `globalThis.`, `self.`) in a `queryFn` / `mutationFn` with no `.ok` / `.status` read, no `{ ok }` / `{ status }` destructuring, no `throw`                                                                                            | response handed on (`parse(await fetch(...))`, `.then(handleResponse)`, `decode(response)`); shadowed or imported `fetch`; clients that throw by default (`ky`, `axios`, `api.get`) |
+| `query-fn-returns-value`                 | a block-bodied `queryFn` with no `return <value>` not ending in `throw`; every `return;`, `return undefined`, `return void ...`                                                                                                                                       | expression-bodied arrows; `mutationFn`                                                                                                                                              |
 
-Concepts are credited to the TanStack Query guides (Query Functions, Updates from Mutation Responses, Optimistic Updates, Testing), to Dominik Dorfmeister's tkdodo.eu articles (React Query FAQs, React Query Error Handling, Practical React Query, React Query and Forms, Breaking React Query's API on purpose, Concurrent Optimistic Updates in React Query, Testing React Query), and to the `no-void-query-fn` rule of `@tanstack/eslint-plugin-query`. Every rule is an independent implementation.
+</details>
+
+## 🧊 The cache is immutable
+
+```ts
+queryClient.setQueryData(["todos"], (old: Todo[]) => {
+  old.push(todo);
+  return old;
+}); // ❌ mutated in place
+queryClient.setQueryData(["todos"], (old: Todo[] | undefined) => [...(old ?? []), todo]); // ✅ copy
+```
+
+**Blind spot: aliases of the cached value aren't tracked.**
+
+<details>
+<summary>What <code>no-query-cache-mutation</code> watches</summary>
+
+Watched: first parameter of a `setQueryData` / `setQueriesData` updater, first parameter of a query `select`, a variable initialised from `getQueryData(...)`. `select` counts next to `queryKey` / `queryFn`, or as a direct option of an imported query hook or `queryOptions` / `infiniteQueryOptions`.
+
+Mutations: `push`, `pop`, `shift`, `unshift`, `splice`, `sort`, `reverse`, `fill`, `copyWithin`, member assignment, `++` / `--`, `delete`, `Object.assign(value, ...)`. Copies and immer drafts (different bindings) pass.
+
+</details>
+
+## 🔁 Optimistic updates need cancel + settle
+
+```ts
+useMutation({
+  mutationFn: addTodo,
+  onMutate: (todo: Todo) => {
+    queryClient.setQueryData(["todos"], (old: Todo[]) => [...old, todo]); // ❌ no cancel* call, no onError / onSettled
+  },
+});
+useMutation({
+  mutationFn: addTodo,
+  onMutate: async (todo: Todo) => {
+    await queryClient.cancelQueries({ queryKey: ["todos"] });
+    queryClient.setQueryData(["todos"], (old: Todo[]) => [...old, todo]);
+  },
+  onSettled: () => queryClient.invalidateQueries({ queryKey: ["todos"] }), // ✅ onSettled alone is enough
+});
+```
+
+<details>
+<summary>What <code>require-optimistic-update-guards</code> checks</summary>
+
+An `onMutate` (next to `mutationFn`, or an option of imported `useMutation` / `mutationOptions`) calling `setQueryData` / `setQueriesData`:
+
+| Report               | When                                                                                    |
+| -------------------- | --------------------------------------------------------------------------------------- |
+| missing cancellation | the handler calls nothing whose name contains `cancel`                                  |
+| missing settlement   | neither `onError` nor `onSettled` in the options. ⏭️ Skipped if the object has a spread |
+
+</details>
+
+## ⚛️ Server state isn't component state
+
+```ts
+const { data } = useQuery(todosOptions);
+const [todos, setTodos] = useState(data); // ❌ no-query-data-in-use-state: frozen at first render
+useEffect(() => {
+  if (data) setTodos(data);
+}, [data]); // ❌ no-query-data-sync-effect (opt-in)
+```
+
+Fix: derive during render or split the component.
+
+<details>
+<summary>Exact triggers and exemptions</summary>
+
+| Rule                         | ❌ Fires on                                                                                                                                                                                                                                         | ⏭️ Exempt                                                                           |
+| ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| `no-query-data-in-use-state` | `useState(initial)` (React or Preact, aliases and `React.useState` included) where `initial` reads `data` from `useQuery` / `useInfiniteQuery` / `useQueries` imported from TanStack Query: destructured `data` (alias or default) or `result.data` | suspense hooks; queries with a literal `initialData` (data defined on first render) |
+| `no-query-data-sync-effect`  | a `useEffect` / `useLayoutEffect` callback passing the same query data to a `useState` setter                                                                                                                                                       | enable deliberately: initialising a form draft is a known borderline case           |
+
+</details>
+
+## 🧪 One fresh QueryClient per test
+
+```ts
+const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } }); // ❌ module scope
+```
+
+<details>
+<summary><code>test-query-client-hygiene</code> triggers and <code>testFilePattern</code></summary>
+
+`new QueryClient(...)` imported from TanStack Query, in files matching `testFilePattern`:
+
+| ❌ Report                                                           | ⏭️ Unless                                           |
+| ------------------------------------------------------------------- | --------------------------------------------------- |
+| client created at module scope or directly in a `describe` callback | that variable is `.clear()`ed somewhere in the file |
+| client without an explicit `defaultOptions.queries.retry`           | options are non-literal or spread (not judged)      |
+
+| Option            | Default                                                                                                                         |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| `testFilePattern` | `(?:\.(?:test\|spec)\.[cm]?[jt]sx?$)\|(?:/__tests__/)` → `*.test.*`, `*.spec.*`, `__tests__/`. Widen it to cover test utilities |
+
+</details>
+
+## Contract
+
+| Topic           | Contract                                                                                                                                                                         |
+| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| file gate       | rules keyed on option names (`queryFn`, `mutationFn`, `select`, `onMutate`, `setQueryData`) run only in files importing `@tanstack/query-core` or an `@tanstack/*-query` adapter |
+| bindings        | hooks, option helpers, `QueryClient` resolve through those imports: aliases, namespace imports, lexical shadows                                                                  |
+| indirection     | `queryFn`, `mutationFn`, `onMutate` resolve one hop to a same-file function declaration or `const` function                                                                      |
+| ❌ out of scope | wrapper hooks re-exported from project modules                                                                                                                                   |
+| analysis        | syntactic, per file                                                                                                                                                              |
 
 <!-- harness-catalog:start -->
 

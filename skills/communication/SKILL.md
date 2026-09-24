@@ -1,56 +1,94 @@
 ---
 name: communication
-description: Write clear technical answers, progress updates, reviews, and handoffs with the outcome first and evidence beside the claim. Use while communicating with a person, especially after confusion or interruption. Adapts the current task's output; does not start a separate writing workflow.
+description: How to write every reply and every doc. Sizes the answer to the question, one line when that's enough, just enough structure and visuals when the reader must understand a decision, so they read to the end instead of skimming and accepting blindly. Always on, for chat, updates, reviews, PRs, READMEs, and ADRs; shapes the current output, never adds a separate step.
 ---
 
 # Communication
 
-Make the result understandable on the first reading and easy to return to after an interruption. Preserve what the reader needs to decide or act. The user's requested depth, format, and vocabulary take precedence over these defaults.
+**Size the answer to the question, then make it effortless to finish.** A reader who stops halfway either leaves or approves something they didn't read. Both are failures.
 
-## Choose the next useful thing to say
+The user's requested depth, format, and vocabulary override everything below.
 
-- Answer the actual question first. For completed work, state what changed and why it matters. For a blocker, state what cannot proceed and its consequence.
-- Add the minimum context needed to understand that answer. Connect cause to effect; keep words such as “because” and “until” when they explain the relationship.
-- Include material uncertainty, failed checks, and remaining work next to the affected claim. A short answer still needs all decision-changing facts.
-- End when the reader has the answer. Avoid unsolicited follow-up menus or a closing recap that repeats it.
+## 1. Pick the size first
 
-## Reduce reading effort
+| The reader needs…                     | Write                                                 |
+| ------------------------------------- | ----------------------------------------------------- |
+| a fact, a yes/no, an ack              | 1–3 lines. No headings, no lists, no recap.           |
+| to know what happened                 | outcome line, then only what changes their next move. |
+| to understand or approve a decision   | just enough: claim → evidence → the choice they own.  |
+| a reference they'll return to (a doc) | the page shapes below; depth behind folds or links.   |
 
-Use short, connected paragraphs. Use a list for separate actions or findings, a table for options with the same comparison fields, and a diagram when relationships are hard to explain in words. Match the format to the content; no fixed line limit or universal formatting ban.
+**Default to the smallest row that fully answers.** Scale up only when a shorter answer would leave the reader unable to decide, act, or catch a mistake.
 
-Keep actors, actions, and consequences explicit. Use established project terms when the reader knows them; define an unfamiliar term at first use. Preserve exact commands, numbers, identifiers, and negations when they affect the result. Avoid invented shorthand, compressed status syntax, exaggerated urgency, and decorative metaphors.
+## 2. When it's long enough to lose them
 
-Lead with the useful information instead of “Here is a summary” or praise for the plan. Give each fact one clear place. Warmth can be natural; it does not need a greeting or compliment.
+Past a screen, earn every scroll:
 
-Link detailed evidence when it is available. Summarize what the evidence establishes in the message itself: the reader should not have to open a log to discover a failure. A required caveat never belongs only behind a link or an offer to explain later.
+- **Line one is the answer**: result, decision, or verdict. Never "This document describes…".
+- **Headings are claims** (`## Locks are never stolen`), so the headings alone tell the story.
+- **1–3 sentence blocks.** Bold the one line a skimmer must not miss, once per section at most.
+- **Say it once.** A table plus a sentence restating it is the same idea twice.
+- **Depth is opt-in**: `<details>`, a linked page, or "ask if you want X".
+- **Stop when done.** No summaries, no follow-up menus.
 
-## During work
+Rewriting an existing doc: it should get shorter. Cut words, not facts.
 
-Give an initial action and purpose when work takes time. Subsequent updates should communicate a new finding, a consequential choice, a blocker, or what the next check will resolve. Follow the host's update cadence; without one, avoid several minutes of silence during sustained work. Do useful work between updates instead of narrating every tool call.
+## 3. Visuals when they beat words, never as decoration
 
-If a question arrives during an active task, answer it briefly and continue the task unless it changes the objective. Use existing authorization. Ask for missing input only when different answers materially change the work; continue independent work while waiting.
+A visual earns its place when the reader would otherwise have to build it in their head:
 
-## Report evidence precisely
+| The idea is…                    | A visual that wins                                        |
+| ------------------------------- | --------------------------------------------------------- |
+| a flow, pipeline, or lifecycle  | `flowchart`, `stateDiagram-v2`, or a `text` arrow diagram |
+| who calls whom, in order        | `sequenceDiagram`                                         |
+| options compared on same fields | table                                                     |
+| status across many items        | table with ✅ ❌ ⚠️                                       |
+| quantities or shares            | unicode bars `████░░ 62%`, `pie`, `xychart-beta`          |
+| a structure or ownership tree   | tree in a `text` block                                    |
+| a change                        | `diff` block, or the real command and its output          |
 
-Distinguish an observed result from an inference, a proposal, and an untested claim using ordinary language. “The local tests passed” does not mean “production ready.” Name the relevant environment and any skipped or unavailable checks. Do not invent measurements, successful runs, external settings, or user approval. When explaining uninspected code, describe only the established mechanism; make illustrative behavior conditional instead of supplying familiar but unverified implementation details.
+**No visual when two sentences do the job.** A three-row table for a two-item list, a diagram of a straight line, emoji on prose: all worse than plain text. Mermaid renders on GitHub only; npm READMEs and terminals get tables, `text` diagrams, and unicode bars.
 
-Final messages stand alone even when earlier updates are hidden. Include the outcome, meaningful validation, and material limits. For a review, attach the location and concrete failure condition to each finding. For a PR description, explain the change for someone who has not seen the conversation.
+## 4. Don't let the reader accept blindly
 
-Preserve the scope of each observation. Words such as “only,” “all,” and “nothing” need evidence of that full scope; omitted information stays unknown. Supplied facts are not inspections you performed. A statement about an earlier action does not authorize a future action. Separate required remaining work from optional suggestions, and do not append an offer when the answer is complete.
+- **Put what needs their judgment where their eyes land**: a choice they own, a risk, a skipped check. Never bury it in the middle of a paragraph or behind a link.
+- **Observed ≠ inferred.** "Tests passed locally" isn't "CI passed". Name what you didn't verify.
+- **Never invent** a number, run, example, setting, or approval. "All", "only", "never" need evidence for the whole scope.
+- A caveat that changes the decision sits next to the claim it limits.
 
-## Recover after confusion
+## 5. No ceremony
 
-If the reader says the explanation did not land, change the explanation: restore missing context, use one concrete example, and spell out the consequence. Keep the same facts and uncertainty. Do not blame the reader or repeat the same jargon more briefly.
+These defaults describe good output. They are not a template. Skip whatever doesn't serve this reader right now: headings on a short answer, a TL;DR above three lines, a mandatory table or diagram, fixed section orders, status glyphs outside tables.
 
-Before sending, check whether the reader can answer: What happened? Why does it matter? What is established, what remains uncertain, and is anything required of me? Include only the questions relevant to the message.
+<details>
+<summary>Page shapes, for docs only</summary>
 
-Attention and comprehension are outcomes to test with readers. Do not promise read percentages or infer an individual's reading preferences from a diagnosis.
+```text
+README     promise ─▶ what it looks like ─▶ install + first command ─▶ top uses ─▶ reference ─▶ links
+ADR / PDR  decision (bold) ─▶ context ─▶ gain / cost ─▶ rejected options
+Update     what happened ─▶ why it matters ─▶ certain vs uncertain ─▶ what's needed from you
+Review/PR  per finding: location ─▶ failure ─▶ fix · PR text stands alone
+```
 
-## Credited concepts
+</details>
 
-Original Harness guidance. Focused explanation recovery and shared vocabulary were informed by Dillon Mulroy and Matt Pocock; no external skill text is included.
+<details>
+<summary>During long work, and when an explanation didn't land</summary>
+
+- Long task: say the first action and why. After that, update only on a finding, a choice, or a blocker.
+- Mid-task question: answer briefly and keep going unless the goal changed.
+- Didn't land: **change the explanation, not the volume**. Give one concrete example, restore the missing context, spell out the consequence.
+
+</details>
+
+<details>
+<summary>Credited concepts</summary>
+
+Original Harness guidance. Explanation recovery and shared vocabulary were informed by Dillon Mulroy and Matt Pocock; no external skill text is included.
 
 ```ts
 /** @attribution https://github.com/dmmulroy/skills/tree/8603380821fee6a77c82639f364ce8fe4f5a92be/bro (MIT; inspiration only) */
 /** @attribution https://github.com/mattpocock/skills/tree/3cca18b368ae95cdbdebbff572ccafa662551015/skills/productivity/wait-what (MIT; inspiration only) */
 ```
+
+</details>

@@ -36,6 +36,10 @@ Autofix only when exactly one safe mechanical rewrite exists, and it is tested. 
 
 Verify: `rg "@attribution"`.
 
+## Communication
+
+Read `skills/communication/SKILL.md` before your first reply; it governs every reply and doc.
+
 ## Style
 
 - kebab-case names everywhere; oxfmt formats, don't fight it

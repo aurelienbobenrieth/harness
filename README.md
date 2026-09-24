@@ -1,63 +1,85 @@
 # Harness
 
-Reusable lint rules, tool configurations, conformance checks, and operating skills for TypeScript projects.
+**Lint rules, tool configs, conformance checks, and agent skills that steer TypeScript projects, so the same mistake is caught by a tool the second time.**
 
-Nine packages are release candidates. Six packages are private drafts with documented adoption limits: the five agentlint plugins and `@aurelienbbn/oxlint-plugin-tanstack-query`. Seven packages are parked outside this repository until a later release: the four Shopify theme packages, both Lit plugins, and `oio`. **Publishing is disabled:** `pnpm release` prints a preparation plan. See the [release policy](docs/release-readiness.md) and [consumer compatibility](docs/compatibility.md).
+```mermaid
+flowchart LR
+  F[recurring mistake] --> T{deterministic trigger?}
+  T -- mechanical fact --> O[oxlint rule / conformance check]
+  T -- needs judgment --> A[agentlint review]
+  T -- no trigger --> S[skill / human review]
+  O & A & S --> P[next project inherits it]
+```
 
-## Packages
+> [!WARNING]
+> **Publishing is disabled.** `pnpm release` only prints a preparation plan. See [release readiness](docs/release-readiness.md).
 
-- `@aurelienbbn/oxlint-config`: reusable oxlint config presets made from existing oxlint rules.
-- `@aurelienbbn/oxlint-plugin-core`: custom oxlint rules for TypeScript projects.
-- `@aurelienbbn/oxlint-plugin-effect`: custom oxlint rules for Effect projects.
-- `@aurelienbbn/oxlint-plugin-shopify-app`: custom oxlint rules for Shopify app and extension code.
-- `@aurelienbbn/oxlint-plugin-xstate`: custom oxlint rules for XState machines and actors.
-- `@aurelienbbn/oxlint-plugin-tanstack-query`: custom oxlint rules for TanStack Query failure modes the official plugin does not cover (private draft).
-- `@aurelienbbn/oxlint-plugin-type-evidence`: custom oxlint rules for explicit TypeScript boundary and assertion contracts.
-- `@aurelienbbn/agentlint-plugin-core`: custom agentlint rules for general TypeScript projects.
-- `@aurelienbbn/agentlint-plugin-effect`: custom agentlint rules for Effect projects.
-- `@aurelienbbn/agentlint-plugin-tanstack-query`: custom agentlint rules for TanStack Query projects.
-- `@aurelienbbn/agentlint-plugin-shopify-app`: custom agentlint rules for Shopify app and extension code.
-- `@aurelienbbn/agentlint-plugin-xstate`: custom agentlint rules for XState machines and actors.
-- `@aurelienbbn/conformance-shopify-app`: structural conformance checks for Shopify apps, packaged as a Vitest suite.
-- `@aurelienbbn/conformance-core`: project-agnostic repository checks with explicit coverage reports and a Vitest adapter.
-- `@aurelienbbn/oxfmt-config`: reusable oxfmt config presets made from existing formatter settings.
+## 15 packages, 3 maturity levels
 
-## Package Taxonomy
+```text
+candidate  █████████        9  release candidates, consumer-tested
+draft      ██████           6  private: 5 agentlint plugins + oxlint-plugin-tanstack-query
+parked     ███████          7  outside this repo: 4 Shopify theme pkgs, 2 Lit plugins, oio
+```
 
-- `*-config` / `*-preset`: bundles existing rules into recommended combinations.
-- `*-plugin`: defines new rule implementations.
-- `conformance-*`: structural checks over manifests, file layout, and build output, consumable as a Vitest suite or programmatically.
+| Package                           | Kind                                         |   Size | Status   |
+| --------------------------------- | -------------------------------------------- | -----: | -------- |
+| `oxlint-config`                   | preset                                       | config | ✅       |
+| `oxfmt-config`                    | preset                                       | config | ✅       |
+| `oxlint-plugin-core`              | rules · TypeScript                           |     15 | ✅       |
+| `oxlint-plugin-effect`            | rules · Effect                               |     32 | ✅       |
+| `oxlint-plugin-shopify-app`       | rules · Shopify apps & extensions            |     27 | ✅       |
+| `oxlint-plugin-xstate`            | rules · XState                               |     11 | ✅       |
+| `oxlint-plugin-type-evidence`     | rules · TS boundary & assertion contracts    |     10 | ✅       |
+| `oxlint-plugin-tanstack-query`    | rules · gaps the official plugin misses      |      8 | 🧪 draft |
+| `agentlint-plugin-core`           | agent reviews · TypeScript                   |     24 | 🧪 draft |
+| `agentlint-plugin-effect`         | agent reviews · Effect                       |      3 | 🧪 draft |
+| `agentlint-plugin-tanstack-query` | agent reviews · TanStack Query               |      4 | 🧪 draft |
+| `agentlint-plugin-shopify-app`    | agent reviews · Shopify                      |     14 | 🧪 draft |
+| `agentlint-plugin-xstate`         | agent reviews · XState                       |      5 | 🧪 draft |
+| `conformance-core`                | checks · any repo, Vitest adapter            |      5 | ✅       |
+| `conformance-shopify-app`         | checks · Shopify app structure, Vitest suite |     10 | ✅       |
 
-Rules should live in the narrowest reusable domain that fits them, for example `effect` for Effect-specific rules and `core` for technology-agnostic rules.
+All names are scoped `@aurelienbbn/…`. Each package README ends with its generated rule/check inventory. Why drafts stay private: [compatibility](docs/compatibility.md).
 
-## Rule implementation policy
+## What goes where
 
-Rules that have one safe mechanical rewrite must provide an autofix and test it. Rules whose fix requires project knowledge, such as choosing an Effect Schema decoder or encoder, should report only and leave the change to the developer.
+```text
+*-config / *-preset   bundle existing rules
+*-plugin              new rule implementations
+conformance-*         structural checks: manifests, layout, build output
+```
 
-## Review follow-up and validation
+- **Narrowest domain wins:** `effect` for Effect-only rules, `core` for stack-agnostic ones.
+- **Autofix only when exactly one safe rewrite exists**, and it's tested. A fix needing project knowledge (e.g. picking an Effect Schema decoder) reports only.
 
-Defaults deliberately optimize for these projects. Architecture preferences, deterministic diagnostics, and agent review prompts have different contracts; see each package's generated inventory and migration notes.
+## Commands
 
-- `pnpm check`: build, source typecheck, lint, formatting, unit tests, and repository policy/catalog gates.
-- `pnpm quality:check`: require a clean Knip report and keep production-source duplication at or below the reviewed 28-clone baseline; tests, fixtures, generated output, documentation, and vendored archives are excluded.
-- `pnpm test:coverage`: measure directly imported config, agentlint, and conformance code with ratcheted thresholds.
-- `pnpm test:mutation`: mutation-test the small conformance-core kernel.
-- [Rule ownership](docs/rule-ownership.md): upstream boundaries, removed overlap, and the graph-tooling decision.
-- `pnpm security:check`: audit all dependency classes against current registry advisories; required separately in CI and release preparation because it needs network access.
-- `pnpm test:compatibility baseline` / `current`: install the 9 packed candidates outside the workspace using reviewed public-registry tool versions, strict peers and engines, and complete declaration checking. No local dependency archive, alias, or declaration waiver is used.
-- `pnpm test:package`: exercise all 15 packed packages, including the private drafts, against the reviewed local agentlint archive and Vite Plus alias. Checks cover public APIs, the oxlint and agentlint runners, and conformance suites.
-- `pnpm release:plan`: inspect candidate versions, draft exclusions, working-tree status, and publication blockers without changing files or contacting a registry.
-- `pnpm catalog`: refresh exported rule/check inventories and credited concepts after building.
-- `pnpm test`: rebuild before running tests. The old watch script was removed because edits could leave the subprocess rules testing stale dist files.
+| Command                                        | What it proves                                                                       |
+| ---------------------------------------------- | ------------------------------------------------------------------------------------ |
+| `pnpm check`                                   | build, typecheck, lint, format, unit tests, policy + catalog gates                   |
+| `pnpm test`                                    | rebuild, then unit tests (no watch mode: it tested stale `dist`)                     |
+| `pnpm quality:check`                           | clean Knip report; production duplication ≤ 28-clone baseline                        |
+| `pnpm test:coverage`                           | ratcheted coverage for config, agentlint, conformance code                           |
+| `pnpm test:mutation`                           | mutation-tests the conformance-core kernel                                           |
+| `pnpm security:check`                          | audits every dependency class; needs network, so separate in CI                      |
+| `pnpm test:compatibility baseline` / `current` | installs the 9 packed candidates outside the workspace against public-registry tools |
+| `pnpm test:package`                            | exercises all 15 packed packages, drafts included, via the local agentlint archive   |
+| `pnpm release:plan`                            | versions, draft exclusions, blockers. Changes nothing                                |
+| `pnpm catalog`                                 | regenerates rule/check inventories and credits (after build)                         |
 
-The 15-package consumer and both candidate registry profiles require complete TypeScript dependency declarations. The former Effect and Vite Plus declaration exceptions have been removed; these commands use neither `skipLibCheck` nor an error allowlist. The agentlint plugins still require the reviewed private archive or built sibling workspace and remain incompatible with public agentlint 0.1.5. See the [current contract](docs/agentlint-contract.md).
+**No `skipLibCheck`, no error allowlist.** Every consumer profile needs complete TypeScript declarations. Agentlint plugins still need the reviewed private archive and don't work with public agentlint 0.1.5: see the [agentlint contract](docs/agentlint-contract.md).
 
-CI covers Linux/Windows with current Node 22/24 and separate checks at the declared runtime floors. A configured matrix is not evidence that its remote runs passed. See [compatibility evidence](docs/compatibility.md) for the actual local runs.
+CI runs Linux + Windows on Node 22/24 plus the declared runtime floors. A configured matrix isn't a passed one: [local run evidence](docs/compatibility.md).
 
-## Operating skills
+## Read next
 
-The [Shopify tooling guide](docs/shopify.md) connects App Store and Built for Shopify requirements to scoped lint rules, conformance, contextual review, and app-owned runtime evidence. It includes a tested App Home lint recipe and a source-drift-aware review planner.
+| If you want…                        | Go to                                                                                        |
+| ----------------------------------- | -------------------------------------------------------------------------------------------- |
+| the philosophy in one page          | [operating model](docs/operating-model.md)                                                   |
+| what Harness owns vs upstream tools | [rule ownership](docs/rule-ownership.md)                                                     |
+| Shopify App Store / BFS coverage    | [Shopify guide](docs/shopify.md)                                                             |
+| the agent skills                    | [skills guide](docs/skills.md)                                                               |
+| to contribute                       | [CONTRIBUTING](CONTRIBUTING.md) · [SECURITY](SECURITY.md) · [CODEOWNERS](.github/CODEOWNERS) |
 
-The [skills guide](docs/skills.md) explains the communication, build, testing, git, and toolsmith guidance, automatic versus explicit invocation, validation boundaries, and source credits. Deterministic policy belongs in executable checks; skills carry the context-dependent decisions those checks cannot make.
-
-Use [CONTRIBUTING.md](CONTRIBUTING.md) for changes and validation, [SECURITY.md](SECURITY.md) for vulnerability-reporting status, and [CODEOWNERS](.github/CODEOWNERS) for maintainer ownership.
+**Agentlint doesn't score maintainability.** It schedules the spots where a human must decide, keeps the decision with its evidence, and reopens it when that evidence or the repo's review epoch changes.

@@ -1,60 +1,65 @@
 # @aurelienbbn/conformance-core
 
-Stack-agnostic repo hygiene conformance checks: the slop that accumulates in any codebase regardless of framework — duplicate dependencies, copy-pasted blocks, dead exports, and leaky design-system builds. Ships as plain check functions plus a Vitest adapter.
-
-## Checks
-
-### dependency-overlap
-
-Reads the root and discovered workspace manifests, evaluating overlap within each manifest. Built-in families produce advisory warnings because tools can be complementary; explicit `dependencyOverlapGroups` replace those defaults and produce errors for the consumer's declared interchangeable dependencies. An empty list disables family advice. See `defaultGroups` in the source for the exact inventory.
-
-### duplication-budget
-
-Runs [jscpd](https://github.com/kucherenko/jscpd) when it is installed and fails once the clone count exceeds `duplication.maxClones` (default 0, with `minLines` 8 / `minTokens` 60). node_modules, dist, coverage, and .git are ignored. An absent optional jscpd produces an unsupported warning and a skipped Vitest test. Set `duplication.requireTool: true` when missing tooling must fail.
-
-### dead-exports
-
-Runs [knip](https://knip.dev) with the JSON reporter and reports unused files and exports. Missing optional tooling produces a warning. `deadExports.requireKnipConfig: true` requires both configuration and a working tool; missing or malformed evidence produces an error. Report objects and supported issue arrays are shape-checked before interpretation.
-
-### closed-design-system-probe
-
-Only runs when `closedDesignSystem` is configured. Supply an explicit native `buildCommand` with `{stylesheet}` and `{output}` placeholders. The probe parses built CSS and compares exact required/forbidden selector lists; it does not establish exhaustive closure. There is no default builder and no implicit package installation.
-
-### tsconfig-strictness
-
-Only runs when `tsconfigStrictness` is set; `{}` enables the defaults. Each checked tsconfig is resolved through its whole `extends` chain (relative paths with or without `.json`, arrays with later entries winning, package specifiers looked up in `node_modules` including scoped names, string `exports` targets and the manifest `tsconfig` field; JSONC comments, trailing commas and a BOM are accepted). The effective `compilerOptions` must then satisfy:
-
-- `strict`, `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`, `verbatimModuleSyntax` and `erasableSyntaxOnly` resolve to `true`. `strict` must be written down: an inherited compiler default is not evidence.
-- No strict-family flag (`strictNullChecks`, `noImplicitAny`, `strictFunctionTypes`, `strictBindCallApply`, `strictPropertyInitialization`, `strictBuiltinIteratorReturn`, `noImplicitThis`, `useUnknownInCatchVariables`, `alwaysStrict`) is switched off underneath `strict`.
-- `ignoreDeprecations` is absent, whatever its value.
-
-Each message names the file that set the offending value. Options:
-
-- `files`: root-relative tsconfig paths. Default: `tsconfig.json` and `tsconfig.*.json` in the root and every pnpm workspace package, minus solution files (`"files": []` without `include`) and configs that only serve as the `extends` base of another checked config.
-- `additionalRequiredFlags`: more flags that must be `true`, for example `noImplicitOverride` or `noFallthroughCasesInSwitch`.
-- `waivers`: flag name to written reason (at least three words). A waived flag becomes a warning that repeats the reason, so the exception stays visible in every report. A waiver for a flag the check does not own throws; a waiver that matches nothing is reported as stale.
-
-A missing or circular `extends`, an unreadable or malformed file, and a listed file that does not exist are failed evaluations, never a pass. No discovered tsconfig is unsupported evidence. The check reads JSON only: it neither runs `tsc` nor needs TypeScript installed.
-
-Why a conformance check: type-aware lint rules (`no-unnecessary-condition`, `strict-boolean-expressions`, `no-unsafe-*`) silently degrade under a loosened tsconfig, loosening it is the cheapest way to make errors disappear, and no AST rule sees a JSON config. `erasableSyntaxOnly` also replaces a family of enum/namespace/parameter-property lint rules with a compiler guarantee.
-
-Findings carry severity (`error`/`warning`) and a docs URL. The legacy finding API preserves those severities. The Vitest adapter prints warnings, skips unavailable optional evidence, and fails error findings or failed evaluations even when their finding severity is a warning. Evaluated advisory findings still pass. Tool runs are capped at 120 seconds. The report API below exposes the complete evaluation inventory for automation.
-
-## Vitest usage
+**5 repo-hygiene checks for any TypeScript repo. Plain functions or one Vitest file.**
 
 ```ts
 // conformance.test.ts
 import { coreConformance } from "@aurelienbbn/conformance-core/vitest";
 
+coreConformance({ root: process.cwd(), tsconfigStrictness: {} });
+```
+
+`vitest` is an optional peer (`>=4.1.11 <6.0.0`); Node `^22.19.0 || ^24.11.0`.
+
+## A report never confuses "no violations" with "no evidence"
+
+```text
+skipped      excluded by skipChecks · CSS probe or tsconfig gate unconfigured
+unsupported  tool absent (jscpd, knip) · no tsconfig found
+failed       timeout · bad report · throw · bad options   (tools cap at 120 s, Vitest tests at 125 s)
+evaluated    ran to completion, can still hold violations
+
+report.status   failed      any error finding or failed check
+                incomplete  any check not evaluated
+                passed      otherwise  (configured static checks, not whole-project compliance)
+```
+
+| Evaluation                                                                        | Vitest test                          |
+| --------------------------------------------------------------------------------- | ------------------------------------ |
+| skipped · unsupported warning                                                     | ⏭️ skipped, warning printed          |
+| unsupported error (`requireTool`, `requireKnipConfig`, explicit tsconfig `files`) | ❌ fails                             |
+| failed                                                                            | ❌ fails, even with warning severity |
+| evaluated: errors · warnings only                                                 | ❌ fails · ✅ passes                 |
+
+## Three entry points
+
+```ts
+import { runCoreConformance, runCoreConformanceReport } from "@aurelienbbn/conformance-core";
+
+const findings = await runCoreConformance({ root: process.cwd(), skipChecks: ["duplication-budget"] }); // legacy, same severities
+const report = await runCoreConformanceReport({ root: process.cwd() }); // { status, checks[], findings[] }
+```
+
+`coreConformance` (`/vitest`) makes one test per check. Finding: `check`, `severity`, `message`, `path?`, `docs` URL, `evaluation` when evidence is missing.
+
+<details>
+<summary>Full example, sample report, other exports</summary>
+
+```ts
 coreConformance({
   root: process.cwd(),
   duplication: { maxClones: 0 },
   deadExports: { requireKnipConfig: true },
   closedDesignSystem: {
-    stylesheet: "frontend/theme.css",
-    buildCommand: [process.execPath, "scripts/build-css.mjs", "{stylesheet}", "{output}"],
-    requiredSelectors: [".btn", ".card"],
-    forbiddenSelectors: [".mt-4", ".text-red-500"],
+    stylesheet: "theme.css",
+    requiredSelectors: [".token"],
+    forbiddenSelectors: [".raw"],
+    buildCommand: [
+      process.execPath,
+      "-e",
+      "require('node:fs').writeFileSync(process.argv[1], '.token {}')",
+      "{output}",
+    ],
   },
   tsconfigStrictness: {
     waivers: { exactOptionalPropertyTypes: "Vendor SDK typings assign undefined to optional fields." },
@@ -62,34 +67,147 @@ coreConformance({
 });
 ```
 
-## Programmatic usage
+`runCoreConformanceReport({ root, tsconfigStrictness: {}, skipChecks: ["duplication-budget"] })` on a workspace, trimmed:
 
-```ts
-import { runCoreConformance } from "@aurelienbbn/conformance-core";
-
-const findings = await runCoreConformance({
-  root: process.cwd(),
-  skipChecks: ["duplication-budget"],
-});
+```json
+{
+  "status": "failed",
+  "checks": [
+    { "check": "dependency-overlap", "status": "evaluated", "findings": [] },
+    { "check": "duplication-budget", "status": "skipped", "reason": "Excluded by skipChecks.", "findings": [] },
+    {
+      "check": "closed-design-system-probe",
+      "status": "skipped",
+      "reason": "No CSS build/selector probe configured.",
+      "findings": []
+    },
+    {
+      "check": "tsconfig-strictness",
+      "status": "evaluated",
+      "findings": [
+        {
+          "check": "tsconfig-strictness",
+          "severity": "error",
+          "message": "packages/agentlint-plugin-core/tsconfig.json: `noUncheckedIndexedAccess` is unset; set it to true in compilerOptions.",
+          "path": "packages/agentlint-plugin-core/tsconfig.json",
+          "docs": "https://github.com/aurelienbobenrieth/harness/tree/main/packages/conformance-core#tsconfig-strictness"
+        }
+      ]
+    }
+  ]
+}
 ```
 
-```ts
-import { runCoreConformanceReport } from "@aurelienbbn/conformance-core";
+Also exported: `coreChecks`, `activeChecks`, and each check object (`dependencyOverlap`, `duplicationBudget`, `deadExports`, `closedDesignSystemProbe`, `tsconfigStrictness`).
 
-const report = await runCoreConformanceReport({ root: process.cwd() });
-// report.status: passed | incomplete | failed
-// report.checks: one entry per check, with status, reason, and findings
+</details>
+
+## Checks
+
+### dependency-overlap
+
+**Built-in families warn (tools can be complementary); your `dependencyOverlapGroups` replace them and error; `[]` disables.** Each root and workspace `package.json` judged alone.
+
+<details>
+<summary>The 30 built-in families, workspace discovery</summary>
+
+Reads `dependencies` + `devDependencies`. Workspaces: `pnpm-workspace.yaml` `packages:` literal paths and single-level `dir/*` only; negations and deeper globs ignored.
+
+```text
+dayjs date-fns moment luxon
+axios got ky node-fetch superagent
+uuid nanoid cuid cuid2 @paralleldrive/cuid2 ulid
+zod yup joi ajv superstruct valibot arktype
+lodash lodash-es ramda remeda es-toolkit
+chalk picocolors kleur colorette ansis
+dotenv dotenv-flow
+jest vitest
+winston pino bunyan loglevel consola
+glob fast-glob globby tinyglobby
+commander yargs cac citty meow
+inquirer @inquirer/prompts prompts @clack/prompts enquirer
+p-limit p-queue p-map promise-pool @supercharge/promise-pool
+yaml js-yaml
+papaparse csv-parse fast-csv
+prisma drizzle-orm kysely knex typeorm sequelize
+ws socket.io
+immer mutative
+zustand jotai valtio @xstate/store
+fs-extra graceful-fs
+semver compare-versions
+marked markdown-it remark micromark
+cheerio parse5 linkedom node-html-parser
+execa zx tinyexec
+rimraf del
+cross-env env-cmd
+nodemon tsx-watch watchexec
+mime mime-types
+deepmerge defu ts-deepmerge
+query-string qs
 ```
 
-Each check is `evaluated`, `skipped`, `unsupported`, or `failed`. An evaluated check can still have violations. Explicit exclusions, an unconfigured CSS probe and an unconfigured tsconfig gate are skipped; absent tools are unsupported; timeouts, invalid reports, and execution exceptions are failed evaluations. Only complete evaluation without error findings yields `passed`; optional missing evidence yields `incomplete`. These statuses describe the configured static checks, not whole-project compliance.
+</details>
 
-Migration: unknown `skipChecks` IDs now throw, so correct misspellings rather than silently losing the intended exception. Vitest lists explicit exclusions and the unconfigured CSS probe as skipped tests. Duplication limits must be finite safe integers (`minLines`/`minTokens` positive, `maxClones` nonnegative). Malformed report rows are rejected even when a generous budget would otherwise hide them.
+### duplication-budget
 
-## Contract boundaries and migration
+[jscpd](https://github.com/kucherenko/jscpd), ignoring `node_modules`, `dist`, `coverage`, `.git`. Over budget: ❌ with the top 3 clones. **Malformed clone rows fail under any budget.**
 
-Required Knip gates (`deadExports.requireKnipConfig: true`) fail on missing configuration/tooling or unusable output. Set `duplication.requireTool: true` for the same required-tool behavior in jscpd; `duplication.ignorePatterns` adds generated/vendor exclusions. Migration: unavailable optional tools now register as skipped Vitest tests; malformed output and failed execution fail the test. They previously could appear as passing warning-only tests. This makes the adapter agree with the report's evidence status.
+### dead-exports
 
-Dependency overlap is evaluated within each manifest. Built-in groups are advisory; explicitly supplied equivalence groups are enforced. The CSS probe requires an explicit `buildCommand` and matches exact parsed selectors. It checks finite required/forbidden lists, not exhaustive closure. Your builder must include the probe inputs. On Windows use a native executable or `node` plus the installed tool's JavaScript entrypoint; shell shims are rejected. Tool adapters have a 120-second execution limit and the Vitest wrapper allows 125 seconds.
+[knip](https://knip.dev) `--reporter json`: unused files, exports, types, namespace, enum, and class members (10 listed). Report shapes checked first. Default: no knip config still runs; absent knip warns; timeout or bad output fails.
+
+### closed-design-system-probe
+
+**A finite selector probe, not proof of exhaustive closure.** Exact required/forbidden selectors in your parsed build output. **No default builder, no implicit install**; the builder must include the probe inputs. Timeout, nonzero exit, no output, invalid CSS → failed.
+
+> [!WARNING]
+> Windows: pass a native executable or `node` plus the tool's JS entrypoint. Shell shims (`.cmd`, `.bat`, `npx`, `npm`, `pnpm`, `yarn`) are rejected.
+
+### tsconfig-strictness
+
+**A loosened tsconfig silently degrades type-aware lint (`no-unnecessary-condition`, `strict-boolean-expressions`, `no-unsafe-*`), and no AST rule sees JSON.** Checks effective options after `extends`; messages name the file that set each value.
+
+Requires `strict: true` **written down, never inherited**; `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`, `verbatimModuleSyntax`, `erasableSyntaxOnly` true; no strict-family flag off; no `ignoreDeprecations`, whatever its value.
+
+<details>
+<summary>Strict family, default files, waivers, failure modes, <code>extends</code> resolution</summary>
+
+- Strict family: `strictNullChecks`, `noImplicitAny`, `strictFunctionTypes`, `strictBindCallApply`, `strictPropertyInitialization`, `strictBuiltinIteratorReturn`, `noImplicitThis`, `useUnknownInCatchVariables`, `alwaysStrict`.
+- `erasableSyntaxOnly` replaces a family of enum/namespace/parameter-property lint rules with a compiler guarantee.
+- Default `files`: `tsconfig.json` + `tsconfig.*.json` in the root and every pnpm workspace package, minus solution files (`"files": []`, no `include`) and configs that only serve as another checked config's `extends` base.
+- `additionalRequiredFlags`: more flags that must be `true`, e.g. `noImplicitOverride`.
+
+| Input                                                        | Result                                             |
+| ------------------------------------------------------------ | -------------------------------------------------- |
+| waiver (flag → reason ≥ 3 words)                             | ⚠️ warning repeating the reason in every report    |
+| waiver for a flag the check doesn't own, or reason < 3 words | throws (failed evaluation in the report)           |
+| waiver matching nothing                                      | ⚠️ stale-waiver warning                            |
+| missing or circular `extends`, unreadable or malformed file  | ❌ failed evaluation, never a pass                 |
+| listed file missing                                          | ❌ failed                                          |
+| no tsconfig discovered                                       | ⚠️ unsupported (❌ error when `files` is explicit) |
+
+`extends` resolution: relative paths with or without `.json`; arrays, later entries winning; package specifiers from `node_modules` (scoped too) via string `exports` targets or the manifest `tsconfig` field; JSONC comments, trailing commas, a BOM. Reads JSON only: no `tsc` run, no TypeScript install needed.
+
+</details>
+
+## Options
+
+| Option                                               | Default          | Notes                                                                                                         |
+| ---------------------------------------------------- | ---------------- | ------------------------------------------------------------------------------------------------------------- |
+| `skipChecks`                                         | `[]`             | unknown IDs throw                                                                                             |
+| `dependencyOverlapGroups`                            | 30 families      | yours replace them                                                                                            |
+| `duplication.maxClones` · `.minLines` · `.minTokens` | `0` · `8` · `60` | safe integers; `maxClones` ≥ 0, others > 0                                                                    |
+| `duplication.ignorePatterns`                         | `[]`             | generated/vendor globs                                                                                        |
+| `duplication.requireTool`                            | `false`          | absent jscpd or bad run → ❌                                                                                  |
+| `deadExports.requireKnipConfig`                      | `false`          | no config (`knip.json(c)`, `.knip.json(c)`, `knip(.config).ts/js`, `package.json#knip`), tool, or output → ❌ |
+| `closedDesignSystem`                                 | unset (skipped)  | `stylesheet`, `buildCommand` argv with `{stylesheet}` `{output}`, `requiredSelectors`, `forbiddenSelectors`   |
+| `tsconfigStrictness`                                 | unset (skipped)  | `{}` = defaults; `files`, `additionalRequiredFlags`, `waivers`                                                |
+
+## Migration
+
+- Unknown `skipChecks` IDs throw instead of silently losing the exception: fix the misspelling.
+- Absent optional tools are skipped tests; bad output or failed runs fail. Both could pass as warning-only tests before.
+- Duplication limits must be finite safe integers; malformed jscpd rows fail even under a generous budget.
 
 <!-- harness-catalog:start -->
 

@@ -1,19 +1,32 @@
 # Contributing
 
-Start with a small reproduction and the user-visible behavior you want to improve. Open an issue for a new policy whose usefulness depends on project taste; a narrowly scoped bug fix can go straight to a pull request.
+**Start from a small reproduction and the user-visible behavior to change.** Bug fix → PR. Taste-dependent policy → [issue](https://github.com/aurelienbobenrieth/harness/issues) first. Vulnerability → [security policy](SECURITY.md).
 
-Use the Node ranges in the root manifest and the exact `packageManager` version. Install with `pnpm install --frozen-lockfile`. Run `pnpm check` before requesting review; run `pnpm test:package` when changing public exports, package metadata, dependency ranges, generated output, or consumer behavior. Also run `pnpm test:compatibility baseline` and `pnpm test:compatibility current` when changing dependency support. All three consumer checks are required for release preparation.
+## Setup and checks
 
-Every new rule includes its implementation, registration, positive and negative tests, README trigger, and changeset. Put it in the narrowest reusable package. An autofix needs one safe mechanical rewrite and a test proving the result. A diagnostic that changes existing valid code needs migration guidance and the appropriate Changesets version bump.
+```sh
+pnpm install --frozen-lockfile   # Node ^22.19.0 || ^24.11.0, pnpm@11.9.0 (packageManager)
+pnpm check                       # always, before review
+pnpm fmt                         # formatting
+pnpm catalog                     # rule/check inventory changed; inspect the diff
+pnpm test:package                # exports, metadata, dependency ranges, generated output, consumer behavior
+                                 # (consumer tests audit their own fresh graph)
+pnpm test:compatibility baseline # dependency support (and `current`)
+pnpm security:check              # deps changed: dev/runtime/optional deps vs registry advisories; fails on registry errors
+```
 
-Use `pnpm fmt` for formatting. Run `pnpm catalog` when changing the registered rule/check inventory, then inspect the generated diff. Prefer a deterministic test or check over adding another instruction to `AGENTS.md`.
+Release preparation needs all of the above except `fmt` and `catalog`. **Never silence an advisory to turn an audit green.**
 
-Run `pnpm security:check` after dependency changes and before release preparation. It audits development, runtime, and optional dependencies against current registry advisories and fails on registry errors. Consumer tests also audit their fresh dependency graph, since registry consumers and the workspace resolve different hosts. Do not turn a failing audit into a pass by silently ignoring an advisory.
+## A new rule ships as one unit
 
-Preserve unrelated working-tree changes. Keep the diff focused, explain what changed and why, and report the checks you actually ran with their result. If a check is blocked, state the blocker and its consequence. Do not present skipped evidence as a pass.
+In the narrowest reusable package: implementation · registration · fires + stays-silent tests · README trigger · changeset. Autofix: exactly one safe mechanical rewrite, tested. Flags existing valid code: migration guidance + the right version bump. **Prefer a test or check over another `AGENTS.md` instruction.**
 
-Implement outside ideas independently. Do not copy licensed implementation or prose. Record a greppable JSDoc `@attribution <source> (<license/inspiration>)` and name the concept in the package README. Raise ambiguous provenance before the contribution lands.
+## Re-implement, never copy
 
-Use [the issue tracker](https://github.com/aurelienbobenrieth/harness/issues) for bugs and feature requests. Follow [the security policy](SECURITY.md) for vulnerability reports. Maintainer ownership is recorded in [CODEOWNERS](.github/CODEOWNERS); response times are best effort.
+No licensed implementation or prose. Add a greppable JSDoc `@attribution <source> (<license/inspiration>)`, name the concept in the package README, and raise ambiguous provenance **before** it lands.
 
-`pnpm release` only prints a preparation plan. It never publishes, tags, pushes, or versions packages. See [release readiness](docs/release-readiness.md) for the candidate/draft contract and the separate checks needed before publication can be enabled.
+## Report evidence, not hope
+
+Keep the diff focused; preserve unrelated working-tree changes. State what changed, why, and each check run with its result, or its blocker and consequence. **Skipped evidence is never a pass.**
+
+`pnpm release` only prints a plan: no publish, tag, push, or version ([release readiness](docs/release-readiness.md)). [CODEOWNERS](.github/CODEOWNERS); best-effort response times.

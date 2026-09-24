@@ -25,4 +25,6 @@ Follow the selected package's documented exports and registration. Avoid assumin
 
 Run the consumer's relevant required checks. Distinguish configuration or dependency failures from findings in existing source. Fix installation defects within scope; preserve and report source findings unless fixing them is part of the request. A justified, documented exception is a policy decision, not something to hide to make the run pass.
 
+When the request includes Harness skills, add one line to the consumer's always-loaded instructions (`AGENTS.md`, `CLAUDE.md`, or the host equivalent) telling agents to read the installed communication skill before their first reply. Keep every other skill discoverable, not bootstrapped.
+
 Finish with installed package versions, meaningful configuration changes, check results, and any blocked or intentionally omitted portion of the requested setup. Group omissions by reason rather than listing every irrelevant package.

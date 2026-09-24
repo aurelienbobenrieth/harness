@@ -1,27 +1,142 @@
 # @aurelienbbn/agentlint-plugin-tanstack-query
 
-Private draft. Development links to the sibling agentlint workspace; packed evidence uses the reviewed local archive; public agentlint 0.1.5 exposes an incompatible API. See the [compatibility evidence](../../docs/compatibility.md#private-draft-boundary).
+**4 agentlint reviews for TanStack Query: every query and mutation shows its loading, error and stale states; data is fetched by key, not by command.**
 
-Custom agentlint rules for TanStack Query projects.
+> [!WARNING]
+> **Private draft.** Built against the reviewed archive `local-packages/agentlint-current.tgz`; public agentlint 0.1.5 is API-incompatible. [Evidence](../../docs/compatibility.md#private-draft-boundary).
 
-## Presets
+## Quick start
 
-- `strictPreset`: enables `query-state-coverage`, `mutation-state-coverage`, and `imperative-query-fetching`.
-- `starterPreset`: enables `query-state-coverage` only.
-- `query-freshness-intent` is opinionated and belongs to no preset; add `queryFreshnessIntent` to `rules` explicitly.
+```sh
+agentlint init --preset "@aurelienbbn/agentlint-plugin-tanstack-query#starterPreset"
+agentlint rules test
+agentlint rules scan --review
+agentlint next --format json
+```
+
+`init` keeps an existing config and prints the install command; never installs. **Calibrate bindings before requiring `agentlint check --all`.**
+
+```ts
+import { defineConfig } from "@aurelienbbn/agentlint";
+import { queryFreshnessIntent, strictPreset } from "@aurelienbbn/agentlint-plugin-tanstack-query";
+
+export default defineConfig({ extends: [strictPreset], rules: [queryFreshnessIntent] });
+```
 
 ## Rules
 
-See the [registered contract inventory](#registered-contract-inventory) for current triggers.
+| Rule                        | `strictPreset` | `starterPreset` | Authority | Standard rev | Detector | Skips             |
+| --------------------------- | :------------: | :-------------: | --------- | :----------: | :------: | ----------------- |
+| `query-state-coverage`      |       ✅       |       ✅        | agent     |     2 ⚠️     |    2     |                   |
+| `mutation-state-coverage`   |       ✅       |                 | agent     |      1       |    1     | tests, test utils |
+| `imperative-query-fetching` |       ✅       |                 | agent     |      1       |    1     | tests             |
+| `query-freshness-intent`    |       🧪       |                 | agent     |      1       |    1     | tests, test utils |
 
-- `query-state-coverage`: triggers on `useQuery`, `useQueries`, `useInfiniteQuery`, `useSuspenseQuery`, `useSuspenseQueries` and `useSuspenseInfiniteQuery` calls, with or without explicit type arguments, bare or as the last segment of a member chain (`trpc.todo.list.useQuery(`, `api?.useQuery(`). Suspense hooks are reviewed against their Suspense fallback and resettable error boundary instead of local `isPending` branches. Calls mentioning `enabled` or `skipToken` are reviewed as lazy queries: spinners use `isLoading` or `fetchStatus`, never `isPending`. The review also checks that stale data stays visible after a failed background refetch and that `placeholderData` results are marked with `isPlaceholderData`.
-- `mutation-state-coverage`: triggers on bare, generic, and member-chain `useMutation` calls. Review pending feedback, duplicate-submission safety, actionable errors, deliberate retries, success reconciliation, and paused/offline behavior. Tests and test utilities stay silent. This generic interaction contract does not duplicate Shopify's domain-specific form and save-bar reviews.
-- `imperative-query-fetching`: triggers on a literal `enabled: false` inside a query options object (one that has `queryKey`/`queryFn`, or is an argument of a query hook or `queryOptions`/`infiniteQueryOptions`), and on `refetch()` / `x.refetch()` / `refetchTodos()` called inside a `useEffect` or `useLayoutEffect` callback in a file that uses a query hook. Apollo-only files and test files stay silent.
-- `query-freshness-intent` (opt-in): triggers on `refetchOnWindowFocus`/`refetchOnMount`/`refetchOnReconnect: false` without a non-zero `staleTime` beside them, `gcTime: 0`, and `retry: false|0` inside query options or `defaultOptions.queries`; one finding per options object. Also triggers on `new QueryClient(` in a file with a `"use client"` directive or hydration calls and no `staleTime`. Test files and test utilities stay silent.
+✅ in preset · 🧪 opinionated, add `queryFreshnessIntent` to `rules`. Presets ignore `**/*.d.ts`.
 
-## Contract boundaries and migration
+**⚠️ `query-state-coverage` rev 2: UI hooks own the review.** Shared `queryOptions` / `infiniteQueryOptions` no longer get duplicate prompts; Suspense hooks are included, with pending and error handling allowed in surrounding Suspense/error boundaries.
 
-UI hooks own visible-state review. Shared `queryOptions` and `infiniteQueryOptions` definitions no longer receive duplicate state-coverage prompts. Suspense hooks are included; pending and error handling can live in surrounding Suspense/error boundaries. The static trigger recognizes the documented hook names, explicit type arguments, and member-call spellings such as tRPC and openapi-react-query; renamed imports and custom wrapper hooks still require consumer fixtures before expansion.
+```ts
+trpc.todo.list.useQuery(undefined); // ❌ query-state-coverage
+queryOptions({ queryKey, queryFn }); // ✅ shared options, no duplicate prompt
+trpc.todo.save.useMutation(); // ❌ mutation-state-coverage
+React.useEffect(() => {
+  todos.refetch();
+}, [filter]); // ❌ imperative-query-fetching
+useQuery({ queryKey: ["user", id], queryFn, enabled: Boolean(id) }); // ✅ input in the key
+queryOptions({ queryKey, queryFn, staleTime: 0, refetchOnMount: false }); // ❌ query-freshness-intent
+```
+
+Recognized: documented hook names, explicit type arguments, member calls (tRPC, openapi-react-query). **Not yet:** renamed imports and custom wrapper hooks; they need consumer fixtures first.
+
+<details>
+<summary><code>query-state-coverage</code>: hooks and review checks</summary>
+
+```ts
+useQuery<Array<Todo>, Error>({ queryKey: ["items"] }); // ❌ fires
+api?.useQuery("get", "/todos"); // ❌ fires: optional chain
+const { data } = useSuspenseQuery(todosOptions); // ❌ fires: reviewed against Suspense + error boundary
+prefetchQuery({ queryKey: ["items"] }); // ✅ silent
+myUseQuery({});
+trpc.todo.useQueryState(); // ✅ silent: not a hook name
+```
+
+Hooks: `useQuery`, `useQueries`, `useInfiniteQuery`, `useSuspenseQuery`, `useSuspenseQueries`, `useSuspenseInfiniteQuery`, with or without type arguments, bare or as the last segment of a member chain.
+
+| Case                                   | Review checks                                                                         |
+| -------------------------------------- | ------------------------------------------------------------------------------------- |
+| Suspense hooks                         | the Suspense fallback and a resettable error boundary, not local `isPending` branches |
+| call mentions `enabled` or `skipToken` | lazy query: spinners use `isLoading` or `fetchStatus`, never `isPending`              |
+| every query                            | stale data stays visible after a failed background refetch                            |
+| `placeholderData`                      | results are marked with `isPlaceholderData`                                           |
+
+</details>
+
+<details>
+<summary><code>mutation-state-coverage</code>: six states per mutation</summary>
+
+Fires on bare, generic and member-chain `useMutation` calls (`useMutation<Todo, Error, Input>(…)`). Silent: `useMutationState`, custom wrappers like `useSaveMutation()`.
+
+```text
+pending feedback · duplicate-submission safety · actionable errors
+deliberate retries · success reconciliation · paused/offline behavior
+```
+
+Generic interaction contract; does not duplicate Shopify's form and save-bar reviews.
+
+</details>
+
+<details>
+<summary><code>imperative-query-fetching</code>: inputs belong in the query key</summary>
+
+```ts
+useQuery({ queryKey: ["search"], queryFn: () => search(term), enabled: false }); // ❌ fires
+trpc.user.byId.useQuery(id, { enabled: false }); // ❌ fires
+const onClick = () => {
+  void refetch();
+}; // ✅ silent: event handler
+export const flag = { name: "beta", enabled: false }; // ✅ silent: not query options
+```
+
+| Fires on                                     | Where                                                                                                                        |
+| -------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| literal `enabled: false`                     | a query options object: has `queryKey`/`queryFn`, or is an argument of a query hook or `queryOptions`/`infiniteQueryOptions` |
+| `refetch()`, `x.refetch()`, `refetchTodos()` | inside a `useEffect` / `useLayoutEffect` callback, in a file that uses a query hook                                          |
+
+Apollo-only files stay silent.
+
+</details>
+
+<details>
+<summary><code>query-freshness-intent</code> 🧪: switching off freshness needs a reason</summary>
+
+One finding per options object, inside query options or `defaultOptions.queries`:
+
+| Fires on                                                                            | Stays silent                                                     |
+| ----------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| `refetchOnWindowFocus` / `refetchOnMount` / `refetchOnReconnect: false`             | a non-zero `staleTime` beside it                                 |
+| `gcTime: 0`                                                                         |                                                                  |
+| `retry: false` or `retry: 0`                                                        | `retry` outside query options (`upload(file, { retry: false })`) |
+| `new QueryClient(` in a file with `"use client"` or hydration calls, no `staleTime` | a plain `new QueryClient()` elsewhere                            |
+
+```ts
+queryOptions({ queryKey, queryFn, refetchOnMount: "always", retry: 2 }); // ✅ silent
+```
+
+</details>
+
+<details>
+<summary>Agentlint rule contract</summary>
+
+| Fact                | Detail                                                                                                                        |
+| ------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| rule shape          | `lifecycle`, `standard` (revision), `detector` (version), `binding` (id, authority, scope, material options)                  |
+| composing           | `defineConfig({ extends: [preset] })` or `defineConfig({ rules: [configuredRule] })`; repeated uses need distinct binding ids |
+| authority           | defaults permit agent acceptance; repository owners choose scope and can raise authority to `human`                           |
+| accepting a finding | requires matching current evidence **and** authority                                                                          |
+| fixtures            | `@aurelienbbn/agentlint/testing` runs the embedded activation/silence fixtures with the real parser                           |
+
+</details>
 
 <!-- harness-catalog:start -->
 
@@ -44,23 +159,13 @@ Generated from package exports by `pnpm catalog`. Rule-specific options and limi
 
 <!-- harness-catalog:end -->
 
-## Current rule contract
-
-Rules expose `lifecycle`, `standard` (revision), `detector` (version), and `binding` (id, authority, scope, material options). Presets use arrays of bindings: `defineConfig({ extends: [preset] })` or `defineConfig({ rules: [configuredRule] })`. Configure repeated uses with distinct binding ids. Repository owners choose scope and can raise authority to `human`; defaults permit agent acceptance. Acceptance requires matching current evidence and authority. `@aurelienbbn/agentlint/testing` runs the embedded activation/silence fixtures with the real parser.
-
-## Start with a focused review
-
-The opt-in `starterPreset` includes `queryStateCoverage`. Install a compatible local draft of this package and agentlint, then run:
-
-```sh
-agentlint init --preset "@aurelienbbn/agentlint-plugin-tanstack-query#starterPreset"
-agentlint rules test
-agentlint rules scan --review
-agentlint next --format json
-```
-
-`init` preserves an existing config and prints the package installation command. It never installs packages itself. Inspect and calibrate the bindings before making `agentlint check --all` required. This gradual onboarding takes conceptual inspiration from desloppify by Peter O'Malley; no code or guidance was copied.
-
 ## Credits
 
-The data-first status ordering in `query-state-coverage` and the "inputs belong in the query key" standard of `imperative-query-fetching` take their concept from TkDodo's blog by Dominik Dorfmeister ("Status Checks in React Query", "React Query FAQs") and the TanStack Query guides. `mutation-state-coverage` is independently based on the official TanStack Query mutations guide. Guidance and detectors are independently written; nothing was copied.
+Guidance and detectors are independently written; nothing copied.
+
+| Rule                        | Concept source                                                                                                                  |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| `query-state-coverage`      | data-first status ordering: TkDodo's blog by Dominik Dorfmeister, "Status Checks in React Query", and the TanStack Query guides |
+| `imperative-query-fetching` | "inputs belong in the query key": TkDodo's blog, "React Query FAQs", and the TanStack Query guides                              |
+| `mutation-state-coverage`   | the official TanStack Query mutations guide                                                                                     |
+| `starterPreset` onboarding  | desloppify by Peter O'Malley: conceptual inspiration, no code or guidance copied                                                |

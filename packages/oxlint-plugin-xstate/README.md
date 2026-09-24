@@ -1,37 +1,103 @@
 # @aurelienbbn/oxlint-plugin-xstate
 
-Custom oxlint rules for XState v5 machines and actors. `eslint-plugin-xstate` does not analyse `setup().createMachine()` machines (it matches a bare `createMachine` callee; last published 2023-12 with an ESLint 8 peer), so this plugin carries its own setup-aware checks.
+**11 oxlint rules for XState v5 machines built with `setup().createMachine()`, the shape `eslint-plugin-xstate` can't see.**
 
-## Rules
+|                                    | `eslint-plugin-xstate`                   | this plugin               |
+| ---------------------------------- | ---------------------------------------- | ------------------------- |
+| `setup().createMachine()` machines | ❌ bare `createMachine` callee only      | ✅ setup-aware            |
+| maintained                         | ❌ last published 2023-12, ESLint 8 peer | ✅ oxlint >=1.82.0 <2.0.0 |
 
-See the [registered contract inventory](#registered-contract-inventory) for current triggers.
+```sh
+pnpm add -D @aurelienbbn/oxlint-plugin-xstate oxlint
+```
 
-The plugin ships no preset: every rule is registered independently and enabled by name. Rules marked MAYBE are lower-confidence or opinionated; keep them off or at `warn` unless the house config wants them.
+```json
+{
+  "jsPlugins": ["@aurelienbbn/oxlint-plugin-xstate"],
+  "rules": {
+    "xstate/require-setup-create-machine": "error",
+    "xstate/no-imperative-action-creator": "error",
+    "xstate/no-context-mutation": "error",
+    "xstate/prefer-send-to": "warn"
+  }
+}
+```
 
-| Rule                                 | Trigger                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `no-imperative-action-creator`       | `assign`/`raise`/`sendTo`/`sendParent`/`forwardTo`/`emit`/`cancel`/`stopChild`/`stop`/`spawnChild`/`log`/`enqueueActions` (imported from `xstate`, destructured from or called on a `setup()` result) used as a discarded statement, or returned by a concise arrow sitting in `entry`/`exit`/`actions` or `setup({ actions })`. The call only builds an action object, so nothing happens.                                                                                     |
-| `no-context-mutation`                | Assignment, `++`/`--`, `delete`, or a mutating method (`push`, `pop`, `shift`, `unshift`, `splice`, `sort`, `reverse`, `fill`, `copyWithin`, and `set`/`add`/`delete`/`clear`) on a path rooted at the `context` destructured by an implementation function inside `setup`/`createMachine`/`createStateConfig`/`createAction`/`assign`/`enqueueActions`, or at `snapshot.context` / `getSnapshot().context`. Option `allowCollectionMethods: true` exempts the Map/Set methods. |
-| `no-machine-in-render`               | `createMachine`, `<setup>.createMachine`, `createActor` or `interpret` whose nearest enclosing function is a component (`/^[A-Z]/`) or hook (`/^use[A-Z]/`), including `memo`/`forwardRef` wrappers, in a file importing `react` or `@xstate/react`. Nested callbacks (`useMemo`, `useEffect`, handlers) and `machine.provide(...)` are not reported.                                                                                                                           |
-| `named-actor-src`                    | `invoke.src` inside `createMachine`/`<setup>.createMachine`/`<setup>.createStateConfig` config, or the first argument of `spawnChild` / `enqueue.spawnChild`, that is a call, a function, or an identifier not bound to a string constant. Member expressions are skipped. Options: `checkSpawn: true` also checks `spawn(...)` taken from an `assign` argument; `guards: true` also reports inline function `guard` values.                                                    |
-| `stable-selector-result`             | Inline `useSelector` selector (from `@xstate/react`, `@xstate/store-react`, or the legacy `@xstate/store/react`; also `<ActorContext>.useSelector`) returning an object literal, array literal, `.map`/`.filter`/`.flatMap`/`.toSorted` call or `Object.keys`/`values`/`entries` with no comparator argument.                                                                                                                                                                   |
-| `no-unreachable-transition` (MAYBE)  | An unguarded branch that is not last in an `always`, `on.<EVENT>`, `after.<DELAY>`, `onDone` or `onError` array (later branches are dead), and the sub-case of an unguarded `always` transition with no `target` or targeting its own state (infinite loop). Branches with spreads or computed keys are skipped.                                                                                                                                                                |
-| `prefer-send-to` (MAYBE, use `warn`) | `sendParent` imported from `xstate` and `<object>.sendParent(...)` calls such as `enqueue.sendParent`.                                                                                                                                                                                                                                                                                                                                                                          |
-| `promise-actor-abort-signal` (MAYBE) | Inline `fromPromise` logic calling the global `fetch` for a read (no init, or a literal `GET`/`HEAD` method) while never referencing `signal`. Wrapped HTTP clients are invisible to it.                                                                                                                                                                                                                                                                                        |
+No preset, no autofix: enable each rule by name.
 
-`require-setup-create-machine` also reports `setup()` called with no argument, with `{}`, or with an object literal that has no `types` key; arguments that cannot be read statically (identifiers, spreads) are skipped.
+## 8 solid, 3 MAYBE
 
-`require-event-satisfies` covers `send`, `raise`, `sendTo`, `sendParent` and `emit` imported from `xstate`, `enqueue.raise`/`sendTo`/`sendParent`/`emit` on the `enqueue` parameter of `enqueueActions`, and `.send` on actor refs from `createActor`, `useActorRef`, `<ActorContext>.useActorRef()`, and the `useMachine`/`useActor` tuple (its `send` slot and its actor-ref slot). For machines typed through `setup({ types })`, TypeScript already checks those payloads against the event union; the rule earns its keep where the event type is erased: `sendTo`/`sendParent` targets, `AnyActorRef`, and refs passed through untyped boundaries. Narrow `sendCalleeNames` to those senders if the rule reads as redundant in a fully typed codebase.
+```text
+solid   ████████   8   error
+MAYBE   ███        3   off or warn: no-unreachable-transition · prefer-send-to (warn) · promise-actor-abort-signal
+```
 
-Config-walking rules treat the argument of `<setup>.createStateConfig(...)` as machine config. `machine-naming` is unchanged: state configs carry state-node ids, not machine ids.
+## What fires
 
-Not shipped: `no-deprecated-xstate-api`. Type-aware `typescript/no-deprecated` already reports `interpret`, `stop`, `getNextSnapshot` and the other `@deprecated` exports.
+```ts
+setup({ types: {} }).createMachine({
+  entry: ({ context }) => {
+    assign({ count: context.count + 1 });
+  }, // ❌ no-imperative-action-creator: builds an action, runs nothing
+});
+setup({ types: {} }).createMachine({
+  entry: assign({ count: ({ context }) => context.count + 1 }), // ✅
+});
 
-Concept credits for rules outside the generated block: `no-imperative-action-creator` and `no-unreachable-transition` re-implement ideas from `eslint-plugin-xstate` (`no-imperative-action`, `no-infinite-loop`) by Richard Laffers; no code was copied.
+actorRef.send({ type: "ADD_ITEM", id: "x" }); // ❌ require-event-satisfies
+actorRef.send({ type: "ADD_ITEM" } satisfies CartEvent); // ✅
 
-## Contract boundaries and migration
+setup({}).createMachine({ id: "app.cart" });
+// ❌ require-setup-create-machine: setup() declares no `types`
+```
 
-Machine IDs default to a generic dotted kebab-case namespace instead of oio; absent IDs remain permitted, and configured patterns validate present static IDs. Event-satisfies checks recognize imported XState send helpers and createActor-owned sends; unrelated .send methods are ignored. Satisfies unknown/any is not accepted as evidence. The rule enforces an explicit syntax policy, not a proof of the intended event union. setup/createMachine enforcement resolves named and namespace imports, aliases, and lexical shadows.
+## `require-event-satisfies` matters where types are erased
+
+```text
+setup({ types }) machine  ──▶  TypeScript already checks the payload  → rule redundant
+sendTo / sendParent targets,
+AnyActorRef, untyped refs ──▶  event type erased                      → rule is the only check
+```
+
+**Fully typed codebase? Narrow `sendCalleeNames` to the erased senders.** `satisfies unknown` / `any` isn't evidence; the rule enforces syntax, not the intended event union.
+
+<details>
+<summary>Options and defaults</summary>
+
+| Rule                      | Option                   | Default                                                                                      |
+| ------------------------- | ------------------------ | -------------------------------------------------------------------------------------------- |
+| `machine-naming`          | `pattern`                | `^[a-z][a-z0-9-]*\.[a-z][a-z0-9-]*$` (generic dotted kebab-case namespace, not oio-specific) |
+| `named-actor-src`         | `checkSpawn`             | `false`; `true` also checks `spawn(...)` taken from an `assign` argument                     |
+|                           | `guards`                 | `false`; `true` also reports inline function `guard` values                                  |
+| `no-context-mutation`     | `allowCollectionMethods` | `false`; `true` exempts Map/Set `set` / `add` / `delete` / `clear`                           |
+| `require-event-satisfies` | `sendCalleeNames`        | `["send", "raise", "sendTo", "sendParent", "emit"]`                                          |
+
+</details>
+
+<details>
+<summary>Exact triggers and scope per rule</summary>
+
+| Rule                           | ❌ Fires on                                                                                                                                                                                                                                                                                | Matched / ⏭️ skipped                                                                                                                                                                                                                                                                                                                       |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `no-imperative-action-creator` | `assign` / `raise` / `sendTo` / `sendParent` / `forwardTo` / `emit` / `cancel` / `stopChild` / `stop` / `spawnChild` / `log` / `enqueueActions` as a discarded statement (also `void` / `await`ed), or returned by a concise arrow in `entry` / `exit` / `actions` or `setup({ actions })` | creators imported from `xstate`, destructured from or called on a `setup()` result                                                                                                                                                                                                                                                         |
+| `no-context-mutation`          | assignment, `++` / `--`, `delete`, or a mutating method on a path rooted at `context` or `snapshot.context` / `getSnapshot().context`                                                                                                                                                      | `context` destructured by an implementation function inside `setup` / `createMachine` / `createStateConfig` / `createAction` / `assign` / `enqueueActions`. Methods: `push`, `pop`, `shift`, `unshift`, `splice`, `sort`, `reverse`, `fill`, `copyWithin`, `set`, `add`, `delete`, `clear`. ⏭️ Map/Set with `allowCollectionMethods: true` |
+| `no-machine-in-render`         | `createMachine`, `<setup>.createMachine`, `createActor`, `interpret` directly in a component or hook body                                                                                                                                                                                  | nearest enclosing function is a component (`/^[A-Z]/`) or hook (`/^use[A-Z]/`), `memo` / `forwardRef` included, in a file importing `react` or `@xstate/react`. ⏭️ nested callbacks (`useMemo`, `useEffect`, handlers), `machine.provide(...)`                                                                                             |
+| `named-actor-src`              | `invoke.src` or first argument of `spawnChild` / `enqueue.spawnChild` that is a call, a function, or an identifier not bound to a string constant                                                                                                                                          | `invoke.src` in `createMachine` / `<setup>.createMachine` / `<setup>.createStateConfig` config. ⏭️ member expressions                                                                                                                                                                                                                      |
+| `stable-selector-result`       | inline `useSelector` selector returning a fresh object/array, no comparator argument                                                                                                                                                                                                       | `useSelector` from `@xstate/react`, `@xstate/store-react`, legacy `@xstate/store/react`, `<ActorContext>.useSelector`. Fresh = object/array literal, `.map` / `.filter` / `.flatMap` / `.toSorted`, `Object.keys` / `values` / `entries`                                                                                                   |
+| `require-setup-create-machine` | machine not built via `setup().createMachine()`, or `setup()` with no argument, `{}`, or an object literal without `types`                                                                                                                                                                 | named and namespace imports, aliases, lexical shadows. ⏭️ `setup(...)` arguments not statically readable (identifiers, spreads)                                                                                                                                                                                                            |
+| `require-event-satisfies`      | an object-literal event sent without `satisfies`                                                                                                                                                                                                                                           | `send`, `raise`, `sendTo`, `sendParent`, `emit` from `xstate`; `enqueue.raise` / `sendTo` / `sendParent` / `emit` on `enqueueActions`' `enqueue`; `.send` on refs from `createActor`, `useActorRef`, `<ActorContext>.useActorRef()`, and the `useMachine` / `useActor` tuple (`send` and actor-ref slots). ⏭️ unrelated `.send` methods    |
+| `machine-naming`               | a present static machine id failing `pattern`                                                                                                                                                                                                                                              | ⏭️ absent ids; `createStateConfig` (state-node ids, not machine ids)                                                                                                                                                                                                                                                                       |
+| `no-unreachable-transition`    | an unguarded branch not last in `always`, `on.<EVENT>`, `after.<DELAY>`, `onDone`, `onError` arrays (later branches dead); an unguarded `always` with no `target` or targeting its own state (infinite loop)                                                                               | ⏭️ branches with spreads or computed keys                                                                                                                                                                                                                                                                                                  |
+| `prefer-send-to`               | `sendParent` imported from `xstate`, and `<object>.sendParent(...)` such as `enqueue.sendParent`                                                                                                                                                                                           |                                                                                                                                                                                                                                                                                                                                            |
+| `promise-actor-abort-signal`   | inline `fromPromise` logic calling global `fetch` for a read (no init, or literal `GET` / `HEAD`) never referencing `signal`                                                                                                                                                               | ⏭️ wrapped HTTP clients are invisible to it                                                                                                                                                                                                                                                                                                |
+
+Config-walking rules treat the argument of `<setup>.createStateConfig(...)` as machine config.
+
+**Not shipped: `no-deprecated-xstate-api`.** Type-aware `typescript/no-deprecated` already reports `interpret`, `stop`, `getNextSnapshot` and the other `@deprecated` exports.
+
+</details>
+
+**Credit:** `no-imperative-action-creator` and `no-unreachable-transition` re-implement `eslint-plugin-xstate`'s `no-imperative-action` and `no-infinite-loop` ideas (Richard Laffers); no code copied.
 
 <!-- harness-catalog:start -->
 

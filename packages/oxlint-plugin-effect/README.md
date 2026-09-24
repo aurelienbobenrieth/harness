@@ -1,24 +1,124 @@
 # @aurelienbbn/oxlint-plugin-effect
 
-Opinionated Oxlint rules for Effect projects. Consumers enable the rules they want from the plugin export.
+**32 oxlint rules for Effect code: runtime boundaries, failure channels, concurrency, services, Schema. Only what `@effect/tsgo` doesn't own.**
 
-## Upstream ownership
+```sh
+pnpm add -D @aurelienbbn/oxlint-plugin-effect oxlint   # oxlint >=1.82.0 <2.0.0
+```
 
-Use the official `@effect/tsgo` recommended Oxlint preset first. It owns typed Effect diagnostics, including floating Effects, missing `yield*`/`return yield*`, unsafe Effect assertions and channels, Effect-native globals and JSON operations, deterministic identifiers, `Effect.fn` opportunities, and Layer provision structure.
+```json
+{
+  "jsPlugins": ["@aurelienbbn/oxlint-plugin-effect"],
+  "rules": {
+    "effect/require-all-concurrency": "error",
+    "effect/require-tagged-effect-fail": "error",
+    "effect/no-run-promise-in-runtime": ["error", { "allow": ["**/src/main.ts"] }]
+  }
+}
+```
 
-This plugin contains only policies or syntactic failure modes not owned by that preset. The official diagnostics are type-aware and have priority whenever an overlap emerges. Upstream ownership is recorded in [`docs/rule-ownership.md`](../../docs/rule-ownership.md) and the exported inventory is enforced by the catalog gate.
+No preset: enable each rule by name.
 
-## Fix policy
+## Upstream first, this plugin second
 
-Autofix is provided only when one mechanical rewrite preserves behavior. The remaining rules report because choosing an error type, runtime boundary, concurrency policy, layer owner, tracing name, or platform adapter requires project knowledge.
+```text
+@effect/tsgo recommended oxlint preset   ← enable FIRST, wins every overlap (type-aware)
+  floating Effects · missing yield* / return yield* · unsafe assertions & channels
+  Effect-native globals & JSON · deterministic ids · Effect.fn opportunities · Layer provision
+        │
+        ▼
+@aurelienbbn/oxlint-plugin-effect        ← policies and syntactic failure modes tsgo doesn't own
+```
 
-## Contract boundaries
+**Type-dependent conclusions stay with `@effect/tsgo`.** Ownership: [`docs/rule-ownership.md`](../../docs/rule-ownership.md); the catalog gate enforces the inventory.
 
-Compatibility is exercised against Effect `4.0.0-rc.115`; this is not a promise that every Effect 3/4 spelling is interchangeable. Import-aware recognizers cover namespace and aliased imports and ignore local shadows. Type-dependent conclusions remain with `@effect/tsgo` rather than being approximated here.
+## What fires
 
-Architecture preferences such as `dependencies-first`, `no-switch`, `prefer-match`, `prefer-effect-array-helpers`, and `schema-type-adjacent` are intentionally opinionated. Consumers can suppress a rule at an exceptional call site instead of weakening the shared configuration.
+```ts
+const values = Effect.all(programs); // ❌ require-all-concurrency
+const values = Effect.all(programs, { concurrency: 1 }); // ✅ explicit choice
 
-Runtime rules share boundary matching: `no-run-promise-in-runtime` owns promise runners; `no-unscoped-runtime-launch` owns fork, sync, callback, and Layer launches. Configure the same allowed boundary paths for both. Concurrency rules require an explicit choice; omitted concurrency is not asserted to be unbounded.
+const program = Effect.fail("boom"); // ❌ require-tagged-effect-fail
+const program = Effect.fail(new DomainError({ reason })); // ✅ tagged error
+
+Effect.tryPromise(() => fetch(url)); // ❌ no-untyped-try-promise-catch, require-abort-signal
+Effect.tryPromise({
+  try: (signal) => fetch(url, { signal }),
+  catch: (cause) => new HttpError({ cause }), // ✅ typed, cause kept, signal forwarded
+});
+```
+
+- **Concurrency rules demand an explicit choice**; they don't claim omitted concurrency is unbounded.
+- **Same `allow` paths on `no-run-promise-in-runtime` and `no-unscoped-runtime-launch`:** shared boundary matching.
+- 🎨 `dependencies-first`, `no-switch`, `prefer-match`, `prefer-effect-array-helpers`, `schema-type-adjacent` are opinionated. **Suppress at the exceptional call site**, not in the shared config.
+
+<details>
+<summary>32 rules by job</summary>
+
+| Job                       | Rules                                                                                                                                                                                                                  |
+| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 🚨 failures (9)           | `no-catch-all-cause`, `no-effect-ordie`, `no-swallowed-failure`, `no-untyped-try-promise-catch`, `preserve-thrown-cause`, `no-unsafe-error-mapper`, `require-tagged-effect-fail`, `no-effect-promise`, `bounded-retry` |
+| 🚪 runtime boundaries (5) | `no-run-promise-in-runtime`, `no-unscoped-runtime-launch`, `prefer-run-main`, `no-fork-detach`, `prefer-it-effect` (opt-in, needs `@effect/vitest`)                                                                    |
+| 🧬 bodies & tracing (4)   | `no-unsafe-effect-body`, `require-named-effect-fn`, `effect-fn-name-matches-binding`, `dependencies-first` 🎨                                                                                                          |
+| 🧩 services & layers (4)  | `no-service-constructor-imports`, `no-service-dependency-parameters`, `no-service-option`, `no-static-service-forwarders`                                                                                              |
+| 📐 Schema & config (4)    | `no-schema-any`, `prefer-schema-decode-unknown`, `schema-type-adjacent` 🎨, `require-redacted-secret-config`                                                                                                           |
+| ⚡ concurrency (3)        | `require-all-concurrency`, `require-for-each-concurrency`, `require-abort-signal`                                                                                                                                      |
+| 🎨 style (3)              | `no-switch`, `prefer-match`, `prefer-effect-array-helpers`                                                                                                                                                             |
+
+</details>
+
+<details>
+<summary>Options and defaults</summary>
+
+`tests` = `**/*.{test,spec}.{ts,tsx}`.
+
+| Rule                               | Option                  | Default                                                                                                     |
+| ---------------------------------- | ----------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `no-run-promise-in-runtime`        | `allow`                 | tests, `**/scripts/**`                                                                                      |
+| `no-unscoped-runtime-launch`       | `allow`                 | tests, `**/scripts/**`                                                                                      |
+| `prefer-run-main`                  | `allow`                 | tests, `**/scripts/**`                                                                                      |
+| `prefer-effect-array-helpers`      | `allow`                 | tests, `**/scripts/**`                                                                                      |
+|                                    | `ignoredObjects`        | `Array`, `Arr`, `Effect`, `HashMap`, `HashSet`, `Match`, `Option`, `Record`, `Schedule`, `Schema`, `Stream` |
+| `no-schema-any`                    | `allow`                 | tests, `**/fixtures/**`, `**/scripts/**`, `tools/**`                                                        |
+| `no-effect-ordie`                  | `allow`, `allowedCalls` | `[]`, `[]`                                                                                                  |
+| `no-effect-promise`                | `allow`                 | `[]`                                                                                                        |
+|                                    | `mode`                  | `"all"` · or `"rejectable-only"`                                                                            |
+| `no-fork-detach`                   | `allow`                 | `[]`                                                                                                        |
+| `no-swallowed-failure`             | `allowInFinalizers`     | `true`                                                                                                      |
+| `prefer-it-effect`                 | `testFiles`             | tests                                                                                                       |
+| `require-abort-signal`             | `abortableCalls`        | `["fetch"]`                                                                                                 |
+| `require-redacted-secret-config`   | `secretPattern`         | `(SECRET\|PASSWORD\|PASSWD\|TOKEN\|API_?KEY\|PRIVATE_?KEY\|CREDENTIAL\|DATABASE_URL\|_DSN$)`                |
+|                                    | `benignPattern`         | `_(TTL\|LENGTH\|NAME\|HEADER\|URL_PREFIX\|COUNT\|ENABLED)$`                                                 |
+| `effect-fn-name-matches-binding`   | `ignorePattern`         | none                                                                                                        |
+| `no-service-constructor-imports`   | `serviceModules`        | none (project-local sources always count)                                                                   |
+| `no-service-dependency-parameters` | `serviceTypeNames`      | `[]`                                                                                                        |
+
+</details>
+
+## 0 autofix, 5 suggestions
+
+**No rule has one behavior-preserving rewrite:** error type, runtime boundary, concurrency policy, layer owner, tracing name, and platform adapter need project knowledge.
+
+<details>
+<summary>The 5 editor suggestions</summary>
+
+| Rule                             | Suggests                                                      |
+| -------------------------------- | ------------------------------------------------------------- |
+| `require-abort-signal`           | forward the thunk's `signal` into `fetch`                     |
+| `effect-fn-name-matches-binding` | rename the span to the binding name                           |
+| `no-fork-detach`                 | `forkChild` → `forkScoped` inside a Layer constructor         |
+| `no-swallowed-failure`           | add `{ log: true }` to `Effect.ignore`                        |
+| `require-redacted-secret-config` | `Config.String` / `Config.NonEmptyString` → `Config.Redacted` |
+
+</details>
+
+## Contract
+
+| Topic          | Contract                                                                          |
+| -------------- | --------------------------------------------------------------------------------- |
+| Effect version | exercised on `4.0.0-rc.115`. ⚠️ Effect 3/4 spellings not promised interchangeable |
+| imports        | namespace and aliased imports recognized; local shadows ignored                   |
+| overlap        | `@effect/tsgo`'s type-aware diagnostics win                                       |
 
 <!-- harness-catalog:start -->
 

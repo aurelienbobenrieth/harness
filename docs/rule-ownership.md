@@ -1,30 +1,78 @@
 # Rule ownership
 
-Harness adds a rule only when the repository can state the behavior it owns. A rule earns its place when its failure mode matters, its trigger is deterministic enough for the chosen engine, it has both reporting and silent fixtures, and a maintained upstream tool does not already enforce the same contract better.
+**A rule ships only when it names the behavior it owns and no maintained upstream tool enforces it better.**
 
-`pnpm catalog:check` applies that two-sided test requirement to every one of the 148 exported rules and 15 conformance checks. The generated inventory in each package README is the exhaustive rule-level list; a rule omitted from that inventory cannot ship.
+```mermaid
+flowchart LR
+  C[candidate rule] --> M{failure mode matters?}
+  M -- yes --> D{"trigger fits engine?"}
+  D -- yes --> X{"fires + silent fixtures?"}
+  X -- yes --> U{upstream does it better?}
+  U -- no --> S[✅ ships]
+  M -- no --> R[❌ rejected]
+  D -- no --> R
+  X -- no --> R
+  U -- yes --> R
+```
 
-## Upstream boundary
+**`pnpm catalog:check` enforces two-sided fixtures on all 153 rules and 15 checks.** A rule missing from its README's generated inventory can't ship.
 
-| Area                              | Upstream owner                                                                          | Harness-owned delta                                                                                                                                                                                                                                                                   |
-| --------------------------------- | --------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| General JavaScript and TypeScript | Oxlint built-in rules and TypeScript                                                    | Project conventions that cannot be expressed by the strict preset, plus the preset composition itself.                                                                                                                                                                                |
-| Import graph                      | Oxlint's `import/no-cycle`, `import/no-self-import`, and `eslint/no-restricted-imports` | `withImportGraphLayer` enables cycle analysis; `layerDirectionOverride` lets a project declare its actual dependency direction. Harness does not build another graph engine.                                                                                                          |
-| Dead files and exports            | Knip                                                                                    | `dead-exports` is a conformance adapter: it executes Knip, validates its report, and translates unavailable/malformed evidence into the shared report model. It does not implement reachability analysis.                                                                             |
-| Duplication                       | jscpd                                                                                   | `duplication-budget` is an adapter with an explicit clone budget and evidence-failure behavior. It does not implement clone detection.                                                                                                                                                |
-| TypeScript configuration          | TypeScript's resolved configuration                                                     | `tsconfig-strictness` checks the resolved flags across a workspace and records explicit waivers.                                                                                                                                                                                      |
-| Effect typed correctness          | `@effect/tsgo`                                                                          | Only organization policy and syntax-level checks not owned by the typed diagnostics remain.                                                                                                                                                                                           |
-| TanStack Query                    | `@tanstack/eslint-plugin-query`                                                         | The config layer exposes official rules. Local rules remain only where they review a different architecture or UI-state contract; the syntactic `query-fn-returns-value` fallback exists because the official typed rule is not executable through the current Oxlint JS-plugin path. |
-| XState                            | XState runtime/types and editor tooling                                                 | Deterministic lifecycle, persistence, and state-model policies that have no supported CI lint equivalent.                                                                                                                                                                             |
-| Shopify                           | Shopify schemas, CLI, types, and official guidance                                      | Cross-file production contracts and finite AST checks that schemas/types do not express. Browser behavior, copy quality, accessibility, and visual correctness stay outside static-rule claims.                                                                                       |
-| Agent review rules                | Agentlint detector contract                                                             | Review prompts for architecture and semantic risks that are intentionally not represented as compiler-style certainty. They remain private until the compatible engine is published.                                                                                                  |
+```text
+ oxlint-plugin-effect            ████████████████████████████████  32
+ oxlint-plugin-shopify-app       ███████████████████████████       27
+ agentlint-plugin-core           ████████████████████████          24
+ oxlint-plugin-core              ███████████████                   15
+ agentlint-plugin-shopify-app    ██████████████                    14
+ oxlint-plugin-xstate            ███████████                       11
+ oxlint-plugin-type-evidence     ██████████                        10
+ oxlint-plugin-tanstack-query    ████████                           8
+ agentlint-plugin-xstate         █████                              5
+ agentlint-plugin-tanstack-query ████                               4
+ agentlint-plugin-effect         ███                                3
+                                                        rules  = 153
+ conformance-shopify-app         ██████████                        10
+ conformance-core                █████                              5
+                                                        checks =  15
+```
 
-## Removed overlap
+## Upstream owns the engine, Harness owns the delta
 
-The Effect audit removed `matching-identifier`, `no-ambient-nondeterminism`, `no-cascading-layer-provide`, `no-effect-type-assertion`, `no-floating-effect`, `no-nested-layer-provide`, `no-plain-yield`, `no-raw-json-parse`, `no-raw-json-stringify`, `no-unsafe-error-channel`, `prefer-effect-fn`, `require-return-on-failure-yield`, and `use-root-imports`. Their semantics are owned more accurately by official typed Effect diagnostics.
+| Upstream owner                                                                    | Harness delta                                                                                                  |
+| --------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| Oxlint built-ins + TypeScript                                                     | Conventions the strict preset can't express; the preset itself.                                                |
+| Oxlint `import/no-cycle`, `import/no-self-import`, `eslint/no-restricted-imports` | `withImportGraphLayer` (cycles), `layerDirectionOverride` (real direction). **No second graph engine.**        |
+| Knip                                                                              | `dead-exports` runs it, validates the report. **No reachability analysis.**                                    |
+| jscpd                                                                             | `duplication-budget`: clone budget + evidence failure. **No clone detection.**                                 |
+| TypeScript resolved config                                                        | `tsconfig-strictness`: resolved flags, explicit waivers.                                                       |
+| `@effect/tsgo`                                                                    | Only syntax and org policy it doesn't own.                                                                     |
+| `@tanstack/eslint-plugin-query`                                                   | Official rules; `query-fn-returns-value` is a syntactic fallback (typed rule can't run via Oxlint JS plugins). |
+| XState runtime/types + editor tooling                                             | Lifecycle, persistence, state-model policies with no CI lint equivalent.                                       |
+| Shopify schemas, CLI, types, guidance                                             | Cross-file contracts, finite AST checks. **No browser, copy, accessibility, or visual claims.**                |
+| Agentlint detector contract                                                       | Review prompts; private until a compatible engine ships.                                                       |
 
-This is an ownership audit, not usage evidence. False-positive rate, suppression rate, and consumer findings become measurable only after publication and adoption; those signals should decide which remaining opinionated rules survive.
+<details>
+<summary>Delta details</summary>
 
-## Graph tooling decision
+- `dead-exports` also maps unavailable/malformed Knip evidence into the shared report model.
+- `tsconfig-strictness` checks resolved flags across a workspace.
+- TanStack Query local rules exist only where they review a different architecture or UI-state contract.
+- Agentlint prompts target architecture and semantic risks, deliberately not compiler-style certainty.
+- Skott is for dependency visualization; dependency-cruiser is stronger for rich graph policies.
 
-The repository and strict config use Oxlint's native multi-file import rules now. That is sufficient for cycle rejection and project-declared layer boundaries without maintaining a second parser or graph. Skott is useful for dependency visualization and dependency-cruiser is stronger for rich graph policies, but neither adds a necessary merge gate here today. Adopt dependency-cruiser when a real consumer needs transitive forbidden paths, orphan analysis beyond Knip, or a reportable architecture graph that `no-restricted-imports` cannot express.
+</details>
+
+## 13 Effect rules cut: typed diagnostics own them
+
+<details>
+<summary>The 13 removed rules</summary>
+
+`matching-identifier`, `no-ambient-nondeterminism`, `no-cascading-layer-provide`, `no-effect-type-assertion`, `no-floating-effect`, `no-nested-layer-provide`, `no-plain-yield`, `no-raw-json-parse`, `no-raw-json-stringify`, `no-unsafe-error-channel`, `prefer-effect-fn`, `require-return-on-failure-yield`, `use-root-imports`
+
+</details>
+
+> [!NOTE]
+> Ownership audit, not usage evidence. Post-adoption false-positive, suppression, and finding rates decide which opinionated rules survive.
+
+## Oxlint import rules are the only graph gate
+
+Cycles + declared layers, repo and strict config. Skott and dependency-cruiser: no merge gate needed today. **Adopt dependency-cruiser when a consumer needs** transitive forbidden paths, orphan analysis beyond Knip, or an architecture graph `no-restricted-imports` can't express.
