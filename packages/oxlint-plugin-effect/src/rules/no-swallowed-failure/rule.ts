@@ -41,6 +41,13 @@ function isSilentSuccess(context: Context, node: ESTree.Node | undefined): boole
   return node.arguments.length <= 1 && isPlaceholderValue(node.arguments[0]);
 }
 
+/** A lazy fallback that yields a placeholder value: `() => null`, `() => []`, `() => {}` (returns undefined). */
+function returnsPlaceholder(fn: FunctionNode): boolean {
+  if (fn.body?.type === "BlockStatement" && fn.body.body.length === 0) return true;
+  const returned = returnedExpression(fn);
+  return returned !== undefined && isPlaceholderValue(returned);
+}
+
 function isInsideFinalizer(context: Context, node: ESTree.Node): boolean {
   let child: ESTree.Node = node;
   let current = parentOf(node);
@@ -64,7 +71,7 @@ export const noSwallowedFailure: Rule = {
     type: "problem",
     docs: {
       description:
-        "Disallow Effect.ignore without a log option and Effect.catch handlers that discard the error and succeed with a placeholder.",
+        "Disallow Effect.ignore without a log option, and Effect.catch handlers or Effect.orElseSucceed fallbacks that discard the error for a placeholder.",
     },
     hasSuggestions: true,
     messages: {
@@ -72,6 +79,8 @@ export const noSwallowedFailure: Rule = {
         "Make the discarded failure observable: pass { log: true } (or a severity and message) to Effect.ignore, or handle the error.",
       catch:
         "Handle, map, or log the failure: this Effect.catch handler discards every error and succeeds with a placeholder. Name the condition with catchTag/catchIf when a fallback is intended.",
+      orElseSucceed:
+        "Handle, map, or log the failure: this Effect.orElseSucceed fallback discards every error for a placeholder value. Name the condition with catchTag/catchIf when a fallback is intended.",
       addLog: "Log the ignored failure with { log: true }.",
     },
     schema: [
@@ -121,7 +130,14 @@ export const noSwallowedFailure: Rule = {
         });
       },
       CallExpression(node) {
-        if (effectMethod(context, node.callee) !== "catch") return;
+        const method = effectMethod(context, node.callee);
+        if (method === "orElseSucceed") {
+          const fallback = node.arguments.at(-1);
+          if (!isFunctionNode(fallback) || !returnsPlaceholder(fallback) || allowedAsFinalizer(node)) return;
+          context.report({ node: fallback, messageId: "orElseSucceed" });
+          return;
+        }
+        if (method !== "catch") return;
         const handler = node.arguments.at(-1);
         if (!isFunctionNode(handler) || !ignoresFirstParameter(context, handler)) return;
         if (!isSilentSuccess(context, returnedExpression(handler))) return;

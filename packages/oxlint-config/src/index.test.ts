@@ -6,6 +6,8 @@ import { promisify } from "node:util";
 import { expect, it } from "vitest";
 import {
   defineStrictOxlintConfig,
+  effectTsgoOwnerRules,
+  effectTsgoSettledRules,
   importGraphRules,
   layerDirectionOverride,
   nurseryCandidateRules,
@@ -15,6 +17,7 @@ import {
   testFileGlobs,
   vagueTestTitlePattern,
   type OxlintConfig,
+  withEffectTsgoLayer,
   withImportGraphLayer,
   withTanstackQueryLayer,
 } from "./index.ts";
@@ -207,6 +210,75 @@ it("appends companion plugins after the official TanStack Query plugin", () => {
 
   expect(config.jsPlugins).toEqual(["./local-plugin.js", tanstackQueryPluginSpecifier, "companion-plugin"]);
   expect(config.rules).toMatchObject({ ...tanstackQueryRules, "companion/some-rule": "error" });
+});
+
+/** Same shape as `recommended` from `@effect/tsgo/oxlint-presets` 0.45.0, trimmed to the rules these tests touch. */
+const effectTsgoPresetFixture = {
+  options: { typeAware: true },
+  plugins: ["effecttsgo"],
+  rules: {
+    "effecttsgo/catch-die-to-or-die": "warn",
+    "effecttsgo/catch-to-ignore": "warn",
+    "effecttsgo/floating-effect": "error",
+    "effecttsgo/global-fetch": "warn",
+  },
+} as unknown as OxlintConfig;
+
+it("adds the @effect/tsgo preset, its native plugin, the owner diagnostics, and the settled conflicts", () => {
+  const config = withEffectTsgoLayer(defineStrictOxlintConfig(), { preset: effectTsgoPresetFixture });
+
+  expect(config.plugins).toEqual([...strictPlugins, "effecttsgo"]);
+  expect(config.rules).toMatchObject({
+    "effecttsgo/floating-effect": "error",
+    "effecttsgo/global-fetch": "warn",
+    "effecttsgo/any-unknown-in-error-context": "error",
+    "effecttsgo/deterministic-keys": "error",
+    "effecttsgo/strict-effect-provide": "error",
+    "effecttsgo/unsafe-effect-type-assertion": "error",
+    "effecttsgo/catch-die-to-or-die": "off",
+    "effecttsgo/catch-to-ignore": "off",
+    "effecttsgo/catch-to-or-else-succeed": "off",
+    "effecttsgo/redundant-or-die": "off",
+    "typescript/no-explicit-any": "error",
+  });
+  expect(config.options).toMatchObject({ typeAware: true, denyWarnings: true });
+});
+
+it("pins the four off-by-default owner diagnostics and the four settled rewrites", () => {
+  expect(effectTsgoOwnerRules).toEqual({
+    "effecttsgo/any-unknown-in-error-context": "error",
+    "effecttsgo/deterministic-keys": "error",
+    "effecttsgo/strict-effect-provide": "error",
+    "effecttsgo/unsafe-effect-type-assertion": "error",
+  });
+  expect(effectTsgoSettledRules).toEqual({
+    "effecttsgo/catch-die-to-or-die": "off",
+    "effecttsgo/catch-to-ignore": "off",
+    "effecttsgo/catch-to-or-else-succeed": "off",
+    "effecttsgo/redundant-or-die": "off",
+  });
+});
+
+it("lets rules and options already on the config win over the @effect/tsgo layer", () => {
+  const config = withEffectTsgoLayer(
+    defineStrictOxlintConfig({
+      options: { typeAware: false },
+      rules: { "effecttsgo/catch-to-ignore": "warn", "effecttsgo/deterministic-keys": "off" },
+    }),
+    { preset: effectTsgoPresetFixture },
+  );
+
+  expect(config.rules?.["effecttsgo/catch-to-ignore"]).toBe("warn");
+  expect(config.rules?.["effecttsgo/deterministic-keys"]).toBe("off");
+  expect(config.options?.typeAware).toBe(false);
+});
+
+it("keeps oxlint's default plugins when the config sets none and leaves the preset untouched", () => {
+  const presetBefore = structuredClone(effectTsgoPresetFixture);
+  const config = withEffectTsgoLayer({}, { preset: effectTsgoPresetFixture });
+
+  expect(config.plugins).toEqual(["eslint", "typescript", "unicorn", "oxc", "effecttsgo"]);
+  expect(effectTsgoPresetFixture).toEqual(presetBefore);
 });
 
 it("pins the vitest rules that close assertion loopholes instead of relying on their category", () => {

@@ -21,6 +21,36 @@ it("reports Effect.catch handlers that discard the error for a placeholder", asy
   ).resolves.toBeUndefined();
 });
 
+it("reports Effect.orElseSucceed fallbacks that replace every error with a placeholder", async () => {
+  await expect(
+    assertRuleReports(ruleName, "const a = load.pipe(Effect.orElseSucceed(() => null));\n"),
+  ).resolves.toBeUndefined();
+  await expect(
+    assertRuleReports(ruleName, "const b = Effect.orElseSucceed(load, () => []);\n"),
+  ).resolves.toBeUndefined();
+  await expect(
+    assertRuleReports(ruleName, "const c = load.pipe(Effect.orElseSucceed(() => {}));\n"),
+  ).resolves.toBeUndefined();
+  await expect(
+    assertRuleReports(ruleName, "const d = load.pipe(Effect.orElseSucceed(() => { return undefined; }));\n"),
+  ).resolves.toBeUndefined();
+});
+
+it("allows Effect.orElseSucceed with a computed fallback", async () => {
+  await expect(
+    assertRuleDoesNotReport(
+      ruleName,
+      [
+        "const a = load.pipe(Effect.orElseSucceed(() => cachedUser));",
+        "const b = Effect.orElseSucceed(load, () => defaultSettings(tenant));",
+        "const c = load.pipe(Effect.orElseSucceed(() => { audit(); return null; }));",
+        "const d = Other.orElseSucceed(() => null);",
+        "",
+      ].join("\n"),
+    ),
+  ).resolves.toBeUndefined();
+});
+
 it("allows logged ignores", async () => {
   await expect(
     assertRuleDoesNotReport(

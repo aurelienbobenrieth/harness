@@ -60,6 +60,8 @@ export interface User extends Schema.Schema.Type<typeof UserSchema> {} // ✅ si
 // also silent: typeof X["Encoded"], typeof X.Type
 ```
 
+The fix for a manual alias: run `@effect/tsgo`'s `typeToEffectSchema`, `typeToEffectSchemaClass`, or `structuralTypeToSchema` (recursive) refactor on it instead of re-typing the Schema by hand.
+
 Spelling source: Effect 4 docs (`effect/ai-docs/src/01_effect/02_schema/10_schema-basics.ts` in `effect@4.0.0-rc.115`) derive types with `typeof Contract["Type"]` / `typeof Contract["Encoded"]`; dotted and `Schema.Schema.Type<typeof Contract>` spellings are recognized too.
 
 </details>

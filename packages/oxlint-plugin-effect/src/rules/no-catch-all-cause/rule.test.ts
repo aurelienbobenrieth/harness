@@ -77,3 +77,31 @@ it("ignores catchCause on a local object shadowing Effect", async () => {
     ),
   ).resolves.toBeUndefined();
 });
+
+it("reports Effect.ignoreCause in a pipe and as a direct call", async () => {
+  await expect(
+    assertRuleReports(ruleName, "const warm = warmCache.pipe(Effect.ignoreCause({ log: true }));\n"),
+  ).resolves.toBeUndefined();
+  await expect(assertRuleReports(ruleName, "const warm = Effect.ignoreCause(warmCache);\n")).resolves.toBeUndefined();
+});
+
+it("reports Effect.catchDefect", async () => {
+  await expect(
+    assertRuleReports(ruleName, "const safe = program.pipe(Effect.catchDefect(() => Effect.succeed(fallback)));\n"),
+  ).resolves.toBeUndefined();
+});
+
+it("allows Effect.ignore, which leaves defects and interruption alone", async () => {
+  await expect(
+    assertRuleDoesNotReport(ruleName, "const warm = warmCache.pipe(Effect.ignore({ log: true }));\n"),
+  ).resolves.toBeUndefined();
+});
+
+it("ignores ignoreCause and catchDefect on non-Effect objects", async () => {
+  await expect(
+    assertRuleDoesNotReport(
+      ruleName,
+      "const a = queue.ignoreCause(job);\nconst b = custom.catchDefect(() => fallback);\n",
+    ),
+  ).resolves.toBeUndefined();
+});

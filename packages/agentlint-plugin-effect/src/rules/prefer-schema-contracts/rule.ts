@@ -23,7 +23,7 @@ export const preferSchemaContracts = defineRule({
   lifecycle: "state",
   standard: {
     id: "effect/prefer-schema-contracts",
-    revision: 2,
+    revision: 3,
     title: "Prefer Schema Contracts",
     summary: "Flags exported manual object contracts that need Effect Schema ownership.",
     guidance: {
@@ -33,6 +33,7 @@ export const preferSchemaContracts = defineRule({
         'Boundary contracts use a Schema declaration with an adjacent derived alias: `typeof X["Type"]` / `typeof X["Encoded"]` (the spelling in `effect/ai-docs/src/01_effect/02_schema/10_schema-basics.ts`), `typeof X.Type` / `typeof X.Encoded`, or `Schema.Schema.Type<typeof X>` / `Schema.Codec.Encoded<typeof X>`.',
         "Manual exported object contracts are limited to internal compile-time structures, helper generics, or intentionally non-runtime contracts.",
         "The reason for keeping a manual exported contract is clear from naming, placement, or nearby code.",
+        "A manual type alias that needs a Schema is converted with the `@effect/tsgo` refactors `typeToEffectSchema`, `typeToEffectSchemaClass`, or `structuralTypeToSchema` (recursive types), not re-typed by hand.",
       ],
     },
   },

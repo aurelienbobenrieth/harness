@@ -21,18 +21,19 @@ export default defineConfig(
 
 Returns a plain `OxlintConfig`: works with oxlint directly or as Vite+'s `lint` config, no Vite+ dependency.
 
-## 1 preset, 4 opt-ins
+## 1 preset, 5 opt-ins
 
 | Export                                                  | Adds                                                 |
 | ------------------------------------------------------- | ---------------------------------------------------- |
 | `strictOxlintConfig`                                    | the preset object                                    |
 | `defineStrictOxlintConfig(overrides?, options?)`        | preset + your overrides, cloned                      |
 | `withTanstackQueryLayer(config?, options?)`             | 🔌 official `@tanstack/eslint-plugin-query`, 7 rules |
+| `withEffectTsgoLayer(config, { preset })`               | 🔌 official `@effect/tsgo` preset + 4 owner rules    |
 | `withImportGraphLayer(config?)`                         | 🔌 `import/no-cycle` + `import/no-self-import`       |
 | `layerDirectionOverride({ files, forbidden, message })` | 🔌 one `overrides` entry banning cross-layer imports |
 | `nurseryCandidateRules`                                 | 🔌 4 nursery rules to trial                          |
 
-Also: `testFileGlobs`, `vagueTestTitlePattern`, `tanstackQueryRules`, `tanstackQueryPluginSpecifier`, `importGraphRules`, type `OxlintConfig`.
+Also: `testFileGlobs`, `vagueTestTitlePattern`, `tanstackQueryRules`, `tanstackQueryPluginSpecifier`, `effectTsgoPluginName`, `effectTsgoOwnerRules`, `effectTsgoSettledRules`, `importGraphRules`, type `OxlintConfig`.
 
 ## What the preset sets
 
@@ -184,6 +185,59 @@ Appends the plugin to `jsPlugins`, sets `tanstackQueryRules` to `error`.
 ¹ `@tanstack/eslint-plugin-query` 5.103.1 under oxlint 1.82.0, one-off. **Wiring, not verified coverage:** no repo fixture installs the official plugin; oxlint JS plugins are alpha. Re-check after upgrading either.
 
 `options.companionPlugins`: `{ specifier, rules }[]`. Specifier appended to `jsPlugins` after the official plugin; rules merge after the official rules.
+
+</details>
+
+<details>
+<summary><code>@effect/tsgo</code> layer: install, version lock, owner rules, settled conflicts</summary>
+
+```sh
+pnpm add -D @effect/tsgo@0.45.0 oxlint@1.82.0 oxlint-tsgolint@7.0.2001 typescript@7.0.2   # not dependencies of this package
+```
+
+```jsonc
+// package.json: registers the native `effecttsgo` plugin in oxlint-tsgolint
+{ "scripts": { "prepare": "effect-tsgo patch --oxlint" } }
+```
+
+```ts
+// oxlint.config.ts
+import { recommended } from "@effect/tsgo/oxlint-presets";
+import { defineStrictOxlintConfig, withEffectTsgoLayer } from "@aurelienbbn/oxlint-config";
+import { defineConfig } from "oxlint";
+
+export default defineConfig(withEffectTsgoLayer(defineStrictOxlintConfig(), { preset: recommended }));
+```
+
+Merges the preset's rules, adds `effecttsgo` to `plugins`, then `effectTsgoOwnerRules` and `effectTsgoSettledRules`. Config rules and options win. The preset reports at `warn`; the strict preset's `denyWarnings` makes those blocking. Editor LSP (`@effect/language-service` in `tsconfig.json` `plugins`): set `"diagnostics": false`, or every finding shows twice.
+
+> [!WARNING]
+> **Version lock.** `@effect/tsgo` 0.45.0 supports oxlint 1.81.0 / 1.82.0, oxlint-tsgolint 7.0.2001, TypeScript 7.0.2, and `effect-tsgo patch` refuses anything else. That is the [compatibility](../../docs/compatibility.md) `baseline` row; the `current` row (oxlint 1.83.0, oxlint-tsgolint 7.0.2002) is outside it. **Pin the baseline row** until a tsgo release widens its matrix.
+
+`effectTsgoOwnerRules`: off in `recommended`, on here because they own checks `@aurelienbbn/oxlint-plugin-effect` removed.
+
+| `effecttsgo/…`                 | Owns the removed rule                                                                      |
+| ------------------------------ | ------------------------------------------------------------------------------------------ |
+| `any-unknown-in-error-context` | `no-unsafe-error-channel`                                                                  |
+| `unsafe-effect-type-assertion` | `no-effect-type-assertion`                                                                 |
+| `deterministic-keys`           | `matching-identifier` (with `class-self-mismatch`, already in `recommended`)               |
+| `strict-effect-provide`        | ⚠️ partial: `Effect.provide` outside entry points, not the removed `Layer.provide` nesting |
+
+Every overlap with `@aurelienbbn/oxlint-plugin-effect`, settled once:
+
+| `effecttsgo/…`                                           | Harness rule                                 | Setting             | Why                                                                                                                                                                |
+| -------------------------------------------------------- | -------------------------------------------- | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `catch-die-to-or-die`                                    | `no-effect-ordie`                            | `off`               | its rewrite is `Effect.orDie`, which the Harness rule bans; the dying catch already reports                                                                        |
+| `redundant-or-die`                                       | `no-effect-ordie`                            | `off`               | hoists an `orDie` the Harness rule already reports                                                                                                                 |
+| `catch-to-or-else-succeed`                               | `no-swallowed-failure`                       | `off`               | its rewrite `Effect.orElseSucceed(() => placeholder)` is reported too                                                                                              |
+| `catch-to-ignore`                                        | `no-swallowed-failure`, `no-catch-all-cause` | `off`               | suggests bare `Effect.ignore` (needs `{ log }`) or `Effect.ignoreCause` (banned)                                                                                   |
+| `global-fetch`, `global-fetch-in-effect`                 | `require-abort-signal`                       | both on, tsgo first | replace `fetch` with `HttpClient` (interruption built in) and both go quiet; forwarding `signal` alone leaves tsgo firing. Keeping `fetch`: turn the tsgo pair off |
+| `global-error-in-effect-failure`, `extends-native-error` | `require-tagged-effect-fail`                 | both on             | same fix (a tagged error); `Effect.fail(new Error(…))` reports twice. Literals and strings: Harness only                                                           |
+| `try-catch-in-effect-gen`, `global-timers-in-effect`     | `no-unsafe-effect-body`                      | tsgo owns           | the Harness rule keeps only its `throw` check                                                                                                                      |
+
+Not running `@aurelienbbn/oxlint-plugin-effect`? The four `off` rules lose their reason: set them back in `rules`.
+
+Credit: preset shape, the `effecttsgo` plugin name, and every diagnostic name come from [Effect-TS/tsgo](https://github.com/Effect-TS/tsgo) (MIT).
 
 </details>
 

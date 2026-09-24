@@ -1,7 +1,10 @@
 import { eslintCompatPlugin } from "@oxlint/plugins";
 import { dependenciesFirst } from "./rules/dependencies-first/rule.js";
 import { noCatchAllCause } from "./rules/no-catch-all-cause/rule.js";
+import { noDynamicSpanName } from "./rules/no-dynamic-span-name/rule.js";
 import { noEffectOrDie } from "./rules/no-effect-ordie/rule.js";
+import { noFakeTimersInEffectTests } from "./rules/no-fake-timers-in-effect-tests/rule.js";
+import { noManagedRuntimePerCall } from "./rules/no-managed-runtime-per-call/rule.js";
 import { noRunPromiseInRuntime } from "./rules/no-run-promise-in-runtime/rule.js";
 import { noServiceConstructorImports } from "./rules/no-service-constructor-imports/rule.js";
 import { noServiceDependencyParameters } from "./rules/no-service-dependency-parameters/rule.js";
@@ -15,7 +18,6 @@ import { noUntypedTryPromiseCatch } from "./rules/no-untyped-try-promise-catch/r
 import { noUnscopedRuntimeLaunch } from "./rules/no-unscoped-runtime-launch/rule.js";
 import { preferEffectArrayHelpers } from "./rules/prefer-effect-array-helpers/rule.js";
 import { preferMatch } from "./rules/prefer-match/rule.js";
-import { preferSchemaDecodeUnknown } from "./rules/prefer-schema-decode-unknown/rule.js";
 import { requireAllConcurrency } from "./rules/require-all-concurrency/rule.js";
 import { requireForEachConcurrency } from "./rules/require-for-each-concurrency/rule.js";
 import { requireNamedEffectFn } from "./rules/require-named-effect-fn/rule.js";
@@ -39,7 +41,10 @@ export default eslintCompatPlugin({
   rules: {
     "dependencies-first": dependenciesFirst,
     "no-catch-all-cause": noCatchAllCause,
+    "no-dynamic-span-name": noDynamicSpanName,
     "no-effect-ordie": noEffectOrDie,
+    "no-fake-timers-in-effect-tests": noFakeTimersInEffectTests,
+    "no-managed-runtime-per-call": noManagedRuntimePerCall,
     "no-run-promise-in-runtime": noRunPromiseInRuntime,
     "no-service-constructor-imports": noServiceConstructorImports,
     "no-service-dependency-parameters": noServiceDependencyParameters,
@@ -53,7 +58,6 @@ export default eslintCompatPlugin({
     "no-unscoped-runtime-launch": noUnscopedRuntimeLaunch,
     "prefer-effect-array-helpers": preferEffectArrayHelpers,
     "prefer-match": preferMatch,
-    "prefer-schema-decode-unknown": preferSchemaDecodeUnknown,
     "require-all-concurrency": requireAllConcurrency,
     "require-for-each-concurrency": requireForEachConcurrency,
     "require-named-effect-fn": requireNamedEffectFn,

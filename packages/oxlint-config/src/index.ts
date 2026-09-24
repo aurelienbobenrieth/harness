@@ -282,3 +282,66 @@ export function withImportGraphLayer(config: OxlintConfig = defineStrictOxlintCo
     },
   });
 }
+
+/** Native oxlint plugin name that `effect-tsgo patch --oxlint` registers in `oxlint-tsgolint`. */
+export const effectTsgoPluginName = "effecttsgo";
+
+/**
+ * `@effect/tsgo` 0.45.0 diagnostics that its `recommended` preset leaves off, turned on because they own checks
+ * Harness removed from `@aurelienbbn/oxlint-plugin-effect`: `no-unsafe-error-channel`, `matching-identifier`,
+ * `no-effect-type-assertion`, and the closest (partial) owner of the two `Layer.provide` rules.
+ */
+export const effectTsgoOwnerRules = {
+  "effecttsgo/any-unknown-in-error-context": "error",
+  "effecttsgo/deterministic-keys": "error",
+  "effecttsgo/strict-effect-provide": "error",
+  "effecttsgo/unsafe-effect-type-assertion": "error",
+} satisfies RuleEntries;
+
+/**
+ * `@effect/tsgo` 0.45.0 rewrites that point at code a `@aurelienbbn/oxlint-plugin-effect` rule reports, so the
+ * suggested fix would trade one finding for another. The Harness rule owns each case.
+ */
+export const effectTsgoSettledRules = {
+  "effecttsgo/catch-die-to-or-die": "off",
+  "effecttsgo/catch-to-ignore": "off",
+  "effecttsgo/catch-to-or-else-succeed": "off",
+  "effecttsgo/redundant-or-die": "off",
+} satisfies RuleEntries;
+
+export interface EffectTsgoLayerOptions {
+  /**
+   * An oxlint preset exported by `@effect/tsgo/oxlint-presets`, usually `recommended`. The consumer installs
+   * `@effect/tsgo` and imports the preset, so this package never pins the diagnostic list.
+   */
+  readonly preset: OxlintConfig;
+}
+
+/**
+ * Adds the opt-in `@effect/tsgo` layer to a lint config: the given preset, the native `effecttsgo` plugin,
+ * `effectTsgoOwnerRules`, and `effectTsgoSettledRules`. The consumer installs `@effect/tsgo` and runs
+ * `effect-tsgo patch --oxlint`; rules already set on the config win over the layer, and config options win over
+ * the preset's options.
+ *
+ * @attribution https://github.com/Effect-TS/tsgo (MIT; oxlint preset shape, plugin name, and diagnostic names)
+ */
+export function withEffectTsgoLayer(config: OxlintConfig, options: EffectTsgoLayerOptions): OxlintConfig {
+  const { preset } = options;
+  // `effecttsgo` only exists once `effect-tsgo patch --oxlint` has run, so oxlint's plugin union omits it.
+  const plugins = [...(preset.plugins ?? []), effectTsgoPluginName] as NonNullable<OxlintConfig["plugins"]>;
+
+  return structuredClone({
+    ...config,
+    options: {
+      ...preset.options,
+      ...config.options,
+    },
+    plugins: mergeList(config.plugins ?? defaultOxlintPlugins, plugins),
+    rules: {
+      ...preset.rules,
+      ...effectTsgoOwnerRules,
+      ...effectTsgoSettledRules,
+      ...config.rules,
+    },
+  });
+}
