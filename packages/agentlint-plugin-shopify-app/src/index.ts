@@ -36,6 +36,11 @@ export {
   type DestructiveActionReviewOptions,
 } from "./rules/destructive-action-review/rule.js";
 export {
+  defineFlowActionHandlerReview,
+  flowActionHandlerReview,
+  type FlowActionHandlerReviewOptions,
+} from "./rules/flow-action-handler-review/rule.js";
+export {
   formErrorRecovery,
   defineFormErrorRecovery,
   type FormErrorRecoveryOptions,
@@ -96,8 +101,8 @@ export const shopifyAppPreset = defineConfig({
 });
 
 /**
- * Server-side reviews for Admin API usage and webhook handlers. `scopeChangeReview` is opt-in and
- * deliberately absent from every preset.
+ * Server-side reviews for Admin API usage and webhook handlers. `scopeChangeReview` and
+ * `flowActionHandlerReview` are opt-in and deliberately absent from every preset.
  */
 export const appServerPreset = defineConfig({
   rules: [adminApiLoopReview, webhookHandlerReview],

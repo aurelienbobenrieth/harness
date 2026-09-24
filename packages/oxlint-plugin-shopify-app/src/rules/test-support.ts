@@ -15,7 +15,10 @@ type LintResult = { readonly stdout: string; readonly stderr: string; readonly e
 
 type LintCodeOptions = {
   readonly filename?: string;
+  /** Rule options, or a function of the temporary project directory that returns them. */
   readonly ruleOptions?: unknown;
+  /** Extra files written into the temporary project, keyed by relative path. */
+  readonly files?: Readonly<Record<string, string>>;
 };
 
 async function lintCode(ruleName: string, code: string, options: LintCodeOptions = {}): Promise<LintResult> {
@@ -24,7 +27,18 @@ async function lintCode(ruleName: string, code: string, options: LintCodeOptions
   const sourcePath = path.join(directory, options.filename ?? "sample.ts");
 
   await mkdir(path.dirname(sourcePath), { recursive: true });
-  const ruleConfig = options.ruleOptions === undefined ? "error" : ["error", options.ruleOptions];
+  await Promise.all(
+    Object.entries(options.files ?? {}).map(async ([relative, content]) => {
+      const filePath = path.join(directory, relative);
+      await mkdir(path.dirname(filePath), { recursive: true });
+      await writeFile(filePath, content);
+    }),
+  );
+  const ruleOptions =
+    typeof options.ruleOptions === "function"
+      ? (options.ruleOptions as (dir: string) => unknown)(directory)
+      : options.ruleOptions;
+  const ruleConfig = ruleOptions === undefined ? "error" : ["error", ruleOptions];
   await writeFile(
     configPath,
     JSON.stringify(
@@ -62,10 +76,20 @@ async function lintCode(ruleName: string, code: string, options: LintCodeOptions
 }
 
 export async function assertRuleReports(ruleName: string, code: string, options?: LintCodeOptions): Promise<void> {
+  await reportedMessages(ruleName, code, options);
+}
+
+/** Assert the rule reports, and return its diagnostic messages for exact-count assertions. */
+export async function reportedMessages(
+  ruleName: string,
+  code: string,
+  options?: LintCodeOptions,
+): Promise<readonly string[]> {
   const result = await lintCode(ruleName, code, options);
-  assertHealthyResult(result);
+  const diagnostics = assertHealthyResult(result);
   assert.equal(result.exitCode, 1);
   assert.match(result.stdout + result.stderr, diagnosticCodePattern(ruleName));
+  return diagnostics.map((diagnostic) => diagnostic.message);
 }
 
 export async function assertRuleDoesNotReport(
@@ -88,10 +112,12 @@ function escapeRegExp(value: string): string {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
-function assertHealthyResult(result: LintResult): void {
+type Diagnostic = { code?: string; message: string; labels?: unknown[] };
+
+function assertHealthyResult(result: LintResult): readonly Diagnostic[] {
   assert.equal(result.stderr, "", result.stderr);
   const output = JSON.parse(result.stdout) as {
-    diagnostics: { code?: string; message: string; labels?: unknown[] }[];
+    diagnostics: Diagnostic[];
   };
   assert.ok(Array.isArray(output.diagnostics), result.stdout);
   for (const diagnostic of output.diagnostics) {
@@ -99,4 +125,5 @@ function assertHealthyResult(result: LintResult): void {
     assert.ok(diagnostic.labels && diagnostic.labels.length > 0, diagnostic.message);
     assert.doesNotMatch(diagnostic.message, /Error running JS plugin|Failed to parse|Maximum call stack/);
   }
+  return output.diagnostics;
 }

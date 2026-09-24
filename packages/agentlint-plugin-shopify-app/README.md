@@ -1,6 +1,6 @@
 # @aurelienbbn/agentlint-plugin-shopify-app
 
-**14 agentlint reviews for Shopify apps and extensions: a deterministic trigger finds the spot, a reviewer checks it against Shopify's own guidance.**
+**15 agentlint reviews for Shopify apps and extensions: a deterministic trigger finds the spot, a reviewer checks it against Shopify's own guidance.**
 
 > [!WARNING]
 > **Private draft.** Built against the reviewed archive `local-packages/agentlint-current.tgz`; public agentlint 0.1.5 is API-incompatible. [Evidence](../../docs/compatibility.md#private-draft-boundary).
@@ -27,24 +27,25 @@ export default defineConfig({ extends: [shopifyAppPreset, checkoutExtensionPrese
 
 ## Rules
 
-| Rule                          | `shopifyApp` | `appServer` | `checkoutExtension` | `starter` | Rev  | Options                                              |
-| ----------------------------- | :----------: | :---------: | :-----------------: | :-------: | :--: | ---------------------------------------------------- |
-| `session-token-auth`          |      ✅      |             |                     |    ✅     | 2 ⚠️ | `identityKeyPattern`                                 |
-| `form-error-recovery`         |      ✅      |             |                     |    ✅     |  1   | `errorAttribute`                                     |
-| `action-label-clarity`        |      ✅      |             |                     |           |  1   | `ambiguousLabelPatterns`                             |
-| `banner-usage`                |      ✅      |             |                     |           |  1   |                                                      |
-| `destructive-action-review`   |      ✅      |             |                     |           |  1   | `toneAttribute`, `destructiveTone`                   |
-| `modal-workflow-review`       |      ✅      |             |                     |           |  1   |                                                      |
-| `no-pressure-copy`            |      ✅      |             |                     |           |  1   | `languages` (`en`, `fr`, `de`), `additionalPatterns` |
-| `review-solicitation`         |      ✅      |             |                     |           |  1   | `additionalPatterns`, `useDefaultPatterns`           |
-| `settings-save-bar`           |      ✅      |             |                     |           | 1 ⚠️ | `formElementPattern`, `saveBarMarkerPattern`         |
-| `admin-api-loop-review`       |              |     ✅      |                     |           |  1   | `graphqlCalleePattern`                               |
-| `webhook-handler-review`      |              |     ✅      |                     |           |  1   | `topicPattern`                                       |
-| `checkout-network-discipline` |              |             |         ✅          |           | 2 ⚠️ | `networkCallPattern`                                 |
-| `scope-change-review` 🧪      |              |             |                     |           |  1   | `manifestPattern`                                    |
-| `app-ux-review` 🧪            |              |             |                     |           |  1   | `targets`, `elementNamePattern`                      |
+| Rule                            | `shopifyApp` | `appServer` | `checkoutExtension` | `starter` | Rev  | Options                                              |
+| ------------------------------- | :----------: | :---------: | :-----------------: | :-------: | :--: | ---------------------------------------------------- |
+| `session-token-auth`            |      ✅      |             |                     |    ✅     | 2 ⚠️ | `identityKeyPattern`                                 |
+| `form-error-recovery`           |      ✅      |             |                     |    ✅     |  1   | `errorAttribute`                                     |
+| `action-label-clarity`          |      ✅      |             |                     |           |  1   | `ambiguousLabelPatterns`                             |
+| `banner-usage`                  |      ✅      |             |                     |           |  1   |                                                      |
+| `destructive-action-review`     |      ✅      |             |                     |           |  1   | `toneAttribute`, `destructiveTone`                   |
+| `modal-workflow-review`         |      ✅      |             |                     |           |  1   |                                                      |
+| `no-pressure-copy`              |      ✅      |             |                     |           |  1   | `languages` (`en`, `fr`, `de`), `additionalPatterns` |
+| `review-solicitation`           |      ✅      |             |                     |           |  1   | `additionalPatterns`, `useDefaultPatterns`           |
+| `settings-save-bar`             |      ✅      |             |                     |           | 1 ⚠️ | `formElementPattern`, `saveBarMarkerPattern`         |
+| `admin-api-loop-review`         |              |     ✅      |                     |           |  1   | `graphqlCalleePattern`                               |
+| `webhook-handler-review`        |              |     ✅      |                     |           |  1   | `topicPattern`                                       |
+| `checkout-network-discipline`   |              |             |         ✅          |           | 2 ⚠️ | `networkCallPattern`                                 |
+| `scope-change-review` 🧪        |              |             |                     |           |  1   | `manifestPattern`                                    |
+| `flow-action-handler-review` 🧪 |              |             |                     |           |  1   | `handlerPathPattern`                                 |
+| `app-ux-review` 🧪              |              |             |                     |           |  1   | `targets`, `elementNamePattern`                      |
 
-Presets are `<name>Preset`. 🧪 in no preset: register `scopeChangeReview` / a configured `defineAppUxReview(...)`. All rules: agent authority, detector 1. Presets ignore `**/*.d.ts`. ⚠️ see [migration](#migration).
+Presets are `<name>Preset`. 🧪 in no preset: register `scopeChangeReview`, `flowActionHandlerReview` / a configured `defineAppUxReview(...)`. All rules: agent authority, detector 1. Presets ignore `**/*.d.ts`. ⚠️ see [migration](#migration).
 
 | Preset                    | Scope                                           | Narrow it to                                                                             |
 | ------------------------- | ----------------------------------------------- | ---------------------------------------------------------------------------------------- |
@@ -112,19 +113,21 @@ The Text field reference encourages feedback during typing; the Alerts guide rec
 </details>
 
 <details>
-<summary>Server: loops, webhooks, scopes</summary>
+<summary>Server: loops, webhooks, Flow actions, scopes</summary>
 
-| Rule                     | Fires on                                                                                                                                                                                                                      | Stays silent                                                                                       |
-| ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
-| `admin-api-loop-review`  | `admin.graphql`, `client.request` or `client.query` (optionally qualified) inside a `for` / `for…of` / `while` / `do` body, or a `.map` / `.forEach` / `.flatMap` callback                                                    | a `for…of` iterable, a `for` initializer, functions merely defined inside a loop; test files       |
-| `webhook-handler-review` | once per file: `authenticate.webhook`, an `X-Shopify-Hmac-Sha256` / `X-Shopify-Topic` / `X-Shopify-Webhook-Id` string, or a known topic literal (`orders/create`, `APP_UNINSTALLED`) as a `switch` case or comparison operand | test files                                                                                         |
-| `scope-change-review` 🧪 | change rule: `shopify.app.toml` / `shopify.app.<name>.toml` whose `[access_scopes]` `scopes` / `optional_scopes` (or legacy top-level `scopes`) gained entries since the Git baseline                                         | removed, reordered or demoted scopes; unchanged manifests are never inventoried, even with `--all` |
+| Rule                            | Fires on                                                                                                                                                                                                                      | Stays silent                                                                                       |
+| ------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| `admin-api-loop-review`         | `admin.graphql`, `client.request` or `client.query` (optionally qualified) inside a `for` / `for…of` / `while` / `do` body, or a `.map` / `.forEach` / `.flatMap` callback                                                    | a `for…of` iterable, a `for` initializer, functions merely defined inside a loop; test files       |
+| `webhook-handler-review`        | once per file: `authenticate.webhook`, an `X-Shopify-Hmac-Sha256` / `X-Shopify-Topic` / `X-Shopify-Webhook-Id` string, or a known topic literal (`orders/create`, `APP_UNINSTALLED`) as a `switch` case or comparison operand | test files                                                                                         |
+| `flow-action-handler-review` 🧪 | once per file: `authenticate.flow`, an `action_run_id` / `action_definition_id` key (member, destructuring, computed or object key), or a path matching `handlerPathPattern`                                                  | preview and validation endpoints (no run id), the key as plain text; test files                    |
+| `scope-change-review` 🧪        | change rule: `shopify.app.toml` / `shopify.app.<name>.toml` whose `[access_scopes]` `scopes` / `optional_scopes` (or legacy top-level `scopes`) gained entries since the Git baseline                                         | removed, reordered or demoted scopes; unchanged manifests are never inventoried, even with `--all` |
 
-| Limit                    |                                                                                                                                                                                                    |
-| ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `admin-api-loop-review`  | `graphqlCalleePattern` adds project wrappers; imports and aliases aren't resolved. Bounded pagination is legitimate: the finding asks for the bound and the throttle handling                      |
-| `webhook-handler-review` | `topicPattern` replaces the default topic lexicon. Constant-time database work inline passes; dedup or queueing in another file is evidence the reviewer cites, not something the trigger resolves |
-| `scope-change-review`    | reads two known keys; not a TOML parser. Scope necessity is judged, never proven                                                                                                                   |
+| Limit                        |                                                                                                                                                                                                                                                                                                                           |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `admin-api-loop-review`      | `graphqlCalleePattern` adds project wrappers; imports and aliases aren't resolved. Bounded pagination is legitimate: the finding asks for the bound and the throttle handling                                                                                                                                             |
+| `webhook-handler-review`     | `topicPattern` replaces the default topic lexicon. Constant-time database work inline passes; dedup or queueing in another file is evidence the reviewer cites, not something the trigger resolves                                                                                                                        |
+| `flow-action-handler-review` | asks for HMAC, `action_run_id` dedup, a status within 10 s (202 for longer work), 4xx only for permanent failures, and a `return_value` body. Doesn't read `runtime_url` from TOML: set `handlerPathPattern` for handlers that delegate the payload elsewhere. A manual HMAC check also triggers `webhook-handler-review` |
+| `scope-change-review`        | reads two known keys; not a TOML parser. Scope necessity is judged, never proven                                                                                                                                                                                                                                          |
 
 </details>
 
@@ -227,6 +230,7 @@ Independently implemented from Shopify's official documentation; no Shopify code
 | 2026-09-19 | [HTTPS webhook delivery](https://shopify.dev/docs/apps/build/webhooks/subscribe/https), [duplicate webhooks](https://shopify.dev/docs/apps/build/webhooks/ignore-duplicates), [webhook best practices](https://shopify.dev/docs/apps/build/webhooks/best-practices), [`authenticate.webhook`](https://shopify.dev/docs/api/shopify-app-react-router/latest/authenticate/webhook)                                                                                                                                                                                                                                                                                                              | `webhook-handler-review`                                                           |
 | 2026-09-19 | [access scope management](https://shopify.dev/docs/apps/build/authentication-authorization/app-installation/manage-access-scopes), [protected customer data](https://shopify.dev/docs/apps/launch/protected-customer-data)                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | `scope-change-review`                                                              |
 | 2026-09-19 | [checkout capabilities](https://shopify.dev/docs/apps/build/checkout/capabilities), [`shopify-app-js` future flags](https://github.com/Shopify/shopify-app-js)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                | extended checkout and authentication guidance                                      |
+| 2026-09-24 | [Flow action endpoints](https://shopify.dev/docs/apps/build/flow/actions/endpoints), [create a Flow action](https://shopify.dev/docs/apps/build/flow/actions/create), [complex data types](https://shopify.dev/docs/apps/build/flow/configure-complex-data-types)                                                                                                                                                                                                                                                                                                                                                                                                                             | `flow-action-handler-review`                                                       |
 
 </details>
 
@@ -236,22 +240,23 @@ Independently implemented from Shopify's official documentation; no Shopify code
 
 Generated from package exports by `pnpm catalog`. Rule-specific options and limitations are described above and in the source tests.
 
-| Rule/check                    | Trigger or review scope                                                                                                         |
-| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| `action-label-clarity`        | Reviews configured ambiguous literal labels on Polaris actions in their merchant context.                                       |
-| `admin-api-loop-review`       | Flags Admin GraphQL calls issued from loops or iteration callbacks for cost, batching, and throttle review.                     |
-| `app-ux-review`               | Requests UX evidence for explicitly configured app routes and extension entry points.                                           |
-| `banner-usage`                | Reviews App Home banners for purpose, context, dismissal persistence, and competing messages.                                   |
-| `checkout-network-discipline` | Flags network calls in checkout extension code for latency-budget review.                                                       |
-| `destructive-action-review`   | Reviews actions explicitly marked with a destructive tone for consequences, confirmation, and failure handling.                 |
-| `form-error-recovery`         | Reviews Polaris form controls with error wiring for understandable, persistent recovery feedback.                               |
-| `modal-workflow-review`       | Reviews modal and app-window workflows for merchant initiation, task fit, and usable dismissal.                                 |
-| `no-pressure-copy`            | Flags urgency, scarcity, or outcome-guarantee copy in merchant-facing UI.                                                       |
-| `review-solicitation`         | Reviews app-rating request phrases for neutral wording, incentives, placement, and merchant control.                            |
-| `scope-change-review`         | Flags access scopes added to a Shopify app manifest since the baseline for necessity review.                                    |
-| `session-token-auth`          | Flags cookie or Web Storage identity state in embedded Shopify app code.                                                        |
-| `settings-save-bar`           | Flags forms in embedded app pages that lack a contextual save bar integration.                                                  |
-| `webhook-handler-review`      | Flags Shopify webhook handlers once per file for response-time, duplicate-delivery, ordering, uninstall, and compliance review. |
+| Rule/check                    | Trigger or review scope                                                                                                                     |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| `action-label-clarity`        | Reviews configured ambiguous literal labels on Polaris actions in their merchant context.                                                   |
+| `admin-api-loop-review`       | Flags Admin GraphQL calls issued from loops or iteration callbacks for cost, batching, and throttle review.                                 |
+| `app-ux-review`               | Requests UX evidence for explicitly configured app routes and extension entry points.                                                       |
+| `banner-usage`                | Reviews App Home banners for purpose, context, dismissal persistence, and competing messages.                                               |
+| `checkout-network-discipline` | Flags network calls in checkout extension code for latency-budget review.                                                                   |
+| `destructive-action-review`   | Reviews actions explicitly marked with a destructive tone for consequences, confirmation, and failure handling.                             |
+| `flow-action-handler-review`  | Flags Shopify Flow action runtime handlers once per file for signature, duplicate-run, response-time, status-code, and return-value review. |
+| `form-error-recovery`         | Reviews Polaris form controls with error wiring for understandable, persistent recovery feedback.                                           |
+| `modal-workflow-review`       | Reviews modal and app-window workflows for merchant initiation, task fit, and usable dismissal.                                             |
+| `no-pressure-copy`            | Flags urgency, scarcity, or outcome-guarantee copy in merchant-facing UI.                                                                   |
+| `review-solicitation`         | Reviews app-rating request phrases for neutral wording, incentives, placement, and merchant control.                                        |
+| `scope-change-review`         | Flags access scopes added to a Shopify app manifest since the baseline for necessity review.                                                |
+| `session-token-auth`          | Flags cookie or Web Storage identity state in embedded Shopify app code.                                                                    |
+| `settings-save-bar`           | Flags forms in embedded app pages that lack a contextual save bar integration.                                                              |
+| `webhook-handler-review`      | Flags Shopify webhook handlers once per file for response-time, duplicate-delivery, ordering, uninstall, and compliance review.             |
 
 ### Credited concepts
 
@@ -271,6 +276,9 @@ Generated from package exports by `pnpm catalog`. Rule-specific options and limi
 - https://shopify.dev/docs/apps/build/authentication-authorization/id-tokens (inspiration; independently implemented)
 - https://shopify.dev/docs/apps/build/checkout/capabilities (inspiration; independently implemented)
 - https://shopify.dev/docs/apps/build/checkout/extension-performance (inspiration; independently implemented)
+- https://shopify.dev/docs/apps/build/flow/actions/create (inspiration; independently implemented)
+- https://shopify.dev/docs/apps/build/flow/actions/endpoints (inspiration; independently implemented)
+- https://shopify.dev/docs/apps/build/flow/configure-complex-data-types (inspiration; independently implemented)
 - https://shopify.dev/docs/apps/build/webhooks/best-practices (inspiration; independently implemented)
 - https://shopify.dev/docs/apps/build/webhooks/ignore-duplicates (inspiration; independently implemented)
 - https://shopify.dev/docs/apps/build/webhooks/subscribe/https (inspiration; independently implemented)
