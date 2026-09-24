@@ -101,6 +101,16 @@ importers:
         specifier: file:../../local-packages/agentlint-current.tgz
         version: file:local-packages/agentlint-current.tgz(redis@6.2.1)
 
+  packages/conformance-cloudflare:
+    dependencies:
+      jsonc-parser:
+        specifier: 3.3.1
+        version: 3.3.1
+    devDependencies:
+      vitest:
+        specifier: 4.1.11
+        version: 4.1.11(@types/node@22.20.3)(@vitest/browser-preview@4.1.11)(@vitest/coverage-v8@4.1.11)(vite@8.1.0(@types/node@22.20.3)(jiti@2.7.0)(yaml@2.9.1))
+
   packages/conformance-core:
     dependencies:
       postcss:
@@ -139,7 +149,25 @@ importers:
         specifier: ^7.0.2001
         version: 7.0.2001
 
+  packages/oxlint-plugin-cloudflare:
+    dependencies:
+      '@oxlint/plugins':
+        specifier: 1.83.0
+        version: 1.83.0
+      oxlint:
+        specifier: 1.82.0
+        version: 1.82.0(oxlint-tsgolint@7.0.2001)(vite-plus@0.3.2(@arethetypeswrong/core@0.18.5)(@types/node@22.20.3)(@vitest/coverage-v8@4.1.11)(jiti@2.7.0)(publint@0.3.24)(typescript@7.0.2)(yaml@2.9.1))
+
   packages/oxlint-plugin-core:
+    dependencies:
+      '@oxlint/plugins':
+        specifier: 1.83.0
+        version: 1.83.0
+      oxlint:
+        specifier: 1.82.0
+        version: 1.82.0(oxlint-tsgolint@7.0.2001)(vite-plus@0.3.2(@arethetypeswrong/core@0.18.5)(@types/node@22.20.3)(@vitest/coverage-v8@4.1.11)(jiti@2.7.0)(publint@0.3.24)(typescript@7.0.2)(yaml@2.9.1))
+
+  packages/oxlint-plugin-drizzle:
     dependencies:
       '@oxlint/plugins':
         specifier: 1.83.0
