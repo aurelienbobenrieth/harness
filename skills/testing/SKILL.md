@@ -1,52 +1,45 @@
 ---
 name: testing
-description: Write or review tests that detect meaningful behavior failures with readable, reproducible evidence. Use when editing tests, choosing a regression seam, or assessing whether existing assertions justify a claim; simple edits do not automatically need new tests.
+description: Write or review tests that catch real behavior failures with reproducible evidence. Use when editing tests, picking a regression seam, or judging whether assertions back a claim; suite audits and property/state/mutation choices belong to test-strategy.
 ---
 
 # Testing
 
-Start with the defect the test would catch. Keep a test when it protects an observable contract, a meaningful invariant, or a demonstrated regression. A test that computes its expected value with the same algorithm as the implementation supplies little independent evidence.
+Each test must catch a named defect. Never derive the expected value with the implementation's algorithm.
 
-## Choose the boundary
+## Boundary → evidence
 
-Ask where the behavior can realistically break:
+| Failure source                        | Evidence                                   |
+| ------------------------------------- | ------------------------------------------ |
+| Local logic                           | Examples with independently chosen outputs |
+| Law over many inputs                  | Bounded property, replayable failures      |
+| Database, filesystem, loader, service | Contract or integration check              |
+| User interaction                      | Rendered browser/component behavior        |
+| Environment config                    | Smoke check of that environment            |
 
-| Failure source                                             | Evidence to prefer                                               |
-| ---------------------------------------------------------- | ---------------------------------------------------------------- |
-| Local decision or transformation                           | Focused examples with independently chosen outcomes.             |
-| Law over many inputs                                       | A property with a bounded generator and reproducible failures.   |
-| Database, filesystem, package loader, or service semantics | A contract or integration check against that boundary.           |
-| User interaction                                           | Rendered behavior at the relevant browser or component boundary. |
-| Environment configuration                                  | An explicit smoke check of that environment.                     |
+Audits, properties, state models, mutation → [test-strategy](../test-strategy/SKILL.md).
 
-Use [test-strategy](../test-strategy/SKILL.md) for a substantial suite audit or when choosing properties, state models, or mutation testing. Ordinary example tests do not require that extra workflow.
+- Fakes prove behavior only under their assumptions. Verify key ones against the real boundary; record what stays unverified.
+- Captured responses test parsing, not live auth, pagination, delivery, or timing.
 
-A fake demonstrates how the feature behaves under the fake's assumptions. Verify important assumptions against a real implementation or its authoritative contract. Captured responses can exercise parsing but cannot prove current authentication, pagination, delivery, or timing behavior. Record the boundary that remains unverified.
+## Assertions
 
-## Make the contract readable
+- Exact equality for closed values; targeted assertions for extensible records and UI.
+- Assert absence (extra data, writes, events) when that is the failure mode.
+- Observable results over internal call order, unless a boundary call's payload and count are the contract.
+- Rule/validator: firing cases AND nearby silent cases. Autofix: exact rewrite; valid/ambiguous input untouched.
 
-Name the triggering condition and visible result: "a repeated request returns the first receipt without charging again." Use the project's vocabulary and established test organization. Keep fixtures close enough to understand, and extract setup when it obscures the behavior. Line counts and helper placement are not quality gates.
+## Determinism
 
-Assert the contract's important output fields and required absence of side effects. Exact equality suits closed value objects and payloads; targeted assertions suit extensible records or rendered interfaces. Include negative assertions when unwanted extra data, writes, or events are the failure mode. Neither whole-object equality nor partial matching is universally stronger.
+- Unit: control clocks, randomness, IDs, ordering. Restore globals, dispose resources on failure. Isolated temp dirs; no fixed ports or paths.
+- Integration: explicit environment, finite timeouts, isolated data, cleanup, outside the fast loop.
+- Properties: keep seed and shrink path. Promote found defects to named regression cases.
 
-Group assertions that describe one behavior. Use tables when cases share a rule and still produce identifiable failures. Keep cases separate when their setup or outcomes deserve separate explanations. Prefer observable results to internal call order; a boundary call, its payload, and its count can themselves be the contract.
+## Evidence claims
 
-For a new rule or validator, include inputs that should report and nearby valid inputs that should stay silent. For an autofix, verify the exact rewrite and that valid or ambiguous input is preserved. Follow additional repository rule-authoring requirements.
-
-## Make failures useful
-
-Control clocks, randomness, IDs, and ordering in unit tests. Await completion through the runner's supported primitives. Restore global state and dispose of resources even on failure. Use isolated temporary directories and avoid fixed shared ports or paths.
-
-Integration tests may use real clocks, networks, and processes when those are what they verify. Give them explicit environment selection, finite timeouts, isolated data, and cleanup. Keep them discoverable separately from the fast local loop. Follow the existing authorization for any external mutation.
-
-Property runs must preserve the seed and shrink path needed to replay a failure. A fixed seed is useful for a stable local loop; varying seeds are useful exploration when failures retain their replay data. Turn a useful discovered defect into a named regression case.
-
-Confirm that a new regression test fails for the intended reason when practical. A test that fails because its fixture cannot load has not reproduced the behavior. Report zero selected tests, environment skips, and flaky retries separately from successful assertions; retries do not repair a flaky test.
-
-## Review the evidence
-
-Use coverage to locate unexamined behavior, then judge the risk at that location. A high percentage cannot establish correctness, and an uncovered branch is not automatically worth a test. Type checks can protect static contracts; they do not prove runtime data or published declarations work for consumers.
-
-Before deleting a test, identify the unique failure it catches and whether another check actually preserves it. Temporary probes can become maintained tests when they protect a useful contract and meet the same standard. Avoid rewriting a working suite solely for preferred wording or layout.
-
-Report what the executed tests establish and the material boundary they leave open. New tests are unnecessary when existing evidence adequately covers a reversible, low-impact change; complete the repository's required checks regardless.
+- New regression test must fail for the intended reason, not a fixture error.
+- Report zero selected tests, skips, and retries separately from passes. Retries don't fix flakes.
+- Coverage locates gaps; it proves nothing.
+- Type checks don't prove runtime data or published declarations.
+- Before deleting a test, name what else still catches its failure. Don't rewrite a working suite for style.
+- Covered low-impact reversible change → no new test; still run required checks.

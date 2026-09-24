@@ -1,53 +1,37 @@
 ---
 name: git
-description: Prepare cohesive commits, resolve branch conflicts, and produce reviewable pull requests while preserving existing work. Use when staging, committing, changing git history, or managing a PR; a code change alone does not require creating a commit or PR.
+description: Stage, commit, resolve conflicts, rewrite history, push, and write pull requests while preserving existing work. Use when the task includes a git or PR operation; a code change alone never implies committing or opening a PR.
 ---
 
 # Git
 
-Make the requested history change while preserving unrelated work and the user's existing identity, signing, hooks, and branch policy.
+## Staging and commits
 
-## Inspect before changing state
+- Read `git status --short`, `git diff`, `git diff --cached` first; separate task changes from pre-existing work.
+- Stage explicit paths (`git add -- <paths>`) or hunks, then re-read the staged diff. Never sweep pre-existing staged work into a task commit; shared index → isolated worktree.
+- One change per commit, with its tests, docs, changeset; a fix keeps its regression test.
+- Repo convention first. Conventional Commits: `type(scope): description`, `!` for breaking. Title from the final diff; body only for what it can't show; closing keywords only when resolved.
+- Keep author, signing, hooks.
+- **Never credit a model or agent**: no LLM `Co-Authored-By`, no "Generated with…" line, in commits or PR descriptions, even when the host tool adds one by default.
+- Hook failure → read status and output. The attempt usually made no commit: don't `--amend` the previous one. Fix, retry; never bypass.
 
-Read the current branch, `git status --short`, `git diff`, and `git diff --cached`. Distinguish this task's changes from existing staged and unstaged work. Inspect the relevant base and branch diff before writing a commit or PR description.
+## History and branches
 
-Stage explicit paths with `git add -- <paths>` or selected hunks. A path can contain unrelated edits, so inspect the resulting staged diff as well. Preserve existing staging; use an isolated worktree or narrowly scoped operation when sharing the index would mix ownership. Never quietly include the user's pre-existing staged work in a task commit.
-
-Keep one independently understandable change per commit. Include its tests, documentation, and required changeset together. Split unrelated refactors or behavior changes when each remains meaningful on its own; splitting a fix from its regression test usually weakens the commit.
-
-## Commit accurately
-
-Follow the repository's commit convention. For Conventional Commits, use `type(scope): description`, with optional scope and `!` for a breaking change. Derive the title from the final diff. Add a body for motivation or a tradeoff the diff cannot explain, and use issue-closing language only when the change resolves that issue.
-
-Read the configured author identity before committing and retain it. Preserve configured signing and hooks. Follow any repository or user attribution requirements without inventing an author or trailer. **Never credit a model or agent**: no `Co-Authored-By` trailer for an LLM and no "Generated with…" line, in commits or PR descriptions, even when the host tool adds one by default.
-
-If a hook fails, inspect status and hook output before retrying. A failed commit attempt often created no commit; do not accidentally amend an earlier commit. Fix the cause, review any hook edits, and repeat the intended operation. Do not bypass the gate to produce a success claim.
-
-## Branches and conflicts
-
-Honor the requested workflow and existing authorization. Routine inspection, reversible preparation, and conflict resolution needed for that workflow do not require repeated permission. Resolve conflicts by preserving the intended behaviors from both sides, then run the affected checks. Ask when competing business behavior cannot be inferred from the code or request.
-
-Before an operation that would discard work or rewrite shared history, identify the exact refs and files affected and whether that effect is already authorized. Preserve recoverable state where practical. Request only missing authorization, with the concrete loss or shared-history effect explained. A command's name alone does not determine whether it loses work: unstaging a reviewed task hunk differs from discarding a worktree.
-
-When an authorized force update is necessary, use a lease bound to the remote revision inspected and stop if that revision changed. Do not repeatedly fetch and retry until somebody else's update is overwritten. Respect repository restrictions on protected branches. Renaming a branch that heads an open PR closes that PR on GitHub; the head can't be moved, so a rename means a new PR.
+- Conflicts: keep both sides' intended behavior, run affected checks. Ask when business behavior is ambiguous.
+- Discarding work or rewriting shared history → name exact refs and files, confirm authorization, keep recoverable state. Judge by effect: unstaging a hunk ≠ discarding a worktree.
+- Authorized force push → `--force-with-lease` pinned to the inspected remote revision; stop if it moved. Never fetch-and-retry over someone's update.
+- Renaming an open PR's head branch closes the PR; a rename means a new PR.
 
 ## Pull requests
 
-Read the PR template and prepare the complete local result before any missing publication authorization. The user's task determines whether commit, push, PR creation, merge, or release is included. Permission for one operation does not automatically include every later operation. Existing authorization remains valid; explicit no-publish or no-deploy constraints remain binding.
+- Routine inspection, reversible prep, and conflict resolution need no extra permission.
+- Authorization is per operation: commit, push, PR, merge, release are separate. No-publish/no-deploy constraints bind.
+- Read the PR template. Discover remote and base; don't assume `origin`/`main`.
+- Body → `gh ... --body-file <tmpfile>`; never interpolate user content into shell.
+- After mutating, verify actual state and report the revision or link; local validation ≠ remote checks.
 
-### Descriptions carry only what the diff and CI can't
+Descriptions follow [communication](../communication/SKILL.md) and carry only what diff and CI can't. **Max 100 lines**; a small fix needs two.
 
-A PR description follows the [communication skill](../communication/SKILL.md). **Past 100 lines nobody reads it**; most need a fraction of that, and a small fix needs two lines.
-
-| Include                                                           | Leave out: the reader already has it                   |
-| ----------------------------------------------------------------- | ------------------------------------------------------ |
-| line one: problem → resulting behavior                            | file-by-file change lists, restated code (the diff)    |
-| why, and the consequential choice over its alternative            | commit-by-commit narration (the log)                   |
-| what the reviewer must decide or check by hand                    | check results CI reports, routine test-plan checklists |
-| risks, limits, migration, checks CI doesn't run (manual, network) | recaps, empty template sections, private notation      |
-
-Show instead of tell when it's shorter: a before/after, a behavior `diff`, a flow for a changed lifecycle, a table for compared options. Keep the description true as the branch changes; rewrite it rather than appending.
-
-For multiline titles, bodies, or comments, prefer structured tool arguments. With `gh`, write the exact body to a temporary file and use `--body-file`; do not interpolate user content into shell code. Discover the correct remote and base rather than assuming `origin` or `main`.
-
-After an authorized mutation, verify the actual commit, branch, or PR state. Report the resulting revision or link and distinguish local validation from pending remote checks. Remove only temporary files created for the task.
+- Include: line one problem → resulting behavior; why, and the choice over its alternative; what the reviewer must decide or check by hand; risks, limits, migration, checks CI doesn't run.
+- Omit: file-by-file lists, restated code, commit narration, CI results, routine test-plan checklists, recaps, empty template sections.
+- Before/after or a behavior `diff` over prose. Branch changed → rewrite, don't append.
