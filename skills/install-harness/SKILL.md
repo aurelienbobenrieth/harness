@@ -12,6 +12,8 @@ description: Add Harness lint, format, conformance packages, and skills to a con
 - No eligible version → report it, install the rest. Never publish or invent a release. Local tarballs only for requested preview adoption.
 - The five agentlint plugins target the checked-in agentlint archive, whose API differs from public npm `agentlint` at the same version. Never substitute the public package. Preview = explicit local setup, reviewed artifacts, verified integrity.
 
+- **Official tooling first:** for Effect, Cloudflare, Shopify, PlanetScale, Alchemy, or Drizzle, wire what [official-tooling](references/official-tooling.md) lists before any Harness equivalent.
+
 ## Merge
 
 - Use the consumer's package manager. Keep existing ignores and rules. No whole-config replacement, overwriting initializers, or blanket-ignored agent directories.
