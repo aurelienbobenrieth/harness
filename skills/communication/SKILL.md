@@ -64,8 +64,3 @@ Review/PR  per finding: location ─▶ failure ─▶ fix · PR text stands alo
 - Long task: state the first action and why, then update only on a finding, a choice, or a blocker.
 - Mid-task question: answer briefly, continue unless the goal changed.
 - Didn't land: change the explanation, not the volume. One concrete example, the missing context, the consequence.
-
-```ts
-/** @attribution https://github.com/dmmulroy/skills/tree/8603380821fee6a77c82639f364ce8fe4f5a92be/bro (MIT; inspiration only) */
-/** @attribution https://github.com/mattpocock/skills/tree/3cca18b368ae95cdbdebbff572ccafa662551015/skills/productivity/wait-what (MIT; inspiration only) */
-```

@@ -9,6 +9,7 @@ description: Review a Shopify app against App Store, Built for Shopify, Polaris,
 
 - Read surfaces, distribution, deployment, versions, categories from the project. Each surface is its own contract: App Home components don't govern checkout, admin extensions, customer accounts, payments, Liquid.
 - Honor project exceptions and deploy restrictions.
+- Shopify's official `shopify-app-store-review` skill and Dev MCP installed → use them alongside this skill, never instead: they check current requirements; this skill owns evidence and Harness tooling. Keep their telemetry off (`DO_NOT_TRACK=1`, or the toolkit's opt-out file).
 - Cite the exact [App Store](https://shopify.dev/docs/apps/launch/shopify-app-store/app-store-requirements), [BFS](https://shopify.dev/docs/apps/launch/built-for-shopify/requirements), [App Home](https://shopify.dev/docs/api/app-home/latest/web-components), or [design](https://shopify.dev/docs/apps/design) section before calling anything an error. Conflicts → record; examples aren't contracts.
 - Harness only: `pnpm shopify:plan <profile.json>` lists pending items from `policy/shopify-requirements.json` (BFS includes App Store; unreviewed categories stay in); `pnpm shopify:sources` detects drift, never updates policy.
 
@@ -29,7 +30,3 @@ description: Review a Shopify app against App Store, Built for Shopify, Polaris,
 ## Report
 
 Defects, then evidence and gaps. Dashboard, submission, legal, live-store evidence stays unresolved. Green ≠ acceptance or BFS.
-
-<!-- @attribution https://shopify.dev/docs/apps/launch/shopify-app-store/app-store-requirements (inspiration; independently authored review workflow) -->
-<!-- @attribution https://shopify.dev/docs/apps/launch/built-for-shopify/requirements (inspiration; independently authored review workflow) -->
-<!-- @attribution https://shopify.dev/docs/apps/design/content (inspiration; independently authored review workflow) -->

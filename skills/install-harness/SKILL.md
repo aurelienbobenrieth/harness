@@ -25,7 +25,3 @@ description: Add Harness lint, format, conformance packages, and skills to a con
 
 - Run the consumer's required checks. Config/dependency failure → fix. Existing-source finding → report; never suppress to go green.
 - Report versions, config changes, results, omissions by reason.
-
-```ts
-/** @attribution https://github.com/TanStack/intent (MIT; inspiration: a task → skill map in always-loaded agent instructions) */
-```

@@ -30,9 +30,3 @@ description: Review a diff, branch, or PR for defects that change outcomes and f
 - Format: location, trigger, consequence, fix direction. Rank by impact × likelihood; no quota.
 - Return findings; fix only when authorized. None found → state the scope inspected and its gaps, never "looks good" as certification.
 - Recurring issue → name the rule, check, or test that should own it. One finding doesn't justify a new rule.
-
-```ts
-/**
- * @attribution https://github.com/mattpocock/skills/tree/c55ee46073ed923f86ce59a5eb3b6d895095d1b7/skills/engineering/code-review (MIT; inspiration: reviewing fidelity to the request as its own axis)
- */
-```
