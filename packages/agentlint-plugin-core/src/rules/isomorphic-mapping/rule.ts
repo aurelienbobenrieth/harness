@@ -120,7 +120,7 @@ export function defineIsomorphicMapping(options: IsomorphicMappingOptions = {}):
     },
     binding: {
       id: "core/isomorphic-mapping",
-      authority: "agent",
+      authority: "human",
       include: [...sourceGlobs],
       exclude: [...nonTestExcludes],
       options: {

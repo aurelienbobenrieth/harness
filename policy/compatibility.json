@@ -14,7 +14,7 @@
   "localAgentlint": {
     "version": "0.1.5",
     "path": "local-packages/agentlint-current.tgz",
-    "integrity": "sha512-7c1XgeVzL7CrQFKiizvZPj0FdKXzmOVX4TXTAFWL844nTR7qscMK4bZUYcBhnwoVd6i3/gjJ/qGWXSpeXsAbwg==",
+    "integrity": "sha512-tu057ahX/SdT3Lf4bmJCMlAEla+qA3zTSheepAWHK6HpNfRI1TkoMSKSFT+3uBvdlN+WNlszyfZBmiHD7Ga4Gg==",
     "registryIntegrity": "sha512-845ZB/KsP7j1PuL163l11J40WhU1qHP1MPDzRVUExybGZdhAWZuDo/PVAosKGrv1LSBQYqg7Z3QA2nWJx1qDhw==",
     "registryCompatible": false,
     "developmentDependency": "file:../../local-packages/agentlint-current.tgz"

@@ -278,7 +278,7 @@ export function defineAbstractionEarnsKeep(options: AbstractionEarnsKeepOptions 
     },
     binding: {
       id: "core/abstraction-earns-keep",
-      authority: "agent",
+      authority: "human",
       include: ["**/*.{ts,tsx,js,jsx,mts,cts,mjs,cjs}"],
       exclude: ["**/*.d.ts"],
       options: {

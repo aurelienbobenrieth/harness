@@ -205,7 +205,7 @@ export function defineFlagForkedFunction(options: FlagForkedFunctionOptions = {}
     },
     binding: {
       id: "core/flag-forked-function",
-      authority: "agent",
+      authority: "human",
       include: [...sourceGlobs],
       exclude: includeJsx ? [...nonTestExcludes] : [...nonTestExcludes, jsxGlob],
       options: {

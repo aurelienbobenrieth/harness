@@ -10,6 +10,9 @@ export const nonTestExcludes: readonly string[] = ["**/*.d.ts", "**/*.{test,spec
 export type SerializedPattern = { readonly source: string; readonly flags: string };
 
 /** Mirrors a RegExp option into `binding.options`; absent options serialize as `null`. */
+export function serializePattern(pattern: RegExp): SerializedPattern;
+export function serializePattern(pattern: undefined): null;
+export function serializePattern(pattern: RegExp | undefined): SerializedPattern | null;
 export function serializePattern(pattern: RegExp | undefined): SerializedPattern | null {
   return pattern ? { source: pattern.source, flags: pattern.flags } : null;
 }

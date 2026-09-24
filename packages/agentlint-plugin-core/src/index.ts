@@ -31,6 +31,11 @@ export {
   type FallbackMasksFailureOptions,
 } from "./rules/fallback-masks-failure/rule.js";
 export {
+  changeScatterReview,
+  defineChangeScatterReview,
+  type ChangeScatterReviewOptions,
+} from "./rules/change-scatter-review/rule.js";
+export {
   defineTestBehaviorCoverage,
   testBehaviorCoverage,
   type TestBehaviorCoverageOptions,
@@ -94,11 +99,31 @@ export {
   defineValidationDiscardsProof,
   type ValidationDiscardsProofOptions,
 } from "./rules/validation-discards-proof/rule.js";
+export {
+  defineHotspotChangeReview,
+  hotspotChangeReview,
+  type HotspotChangeReviewOptions,
+  type MaintenanceHotspot,
+} from "./rules/hotspot-change-review/rule.js";
+export {
+  definePrecisionBoundaryReview,
+  precisionBoundaryReview,
+  type PrecisionBoundaryReviewOptions,
+} from "./rules/precision-boundary-review/rule.js";
+export {
+  defineProtectedInvariantChange,
+  protectedInvariantChange,
+  type ProtectedInvariant,
+  type ProtectedInvariantChangeOptions,
+} from "./rules/protected-invariant-change/rule.js";
+export {
+  defineSingleUseExtractionReview,
+  singleUseExtractionReview,
+  type SingleUseExtractionReviewOptions,
+} from "./rules/single-use-extraction-review/rule.js";
 
 /**
- * Every settled core rule. Opt-in rules (`fallbackMasksFailure`, `fakeParity`, `flagForkedFunction`,
- * `isomorphicMapping`, `pinnedSuspectOutput`, `propertyTestOpportunity`, `validationDiscardsProof`) are exported
- * but stay out until calibrated.
+ * Every settled core rule. Opt-in rules are exported but stay out until calibrated against a consumer.
  */
 export const strictPreset = defineConfig({
   rules: [

@@ -211,7 +211,7 @@ packages:
     engines: {node: '>=20'}
 
   '@aurelienbbn/agentlint@file:local-packages/agentlint-current.tgz':
-    resolution: {integrity: sha512-7c1XgeVzL7CrQFKiizvZPj0FdKXzmOVX4TXTAFWL844nTR7qscMK4bZUYcBhnwoVd6i3/gjJ/qGWXSpeXsAbwg==, tarball: file:local-packages/agentlint-current.tgz}
+    resolution: {integrity: sha512-tu057ahX/SdT3Lf4bmJCMlAEla+qA3zTSheepAWHK6HpNfRI1TkoMSKSFT+3uBvdlN+WNlszyfZBmiHD7Ga4Gg==, tarball: file:local-packages/agentlint-current.tgz}
     version: 0.1.5
     engines: {node: '>=22.19.0'}
     hasBin: true
