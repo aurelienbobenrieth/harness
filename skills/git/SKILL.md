@@ -35,7 +35,18 @@ When an authorized force update is necessary, use a lease bound to the remote re
 
 Read the PR template and prepare the complete local result before any missing publication authorization. The user's task determines whether commit, push, PR creation, merge, or release is included. Permission for one operation does not automatically include every later operation. Existing authorization remains valid; explicit no-publish or no-deploy constraints remain binding.
 
-Describe the concrete problem and resulting behavior. Include a brief reason for consequential design choices, the relevant validation actually performed, and material risks or limits. Scale the body to the change; a small fix may need two sentences and one check result. Mention CI checks when they substantiate the claim, without dumping routine logs. Avoid private notation that a new reviewer must decode.
+### Descriptions carry only what the diff and CI can't
+
+A PR description follows the [communication skill](../communication/SKILL.md). **Past 100 lines nobody reads it**; most need a fraction of that, and a small fix needs two lines.
+
+| Include                                                           | Leave out: the reader already has it                   |
+| ----------------------------------------------------------------- | ------------------------------------------------------ |
+| line one: problem → resulting behavior                            | file-by-file change lists, restated code (the diff)    |
+| why, and the consequential choice over its alternative            | commit-by-commit narration (the log)                   |
+| what the reviewer must decide or check by hand                    | check results CI reports, routine test-plan checklists |
+| risks, limits, migration, checks CI doesn't run (manual, network) | recaps, empty template sections, private notation      |
+
+Show instead of tell when it's shorter: a before/after, a behavior `diff`, a flow for a changed lifecycle, a table for compared options. Keep the description true as the branch changes; rewrite it rather than appending.
 
 For multiline titles, bodies, or comments, prefer structured tool arguments. With `gh`, write the exact body to a temporary file and use `--body-file`; do not interpolate user content into shell code. Discover the correct remote and base rather than assuming `origin` or `main`.
 
