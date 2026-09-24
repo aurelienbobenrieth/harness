@@ -5,11 +5,11 @@
 ```text
  App Store requirements     ████████████████████  174 / 174  mapped
  BFS requirements           ████████████████████   77 / 77   mapped
- App Home component pages   ████████████████████   47 / 47   tracked
- + selected design, security, performance, and listing guidance
+ App Home component pages   ████████████████████   50 / 50   tracked  (Polaris 1.1)
+ + selected design, security, performance, Flow, Events, and listing guidance
 ```
 
-[Source ledger](../policy/shopify-requirements.json): URLs, review dates, hashes, applicability, limits. Review began 2026-09-05.
+[Source ledger](../policy/shopify-requirements.json): URLs, review dates, hashes, applicability, limits. Review began 2026-09-05; sources added later carry their own date.
 
 > [!WARNING]
 > **Nothing here grants App Store approval or BFS status**: not the ledger, complete inventories, or green tests. Shopify's review and deployment systems decide.
@@ -23,17 +23,30 @@
  customer accounts       │ Functions           │ storefront themes
 ```
 
-| Need                                                                                       | Tool                                                                          | A pass establishes                          |
-| ------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------- | ------------------------------------------- |
-| Polaris labels, action slots, modals, recognized API calls, server + GraphQL               | [27 Oxlint rules](../packages/oxlint-plugin-shopify-app/README.md)            | source meets the configured static contract |
-| native HTML accessibility                                                                  | [App Home Oxlint recipe](../examples/shopify/app-home.oxlintrc.json)          | `jsx-a11y` on native elements               |
-| copy, recovery, destructive actions, onboarding, navigation, checkout UX                   | [14 agentlint reviews](../packages/agentlint-plugin-shopify-app/README.md) 🔒 | review work found, not a verdict            |
-| deployment manifests, API versions, extension prerequisites, built bundles, listing assets | [10 conformance checks](../packages/conformance-shopify-app/README.md)        | local inputs meet their contract            |
-| iframe protection, webhook rejection                                                       | conformance HTTP helpers                                                      | supplied handler passes tested scenarios    |
-| admin, carrier, fulfillment, storefront performance                                        | conformance performance evaluators                                            | supplied measurements meet thresholds       |
-| app-wide applicability, missing evidence                                                   | [Shopify review skill](../skills/shopify-review/SKILL.md) + planner           | scope + pending work, never acceptance      |
+| Need                                                                                   | Tool                                                                          | A pass establishes                          |
+| -------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- | ------------------------------------------- |
+| Polaris components known to installed types, labels, action slots, modals, API calls   | [27 Oxlint rules](../packages/oxlint-plugin-shopify-app/README.md)            | source meets the configured static contract |
+| native HTML accessibility                                                              | [App Home Oxlint recipe](../examples/shopify/app-home.oxlintrc.json)          | `jsx-a11y` on native elements               |
+| copy, recovery, destructive actions, onboarding, navigation, checkout UX, Flow actions | [15 agentlint reviews](../packages/agentlint-plugin-shopify-app/README.md) 🔒 | review work found, not a verdict            |
+| manifests, API versions, Polaris CDN major, Flow templates, Preact migration, bundles  | [13 conformance checks](../packages/conformance-shopify-app/README.md)        | local inputs meet their contract            |
+| iframe protection, webhook rejection                                                   | conformance HTTP helpers                                                      | supplied handler passes tested scenarios    |
+| admin, carrier, fulfillment, storefront performance                                    | conformance performance evaluators                                            | supplied measurements meet thresholds       |
+| app-wide applicability, missing evidence                                               | [Shopify review skill](../skills/shopify-review/SKILL.md) + planner           | scope + pending work, never acceptance      |
 
 Oxlint + conformance: public-registry consumer validation. 🔒 agentlint: private draft, same version as public but a different API ([contract](agentlint-contract.md)).
+
+## Shopify's own agent tooling complements this review
+
+**Use Shopify's official tools alongside Harness, never instead of evidence: they check against Shopify's current docs; Harness owns evidence and drift.** Reviewed 2026-09-24.
+
+| Tool                                                                                                         | Adds                                                                                      |
+| ------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------- |
+| [AI Toolkit](https://shopify.dev/docs/apps/build/ai-toolkit) `shopify-app-store-review` skill                | requirement-by-requirement pre-submission pass, maintained by Shopify                     |
+| [Dev MCP](https://shopify.dev/docs/apps/build/ai-toolkit#install-with-the-dev-mcp-server) `@shopify/dev-mcp` | doc search, GraphQL and Polaris component validation for the surface and version          |
+| `shopify app config validate` · `shopify app deploy`                                                         | Shopify's TOML schemas and deploy limits; needs a registered app, so no offline preflight |
+
+> [!IMPORTANT]
+> **Telemetry always off.** The AI Toolkit and Dev MCP send usage events by default, including prompts and validated code ([toolkit README](https://github.com/Shopify/Shopify-AI-Toolkit#telemetry)). Create the opt-out file (`%APPDATA%\shopify-ai-toolkit\opt-out` on Windows, `~/.config/shopify-ai-toolkit/opt-out` elsewhere) and set `DO_NOT_TRACK=1`: the file also covers hosts that drop your environment.
 
 ## Adopt in 5 steps
 
@@ -65,7 +78,9 @@ Oxlint + conformance: public-registry consumer validation. 🔒 agentlint: priva
 | `functions-no-unavailable-runtime-apis`                                                                  | Function directories, via `overrides`                                    |
 | `require-fetch-abort-signal`                                                                             | relevant checkout extension paths                                        |
 | `app-ux-review`, `scope-change-review` (agentlint)                                                       | ⚙️ opt-in, in no preset                                                  |
-| `extension-capability-contract` (conformance)                                                            | ⚙️ opt-in: pass `optionalShopifyAppChecks`                               |
+| `extension-capability-contract`, `listing-inputs` (conformance)                                          | ⚙️ opt-in: pass `optionalShopifyAppChecks`                               |
+| `[events]` checks: `nextGenerationEvents: true` (conformance)                                            | ⚙️ opt-in while Events is a developer preview on `unstable`              |
+| `builtForShopifyCategories: ["returns" \| "subscriptions"]` (conformance)                                | Customer Account API prerequisite (BFS 5.12.4 / 5.14.5, from 2026-12-01) |
 
 </details>
 

@@ -125,3 +125,38 @@ it("does not pool extension prerequisites across different deployments", async (
   expect(findings.some((finding) => finding.message.startsWith("shopify.app.production.toml:"))).toBe(true);
   expect(findings.some((finding) => finding.message.startsWith("shopify.app.local.toml:"))).toBe(true);
 });
+
+it("requires a Customer Account API prerequisite for returns apps", async () => {
+  const missing = await createFixture({ "shopify.app.toml": 'name = "returns"' });
+  expect(await builtForShopifyExtensions.run({ root: missing, builtForShopifyCategories: ["returns"] })).toEqual([
+    expect.objectContaining({ severity: "error", message: expect.stringMatching(/^Built for Shopify 5\.12\.4: /u) }),
+  ]);
+  const empty = await createFixture({ "shopify.app.toml": "[customer_authentication]\nredirect_uris = []" });
+  expect(await builtForShopifyExtensions.run({ root: empty, builtForShopifyCategories: ["returns"] })).toHaveLength(1);
+});
+
+it.each([
+  [
+    "a customer_authentication client",
+    { "shopify.app.toml": '[customer_authentication]\nredirect_uris = ["https://app.example/auth/callback"]' },
+  ],
+  [
+    "a customer account extension",
+    { "extensions/returns/shopify.extension.toml": ui("customer-account.order.action.render") },
+  ],
+])("accepts %s as the returns prerequisite", async (_name, files) => {
+  const root = await createFixture(files);
+  expect(await builtForShopifyExtensions.run({ root, builtForShopifyCategories: ["returns"] })).toEqual([]);
+});
+
+it("reports the subscriptions Customer Account API prerequisite separately", async () => {
+  const root = await createFixture({
+    "extensions/theme/shopify.extension.toml": 'type = "theme"',
+    "extensions/theme/blocks/subscription.liquid": '{% schema %}{"target":"section"}{% endschema %}',
+  });
+  const findings = await builtForShopifyExtensions.run({ root, builtForShopifyCategories: ["subscriptions"] });
+  expect(findings.map((finding) => finding.message.split(":")[0]).toSorted()).toEqual([
+    "Built for Shopify 5.14.4",
+    "Built for Shopify 5.14.5",
+  ]);
+});

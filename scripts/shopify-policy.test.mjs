@@ -51,6 +51,12 @@ for (const [name, mutate] of [
     },
   ],
   [
+    "malformed source date",
+    (copy) => {
+      copy.sources[0].reviewedAt = "2026-9-30";
+    },
+  ],
+  [
     "unofficial source",
     (copy) => {
       copy.sources[0].url = "https://shopify.dev.example.org/docs";
@@ -69,6 +75,12 @@ for (const [name, mutate] of [
     mutate(copy);
     assert.throws(() => validateShopifyPolicy(copy));
   });
+
+test("accepts a source reviewed after the policy review began", () => {
+  const copy = structuredClone(policy);
+  copy.sources[0].reviewedAt = "2099-01-01";
+  assert.doesNotThrow(() => validateShopifyPolicy(copy));
+});
 
 test("unknown applicability includes every category and cannot produce a compliance pass", () => {
   const plan = createShopifyReviewPlan(policy, { programs: ["bfs"] });

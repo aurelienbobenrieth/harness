@@ -88,3 +88,39 @@ it.each([
   const root = await createFixture({ "shopify.app.toml": content });
   expect(await complianceWebhooks.run({ root })).toHaveLength(3);
 });
+
+const eventsOnly = `
+[events]
+api_version = "unstable"
+
+[[events.subscription]]
+handle = "redact"
+topic = "customers/redact"
+actions = ["create"]
+uri = "/events"
+`;
+
+it("keeps [events] out of the default run", async () => {
+  const root = await createFixture({ "shopify.app.toml": compliantToml + eventsOnly });
+  expect(await complianceWebhooks.run({ root })).toEqual([]);
+});
+
+it("rejects compliance topics declared as Events subscriptions when Events validation is on", async () => {
+  const root = await createFixture({ "shopify.app.toml": compliantToml + eventsOnly });
+  expect(await complianceWebhooks.run({ root, nextGenerationEvents: true })).toEqual([
+    expect.objectContaining({
+      severity: "error",
+      docs: "https://shopify.dev/docs/apps/build/events/migrate-from-webhooks",
+      message: expect.stringContaining('compliance topic "customers/redact" as an Events subscription'),
+    }),
+  ]);
+});
+
+it("explains that Events cannot replace missing compliance subscriptions", async () => {
+  const root = await createFixture({ "shopify.app.toml": eventsOnly.replace("customers/redact", "Customer") });
+  const findings = await complianceWebhooks.run({ root, nextGenerationEvents: true });
+  expect(findings).toHaveLength(3);
+  expect(
+    findings.every((finding) => finding.message.endsWith("Events subscriptions cannot carry compliance topics.")),
+  ).toBe(true);
+});

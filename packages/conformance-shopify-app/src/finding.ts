@@ -39,6 +39,11 @@ export type ConformanceRunOptions = {
   readonly builtForShopifyCategories?: readonly BuiltForShopifyCategory[];
   /** Project-relative document entries; unset discovers common HTML and JSX root layouts. */
   readonly documentEntries?: readonly string[];
+  /**
+   * Also validate the `[events]` block (Next Generation Events). Default `false`: Events is a developer
+   * preview on the `unstable` API version, so its configuration contract can still change.
+   */
+  readonly nextGenerationEvents?: boolean;
   /** Validate only explicitly supplied listing metadata and asset files; omitted fields are not assessed. */
   readonly listing?: import("./checks/listing-inputs.js").ShopifyAppListing;
 };
@@ -50,4 +55,5 @@ export type BuiltForShopifyCategory =
   | "sms-marketing"
   | "invoices"
   | "product-reviews"
+  | "returns"
   | "subscriptions";

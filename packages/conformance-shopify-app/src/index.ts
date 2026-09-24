@@ -8,6 +8,9 @@ import { webhookSubscriptionContract } from "./checks/webhook-subscription-contr
 import { builtForShopifyExtensions } from "./checks/built-for-shopify-extensions.js";
 import { listingInputs } from "./checks/listing-inputs.js";
 import { extensionCapabilityContract } from "./checks/extension-capability-contract.js";
+import { polarisCdnTrack } from "./checks/polaris-cdn-track.js";
+import { flowTemplateContract } from "./checks/flow-template-contract.js";
+import { extensionFrameworkContract } from "./checks/extension-framework-contract.js";
 import type { ConformanceCheck, ConformanceFinding, ConformanceRunOptions } from "./finding.js";
 import { appManifests } from "./app-manifests.js";
 
@@ -21,6 +24,9 @@ export { apiVersionContract } from "./checks/api-version-contract.js";
 export { webhookSubscriptionContract } from "./checks/webhook-subscription-contract.js";
 export { builtForShopifyExtensions } from "./checks/built-for-shopify-extensions.js";
 export { extensionCapabilityContract } from "./checks/extension-capability-contract.js";
+export { polarisCdnTrack } from "./checks/polaris-cdn-track.js";
+export { flowTemplateContract } from "./checks/flow-template-contract.js";
+export { extensionFrameworkContract } from "./checks/extension-framework-contract.js";
 export { listingInputs, type ShopifyAppListing, type ShopifyListingImage } from "./checks/listing-inputs.js";
 export type { BuiltForShopifyCategory } from "./finding.js";
 export {
@@ -48,14 +54,17 @@ export const shopifyAppChecks: readonly ConformanceCheck[] = [
   webhookSubscriptionContract,
   apiVersionContract,
   builtForShopifyExtensions,
-  listingInputs,
+  polarisCdnTrack,
+  flowTemplateContract,
+  extensionFrameworkContract,
 ];
 
 /**
  * Checks that are registered but excluded from the default run. Pass them explicitly, for example
  * `shopifyAppConformance(options, [...shopifyAppChecks, ...optionalShopifyAppChecks])`.
+ * `listingInputs` is parked here: Partner Dashboard enforces listing limits at entry.
  */
-export const optionalShopifyAppChecks: readonly ConformanceCheck[] = [extensionCapabilityContract];
+export const optionalShopifyAppChecks: readonly ConformanceCheck[] = [extensionCapabilityContract, listingInputs];
 
 export type ShopifyAppConformanceReport = {
   /** Selected manifest paths, including missing manifests reported in findings. */

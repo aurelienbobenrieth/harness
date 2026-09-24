@@ -2,13 +2,13 @@ import { parse, type DefaultTreeAdapterMap } from "parse5";
 import { parseToml } from "../toml-support.js";
 import path from "node:path";
 import type { ConformanceCheck, ConformanceFinding, ConformanceRunOptions } from "../finding.js";
-import { readTextFile, walkFiles } from "../fs-support.js";
+import { readTextFile } from "../fs-support.js";
 import { appManifests } from "../app-manifests.js";
+import { documentEntries, withoutComments } from "../document-entries.js";
 
 const docs = "https://shopify.dev/docs/apps/launch/built-for-shopify/requirements";
 const appBridgeScriptMarker = "cdn.shopify.com/shopifycloud/app-bridge.js";
 const defaultPlatformMarkers: readonly string[] = [];
-const documentBasenames = new Set(["index.html", "root.tsx", "root.jsx", "__root.tsx", "__root.jsx"]);
 async function isEmbeddedApp(options: ConformanceRunOptions): Promise<boolean> {
   const { root } = options;
   const configFiles = await appManifests(options);
@@ -26,24 +26,11 @@ export const appBridgeScript: ConformanceCheck = {
   description: "Embedded apps must load the App Bridge script from the Shopify CDN in the document head.",
   docs,
   async run(options) {
-    const { root, platformMarkers } = options;
+    const { platformMarkers } = options;
     if (!(await isEmbeddedApp(options))) return [];
 
     const markers = platformMarkers ?? defaultPlatformMarkers;
-    const discovered = (await walkFiles(root, { extensions: [".html", ".tsx", ".jsx"], maxDepth: 4 })).filter(
-      (filePath) => documentBasenames.has(path.basename(filePath)),
-    );
-
-    const candidates =
-      options.documentEntries === undefined
-        ? discovered
-        : options.documentEntries.map((entry) => {
-            const relative = path.relative(path.resolve(root), path.resolve(root, entry));
-            if (entry === "" || relative === ".." || relative.startsWith(`..${path.sep}`) || path.isAbsolute(relative))
-              throw new Error("documentEntries must name project-relative document files inside the project.");
-            return path.resolve(root, entry);
-          });
-    if (options.documentEntries?.length === 0) throw new Error("documentEntries must include at least one document.");
+    const candidates = await documentEntries(options);
     if (markers.some((marker) => marker.trim() === ""))
       throw new Error("platformMarkers must contain nonempty integration markers.");
     if (candidates.length === 0) {
@@ -59,10 +46,10 @@ export const appBridgeScript: ConformanceCheck = {
     }
 
     const findings: ConformanceFinding[] = [];
-    for (const candidate of new Set(candidates)) {
+    for (const candidate of candidates) {
       const content = (await readTextFile(candidate)) ?? "";
       if (hasBridgeScript(content)) continue;
-      const uncommented = content.replaceAll(/<!--[\s\S]*?-->|\/\*[\s\S]*?\*\//g, "");
+      const uncommented = withoutComments(content);
       if (markers.some((marker) => uncommented.includes(marker))) continue;
       findings.push({
         check: "app-bridge-script",
@@ -78,7 +65,7 @@ export const appBridgeScript: ConformanceCheck = {
 };
 
 function hasBridgeScript(content: string): boolean {
-  const uncommented = content.replaceAll(/<!--[\s\S]*?-->|\/\*[\s\S]*?\*\//g, "");
+  const uncommented = withoutComments(content);
   const head = /<head\b[^>]*>[\s\S]*?<\/head>/i.exec(uncommented)?.[0];
   if (head === undefined) return false;
   const document = parse(head);

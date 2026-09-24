@@ -83,3 +83,37 @@ it.each([0, -1, Number.NaN, Number.POSITIVE_INFINITY, 65])(
     await expect(checkoutBundleSize.run({ root, checkoutBundleLimitKb })).rejects.toThrow("checkoutBundleLimitKb");
   },
 );
+
+it.each(["customer-account.page.render", "customer-account.order.page.render"])(
+  "applies the 128 KB full-page limit to %s",
+  async (target) => {
+    const toml = `[[extensions]]\ntype = "ui_extension"\n[[extensions.targeting]]\ntarget = "${target}"`;
+    const within = await createFixture({
+      "extensions/portal/shopify.extension.toml": toml,
+      "extensions/portal/dist/portal.js": "a".repeat(100_000),
+    });
+    expect(await checkoutBundleSize.run({ root: within })).toEqual([]);
+    const above = await createFixture({
+      "extensions/portal/shopify.extension.toml": toml,
+      "extensions/portal/dist/portal.js": "a".repeat(132_000),
+    });
+    expect(await checkoutBundleSize.run({ root: above })).toEqual([
+      expect.objectContaining({
+        severity: "error",
+        message:
+          'Full-page customer account extension "portal" compiled bundle is 129 KB, above the 128 KB budget (Shopify\'s deployment limit is 128 KB).',
+      }),
+    ]);
+  },
+);
+
+it("keeps the 64 KB checkout limit when an extension also declares a full-page target", async () => {
+  const root = await createFixture({
+    "extensions/both/shopify.extension.toml":
+      '[[extensions]]\ntype = "ui_extension"\n[[extensions.targeting]]\ntarget = "customer-account.page.render"\n[[extensions.targeting]]\ntarget = "purchase.checkout.block.render"',
+    "extensions/both/dist/main.js": "a".repeat(100_000),
+  });
+  expect(await checkoutBundleSize.run({ root })).toEqual([
+    expect.objectContaining({ message: expect.stringContaining("above the 64 KB budget") }),
+  ]);
+});

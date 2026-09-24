@@ -2,28 +2,9 @@ import path from "node:path";
 import { readExtensionManifests } from "../extension-manifests.js";
 import type { ConformanceCheck } from "../finding.js";
 import { listDirectory, readTextFile } from "../fs-support.js";
+import { hasTranslation, parseLocale } from "../locale-support.js";
 
 const docs = "https://shopify.dev/docs/apps/build/functions/localization-practices-shopify-functions";
-
-function lookupKey(locale: Record<string, unknown>, dottedKey: string): boolean {
-  let current: unknown = locale;
-  for (const segment of dottedKey.split(".")) {
-    if (typeof current !== "object" || current === null) return false;
-    if (!Object.hasOwn(current, segment)) return false;
-    current = (current as Record<string, unknown>)[segment];
-  }
-  return typeof current === "string";
-}
-
-function parseJsonObject(content: string): Record<string, unknown> | undefined {
-  try {
-    const parsed: unknown = JSON.parse(content);
-    if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed)) return undefined;
-    return parsed as Record<string, unknown>;
-  } catch {
-    return undefined;
-  }
-}
 
 /**
  * @attribution https://shopify.dev/docs/apps/build/functions/localization-practices-shopify-functions (inspiration; independently implemented)
@@ -69,7 +50,7 @@ export const functionsLocalization: ConformanceCheck = {
 
       for (const localeFile of localeFiles) {
         const localeContent = (await readTextFile(path.join(localesRoot, localeFile))) ?? "";
-        const locale = parseJsonObject(localeContent);
+        const locale = parseLocale(localeContent);
         if (locale === undefined) {
           findings.push({
             check: "functions-localization",
@@ -83,7 +64,7 @@ export const functionsLocalization: ConformanceCheck = {
 
         const isDefaultLocale = localeFile.endsWith(".default.json");
         for (const translationKey of translationKeys) {
-          if (lookupKey(locale, translationKey)) continue;
+          if (hasTranslation(locale, translationKey)) continue;
           findings.push({
             check: "functions-localization",
             severity: isDefaultLocale ? "error" : "warning",

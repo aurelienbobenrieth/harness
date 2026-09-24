@@ -38,7 +38,8 @@ export function validateShopifyPolicy(policy) {
       `${source.id}: use a canonical official source`,
     );
     assert.match(source.sha256, /^[a-f0-9]{64}$/u, `${source.id}: record the normalized Markdown hash`);
-    assert.equal(source.reviewedAt, policy.reviewedAt, `${source.id}: review dates must agree`);
+    assert.match(source.reviewedAt, /^\d{4}-\d{2}-\d{2}$/u, `${source.id}: record the source review date`);
+    assert.ok(source.reviewedAt >= policy.reviewedAt, `${source.id}: review dates cannot precede the policy review`);
     assert.ok(Array.isArray(source.requirementIds), `${source.id}: enumerate requirement IDs`);
     assert.equal(
       new Set(source.requirementIds).size,

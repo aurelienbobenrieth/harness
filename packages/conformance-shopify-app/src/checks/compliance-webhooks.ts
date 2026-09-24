@@ -5,7 +5,27 @@ import { readTextFile } from "../fs-support.js";
 import { appManifests } from "../app-manifests.js";
 
 const docs = "https://shopify.dev/docs/apps/build/privacy-law-compliance";
+const eventsDocs = "https://shopify.dev/docs/apps/build/events/migrate-from-webhooks";
 const requiredTopics = ["customers/data_request", "customers/redact", "shop/redact"] as const;
+
+/** Events subscription topics naming a privacy compliance topic; Events does not deliver these (reviewed 2026-09-24). */
+function complianceTopicsInEvents(events: unknown): readonly string[] {
+  if (!isRecord(events) || !Array.isArray(events.subscription)) return [];
+  return events.subscription.flatMap((subscription) =>
+    isRecord(subscription) &&
+    typeof subscription.topic === "string" &&
+    (requiredTopics as readonly string[]).includes(subscription.topic.toLowerCase())
+      ? [subscription.topic]
+      : [],
+  );
+}
+
+/**
+ * With `nextGenerationEvents`, also rejects compliance topics placed in the developer-preview `[events]` block.
+ *
+ * @attribution https://shopify.dev/docs/apps/build/privacy-law-compliance (inspiration; independently implemented)
+ * @attribution https://shopify.dev/docs/apps/build/events/migrate-from-webhooks (inspiration; independently implemented)
+ */
 export const complianceWebhooks: ConformanceCheck = {
   id: "compliance-webhooks",
   description: "Apps must subscribe to the three mandatory privacy compliance webhook topics.",
@@ -59,12 +79,21 @@ export const complianceWebhooks: ConformanceCheck = {
           return subscription.compliance_topics.filter((topic): topic is string => typeof topic === "string");
         }),
       );
+      const events = options.nextGenerationEvents === true ? config.events : undefined;
+      for (const topic of complianceTopicsInEvents(events))
+        findings.push({
+          check: "compliance-webhooks",
+          severity: "error",
+          message: `${configFile} lists compliance topic "${topic}" as an Events subscription. Events does not deliver privacy compliance topics: declare it under compliance_topics in [[webhooks.subscriptions]].`,
+          path: configFile,
+          docs: eventsDocs,
+        });
       for (const topic of requiredTopics) {
         if (topics.has(topic)) continue;
         findings.push({
           check: "compliance-webhooks",
           severity: "error",
-          message: `${configFile} must declare compliance topic "${topic}" in webhooks.subscriptions with a nonempty uri. Source mentions and other deployments do not register this webhook.`,
+          message: `${configFile} must declare compliance topic "${topic}" in webhooks.subscriptions with a nonempty uri. Source mentions and other deployments do not register this webhook.${events === undefined ? "" : " Events subscriptions cannot carry compliance topics."}`,
           path: configFile,
           docs,
         });

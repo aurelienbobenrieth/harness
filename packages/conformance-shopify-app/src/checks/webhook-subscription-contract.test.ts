@@ -60,3 +60,49 @@ it("rejects a subscription table masquerading as the array contract", async () =
   });
   expect(await webhookSubscriptionContract.run({ root })).toHaveLength(1);
 });
+
+const events = (subscription: string, header = 'api_version = "unstable"') =>
+  `[events]\n${header}\n\n[[events.subscription]]\n${subscription}`;
+const priceSync =
+  'handle = "price_sync"\ntopic = "Product"\nactions = ["update"]\ntriggers = ["product.variants.price"]\nuri = "/api/events"\nquery = "query { shop { id } }"\nquery_filter = "product.status:\'ACTIVE\'"';
+
+it("ignores the [events] block unless Events validation is opted in", async () => {
+  const root = await createFixture({ "shopify.app.toml": events('topic = "products/update"') });
+  expect(await webhookSubscriptionContract.run({ root })).toEqual([]);
+  expect(await webhookSubscriptionContract.run({ root, nextGenerationEvents: false })).toEqual([]);
+});
+
+it.each([
+  priceSync,
+  'handle = "product-lifecycle"\ntopic = "Product"\nactions = ["create", "delete"]\nuri = "https://app.example/events"',
+  'handle = "pubsub"\ntopic = "Customer"\nactions = ["create"]\nuri = "pubsub://project-id:topic-id"',
+])("accepts a documented Events subscription", async (subscription) => {
+  const root = await createFixture({ "shopify.app.toml": events(subscription) });
+  expect(await webhookSubscriptionContract.run({ root, nextGenerationEvents: true })).toEqual([]);
+});
+
+it.each([
+  ["events.api_version", events(priceSync, "")],
+  ["events.subscription[0].handle", events(priceSync.replace('"price_sync"', '"price sync"'))],
+  ["events.subscription[0].topic", events(priceSync.replace('"Product"', '"products/update"'))],
+  ["events.subscription[0].actions", events(priceSync.replace('["update"]', '["upsert"]'))],
+  ["events.subscription[0].triggers", events(priceSync.replace('triggers = ["product.variants.price"]\n', ""))],
+  ["events.subscription[0].triggers", events(priceSync.replace('["product.variants.price"]', "[]"))],
+  ["events.subscription[0].uri", events(priceSync.replace('"/api/events"', '"http://app.example/events"'))],
+  ["events.subscription[0].query_filter", events(priceSync.replace('query = "query { shop { id } }"\n', ""))],
+  ["events.subscription", '[events]\napi_version = "unstable"\n[events.subscription]\nhandle = "one"'],
+])("reports %s", async (field, toml) => {
+  const root = await createFixture({ "shopify.app.toml": toml });
+  expect(await webhookSubscriptionContract.run({ root, nextGenerationEvents: true })).toEqual([
+    expect.objectContaining({ severity: "error", message: expect.stringContaining(`shopify.app.toml ${field}:`) }),
+  ]);
+});
+
+it("reports duplicate Events handles", async () => {
+  const root = await createFixture({
+    "shopify.app.toml": `${events(priceSync)}\n\n[[events.subscription]]\n${priceSync}`,
+  });
+  expect(await webhookSubscriptionContract.run({ root, nextGenerationEvents: true })).toEqual([
+    expect.objectContaining({ message: expect.stringContaining("already used") }),
+  ]);
+});

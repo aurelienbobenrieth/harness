@@ -636,6 +636,27 @@
       "requirementIds": []
     },
     {
+      "id": "component-empty-state",
+      "url": "https://shopify.dev/docs/api/app-home/latest/web-components/feedback-and-status-indicators/empty-state",
+      "reviewedAt": "2026-09-24",
+      "sha256": "6f5ba21d297d97fe677860e89f3b15957da2c0cd7de3cbd3df4c903539efa769",
+      "requirementIds": []
+    },
+    {
+      "id": "component-progress",
+      "url": "https://shopify.dev/docs/api/app-home/latest/web-components/feedback-and-status-indicators/progress",
+      "reviewedAt": "2026-09-24",
+      "sha256": "b2282336959f78ed5d183205d6673edf871f2abd431648b4769afa389a87f106",
+      "requirementIds": []
+    },
+    {
+      "id": "component-number",
+      "url": "https://shopify.dev/docs/api/app-home/latest/web-components/typography-and-content/number",
+      "reviewedAt": "2026-09-24",
+      "sha256": "2690f04facfb40a16cc285c33c022335e3b0d49b3689ce5bdcf9771cebd1c976",
+      "requirementIds": []
+    },
+    {
       "id": "app-configuration",
       "url": "https://shopify.dev/docs/apps/build/cli-for-apps/app-configuration",
       "reviewedAt": "2026-09-05",
@@ -815,6 +836,48 @@
       "url": "https://shopify.dev/docs/apps/launch/shopify-app-store/best-practices",
       "reviewedAt": "2026-09-05",
       "sha256": "c468052284191134118404603beaf1d3b6e9b94a9c63a9fafbb031d16938217f",
+      "requirementIds": []
+    },
+    {
+      "id": "polaris-cdn-versioning",
+      "url": "https://shopify.dev/changelog/the-polaris-cdn-is-adopting-semantic-versioning",
+      "reviewedAt": "2026-09-24",
+      "sha256": "1440809ecd963948384088e9952057efc205d8b84fa322bb7800a7b8f781b90e",
+      "requirementIds": []
+    },
+    {
+      "id": "flow-templates",
+      "url": "https://shopify.dev/docs/apps/build/flow/templates/reference",
+      "reviewedAt": "2026-09-24",
+      "sha256": "e4fa5d7529185e44e667df7bef65f252677e13175e86e8fa20b2cbe278a046c4",
+      "requirementIds": []
+    },
+    {
+      "id": "flow-action-endpoints",
+      "url": "https://shopify.dev/docs/apps/build/flow/actions/endpoints",
+      "reviewedAt": "2026-09-24",
+      "sha256": "d3d49288bcdd7814d1eab860cc29025311efadacb491215a446b9495c03ed507",
+      "requirementIds": []
+    },
+    {
+      "id": "checkout-web-components",
+      "url": "https://shopify.dev/docs/apps/build/checkout/migrate-to-web-components",
+      "reviewedAt": "2026-09-24",
+      "sha256": "9541a42cfe22b641f256d183e84a05eab3d4ed1924f919682e147e3e6065cb44",
+      "requirementIds": []
+    },
+    {
+      "id": "customer-account-web-components",
+      "url": "https://shopify.dev/docs/apps/build/customer-accounts/migrate-to-web-components",
+      "reviewedAt": "2026-09-24",
+      "sha256": "97465e125a5dc1a98cc3ab4db966ae0b3417836381f9d194dc5cd5a19ec3ef67",
+      "requirementIds": []
+    },
+    {
+      "id": "events-subscriptions",
+      "url": "https://shopify.dev/docs/apps/build/events/subscribe",
+      "reviewedAt": "2026-09-24",
+      "sha256": "97e48db9952f549031b1a505c3d4822bce2d126e844cf5f020b8ebe97814e46e",
       "requirementIds": []
     }
   ],
@@ -1209,7 +1272,37 @@
       "kind": "check",
       "package": "conformance-shopify-app",
       "member": "listing-inputs",
-      "boundary": "Checks only supplied listing fields, counts, image header dimensions, contained paths and exact duplicate bytes. Omitted fields, decoded image integrity, semantic content, translations and visual similarity require review."
+      "boundary": "Opt-in via optionalShopifyAppChecks: parked because the Partner Dashboard enforces listing limits at entry. Checks only supplied listing fields, counts, image header dimensions, contained paths and exact duplicate bytes. Omitted fields, decoded image integrity, semantic content, translations and visual similarity require review."
+    },
+    "s-known-components": {
+      "kind": "rule",
+      "package": "oxlint-plugin-shopify-app",
+      "member": "s-known-components",
+      "boundary": "Checks recognized source forms only. Dynamic values, wrappers, cross-file behavior and runtime accessibility require the linked evidence protocol; apply the documented surface and category scope. Reads the installed @shopify/polaris-types manifest; silent when none resolves."
+    },
+    "flow-action-handler-review": {
+      "kind": "rule",
+      "package": "agentlint-plugin-shopify-app",
+      "member": "shopify-app/flow-action-handler-review",
+      "boundary": "Schedules contextual review on configured triggers. A trigger is not a proven violation and absence of a trigger does not establish compliance. Private agentlint preview dependency remains required."
+    },
+    "polaris-cdn-track": {
+      "kind": "check",
+      "package": "conformance-shopify-app",
+      "member": "polaris-cdn-track",
+      "boundary": "Checks selected local manifests, entries or output only; inspect options and category exceptions. Presence and syntax do not prove served behavior or platform acceptance. Scripts injected at run time are invisible."
+    },
+    "flow-template-contract": {
+      "kind": "check",
+      "package": "conformance-shopify-app",
+      "member": "flow-template-contract",
+      "boundary": "Checks selected local manifests, entries or output only; inspect options and category exceptions. Presence and syntax do not prove served behavior or platform acceptance. Workflow value, titles, spelling and one-click safety stay with Shopify's template review."
+    },
+    "extension-framework-contract": {
+      "kind": "check",
+      "package": "conformance-shopify-app",
+      "member": "extension-framework-contract",
+      "boundary": "Checks selected local manifests, entries or output only; inspect options and category exceptions. Presence and syntax do not prove served behavior or platform acceptance. Wrappers and shared packages outside the extension are not followed."
     }
   },
   "requirements": [
@@ -2910,7 +3003,7 @@
       "source": "bfs",
       "category": "returns",
       "protocol": "customer-account-flow",
-      "tools": []
+      "tools": ["built-for-shopify-extensions"]
     },
     {
       "id": "bfs/5.13.1",
@@ -2973,7 +3066,7 @@
       "source": "bfs",
       "category": "subscriptions",
       "protocol": "customer-account-flow",
-      "tools": []
+      "tools": ["built-for-shopify-extensions"]
     }
   ],
   "guidance": [
@@ -2983,6 +3076,7 @@
       "protocol": "rendered-accessibility",
       "tools": [
         "component-types",
+        "s-known-components",
         "s-button-accessible-name",
         "s-button-submit-no-navigation",
         "action-label-clarity",
@@ -2994,112 +3088,148 @@
       "id": "component-button-group",
       "source": "component-button-group",
       "protocol": "rendered-accessibility",
-      "tools": ["component-types", "app-ux-review"],
+      "tools": ["component-types", "s-known-components", "app-ux-review"],
       "surfaces": ["app-home"]
     },
     {
       "id": "component-clickable",
       "source": "component-clickable",
       "protocol": "rendered-accessibility",
-      "tools": ["component-types", "s-clickable-accessible-name"],
+      "tools": ["component-types", "s-known-components", "s-clickable-accessible-name"],
       "surfaces": ["app-home"]
     },
     {
       "id": "component-clickable-chip",
       "source": "component-clickable-chip",
       "protocol": "rendered-accessibility",
-      "tools": ["component-types", "app-ux-review"],
+      "tools": ["component-types", "s-known-components", "app-ux-review"],
       "surfaces": ["app-home"]
     },
     {
       "id": "component-link",
       "source": "component-link",
       "protocol": "rendered-accessibility",
-      "tools": ["component-types", "app-ux-review"],
+      "tools": ["component-types", "s-known-components", "app-ux-review"],
       "surfaces": ["app-home"]
     },
     {
       "id": "component-menu",
       "source": "component-menu",
       "protocol": "rendered-accessibility",
-      "tools": ["component-types", "app-ux-review"],
+      "tools": ["component-types", "s-known-components", "app-ux-review"],
       "surfaces": ["app-home"]
     },
     {
       "id": "component-badge",
       "source": "component-badge",
       "protocol": "rendered-accessibility",
-      "tools": ["component-types", "app-ux-review"],
+      "tools": ["component-types", "s-known-components", "app-ux-review"],
       "surfaces": ["app-home"]
     },
     {
       "id": "component-banner",
       "source": "component-banner",
       "protocol": "rendered-accessibility",
-      "tools": ["component-types", "banner-usage"],
+      "tools": ["component-types", "s-known-components", "banner-usage"],
       "surfaces": ["app-home"]
     },
     {
       "id": "component-spinner",
       "source": "component-spinner",
       "protocol": "rendered-accessibility",
-      "tools": ["component-types", "s-spinner-accessible-label"],
+      "tools": ["component-types", "s-known-components", "s-spinner-accessible-label"],
       "surfaces": ["app-home"]
     },
     {
       "id": "component-checkbox",
       "source": "component-checkbox",
       "protocol": "forms-and-recovery",
-      "tools": ["component-types", "app-ux-review", "s-form-control-label-required", "form-error-recovery"],
+      "tools": [
+        "component-types",
+        "s-known-components",
+        "app-ux-review",
+        "s-form-control-label-required",
+        "form-error-recovery"
+      ],
       "surfaces": ["app-home"]
     },
     {
       "id": "component-choice-list",
       "source": "component-choice-list",
       "protocol": "forms-and-recovery",
-      "tools": ["component-types", "app-ux-review", "s-form-control-label-required", "form-error-recovery"],
+      "tools": [
+        "component-types",
+        "s-known-components",
+        "app-ux-review",
+        "s-form-control-label-required",
+        "form-error-recovery"
+      ],
       "surfaces": ["app-home"]
     },
     {
       "id": "component-color-field",
       "source": "component-color-field",
       "protocol": "forms-and-recovery",
-      "tools": ["component-types", "app-ux-review", "s-form-control-label-required", "form-error-recovery"],
+      "tools": [
+        "component-types",
+        "s-known-components",
+        "app-ux-review",
+        "s-form-control-label-required",
+        "form-error-recovery"
+      ],
       "surfaces": ["app-home"]
     },
     {
       "id": "component-color-picker",
       "source": "component-color-picker",
       "protocol": "forms-and-recovery",
-      "tools": ["component-types", "app-ux-review"],
+      "tools": ["component-types", "s-known-components", "app-ux-review"],
       "surfaces": ["app-home"]
     },
     {
       "id": "component-date-field",
       "source": "component-date-field",
       "protocol": "forms-and-recovery",
-      "tools": ["component-types", "app-ux-review", "s-form-control-label-required", "form-error-recovery"],
+      "tools": [
+        "component-types",
+        "s-known-components",
+        "app-ux-review",
+        "s-form-control-label-required",
+        "form-error-recovery"
+      ],
       "surfaces": ["app-home"]
     },
     {
       "id": "component-date-picker",
       "source": "component-date-picker",
       "protocol": "forms-and-recovery",
-      "tools": ["component-types", "app-ux-review"],
+      "tools": ["component-types", "s-known-components", "app-ux-review"],
       "surfaces": ["app-home"]
     },
     {
       "id": "component-drop-zone",
       "source": "component-drop-zone",
       "protocol": "forms-and-recovery",
-      "tools": ["component-types", "app-ux-review", "s-form-control-label-required", "form-error-recovery"],
+      "tools": [
+        "component-types",
+        "s-known-components",
+        "app-ux-review",
+        "s-form-control-label-required",
+        "form-error-recovery"
+      ],
       "surfaces": ["app-home"]
     },
     {
       "id": "component-email-field",
       "source": "component-email-field",
       "protocol": "forms-and-recovery",
-      "tools": ["component-types", "app-ux-review", "s-form-control-label-required", "form-error-recovery"],
+      "tools": [
+        "component-types",
+        "s-known-components",
+        "app-ux-review",
+        "s-form-control-label-required",
+        "form-error-recovery"
+      ],
       "surfaces": ["app-home"]
     },
     {
@@ -3108,6 +3238,7 @@
       "protocol": "forms-and-recovery",
       "tools": [
         "component-types",
+        "s-known-components",
         "s-money-field-no-currency-symbol",
         "s-form-control-label-required",
         "form-error-recovery"
@@ -3118,154 +3249,208 @@
       "id": "component-number-field",
       "source": "component-number-field",
       "protocol": "forms-and-recovery",
-      "tools": ["component-types", "app-ux-review", "s-form-control-label-required", "form-error-recovery"],
+      "tools": [
+        "component-types",
+        "s-known-components",
+        "app-ux-review",
+        "s-form-control-label-required",
+        "form-error-recovery"
+      ],
       "surfaces": ["app-home"]
     },
     {
       "id": "component-password-field",
       "source": "component-password-field",
       "protocol": "forms-and-recovery",
-      "tools": ["component-types", "app-ux-review", "s-form-control-label-required", "form-error-recovery"],
+      "tools": [
+        "component-types",
+        "s-known-components",
+        "app-ux-review",
+        "s-form-control-label-required",
+        "form-error-recovery"
+      ],
       "surfaces": ["app-home"]
     },
     {
       "id": "component-search-field",
       "source": "component-search-field",
       "protocol": "forms-and-recovery",
-      "tools": ["component-types", "app-ux-review", "s-form-control-label-required", "form-error-recovery"],
+      "tools": [
+        "component-types",
+        "s-known-components",
+        "app-ux-review",
+        "s-form-control-label-required",
+        "form-error-recovery"
+      ],
       "surfaces": ["app-home"]
     },
     {
       "id": "component-select",
       "source": "component-select",
       "protocol": "forms-and-recovery",
-      "tools": ["component-types", "app-ux-review", "s-form-control-label-required", "form-error-recovery"],
+      "tools": [
+        "component-types",
+        "s-known-components",
+        "app-ux-review",
+        "s-form-control-label-required",
+        "form-error-recovery"
+      ],
       "surfaces": ["app-home"]
     },
     {
       "id": "component-switch",
       "source": "component-switch",
       "protocol": "forms-and-recovery",
-      "tools": ["component-types", "app-ux-review", "s-form-control-label-required", "form-error-recovery"],
+      "tools": [
+        "component-types",
+        "s-known-components",
+        "app-ux-review",
+        "s-form-control-label-required",
+        "form-error-recovery"
+      ],
       "surfaces": ["app-home"]
     },
     {
       "id": "component-text-area",
       "source": "component-text-area",
       "protocol": "forms-and-recovery",
-      "tools": ["component-types", "app-ux-review", "s-form-control-label-required", "form-error-recovery"],
+      "tools": [
+        "component-types",
+        "s-known-components",
+        "app-ux-review",
+        "s-form-control-label-required",
+        "form-error-recovery"
+      ],
       "surfaces": ["app-home"]
     },
     {
       "id": "component-text-field",
       "source": "component-text-field",
       "protocol": "forms-and-recovery",
-      "tools": ["component-types", "app-ux-review", "s-form-control-label-required", "form-error-recovery"],
+      "tools": [
+        "component-types",
+        "s-known-components",
+        "app-ux-review",
+        "s-form-control-label-required",
+        "form-error-recovery"
+      ],
       "surfaces": ["app-home"]
     },
     {
       "id": "component-url-field",
       "source": "component-url-field",
       "protocol": "forms-and-recovery",
-      "tools": ["component-types", "app-ux-review", "s-form-control-label-required", "form-error-recovery"],
+      "tools": [
+        "component-types",
+        "s-known-components",
+        "app-ux-review",
+        "s-form-control-label-required",
+        "form-error-recovery"
+      ],
       "surfaces": ["app-home"]
     },
     {
       "id": "component-box",
       "source": "component-box",
       "protocol": "rendered-accessibility",
-      "tools": ["component-types", "app-ux-review"],
+      "tools": ["component-types", "s-known-components", "app-ux-review"],
       "surfaces": ["app-home"]
     },
     {
       "id": "component-divider",
       "source": "component-divider",
       "protocol": "rendered-accessibility",
-      "tools": ["component-types", "app-ux-review"],
+      "tools": ["component-types", "s-known-components", "app-ux-review"],
       "surfaces": ["app-home"]
     },
     {
       "id": "component-grid",
       "source": "component-grid",
       "protocol": "rendered-accessibility",
-      "tools": ["component-types", "app-ux-review"],
+      "tools": ["component-types", "s-known-components", "app-ux-review"],
       "surfaces": ["app-home"]
     },
     {
       "id": "component-ordered-list",
       "source": "component-ordered-list",
       "protocol": "rendered-accessibility",
-      "tools": ["component-types", "app-ux-review"],
+      "tools": ["component-types", "s-known-components", "app-ux-review"],
       "surfaces": ["app-home"]
     },
     {
       "id": "component-page",
       "source": "component-page",
       "protocol": "rendered-accessibility",
-      "tools": ["component-types", "s-page-aside-visible", "s-action-slot-contract", "app-ux-review"],
+      "tools": [
+        "component-types",
+        "s-known-components",
+        "s-page-aside-visible",
+        "s-action-slot-contract",
+        "app-ux-review"
+      ],
       "surfaces": ["app-home"]
     },
     {
       "id": "component-query-container",
       "source": "component-query-container",
       "protocol": "rendered-accessibility",
-      "tools": ["component-types", "app-ux-review"],
+      "tools": ["component-types", "s-known-components", "app-ux-review"],
       "surfaces": ["app-home"]
     },
     {
       "id": "component-section",
       "source": "component-section",
       "protocol": "rendered-accessibility",
-      "tools": ["component-types", "app-ux-review"],
+      "tools": ["component-types", "s-known-components", "app-ux-review"],
       "surfaces": ["app-home"]
     },
     {
       "id": "component-stack",
       "source": "component-stack",
       "protocol": "rendered-accessibility",
-      "tools": ["component-types", "app-ux-review"],
+      "tools": ["component-types", "s-known-components", "app-ux-review"],
       "surfaces": ["app-home"]
     },
     {
       "id": "component-table",
       "source": "component-table",
       "protocol": "rendered-accessibility",
-      "tools": ["component-types", "app-ux-review"],
+      "tools": ["component-types", "s-known-components", "app-ux-review"],
       "surfaces": ["app-home"]
     },
     {
       "id": "component-unordered-list",
       "source": "component-unordered-list",
       "protocol": "rendered-accessibility",
-      "tools": ["component-types", "app-ux-review"],
+      "tools": ["component-types", "s-known-components", "app-ux-review"],
       "surfaces": ["app-home"]
     },
     {
       "id": "component-avatar",
       "source": "component-avatar",
       "protocol": "rendered-accessibility",
-      "tools": ["component-types", "app-ux-review"],
+      "tools": ["component-types", "s-known-components", "app-ux-review"],
       "surfaces": ["app-home"]
     },
     {
       "id": "component-icon",
       "source": "component-icon",
       "protocol": "rendered-accessibility",
-      "tools": ["component-types", "app-ux-review"],
+      "tools": ["component-types", "s-known-components", "app-ux-review"],
       "surfaces": ["app-home"]
     },
     {
       "id": "component-image",
       "source": "component-image",
       "protocol": "rendered-accessibility",
-      "tools": ["component-types", "app-ux-review"],
+      "tools": ["component-types", "s-known-components", "app-ux-review"],
       "surfaces": ["app-home"]
     },
     {
       "id": "component-thumbnail",
       "source": "component-thumbnail",
       "protocol": "rendered-accessibility",
-      "tools": ["component-types", "app-ux-review"],
+      "tools": ["component-types", "s-known-components", "app-ux-review"],
       "surfaces": ["app-home"]
     },
     {
@@ -3274,6 +3459,7 @@
       "protocol": "rendered-accessibility",
       "tools": [
         "component-types",
+        "s-known-components",
         "s-modal-actions-use-slots",
         "s-modal-heading-required",
         "s-action-slot-contract",
@@ -3285,42 +3471,63 @@
       "id": "component-popover",
       "source": "component-popover",
       "protocol": "rendered-accessibility",
-      "tools": ["component-types", "app-ux-review"],
+      "tools": ["component-types", "s-known-components", "app-ux-review"],
       "surfaces": ["app-home"]
     },
     {
       "id": "component-chip",
       "source": "component-chip",
       "protocol": "rendered-accessibility",
-      "tools": ["component-types", "app-ux-review"],
+      "tools": ["component-types", "s-known-components", "app-ux-review"],
       "surfaces": ["app-home"]
     },
     {
       "id": "component-heading",
       "source": "component-heading",
       "protocol": "rendered-accessibility",
-      "tools": ["component-types", "app-ux-review"],
+      "tools": ["component-types", "s-known-components", "app-ux-review"],
       "surfaces": ["app-home"]
     },
     {
       "id": "component-paragraph",
       "source": "component-paragraph",
       "protocol": "rendered-accessibility",
-      "tools": ["component-types", "app-ux-review"],
+      "tools": ["component-types", "s-known-components", "app-ux-review"],
       "surfaces": ["app-home"]
     },
     {
       "id": "component-text",
       "source": "component-text",
       "protocol": "rendered-accessibility",
-      "tools": ["component-types", "app-ux-review"],
+      "tools": ["component-types", "s-known-components", "app-ux-review"],
       "surfaces": ["app-home"]
     },
     {
       "id": "component-tooltip",
       "source": "component-tooltip",
       "protocol": "rendered-accessibility",
-      "tools": ["component-types", "s-tooltip-no-interactive-content"],
+      "tools": ["component-types", "s-known-components", "s-tooltip-no-interactive-content"],
+      "surfaces": ["app-home"]
+    },
+    {
+      "id": "component-empty-state",
+      "source": "component-empty-state",
+      "protocol": "rendered-accessibility",
+      "tools": ["component-types", "s-known-components", "app-ux-review"],
+      "surfaces": ["app-home"]
+    },
+    {
+      "id": "component-progress",
+      "source": "component-progress",
+      "protocol": "rendered-accessibility",
+      "tools": ["component-types", "s-known-components"],
+      "surfaces": ["app-home"]
+    },
+    {
+      "id": "component-number",
+      "source": "component-number",
+      "protocol": "rendered-accessibility",
+      "tools": ["component-types", "s-known-components"],
       "surfaces": ["app-home"]
     },
     {
@@ -3511,6 +3718,48 @@
       "protocol": "checkout-consent",
       "tools": ["checkout-network-discipline", "app-ux-review"],
       "surfaces": ["checkout"]
+    },
+    {
+      "id": "polaris-cdn-versioning",
+      "source": "polaris-cdn-versioning",
+      "protocol": "rendered-accessibility",
+      "tools": ["polaris-cdn-track", "component-types"],
+      "surfaces": ["app-home"]
+    },
+    {
+      "id": "flow-templates",
+      "source": "flow-templates",
+      "protocol": "workflow-behavior",
+      "tools": ["flow-template-contract"],
+      "surfaces": ["admin-extension"]
+    },
+    {
+      "id": "flow-action-endpoints",
+      "source": "flow-action-endpoints",
+      "protocol": "api-integration",
+      "tools": ["flow-action-handler-review"],
+      "surfaces": ["server"]
+    },
+    {
+      "id": "checkout-web-components",
+      "source": "checkout-web-components",
+      "protocol": "workflow-behavior",
+      "tools": ["extension-framework-contract"],
+      "surfaces": ["checkout"]
+    },
+    {
+      "id": "customer-account-web-components",
+      "source": "customer-account-web-components",
+      "protocol": "workflow-behavior",
+      "tools": ["extension-framework-contract"],
+      "surfaces": ["customer-account"]
+    },
+    {
+      "id": "events-subscriptions",
+      "source": "events-subscriptions",
+      "protocol": "api-integration",
+      "tools": ["webhook-subscription-contract", "compliance-webhooks"],
+      "surfaces": ["server"]
     }
   ]
 }
