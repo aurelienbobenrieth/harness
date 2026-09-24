@@ -19,7 +19,7 @@ Keep one independently understandable change per commit. Include its tests, docu
 
 Follow the repository's commit convention. For Conventional Commits, use `type(scope): description`, with optional scope and `!` for a breaking change. Derive the title from the final diff. Add a body for motivation or a tradeoff the diff cannot explain, and use issue-closing language only when the change resolves that issue.
 
-Read the configured author identity before committing and retain it. Preserve configured signing and hooks. Follow any repository or user attribution requirements without inventing an author or trailer.
+Read the configured author identity before committing and retain it. Preserve configured signing and hooks. Follow any repository or user attribution requirements without inventing an author or trailer. **Never credit a model or agent**: no `Co-Authored-By` trailer for an LLM and no "Generated with…" line, in commits or PR descriptions, even when the host tool adds one by default.
 
 If a hook fails, inspect status and hook output before retrying. A failed commit attempt often created no commit; do not accidentally amend an earlier commit. Fix the cause, review any hook edits, and repeat the intended operation. Do not bypass the gate to produce a success claim.
 
