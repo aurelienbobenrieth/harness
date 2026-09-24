@@ -29,4 +29,4 @@ No licensed implementation or prose. Add a greppable JSDoc `@attribution <source
 
 Keep the diff focused; preserve unrelated working-tree changes. State what changed, why, and each check run with its result, or its blocker and consequence. **Skipped evidence is never a pass.**
 
-`pnpm release` only prints a plan: no publish, tag, push, or version ([release readiness](docs/release-readiness.md)). [CODEOWNERS](.github/CODEOWNERS); best-effort response times.
+`pnpm release` only prints a plan; publishing happens only in the approval-gated release workflow ([release](docs/release-readiness.md)). [CODEOWNERS](.github/CODEOWNERS); best-effort response times.

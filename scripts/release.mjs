@@ -35,9 +35,9 @@ export function parseReleaseArguments(args) {
 /** Produce an honest local inventory; dirty or unversioned candidates remain visible as blockers. */
 export function createReleasePlan({ policy, manifests, requested, head, dirtyPaths }) {
   const candidates = selectReleasePackages({ policy, manifests, requested });
-  const blockers = [
-    "Publication is disabled; registry authentication and release approval are outside this preparation command.",
-  ];
+  const blockers = policy.publicationEnabled
+    ? []
+    : ["Publication is disabled; registry authentication and release approval are outside this preparation command."];
   if (dirtyPaths.length > 0)
     blockers.push("Commit and review the working tree before preparing an exact release revision.");
   const unversioned = candidates.filter(({ version }) => version === "0.0.0" || version.includes("-"));
@@ -48,7 +48,7 @@ export function createReleasePlan({ policy, manifests, requested, head, dirtyPat
   return {
     schemaVersion: 1,
     mode: "prepare-only",
-    publicationEnabled: false,
+    publicationEnabled: policy.publicationEnabled,
     repository: policy.repository,
     head,
     clean: dirtyPaths.length === 0,
@@ -65,6 +65,9 @@ export function createReleasePlan({ policy, manifests, requested, head, dirtyPat
       "All CI validation and runtime-floor matrix legs pass for this exact revision",
       "Review candidate changesets and consumer migrations",
     ],
+    publish: policy.publicationEnabled
+      ? "Run the Release workflow on the reviewed main SHA; its npm environment approves the publish job."
+      : "Disabled in policy/release.json.",
   };
 }
 

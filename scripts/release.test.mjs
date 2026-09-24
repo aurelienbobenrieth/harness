@@ -4,6 +4,7 @@ import { mkdtempSync, readFileSync, readdirSync, rmdirSync, unlinkSync, writeFil
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
+import { selectPublishable } from "./publish.mjs";
 import { createReleasePlan, parseReleaseArguments } from "./release.mjs";
 import {
   readWorkflows,
@@ -107,11 +108,11 @@ for (const [name, mutate, expected] of [
     /private packages must be classified as draft/,
   ],
   [
-    "publication toggle",
+    "implicit publication toggle",
     (input) => {
-      input.policy.publicationEnabled = true;
+      input.policy.publicationEnabled = "yes";
     },
-    /Publishing is disabled/,
+    /Set publicationEnabled explicitly/,
   ],
   [
     "incorrect repository identity",
@@ -279,7 +280,7 @@ for (const [name, mutate, expected] of [
     (workflows) => {
       workflows["publish.yml"].jobs.prepare.steps.push({ run: "pnpm publish" });
     },
-    /without publishing/,
+    /publish only through the reviewed/,
   ],
   [
     "pull request target",
@@ -426,6 +427,49 @@ for (const [name, mutate, expected] of [
     /without exclusions/,
   ],
   [
+    "publish job without the npm environment",
+    (workflows) => {
+      delete workflows["publish.yml"].jobs.publish.environment;
+    },
+    /approval-gated npm environment/,
+  ],
+  [
+    "publish job with write access",
+    (workflows) => {
+      workflows["publish.yml"].jobs.publish.permissions.contents = "write";
+    },
+    /grant only the required permissions/,
+  ],
+  [
+    "OIDC token outside the publish job",
+    (workflows) => {
+      workflows["publish.yml"].jobs.prepare.permissions = { contents: "read", "id-token": "write" };
+    },
+    /grant only the required permissions/,
+  ],
+  [
+    "publish job that skips preparation",
+    (workflows) => {
+      delete workflows["publish.yml"].jobs.publish.needs;
+    },
+    /after release preparation/,
+  ],
+  [
+    "publish job without reviewed SHA verification",
+    (workflows) => {
+      const job = workflows["publish.yml"].jobs.publish;
+      job.steps = job.steps.filter((step) => step.run !== "node scripts/release.mjs --verify-ref");
+    },
+    /require node scripts\/release\.mjs --verify-ref/,
+  ],
+  [
+    "publish job checking out an input ref",
+    (workflows) => {
+      workflows["publish.yml"].jobs.publish.steps[0].with.ref = "${{ inputs.reviewed-sha }}";
+    },
+    /never an input ref/,
+  ],
+  [
     "matrix labels that do not select the runner",
     (workflows) => {
       workflows["ci.yml"].jobs.validate["runs-on"] = "windows-latest";
@@ -446,5 +490,40 @@ for (const [name, mutate, expected] of [
     const workflows = structuredClone(workflowFixture);
     mutate(workflows);
     assert.throws(() => validateWorkflowPolicy(workflows), expected);
+  });
+}
+
+test("enabled publication drops the disabled blocker from the plan", () => {
+  const input = fixture();
+  input.policy.publicationEnabled = true;
+  const plan = createReleasePlan({ ...input, head: sha, dirtyPaths: [] });
+  assert.equal(plan.publicationEnabled, true);
+  assert.deepEqual(plan.blockers, []);
+});
+
+function publishable(version = "0.1.0", enabled = true) {
+  const input = fixture();
+  input.policy.publicationEnabled = enabled;
+  input.manifests[0].manifest.version = version;
+  return input;
+}
+
+test("publishes versioned candidates and never drafts", () => {
+  assert.deepEqual(selectPublishable({ ...publishable(), published: new Set() }), [
+    { directory: "candidate", name: candidate, version: "0.1.0" },
+  ]);
+});
+
+test("skips candidate versions already on the registry", () => {
+  assert.deepEqual(selectPublishable({ ...publishable(), published: new Set([`${candidate}@0.1.0`]) }), []);
+});
+
+for (const [name, input, expected] of [
+  ["disabled publication", publishable("0.1.0", false), /Publishing is disabled/],
+  ["an unversioned candidate", publishable("0.0.0"), /merge the version PR/],
+  ["a prerelease candidate", publishable("0.1.0-next.0"), /merge the version PR/],
+]) {
+  test(`publish refuses ${name}`, () => {
+    assert.throws(() => selectPublishable({ ...input, published: new Set() }), expected);
   });
 }

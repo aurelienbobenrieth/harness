@@ -11,8 +11,8 @@ flowchart LR
   O & A & S --> P[next project inherits it]
 ```
 
-> [!WARNING]
-> **Publishing is disabled.** `pnpm release` only prints a preparation plan. See [release readiness](docs/release-readiness.md).
+> [!NOTE]
+> **Not on npm yet.** The 9 candidates publish through one manual, approval-gated workflow. See [release](docs/release-readiness.md).
 
 ## 15 packages, 3 maturity levels
 
@@ -65,7 +65,7 @@ conformance-*         structural checks: manifests, layout, build output
 | `pnpm security:check`                          | audits every dependency class; needs network, so separate in CI                      |
 | `pnpm test:compatibility baseline` / `current` | installs the 9 packed candidates outside the workspace against public-registry tools |
 | `pnpm test:package`                            | exercises all 15 packed packages, drafts included, via the local agentlint archive   |
-| `pnpm release:plan`                            | versions, draft exclusions, blockers. Changes nothing                                |
+| `pnpm release:plan`                            | versions, draft exclusions, blockers. Changes nothing; publishing is CI-only         |
 | `pnpm catalog`                                 | regenerates rule/check inventories and credits (after build)                         |
 
 **No `skipLibCheck`, no error allowlist.** Every consumer profile needs complete TypeScript declarations. Agentlint plugins still need the reviewed private archive and don't work with public agentlint 0.1.5: see the [agentlint contract](docs/agentlint-contract.md).

@@ -18,7 +18,9 @@ try {
     "pnpm audit --audit-level=low",
     "Audit all dependency classes without ignoring known advisories or registry errors.",
   );
-  console.log(`Release policy valid: ${inputs.manifests.length} classified packages; publishing disabled.`);
+  console.log(
+    `Release policy valid: ${inputs.manifests.length} classified packages; publishing ${inputs.policy.publicationEnabled ? "enabled through the reviewed npm environment" : "disabled"}.`,
+  );
 } catch (error) {
   console.error(error instanceof Error ? error.message : String(error));
   process.exitCode = 1;

@@ -32,7 +32,7 @@ function requiredRuntimeMatrix(job, versions, owner) {
 /** Evaluate the checked-in preparation policy without invoking a registry or changing files. */
 export function validateReleasePolicy({ policy, manifests, changesets }) {
   assert.equal(policy.schemaVersion, 1, "Use release policy schema version 1.");
-  assert.equal(policy.publicationEnabled, false, "Publishing is disabled; prepare and review a release first.");
+  assert.equal(typeof policy.publicationEnabled, "boolean", "Set publicationEnabled explicitly.");
   assert.match(policy.repository, /^[\w.-]+\/[\w.-]+$/, "Set a GitHub owner/repository identity.");
   assert.equal(policy.defaultBranch, "main", "Release preparation must use main.");
   assert.ok(policy.packages && typeof policy.packages === "object" && !Array.isArray(policy.packages));
@@ -131,7 +131,9 @@ export function validateWorkflowPolicy(workflows) {
         const expected =
           file === "release.yml" && id === "version"
             ? { contents: "write", "pull-requests": "write" }
-            : { contents: "read" };
+            : file === "publish.yml" && id === "publish"
+              ? { contents: "read", "id-token": "write" }
+              : { contents: "read" };
         assert.deepEqual(job.permissions, expected, `${file}/${id}: grant only the required permissions.`);
       }
       assert.ok(
@@ -157,7 +159,7 @@ export function validateWorkflowPolicy(workflows) {
         assert.doesNotMatch(
           step.run ?? "",
           /\b(?:npm|pnpm|changeset|changesets)\s+(?:--\S+\s+)*publish\b/,
-          `${file}/${id}: prepare releases without publishing.`,
+          `${file}/${id}: publish only through the reviewed scripts/publish.mjs.`,
         );
       }
     }
@@ -193,6 +195,28 @@ export function validateWorkflowPolicy(workflows) {
     checkout?.with?.ref,
     "${{ github.sha }}",
     "Check out the workflow revision, never an arbitrary input ref.",
+  );
+  const publish = prepare.jobs.publish;
+  assert.ok(publish, "Keep the reviewed publish job.");
+  assert.equal(publish.needs, "prepare", "Publish only after release preparation passes.");
+  assert.equal(publish.if, "github.ref == 'refs/heads/main'", "Publish only the main workflow revision.");
+  assert.equal(publish.environment, "npm", "Publish through the approval-gated npm environment.");
+  for (const command of [
+    "node scripts/release.mjs --verify-ref",
+    "pnpm install --frozen-lockfile",
+    "pnpm build",
+    "node scripts/publish.mjs",
+  ])
+    requiredRun(publish, command, "publish");
+  assert.equal(
+    publish.steps.find((step) => step.run === "node scripts/release.mjs --verify-ref").env?.HARNESS_REVIEWED_SHA,
+    "${{ inputs.reviewed-sha }}",
+    "Verify the reviewed SHA before publishing.",
+  );
+  assert.equal(
+    publish.steps.find((step) => step.uses?.startsWith("actions/checkout@"))?.with?.ref,
+    "${{ github.sha }}",
+    "Publish the workflow revision, never an input ref.",
   );
   const ci = workflows["ci.yml"];
   assert.equal(ci?.jobs?.result?.name, "Validate", "Preserve the protected branch's aggregate Validate status.");

@@ -1,4 +1,4 @@
-name: Prepare release
+name: Prepare and publish release
 
 on:
   workflow_dispatch:
@@ -62,3 +62,44 @@ jobs:
 
       - name: Show release preparation plan
         run: pnpm release:plan
+
+  publish:
+    name: Publish reviewed candidates to npm
+    needs: prepare
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: npm
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Checkout the workflow revision
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v5.0.0
+
+      # Node 24 bundles an npm that supports trusted publishing (OIDC) and provenance.
+      - name: Setup Node
+        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Verify the reviewed main revision
+        run: node scripts/release.mjs --verify-ref
+        env:
+          HARNESS_REVIEWED_SHA: ${{ inputs.reviewed-sha }}
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build packages
+        run: pnpm build
+
+      - name: Publish candidates not yet on npm
+        run: node scripts/publish.mjs

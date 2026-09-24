@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "repository": "aurelienbobenrieth/harness",
   "defaultBranch": "main",
-  "publicationEnabled": false,
+  "publicationEnabled": true,
   "packages": {
     "@aurelienbbn/agentlint-plugin-core": "draft",
     "@aurelienbbn/agentlint-plugin-effect": "draft",

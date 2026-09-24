@@ -1,15 +1,12 @@
 # Consumer compatibility
 
-**9 release candidates pass as fresh registry consumers on two pinned tool profiles. Nothing is published.** Evidence for the specified consumers, not certification of every downstream project.
+**9 release candidates pass as fresh registry consumers on two pinned tool profiles. Not on npm yet.** Evidence for the specified consumers, not certification of every downstream project.
 
 ```text
 candidate  █████████   9  public release candidates, tested as registry consumers
 draft      ██████      6  private: 5 agentlint plugins + oxlint-plugin-tanstack-query
 parked     ███████     7  outside this repo: 4 Shopify theme pkgs, 2 Lit plugins, oio
 ```
-
-> [!WARNING]
-> **All publication is disabled.** See [release readiness](release-readiness.md).
 
 ## Every host has a floor and a tested ceiling
 
