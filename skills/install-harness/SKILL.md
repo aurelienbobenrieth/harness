@@ -1,6 +1,6 @@
 ---
 name: install-harness
-description: Install Harness lint, format, or conformance packages into a consumer project when the user asks for tooling setup. Not for reviews or explanations.
+description: Add Harness lint, format, conformance packages, and skills to a consumer project, matched to its actual stack and pinned to verified versions. Use when the user asks to install, set up, or adopt Harness tooling or skills in a repo. Not for reviews or explanations.
 ---
 
 # Install Harness
@@ -17,9 +17,13 @@ description: Install Harness lint, format, or conformance packages into a consum
 - Use the consumer's package manager. Keep existing ignores and rules. No whole-config replacement, overwriting initializers, or blanket-ignored agent directories.
 - Wire from documented exports; don't assume helpers, peers, or commands across tool versions.
 - Trial new policies on real source before making them blocking.
-- Skills requested → add one line to always-loaded instructions (`AGENTS.md`, `CLAUDE.md`, or equivalent): read the installed communication skill before the first reply. Other skills stay discoverable, not bootstrapped.
+- Skills requested → add to always-loaded instructions (`AGENTS.md`, `CLAUDE.md`, or equivalent) one line to read the installed communication skill before the first reply, plus a task → skill map for the installed skills (copy the shape of Harness's `AGENTS.md` Skills section). Skills stay discoverable; only the map and communication are bootstrapped.
 
 ## Verify
 
 - Run the consumer's required checks. Config/dependency failure → fix. Existing-source finding → report; never suppress to go green.
 - Report versions, config changes, results, omissions by reason.
+
+```ts
+/** @attribution https://github.com/TanStack/intent (MIT; inspiration: a task → skill map in always-loaded agent instructions) */
+```

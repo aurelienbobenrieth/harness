@@ -163,6 +163,20 @@ query-string qs
 > [!WARNING]
 > Windows: pass a native executable or `node` plus the tool's JS entrypoint. Shell shims (`.cmd`, `.bat`, `npx`, `npm`, `pnpm`, `yarn`) are rejected.
 
+<details>
+<summary>Recipe: close a Tailwind v4 theme and prove it</summary>
+
+1. Put `--*: initial` in the top-level `@theme` ([Tailwind theme docs](https://tailwindcss.com/docs/theme)) so only your tokens generate utilities, then migrate affected uses. Static utilities and arbitrary values still work: this closes the token set, not the class list.
+2. Probe stylesheet: an isolated file importing the real one and requesting allowed and forbidden classes through `@source inline(...)` ([syntax](https://tailwindcss.com/docs/detecting-classes-in-source-files)). Without it, a missing selector may only mean "never discovered".
+3. Build with the pinned local CLI as an executable plus argument array; never a downloaded floating CLI. `buildCommand` is required because core conformance has no framework default.
+4. Wire it like [the example](https://github.com/aurelienbobenrieth/harness/blob/main/examples/conformance-core/closed-design-system-probe.example.ts).
+
+For a full class allowlist, also check class construction and arbitrary values in source. A failed build or missing tool means unevaluated, never "forbidden absent". Keep probe candidates out of production source.
+
+<!-- @attribution https://tailwindcss.com/docs/theme (inspiration from official documentation; independently written guidance) -->
+
+</details>
+
 ### tsconfig-strictness
 
 **A loosened tsconfig silently degrades type-aware lint (`no-unnecessary-condition`, `strict-boolean-expressions`, `no-unsafe-*`), and no AST rule sees JSON.** Checks effective options after `extends`; messages name the file that set each value.

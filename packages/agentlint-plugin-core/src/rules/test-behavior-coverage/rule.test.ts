@@ -260,7 +260,7 @@ it("mirrors options into the binding and validates them", () => {
 it("points the judge at the testing skills", () => {
   expect(testBehaviorCoverage.standard.guidance).toMatchObject({
     refs: expect.arrayContaining([
-      { type: "skill", id: "test-strategy" },
+      { type: "skill", id: "testing" },
       { type: "skill", id: "testing" },
     ]),
   });

@@ -1,29 +1,38 @@
 ---
 name: code-review
-description: Review a diff, branch, or PR for consequential defects, missing evidence, and compatibility risks. Use when the user asks for review or independent assessment; not for ordinary implementation.
+description: Review a diff, branch, or PR for defects that change outcomes and for drift from what was asked, beyond what lint, agentlint, and tests already enforce. Use when asked to review, before marking a non-trivial PR ready, or when assessing someone else's change. Not for style preferences, or for fixing unless the task includes it.
 ---
 
 # Code Review
 
-Report defects that change outcomes; separate them from preferences and open questions.
+**Report what the gates can't catch. Every finding is verified, located, and fixable.**
 
 ## Scope
 
-- PR → compare the intended branch range, not just the working diff.
-- Inspect unfamiliar scripts before running them, especially from untrusted branches.
-- Tool-found defects still go in the review. Report unrun checks as unrun.
+- Run the repo's gates first (`check`, agentlint `check`); report their failures as-is and don't re-derive what they already cover.
+- PR → compare the intended branch range, not just the working diff. Inspect unfamiliar scripts before running them, especially from untrusted branches.
+- Unrun checks are reported as unrun.
 
-## Trace
+## Two axes
 
-- Follow changed values through parsing, auth, state updates, external calls, cleanup, outputs. Probe empty, repeated, partial-failure, cancellation, concurrency cases.
-- Check exports, dependency ranges, generated files, migrations against real consumers; green workspace builds hide broken installs.
-- Challenge abstractions only on concrete cost (duplicated ownership, hidden dependency, inconsistent errors, unreachable branch), never on length or taste.
-- Would tests catch it? Fakes can share the implementation's wrong assumption; snapshots hide interactions. See [testing](../testing/SKILL.md), [test-strategy](../test-strategy/SKILL.md).
+**Did it do what was asked?** Compare the change to the request, issue, or spec: missing behavior, unrequested behavior, silently changed contracts.
+
+**Is it correct?**
+
+- Follow changed values through parsing, auth, state updates, external calls, cleanup, outputs. Probe empty, repeated, partial-failure, cancellation, and concurrent cases.
+- Public surface: exports, dependency ranges, generated files, migrations checked against real consumers; a green workspace build hides broken installs.
+- Design: judge against [build](../build/SKILL.md)'s design rules, and only on concrete cost (a decision spread across modules, a hidden dependency, a pass-through layer, an unreachable branch), never on length or taste.
+- Tests: would they catch the bug? Oracles independent of the code, fakes that can't share its mistake: see [testing](../testing/SKILL.md).
 
 ## Findings
 
-- Falsify each via caller, invariant, or minimal repro. Drop contract-excluded hypotheticals; state blocked uncertainty.
+- Falsify each via a caller, an invariant, or a minimal repro before reporting. Blocked → say what's uncertain.
 - Format: location, trigger, consequence, fix direction. Rank by impact × likelihood; no quota.
-- Return findings only; fix only when authorized.
-- None found → state scope and gaps; never certify.
-- Recurring issue → name the rule, check, test, or skill that should own it. One finding doesn't justify a new rule.
+- Return findings; fix only when authorized. None found → state the scope inspected and its gaps, never "looks good" as certification.
+- Recurring issue → name the rule, check, or test that should own it. One finding doesn't justify a new rule.
+
+```ts
+/**
+ * @attribution https://github.com/mattpocock/skills/tree/c55ee46073ed923f86ce59a5eb3b6d895095d1b7/skills/engineering/code-review (MIT; inspiration: reviewing fidelity to the request as its own axis)
+ */
+```

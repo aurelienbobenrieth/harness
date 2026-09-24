@@ -88,7 +88,7 @@ try {
     path.join(consumer, "shopify-oxlint.json"),
   );
   await copyFile(
-    path.join(root, "skills/closed-design-system/closed-design-system-probe.example.ts"),
+    path.join(root, "examples/conformance-core/closed-design-system-probe.example.ts"),
     path.join(consumer, "closed-design-system-probe.example.ts"),
   );
   const imports = [];

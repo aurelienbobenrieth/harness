@@ -1,6 +1,6 @@
 ---
 name: retrospect
-description: Turn session evidence and user corrections into the smallest durable fix for a recurring workflow problem. Use when a retrospective is requested or friction has demonstrably repeated; never append one to a finished task.
+description: Turn a recurring mistake or correction into the smallest durable fix, and route it to the right owner (type, lint rule, agentlint rule, conformance check, test, script, skill, or doc). Use when a retrospective is requested, the user corrects the same thing twice, or friction demonstrably repeats. Not appended to every finished task.
 ---
 
 # Retrospect
@@ -9,8 +9,11 @@ description: Turn session evidence and user corrections into the smallest durabl
 - Pick the costliest issue. Name trigger → agent action → consequence → correction.
 - One isolated mistake ≠ universal rule. The user's communication style is never the defect.
 - Owner by problem:
-  - repeated deterministic violation → narrowest compiler, lint, or conformance check
-  - repeated commands, fragile verification → existing script or harness
+  - invalid state → type or schema that makes it unrepresentable
+  - repeated deterministic violation → narrowest lint rule or conformance check
+  - deterministic trigger, contextual verdict → agentlint rule (its `rule-advisor` skill authors it)
+  - behavior → test
+  - repeated commands, fragile verification → script ([toolsmith](../toolsmith/SKILL.md))
   - contextual judgment → focused skill: trigger + exception
   - missing domain decision → its canonical doc
   - conflicting process → remove or consolidate

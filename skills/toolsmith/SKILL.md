@@ -1,13 +1,13 @@
 ---
 name: toolsmith
-description: Build or improve reusable scripts, scaffolds, smoke checks, and environment doctors that replace repeated manual work or fragile verification. Not for one-off commands or throwaway probes.
+description: Build scripts, CLIs, scaffolds, smoke checks, and environment doctors that are safe to rerun, exit honestly, and never escape their target. Use when writing or changing a reusable script or tool that replaces repeated manual work or fragile verification. Not for one-off commands, or for deciding which mechanism should own a problem (see retrospect).
 ---
 
 # Toolsmith
 
 Extend an existing script, CI step, or check before adding one.
 
-- Deterministic syntax → compiler or lint rule. Manifests, generated output, layout → conformance check. Runtime or external boundary → smoke/integration test. Contextual judgment → skill or review prompt. Repeated file creation → scaffold with conflict check and preview.
+- Unsure a script is the right owner → [retrospect](../retrospect/SKILL.md) routes it. Repeated file creation → scaffold with conflict check and preview.
 - Task-only probe stays temporary; promote only with recurring value and an owner.
 - Before coding, fix inputs, targets, side effects, success evidence, failure behavior. No new orchestration layer.
 

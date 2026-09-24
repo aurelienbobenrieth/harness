@@ -66,7 +66,7 @@ flowchart LR
 - ❌ no automatic peer install, lifecycle scripts, overrides, or local archives
 - ⚠️ transitive deps follow upstream manifests: fresh-install test, not a locked replay
 
-**One profile:** 9 archives · 11 exports · licenses + READMEs · complete declarations with `skipLibCheck: false` · 7 tests · 0 skips. Every runner/check gets passing and failing input, across: all oxlint plugins in one policy, the Shopify App Home recipe, the formatter config, strict type-aware lint (real oxlint-tsgolint assignment diagnostic, clean after the fix), both conformance APIs, and the closed-design-system skill example (**API wiring only; Tailwind build not run**).
+**One profile:** 9 archives · 11 exports · licenses + READMEs · complete declarations with `skipLibCheck: false` · 7 tests · 0 skips. Every runner/check gets passing and failing input, across: all oxlint plugins in one policy, the Shopify App Home recipe, the formatter config, strict type-aware lint (real oxlint-tsgolint assignment diagnostic, clean after the fix), both conformance APIs, and the closed-design-system example (**API wiring only; Tailwind build not run**).
 
 **A green exit code isn't enough.** Commands parse Vitest's JSON report and fail on a missing test file, unexecuted passes, unfinished or unexpected skips, or any skip in a registry profile. The draft consumer allows each of its 4 named core exclusions once, in the original acceptance suite. 6 regression cases guard this.
 

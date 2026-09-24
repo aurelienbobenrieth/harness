@@ -82,5 +82,6 @@ CI runs Linux + Windows on Node 22/24 plus the declared runtime floors. A config
 | Shopify App Store / BFS coverage    | [Shopify guide](docs/shopify.md)                                                             |
 | the agent skills                    | [skills guide](docs/skills.md)                                                               |
 | to contribute                       | [CONTRIBUTING](CONTRIBUTING.md) · [SECURITY](SECURITY.md) · [CODEOWNERS](.github/CODEOWNERS) |
+| where the ideas came from           | [CREDITS](CREDITS.md)                                                                        |
 
 **Agentlint doesn't score maintainability.** It schedules the spots where a human must decide, keeps the decision with its evidence, and reopens it when that evidence or the repo's review epoch changes.

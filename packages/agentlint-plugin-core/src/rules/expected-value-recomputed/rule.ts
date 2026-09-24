@@ -166,7 +166,7 @@ export function defineExpectedValueRecomputed(options: ExpectedValueRecomputedOp
         ],
         refs: [
           { type: "skill", id: "testing" },
-          { type: "skill", id: "test-strategy" },
+          { type: "skill", id: "testing" },
           {
             type: "url",
             href: "https://testing.googleblog.com/2014/07/testing-on-toilet-dont-put-logic-in.html",

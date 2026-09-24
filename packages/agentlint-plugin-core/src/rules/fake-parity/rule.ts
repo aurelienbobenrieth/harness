@@ -156,7 +156,7 @@ export function defineFakeParity(options: FakeParityOptions = {}): StateRule {
           },
         ],
         refs: [
-          { type: "skill", id: "test-strategy" },
+          { type: "skill", id: "testing" },
           { type: "url", href: "https://martinfowler.com/bliki/ContractTest.html" },
           { type: "url", href: "https://martinfowler.com/bliki/IntegrationTest.html" },
           {

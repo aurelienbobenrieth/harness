@@ -112,7 +112,7 @@ snapshot-only     ≥ 2 tests whose only oracle is a whole-value snapshot,
                   or an inline snapshot > maxInlineSnapshotLines
 ```
 
-`toHaveBeenCalled*`, `toHaveBeenNthCalledWith`, `toHaveReturned*` and the `toBeCalled*` aliases never count as outcomes, even through a custom `outcomePattern`. The judge asks, per double, whether the mocked collaborator is an unmanaged process boundary. Choosing the double and oracle stays in the `test-strategy` and `testing` skills. Limit: measures mock/assertion density per file, not per-test coverage.
+`toHaveBeenCalled*`, `toHaveBeenNthCalledWith`, `toHaveReturned*` and the `toBeCalled*` aliases never count as outcomes, even through a custom `outcomePattern`. The judge asks, per double, whether the mocked collaborator is an unmanaged process boundary. Choosing the double and oracle stays in the `testing` skill. Limit: measures mock/assertion density per file, not per-test coverage.
 
 **expected-value-recomputed.** Test files only. Matchers: `toBe`, `toEqual`, `toStrictEqual`, `toBeCloseTo`, `toContain`, `toMatchObject`. `expected` (or the local `const` it names, inside the same test callback) is computed when it is arithmetic with a non-literal operand, a `map`/`filter`/`reduce`/`join`/`replace`/`toLowerCase`/`toFixed`/`round`… call, or a template with ≥ 2 substitutions. Reports only when the expected expression shares an identifier with the subject call's arguments, or calls something imported from the subject's own module.
 

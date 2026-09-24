@@ -1,6 +1,6 @@
 ---
 name: shopify-review
-description: Review Shopify app readiness (App Store, Built for Shopify, Polaris, copy, accessibility, integrations). Not for routine isolated edits.
+description: Review a Shopify app against App Store, Built for Shopify, Polaris, copy, accessibility, and integration requirements, choosing the right lint, conformance, and runtime evidence per surface. Use when asked to review Shopify app readiness or quality, or before an App Store submission. Not for routine isolated edits.
 ---
 
 # Shopify review

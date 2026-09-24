@@ -36,9 +36,21 @@ Autofix only when exactly one safe mechanical rewrite exists, and it is tested. 
 
 Verify: `rg "@attribution"`.
 
-## Communication
+## Skills
 
-Read `skills/communication/SKILL.md` before your first reply; it governs every reply and doc.
+Read `skills/communication/SKILL.md` before your first reply; it governs all prose. Load the matching skill before acting:
+
+```text
+open requirements, ambiguous domain terms   → align
+feature, fix, refactor, new module/export   → build (with testing)
+writing or judging tests                    → testing
+commit, history, push, PR                   → git
+review a change                             → code-review
+same correction twice, recurring friction   → retrospect
+reusable script, CLI, scaffold, doctor      → toolsmith
+Shopify app readiness                       → shopify-review
+add Harness to a project                    → install-harness
+```
 
 ## Style
 

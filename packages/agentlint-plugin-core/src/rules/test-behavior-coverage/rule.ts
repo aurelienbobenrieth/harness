@@ -120,7 +120,7 @@ export function defineTestBehaviorCoverage(options: TestBehaviorCoverageOptions 
           },
         ],
         refs: [
-          { type: "skill", id: "test-strategy" },
+          { type: "skill", id: "testing" },
           { type: "skill", id: "testing" },
           { type: "url", href: "https://enterprisecraftsmanship.com/posts/when-to-mock/" },
           {

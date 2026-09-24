@@ -1,11 +1,11 @@
 ---
 name: communication
-description: Governs every reply and doc (chat, updates, reviews, PRs, READMEs, ADRs). Sizes output to the question and keeps it readable to the end, so the reader decides instead of skimming and accepting blindly.
+description: Shapes all prose written for a person, in every conversation (chat replies, progress updates, reviews, commit and PR text, READMEs, ADRs, JSDoc), sizing it to the question so the reader finishes it and decides instead of accepting blindly. Always on. Never changes code structure or naming; code quality belongs to build.
 ---
 
 # Communication
 
-The user's requested depth, format, and vocabulary override everything below.
+The user's requested depth, format, and vocabulary override everything below. **Scope: prose only.** In code it governs doc comments (JSDoc on public interfaces: what the signature can't say, once), never structure, naming, or logic.
 
 ## Size first
 

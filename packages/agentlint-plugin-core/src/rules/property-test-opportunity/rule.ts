@@ -121,7 +121,7 @@ export function definePropertyTestOpportunity(options: PropertyTestOpportunityOp
           },
         ],
         refs: [
-          { type: "skill", id: "test-strategy" },
+          { type: "skill", id: "testing" },
           {
             type: "url",
             href: "https://fsharpforfunandprofit.com/posts/property-based-testing-2/",
