@@ -4,7 +4,8 @@
  * @attribution TanStack Query "Optimistic Updates" guide and "Concurrent Optimistic Updates in React Query" by Dominik Dorfmeister, tkdodo.eu (concept)
  */
 import type { Context, ESTree, Rule } from "@oxlint/plugins";
-import { calleeName, findProperty, hasSpread, parentOf, propertyName, resolveFunction, someNode } from "../ast.js";
+import { parentOf } from "@aurelienbbn/oxlint-kit/ast";
+import { calleeName, findProperty, hasSpread, propertyName, resolveFunction, someNode } from "../ast.js";
 import { fileImportsQuery, importedQueryName } from "../binding-support.js";
 
 const missingCancel =

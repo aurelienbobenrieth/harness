@@ -3,8 +3,15 @@
  *
  * @attribution eslint-plugin-xstate no-imperative-action by Richard Laffers (concept)
  */
-import { isSetupResult, memberPropertyName, parentOf, propertyKeyName, unwrapExpression } from "../ast.js";
-import { binding, importedName } from "../binding-support.js";
+import {
+  binding,
+  memberPropertyName,
+  parentOf,
+  propertyKeyName,
+  unwrapExpressionKeepingChain,
+} from "@aurelienbbn/oxlint-kit/ast";
+import { isSetupResult } from "../ast.js";
+import { importedName } from "../binding-support.js";
 import type { Context, ESTree, Rule } from "@oxlint/plugins";
 
 const message =
@@ -65,9 +72,9 @@ function creatorName(context: Context, callee: ESTree.Node): string | undefined 
 }
 
 function discardedCall(expression: ESTree.Node): ESTree.Node {
-  let current = unwrapExpression(expression);
+  let current = unwrapExpressionKeepingChain(expression);
   while (current.type === "AwaitExpression" || (current.type === "UnaryExpression" && current.operator === "void"))
-    current = unwrapExpression(current.argument);
+    current = unwrapExpressionKeepingChain(current.argument);
   return current;
 }
 
@@ -112,7 +119,7 @@ export const noImperativeActionCreator: Rule = {
       },
       ArrowFunctionExpression(node) {
         if (node.body.type === "BlockStatement") return;
-        const call = unwrapExpression(node.body);
+        const call = unwrapExpressionKeepingChain(node.body);
         if (call.type !== "CallExpression") return;
         const name = creatorName(context, call.callee);
         if (name === undefined || !isActionSlotValue(context, node)) return;

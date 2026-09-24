@@ -43,7 +43,7 @@ it("allows scripts by default and configured entry files", async () => {
   await expect(
     assertRuleDoesNotReport(ruleName, "Effect.runPromise(main);\n", {
       filename: "src/worker.ts",
-      ruleConfig: ["error", { allow: ["**/worker.ts"] }],
+      ruleOptions: { allow: ["**/worker.ts"] },
     }),
   ).resolves.toBeUndefined();
 });

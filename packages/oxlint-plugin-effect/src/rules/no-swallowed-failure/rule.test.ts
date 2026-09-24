@@ -1,5 +1,5 @@
 import { expect, it } from "vitest";
-import { fixCode } from "../sota-test-support.ts";
+import { fixCode } from "../test-support.ts";
 import { assertRuleDoesNotReport, assertRuleReports } from "../test-support.ts";
 
 const ruleName = "effect/no-swallowed-failure";
@@ -85,7 +85,7 @@ it("allows bare ignore inside finalizers by default and reports it when disabled
     "const resource = Effect.acquireRelease(open, (handle) => handle.close.pipe(Effect.ignore));\nconst fin = Effect.addFinalizer(() => flush.pipe(Effect.ignore));\n";
   await expect(assertRuleDoesNotReport(ruleName, code)).resolves.toBeUndefined();
   await expect(
-    assertRuleReports(ruleName, code, { ruleConfig: ["error", { allowInFinalizers: false }] }),
+    assertRuleReports(ruleName, code, { ruleOptions: { allowInFinalizers: false } }),
   ).resolves.toBeUndefined();
 });
 

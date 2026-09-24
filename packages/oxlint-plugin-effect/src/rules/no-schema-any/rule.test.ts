@@ -39,7 +39,7 @@ it("allows configured escape-hatch files", async () => {
   await expect(
     assertRuleDoesNotReport(ruleName, "const Payload = Schema.Any;\n", {
       filename: "packages/core/src/legacy/payload.ts",
-      ruleConfig: ["error", { allow: ["**/legacy/**"] }],
+      ruleOptions: { allow: ["**/legacy/**"] },
     }),
   ).resolves.toBeUndefined();
 });

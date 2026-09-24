@@ -6,7 +6,7 @@ const ruleName = "effect/no-service-dependency-parameters";
 it("reports service-named parameters", async () => {
   await expect(
     assertRuleReports(ruleName, "const run = (emailService: EmailService) => Effect.void;\n", {
-      ruleConfig: ["error", { serviceTypeNames: ["EmailService"] }],
+      ruleOptions: { serviceTypeNames: ["EmailService"] },
     }),
   ).resolves.toBeUndefined();
 });
@@ -32,7 +32,7 @@ it("reports Context.Tag.Service parameters", async () => {
 it("reports common service dependency type names", async () => {
   await expect(
     assertRuleReports(ruleName, "const run = (repo: UserRepo) => Effect.void;\n", {
-      ruleConfig: ["error", { serviceTypeNames: ["UserRepo"] }],
+      ruleOptions: { serviceTypeNames: ["UserRepo"] },
     }),
   ).resolves.toBeUndefined();
 });

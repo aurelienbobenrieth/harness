@@ -1,15 +1,8 @@
 import type { Context, ESTree, Rule } from "@oxlint/plugins";
+import { type FunctionNode, nearestFunction, optionsObject, parentOf, walk } from "@aurelienbbn/oxlint-kit/ast";
 import { effectMethod } from "../binding-support.js";
 import { getFilename, isAllowedFile, type RuleContextWithOptions } from "../runtime-support.js";
-import {
-  moduleMethod,
-  nearestFunction,
-  optionsObject,
-  parentOf,
-  stringArrayOption,
-  walk,
-  type FunctionNode,
-} from "../sota-support.js";
+import { moduleMethod, stringArrayOption } from "../sota-support.js";
 
 const detachedForks: ReadonlySet<string> = new Set(["forkDetach", "forkDaemon"]);
 const childForks: ReadonlySet<string> = new Set(["forkChild", "fork"]);

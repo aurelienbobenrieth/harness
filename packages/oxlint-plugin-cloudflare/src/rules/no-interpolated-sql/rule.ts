@@ -5,7 +5,7 @@
  * @attribution https://developers.cloudflare.com/d1/worker-api/d1-database/ (inspiration; independently implemented)
  * @attribution https://developers.cloudflare.com/durable-objects/api/sqlite-storage-api/ (inspiration; independently implemented)
  */
-import { binding, memberPropertyName, unwrapExpression } from "../ast.js";
+import { binding, memberPropertyName, unwrapExpression } from "@aurelienbbn/oxlint-kit/ast";
 import type { Context, ESTree, Rule } from "@oxlint/plugins";
 
 const message =

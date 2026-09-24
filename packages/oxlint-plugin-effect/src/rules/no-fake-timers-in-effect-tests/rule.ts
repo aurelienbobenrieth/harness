@@ -1,5 +1,5 @@
 import type { Context, ESTree, Rule } from "@oxlint/plugins";
-import { binding } from "../binding-support.js";
+import { binding } from "@aurelienbbn/oxlint-kit/ast";
 
 const message =
   "vi.{{method}} drives Vitest's fake timers, not Effect's clock: it.effect runs on TestClock. Advance virtual time with TestClock.adjust or TestClock.setTime from effect/testing.";

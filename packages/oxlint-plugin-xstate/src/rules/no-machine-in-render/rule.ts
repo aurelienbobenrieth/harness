@@ -1,14 +1,8 @@
 /**
  * Forbid creating machines and actors directly in a React component or hook body.
  */
-import {
-  type FunctionNode,
-  importsFrom,
-  isSetupResult,
-  memberPropertyName,
-  nearestFunction,
-  parentOf,
-} from "../ast.js";
+import { type FunctionNode, memberPropertyName, nearestFunction, parentOf } from "@aurelienbbn/oxlint-kit/ast";
+import { importsFrom, isSetupResult } from "../ast.js";
 import { importedName } from "../binding-support.js";
 import type { Context, ESTree, Rule } from "@oxlint/plugins";
 

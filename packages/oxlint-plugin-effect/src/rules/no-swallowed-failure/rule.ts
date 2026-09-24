@@ -1,28 +1,26 @@
 import type { Context, ESTree, Rule } from "@oxlint/plugins";
-import { effectMethod } from "../binding-support.js";
 import {
-  booleanOption,
-  ignoresFirstParameter,
+  type FunctionNode,
   isFunctionNode,
   optionsObject,
   parentOf,
-  propertyNamed,
-  unwrapExpression,
-  type FunctionNode,
-} from "../sota-support.js";
+  unwrapExpressionKeepingChain,
+} from "@aurelienbbn/oxlint-kit/ast";
+import { effectMethod } from "../binding-support.js";
+import { booleanOption, ignoresFirstParameter, propertyNamed } from "../sota-support.js";
 
 function returnedExpression(fn: FunctionNode): ESTree.Node | undefined {
   const body = fn.body;
   if (body === null) return undefined;
-  if (body.type !== "BlockStatement") return unwrapExpression(body);
+  if (body.type !== "BlockStatement") return unwrapExpressionKeepingChain(body);
   const [only, ...rest] = body.body;
   if (only?.type !== "ReturnStatement" || rest.length > 0 || only.argument === null) return undefined;
-  return unwrapExpression(only.argument);
+  return unwrapExpressionKeepingChain(only.argument);
 }
 
 function isPlaceholderValue(node: ESTree.Node | undefined): boolean {
   if (node === undefined) return true;
-  const value = unwrapExpression(node);
+  const value = unwrapExpressionKeepingChain(node);
   if (value.type === "Literal") return true;
   if (value.type === "Identifier") return value.name === "undefined";
   if (value.type === "UnaryExpression") return value.operator === "void";

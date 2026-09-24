@@ -71,6 +71,12 @@ importers:
         specifier: 2.9.1
         version: 2.9.1
 
+  internal/oxlint-kit:
+    devDependencies:
+      '@oxlint/plugins':
+        specifier: 1.83.0
+        version: 1.83.0
+
   packages/agentlint-plugin-core:
     devDependencies:
       '@aurelienbbn/agentlint':
@@ -157,6 +163,10 @@ importers:
       oxlint:
         specifier: 1.82.0
         version: 1.82.0(oxlint-tsgolint@7.0.2001)(vite-plus@0.3.2(@arethetypeswrong/core@0.18.5)(@types/node@22.20.3)(@vitest/coverage-v8@4.1.11)(jiti@2.7.0)(publint@0.3.24)(typescript@7.0.2)(yaml@2.9.1))
+    devDependencies:
+      '@aurelienbbn/oxlint-kit':
+        specifier: workspace:*
+        version: link:../../internal/oxlint-kit
 
   packages/oxlint-plugin-core:
     dependencies:
@@ -166,6 +176,10 @@ importers:
       oxlint:
         specifier: 1.82.0
         version: 1.82.0(oxlint-tsgolint@7.0.2001)(vite-plus@0.3.2(@arethetypeswrong/core@0.18.5)(@types/node@22.20.3)(@vitest/coverage-v8@4.1.11)(jiti@2.7.0)(publint@0.3.24)(typescript@7.0.2)(yaml@2.9.1))
+    devDependencies:
+      '@aurelienbbn/oxlint-kit':
+        specifier: workspace:*
+        version: link:../../internal/oxlint-kit
 
   packages/oxlint-plugin-drizzle:
     dependencies:
@@ -175,6 +189,10 @@ importers:
       oxlint:
         specifier: 1.82.0
         version: 1.82.0(oxlint-tsgolint@7.0.2001)(vite-plus@0.3.2(@arethetypeswrong/core@0.18.5)(@types/node@22.20.3)(@vitest/coverage-v8@4.1.11)(jiti@2.7.0)(publint@0.3.24)(typescript@7.0.2)(yaml@2.9.1))
+    devDependencies:
+      '@aurelienbbn/oxlint-kit':
+        specifier: workspace:*
+        version: link:../../internal/oxlint-kit
 
   packages/oxlint-plugin-effect:
     dependencies:
@@ -184,6 +202,10 @@ importers:
       oxlint:
         specifier: 1.82.0
         version: 1.82.0(oxlint-tsgolint@7.0.2001)(vite-plus@0.3.2(@arethetypeswrong/core@0.18.5)(@types/node@22.20.3)(@vitest/coverage-v8@4.1.11)(jiti@2.7.0)(publint@0.3.24)(typescript@7.0.2)(yaml@2.9.1))
+    devDependencies:
+      '@aurelienbbn/oxlint-kit':
+        specifier: workspace:*
+        version: link:../../internal/oxlint-kit
 
   packages/oxlint-plugin-shopify-app:
     dependencies:
@@ -196,6 +218,10 @@ importers:
       oxlint:
         specifier: 1.82.0
         version: 1.82.0(oxlint-tsgolint@7.0.2001)(vite-plus@0.3.2(@arethetypeswrong/core@0.18.5)(@types/node@22.20.3)(@vitest/coverage-v8@4.1.11)(jiti@2.7.0)(publint@0.3.24)(typescript@7.0.2)(yaml@2.9.1))
+    devDependencies:
+      '@aurelienbbn/oxlint-kit':
+        specifier: workspace:*
+        version: link:../../internal/oxlint-kit
 
   packages/oxlint-plugin-tanstack-query:
     dependencies:
@@ -205,6 +231,10 @@ importers:
       oxlint:
         specifier: 1.82.0
         version: 1.82.0(oxlint-tsgolint@7.0.2001)(vite-plus@0.3.2(@arethetypeswrong/core@0.18.5)(@types/node@22.20.3)(@vitest/coverage-v8@4.1.11)(jiti@2.7.0)(publint@0.3.24)(typescript@7.0.2)(yaml@2.9.1))
+    devDependencies:
+      '@aurelienbbn/oxlint-kit':
+        specifier: workspace:*
+        version: link:../../internal/oxlint-kit
 
   packages/oxlint-plugin-type-evidence:
     dependencies:
@@ -214,6 +244,10 @@ importers:
       oxlint:
         specifier: 1.82.0
         version: 1.82.0(oxlint-tsgolint@7.0.2001)(vite-plus@0.3.2(@arethetypeswrong/core@0.18.5)(@types/node@22.20.3)(@vitest/coverage-v8@4.1.11)(jiti@2.7.0)(publint@0.3.24)(typescript@7.0.2)(yaml@2.9.1))
+    devDependencies:
+      '@aurelienbbn/oxlint-kit':
+        specifier: workspace:*
+        version: link:../../internal/oxlint-kit
 
   packages/oxlint-plugin-xstate:
     dependencies:
@@ -223,6 +257,10 @@ importers:
       oxlint:
         specifier: 1.82.0
         version: 1.82.0(oxlint-tsgolint@7.0.2001)(vite-plus@0.3.2(@arethetypeswrong/core@0.18.5)(@types/node@22.20.3)(@vitest/coverage-v8@4.1.11)(jiti@2.7.0)(publint@0.3.24)(typescript@7.0.2)(yaml@2.9.1))
+    devDependencies:
+      '@aurelienbbn/oxlint-kit':
+        specifier: workspace:*
+        version: link:../../internal/oxlint-kit
 
 packages:
 

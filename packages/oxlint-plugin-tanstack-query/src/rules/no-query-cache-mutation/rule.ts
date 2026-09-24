@@ -4,15 +4,8 @@
  * @attribution TanStack Query "Updates from Mutation Responses" guide, Immutability section (concept)
  */
 import type { Context, ESTree, Rule, Variable } from "@oxlint/plugins";
-import {
-  calleeName,
-  findProperty,
-  type FunctionNode,
-  isFunctionNode,
-  parentOf,
-  propertyName,
-  unwrapExpression,
-} from "../ast.js";
+import { type FunctionNode, isFunctionNode, parentOf, unwrapExpressionKeepingChain } from "@aurelienbbn/oxlint-kit/ast";
+import { calleeName, findProperty, propertyName } from "../ast.js";
 import { fileImportsQuery, importedQueryName } from "../binding-support.js";
 
 const message =
@@ -125,7 +118,7 @@ export const noQueryCacheMutation: Rule = {
         if (cacheWriters.has(name)) {
           const updater = node.arguments[1];
           if (updater === undefined || updater.type === "SpreadElement") return;
-          const fn = unwrapExpression(updater);
+          const fn = unwrapExpressionKeepingChain(updater);
           if (isFunctionNode(fn)) reportMutations(context, firstParameterVariable(context, fn));
           return;
         }
@@ -141,7 +134,7 @@ export const noQueryCacheMutation: Rule = {
       },
       Property(node) {
         if (propertyName(node) !== "select" || !fileImportsQuery(context)) return;
-        const fn = unwrapExpression(node.value);
+        const fn = unwrapExpressionKeepingChain(node.value);
         if (!isFunctionNode(fn) || !isQuerySelect(context, node)) return;
         reportMutations(context, firstParameterVariable(context, fn));
       },

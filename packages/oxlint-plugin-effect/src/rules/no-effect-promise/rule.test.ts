@@ -44,13 +44,13 @@ it("allows configured files", async () => {
   await expect(
     assertRuleDoesNotReport(ruleName, "const res = Effect.promise(() => fetch(url));\n", {
       filename: "src/legacy/adapter.ts",
-      ruleConfig: ["error", { allow: ["**/legacy/**"] }],
+      ruleOptions: { allow: ["**/legacy/**"] },
     }),
   ).resolves.toBeUndefined();
 });
 
 it("narrows to visibly rejectable thunks in rejectable-only mode", async () => {
-  const config = { ruleConfig: ["error", { mode: "rejectable-only" }] } as const;
+  const config = { ruleOptions: { mode: "rejectable-only" } } as const;
   await expect(
     assertRuleReports(ruleName, "const body = Effect.promise(() => response.json());\n", config),
   ).resolves.toBeUndefined();

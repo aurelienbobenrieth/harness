@@ -1,7 +1,8 @@
 import type { ESTree, Rule } from "@oxlint/plugins";
+import { isFunctionNode, optionsObject, parentOf } from "@aurelienbbn/oxlint-kit/ast";
 import { effectMethod } from "../binding-support.js";
 import { getFilename, isAllowedFile, type RuleContextWithOptions } from "../runtime-support.js";
-import { isFunctionNode, optionsObject, parentOf, stringArrayOption } from "../sota-support.js";
+import { stringArrayOption } from "../sota-support.js";
 
 const message =
   "Write this test with it.effect from @effect/vitest and yield the program instead of calling Effect.{{method}}: it.effect injects TestClock and TestContext, closes scopes, and renders the failure Cause.";

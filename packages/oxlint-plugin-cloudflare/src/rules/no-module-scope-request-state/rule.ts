@@ -7,13 +7,12 @@
  */
 import {
   binding,
-  enclosingClass,
   importedNameFrom,
-  isWorkerModule,
   memberPropertyName,
   nearestFunction,
   unwrapExpression,
-} from "../ast.js";
+} from "@aurelienbbn/oxlint-kit/ast";
+import { enclosingClass, isWorkerModule } from "../ast.js";
 import type { Context, ESTree, Rule } from "@oxlint/plugins";
 
 const clientMessage =

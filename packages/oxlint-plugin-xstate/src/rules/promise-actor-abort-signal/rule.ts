@@ -2,14 +2,15 @@
  * Require `fromPromise` actors that `fetch` a read to forward the actor's abort signal.
  */
 import {
-  findProperty,
+  binding,
   isFunctionNode,
   memberPropertyName,
   stringLiteralValue,
-  unwrapExpression,
+  unwrapExpressionKeepingChain,
   walk,
-} from "../ast.js";
-import { binding, importedName } from "../binding-support.js";
+} from "@aurelienbbn/oxlint-kit/ast";
+import { findProperty } from "../ast.js";
+import { importedName } from "../binding-support.js";
 import type { Context, ESTree, Rule } from "@oxlint/plugins";
 
 const message =
@@ -35,12 +36,12 @@ function isGlobalFetch(context: Context, callee: ESTree.Node): boolean {
 function isAbortableRead(call: ESTree.CallExpression): boolean {
   const init = call.arguments[1];
   if (init === undefined) return true;
-  const options = unwrapExpression(init);
+  const options = unwrapExpressionKeepingChain(init);
   if (options.type !== "ObjectExpression") return false;
   if (options.properties.some((property) => property.type !== "Property")) return false;
   const method = findProperty(options, "method");
   if (method === undefined) return true;
-  const verb = stringLiteralValue(unwrapExpression(method.value))?.toUpperCase();
+  const verb = stringLiteralValue(unwrapExpressionKeepingChain(method.value))?.toUpperCase();
   return verb === "GET" || verb === "HEAD";
 }
 
@@ -61,7 +62,7 @@ export const promiseActorAbortSignal: Rule = {
         if (importedName(context, node.callee) !== "fromPromise") return;
         const first = node.arguments[0];
         if (first === undefined) return;
-        const logic = unwrapExpression(first);
+        const logic = unwrapExpressionKeepingChain(first);
         if (!isFunctionNode(logic)) return;
         const reads: ESTree.CallExpression[] = [];
         let usesSignal = false;

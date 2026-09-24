@@ -4,7 +4,8 @@
   "private": true,
   "description": "Shared quality tooling for Aurelien projects.",
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "internal/*"
   ],
   "type": "module",
   "scripts": {

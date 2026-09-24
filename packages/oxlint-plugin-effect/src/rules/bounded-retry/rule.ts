@@ -1,6 +1,7 @@
 import type { Context, ESTree, Rule } from "@oxlint/plugins";
-import { binding, effectMethod } from "../binding-support.js";
-import { moduleMethod, propertyNamed, unwrapExpression } from "../sota-support.js";
+import { binding, unwrapExpressionKeepingChain } from "@aurelienbbn/oxlint-kit/ast";
+import { effectMethod } from "../binding-support.js";
+import { moduleMethod, propertyNamed } from "../sota-support.js";
 
 const message =
   "Bound this retry: add Schedule.recurs(n), Schedule.upTo/during, a `times` option, or a `while`/`until` predicate so a permanently failing call cannot retry forever.";
@@ -36,7 +37,7 @@ function constInitializer(context: Context, node: ESTree.Node & { readonly name:
 }
 
 function inspect(context: Context, input: ESTree.Node, evidence: Evidence, seen: Set<ESTree.Node>): void {
-  const node = unwrapExpression(input);
+  const node = unwrapExpressionKeepingChain(input);
   if (seen.has(node)) return;
   seen.add(node);
 
@@ -81,8 +82,9 @@ function inspect(context: Context, input: ESTree.Node, evidence: Evidence, seen:
 }
 
 function isUnboundedPolicy(context: Context, policy: ESTree.Node): boolean {
-  let schedule = unwrapExpression(policy);
-  if (schedule.type === "Identifier") schedule = unwrapExpression(constInitializer(context, schedule) ?? schedule);
+  let schedule = unwrapExpressionKeepingChain(policy);
+  if (schedule.type === "Identifier")
+    schedule = unwrapExpressionKeepingChain(constInitializer(context, schedule) ?? schedule);
   if (schedule.type === "ArrowFunctionExpression" || schedule.type === "FunctionExpression") return false;
 
   if (schedule.type === "ObjectExpression") {

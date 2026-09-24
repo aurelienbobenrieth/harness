@@ -1,7 +1,8 @@
 import type { Context, ESTree, Rule } from "@oxlint/plugins";
+import { optionsObject, parentOf, unwrapExpressionKeepingChain } from "@aurelienbbn/oxlint-kit/ast";
 import { effectMethod } from "../binding-support.js";
 import { defaultAllow, getFilename, isAllowedFile, type RuleContextWithOptions } from "../runtime-support.js";
-import { optionsObject, parentOf, stringArrayOption, unwrapExpression } from "../sota-support.js";
+import { stringArrayOption } from "../sota-support.js";
 
 const message =
   "Launch the process with NodeRuntime.runMain or BunRuntime.runMain instead of a top-level Effect.{{method}}: runMain interrupts fibers on SIGINT/SIGTERM, runs finalizers, and sets the exit code.";
@@ -16,12 +17,13 @@ function memberName(node: ESTree.Node): string | undefined {
 }
 
 function launchedMethod(context: Context, input: ESTree.Node): string | undefined {
-  let node = unwrapExpression(input);
+  let node = unwrapExpressionKeepingChain(input);
   for (;;) {
-    if (node.type === "AwaitExpression") node = unwrapExpression(node.argument);
-    else if (node.type === "UnaryExpression" && node.operator === "void") node = unwrapExpression(node.argument);
+    if (node.type === "AwaitExpression") node = unwrapExpressionKeepingChain(node.argument);
+    else if (node.type === "UnaryExpression" && node.operator === "void")
+      node = unwrapExpressionKeepingChain(node.argument);
     else if (node.type === "CallExpression" && promiseChainMethods.has(memberName(node.callee) ?? "")) {
-      node = unwrapExpression((node.callee as ESTree.MemberExpression).object);
+      node = unwrapExpressionKeepingChain((node.callee as ESTree.MemberExpression).object);
     } else break;
   }
   if (node.type !== "CallExpression") return undefined;

@@ -1,5 +1,5 @@
 import { expect, it } from "vitest";
-import { fixCode } from "../sota-test-support.ts";
+import { fixCode } from "../test-support.ts";
 import { assertRuleDoesNotReport, assertRuleReports } from "../test-support.ts";
 
 const ruleName = "effect/require-redacted-secret-config";
@@ -51,7 +51,7 @@ it("allows secret-looking names that describe metadata, dynamic names and other 
 it("honours a custom secret pattern", async () => {
   await expect(
     assertRuleReports(ruleName, 'const pepper = Config.String("HASH_PEPPER");\n', {
-      ruleConfig: ["error", { secretPattern: "PEPPER" }],
+      ruleOptions: { secretPattern: "PEPPER" },
     }),
   ).resolves.toBeUndefined();
 });

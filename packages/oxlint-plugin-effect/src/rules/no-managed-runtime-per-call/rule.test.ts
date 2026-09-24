@@ -45,7 +45,7 @@ it("reports in test files once the allow list is emptied", async () => {
     assertRuleReports(
       ruleName,
       'import { ManagedRuntime } from "effect";\nbeforeAll(() => { runtime = ManagedRuntime.make(TestLive); });\n',
-      { filename: "repo.test.ts", ruleConfig: ["error", { allow: [] }] },
+      { filename: "repo.test.ts", ruleOptions: { allow: [] } },
     ),
   ).resolves.toBeUndefined();
 });

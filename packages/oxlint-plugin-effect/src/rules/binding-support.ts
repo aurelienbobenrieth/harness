@@ -1,14 +1,5 @@
-import type { Context, ESTree, Scope, Variable } from "@oxlint/plugins";
-
-export function binding(context: Context, node: ESTree.Node, name: string): Variable | undefined {
-  let scope: Scope | null = context.sourceCode.getScope(node);
-  while (scope !== null) {
-    const variable = scope.set.get(name);
-    if (variable !== undefined) return variable;
-    scope = scope.upper;
-  }
-  return undefined;
-}
+import { binding } from "@aurelienbbn/oxlint-kit/ast";
+import type { Context, ESTree } from "@oxlint/plugins";
 
 /**
  * Recognize a root Effect module (`Effect`, `Layer`, `Schema`...) through its import and aliases without matching

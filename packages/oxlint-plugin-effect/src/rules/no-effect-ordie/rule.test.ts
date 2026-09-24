@@ -21,7 +21,7 @@ it("allows configured files", async () => {
   await expect(
     assertRuleDoesNotReport(ruleName, "const program = Effect.orDie(loadUser);\n", {
       filename: "test-fixtures/defects.ts",
-      ruleConfig: ["error", { allow: ["**/test-fixtures/**"] }],
+      ruleOptions: { allow: ["**/test-fixtures/**"] },
     }),
   ).resolves.toBeUndefined();
 });
@@ -29,7 +29,7 @@ it("allows configured files", async () => {
 it("allows configured call names", async () => {
   await expect(
     assertRuleDoesNotReport(ruleName, "const program = Effect.orDie(loadUser);\n", {
-      ruleConfig: ["error", { allowedCalls: ["orDie"] }],
+      ruleOptions: { allowedCalls: ["orDie"] },
     }),
   ).resolves.toBeUndefined();
 });
@@ -86,7 +86,7 @@ it("allows Effect.catch handlers that do more than die", async () => {
 it("allows configured Layer.orDie calls", async () => {
   await expect(
     assertRuleDoesNotReport(ruleName, "const SafeLive = Layer.orDie(DatabaseLive);\n", {
-      ruleConfig: ["error", { allowedCalls: ["Layer.orDie"] }],
+      ruleOptions: { allowedCalls: ["Layer.orDie"] },
     }),
   ).resolves.toBeUndefined();
 });

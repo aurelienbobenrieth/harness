@@ -2,17 +2,16 @@
  * Require invoked and spawned actors to be referenced by their `setup({ actors })` key.
  */
 import {
-  findProperty,
-  importsFrom,
+  binding,
   isFunctionNode,
-  isInsideMachineConfig,
   memberPropertyName,
   parentOf,
   propertyKeyName,
   stringLiteralValue,
-  unwrapExpression,
-} from "../ast.js";
-import { binding, importedName } from "../binding-support.js";
+  unwrapExpressionKeepingChain,
+} from "@aurelienbbn/oxlint-kit/ast";
+import { findProperty, importsFrom, isInsideMachineConfig } from "../ast.js";
+import { importedName } from "../binding-support.js";
 import type { Context, ESTree, Rule } from "@oxlint/plugins";
 
 const actorMessage =
@@ -36,7 +35,11 @@ function isStringConstant(context: Context, node: ESTree.Node): boolean {
     definitions.every((definition) => {
       if (definition.node.type !== "VariableDeclarator") return false;
       const initial = definition.node.init;
-      return initial !== null && initial !== undefined && stringLiteralValue(unwrapExpression(initial)) !== undefined;
+      return (
+        initial !== null &&
+        initial !== undefined &&
+        stringLiteralValue(unwrapExpressionKeepingChain(initial)) !== undefined
+      );
     })
   );
 }
@@ -44,7 +47,7 @@ function isStringConstant(context: Context, node: ESTree.Node): boolean {
 /** Actor logic written inline: a call, a function, or an identifier that is not a string constant. */
 function inlineLogic(context: Context, node: ESTree.Node | undefined): ESTree.Node | undefined {
   if (node === undefined || node.type === "SpreadElement") return undefined;
-  const value = unwrapExpression(node);
+  const value = unwrapExpressionKeepingChain(node);
   if (value.type === "CallExpression" || value.type === "NewExpression" || isFunctionNode(value)) return value;
   if (value.type === "Identifier" && value.name !== "undefined" && !isStringConstant(context, value)) return value;
   return undefined;
@@ -94,17 +97,17 @@ export const namedActorSrc: Rule = {
         if (!enabled || parentOf(node)?.type !== "ObjectExpression") return;
         const key = propertyKeyName(node);
         if (key === "guard") {
-          if (!option(context, "guards") || !isFunctionNode(unwrapExpression(node.value))) return;
+          if (!option(context, "guards") || !isFunctionNode(unwrapExpressionKeepingChain(node.value))) return;
           if (!isInsideMachineConfig(context, node)) return;
           context.report({ node: node.value, messageId: "namedGuard" });
           return;
         }
         if (key !== "invoke" || !isInsideMachineConfig(context, node)) return;
-        const value = unwrapExpression(node.value);
+        const value = unwrapExpressionKeepingChain(node.value);
         const invocations = value.type === "ArrayExpression" ? value.elements : [value];
         for (const invocation of invocations) {
           if (invocation === null) continue;
-          const source = findProperty(unwrapExpression(invocation), "src");
+          const source = findProperty(unwrapExpressionKeepingChain(invocation), "src");
           const inline = inlineLogic(context, source?.value);
           if (inline !== undefined) context.report({ node: inline, messageId: "namedActorSrc" });
         }

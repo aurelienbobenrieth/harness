@@ -4,7 +4,14 @@
  * @attribution "React Query FAQs" by Dominik Dorfmeister, tkdodo.eu (concept)
  */
 import type { ESTree, Rule } from "@oxlint/plugins";
-import { type FunctionNode, isFunctionNode, parentOf, rethrows, unwrapExpression, walk, walkOwnBody } from "../ast.js";
+import {
+  type FunctionNode,
+  isFunctionNode,
+  parentOf,
+  unwrapExpressionKeepingChain,
+  walk,
+} from "@aurelienbbn/oxlint-kit/ast";
+import { rethrows, walkOwnBody } from "../ast.js";
 import { queryAndMutationFunctionNames, queryFunction } from "../query-function.js";
 
 const swallowedCatch =
@@ -67,7 +74,7 @@ function swallowingCatchCall(node: ESTree.Node): boolean {
     return false;
   const handler = node.arguments[0];
   if (handler === undefined || handler.type === "SpreadElement") return false;
-  const fn = unwrapExpression(handler);
+  const fn = unwrapExpressionKeepingChain(handler);
   if (!isFunctionNode(fn) || fn.body === null) return false;
   return !rethrows(fn.body) && feedsResult(node);
 }

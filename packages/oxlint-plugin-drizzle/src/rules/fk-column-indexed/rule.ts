@@ -12,7 +12,7 @@ import {
   memberPropertyName,
   propertyKeyName,
   unwrapExpression,
-} from "../ast.js";
+} from "@aurelienbbn/oxlint-kit/ast";
 import type { Context, ESTree, Rule } from "@oxlint/plugins";
 
 const message =

@@ -21,6 +21,8 @@ Release preparation needs all of the above except `fmt` and `catalog`. **Never s
 
 In the narrowest reusable package: implementation · registration · fires + stays-silent tests · README trigger · changeset. Autofix: exactly one safe mechanical rewrite, tested. Flags existing valid code: migration guidance + the right version bump. **Prefer a test or check over another `AGENTS.md` instruction.**
 
+Oxlint rules share AST helpers (`@aurelienbbn/oxlint-kit/ast`) and the rule test harness (`@aurelienbbn/oxlint-kit/testing`) from `internal/oxlint-kit`: a private devDependency that tsdown bundles into each plugin, never a runtime dependency.
+
 ## Re-implement, never copy
 
 No licensed implementation or prose. Add a greppable JSDoc `@attribution <source> (<license/inspiration>)`, name the concept in the package README, and raise ambiguous provenance **before** it lands.

@@ -1,14 +1,14 @@
 import type { Context, ESTree, Rule } from "@oxlint/plugins";
-import { binding, effectMethod } from "../binding-support.js";
 import {
+  binding,
+  type FunctionNode,
   isFunctionNode,
   optionsObject,
-  propertyNamed,
-  stringArrayOption,
-  unwrapExpression,
+  unwrapExpressionKeepingChain,
   walk,
-  type FunctionNode,
-} from "../sota-support.js";
+} from "@aurelienbbn/oxlint-kit/ast";
+import { effectMethod } from "../binding-support.js";
+import { propertyNamed, stringArrayOption } from "../sota-support.js";
 
 const defaultAbortableCalls: readonly string[] = ["fetch"];
 
@@ -102,7 +102,7 @@ export const requireAbortSignal: Rule = {
         const simple =
           thunk.type === "ArrowFunctionExpression" &&
           body !== null &&
-          unwrapExpression(body) === call &&
+          unwrapExpressionKeepingChain(body) === call &&
           parameterList >= 0 &&
           call.arguments.length >= 1 &&
           call.arguments.length <= 2 &&

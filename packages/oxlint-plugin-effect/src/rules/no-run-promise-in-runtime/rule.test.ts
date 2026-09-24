@@ -31,7 +31,7 @@ it("allows configured runtime boundaries", async () => {
   await expect(
     assertRuleDoesNotReport(ruleName, "Effect.runPromise(program);\n", {
       filename: "apps/backend/src/main.ts",
-      ruleConfig: ["error", { allow: ["**/src/main.ts"] }],
+      ruleOptions: { allow: ["**/src/main.ts"] },
     }),
   ).resolves.toBeUndefined();
 });

@@ -5,17 +5,14 @@
  * @attribution https://developers.cloudflare.com/workflows/build/rules-of-workflows/ (inspiration; independently implemented)
  */
 import {
-  enclosingClass,
-  extendsWorkersClass,
+  type FunctionNode,
   isFunctionNode,
-  isNondeterministicCall,
   memberPropertyName,
-  methodOf,
   parentOf,
   propertyKeyName,
   unwrapExpression,
-  type FunctionNode,
-} from "../ast.js";
+} from "@aurelienbbn/oxlint-kit/ast";
+import { enclosingClass, extendsWorkersClass, isNondeterministicCall, methodOf } from "../ast.js";
 import type { Context, ESTree, Rule } from "@oxlint/plugins";
 
 const nameMessage =

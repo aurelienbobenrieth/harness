@@ -1,7 +1,8 @@
 /**
  * Prefer `sendTo` with an explicit actor ref over `sendParent`.
  */
-import { importsFrom, memberPropertyName } from "../ast.js";
+import { memberPropertyName } from "@aurelienbbn/oxlint-kit/ast";
+import { importsFrom } from "../ast.js";
 import { importedName } from "../binding-support.js";
 import type { Rule } from "@oxlint/plugins";
 

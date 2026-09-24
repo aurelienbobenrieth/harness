@@ -4,14 +4,12 @@
  * @attribution eslint-plugin-xstate no-infinite-loop by Richard Laffers (concept)
  */
 import {
-  findProperty,
-  importsFrom,
-  isInsideMachineConfig,
   parentOf,
   propertyKeyName,
   stringLiteralValue,
-  unwrapExpression,
-} from "../ast.js";
+  unwrapExpressionKeepingChain,
+} from "@aurelienbbn/oxlint-kit/ast";
+import { findProperty, importsFrom, isInsideMachineConfig } from "../ast.js";
 import type { ESTree, Rule } from "@oxlint/plugins";
 
 const unreachableMessage =
@@ -35,7 +33,7 @@ const dynamicTarget = "\0dynamic";
 /** Undefined when the element is not statically a transition (spread, identifier, call...). */
 function branch(element: ESTree.Node | null): Branch | undefined {
   if (element === null) return undefined;
-  const node = unwrapExpression(element);
+  const node = unwrapExpressionKeepingChain(element);
   const shorthandTarget = stringLiteralValue(node);
   if (shorthandTarget !== undefined) return { node, guarded: false, target: shorthandTarget };
   if (node.type !== "ObjectExpression") return undefined;
@@ -44,7 +42,10 @@ function branch(element: ESTree.Node | null): Branch | undefined {
   return {
     node,
     guarded: findProperty(node, "guard") !== undefined,
-    target: target === undefined ? undefined : (stringLiteralValue(unwrapExpression(target.value)) ?? dynamicTarget),
+    target:
+      target === undefined
+        ? undefined
+        : (stringLiteralValue(unwrapExpressionKeepingChain(target.value)) ?? dynamicTarget),
   };
 }
 
@@ -102,11 +103,11 @@ export const noUnreachableTransition: Rule = {
         if (!enabled || parentOf(node)?.type !== "ObjectExpression") return;
         const key = propertyKeyName(node);
         if (key === undefined) return;
-        const value = unwrapExpression(node.value);
+        const value = unwrapExpressionKeepingChain(node.value);
         if (transitionMaps.has(key)) {
           if (value.type !== "ObjectExpression" || !isInsideMachineConfig(context, node)) return;
           for (const entry of value.properties) {
-            if (entry.type === "Property") checkOrder(unwrapExpression(entry.value));
+            if (entry.type === "Property") checkOrder(unwrapExpressionKeepingChain(entry.value));
           }
           return;
         }

@@ -1,6 +1,6 @@
 import type { Context, ESTree, Rule } from "@oxlint/plugins";
-import { binding, effectMethod, moduleMethod } from "../binding-support.js";
-import { unwrapExpression } from "../sota-support.js";
+import { binding, unwrapExpressionKeepingChain } from "@aurelienbbn/oxlint-kit/ast";
+import { effectMethod, moduleMethod } from "../binding-support.js";
 
 const message =
   "Span names must stay low-cardinality: this name is built from runtime values, so every distinct value becomes a separate span name in the tracing backend. Use a fixed name and put the values in the span attributes.";
@@ -23,7 +23,7 @@ function nameArguments(context: Context, node: ESTree.CallExpression): readonly 
 }
 
 function isStaticString(context: Context, node: ESTree.Node, seen: Set<ESTree.Node> = new Set()): boolean {
-  const value = unwrapExpression(node);
+  const value = unwrapExpressionKeepingChain(node);
   if (seen.has(value)) return false;
   seen.add(value);
   if (value.type === "Literal") return typeof value.value === "string";
@@ -39,11 +39,11 @@ function isStaticString(context: Context, node: ESTree.Node, seen: Set<ESTree.No
 
 /** A string built at runtime: a template with interpolations or a `+` concatenation involving a string. */
 function isComposedString(node: ESTree.Node): boolean {
-  const value = unwrapExpression(node);
+  const value = unwrapExpressionKeepingChain(node);
   if (value.type === "TemplateLiteral") return value.expressions.length > 0;
   if (value.type !== "BinaryExpression" || value.operator !== "+") return false;
   return [value.left, value.right].some((side) => {
-    const operand = unwrapExpression(side);
+    const operand = unwrapExpressionKeepingChain(side);
     return (
       (operand.type === "Literal" && typeof operand.value === "string") ||
       operand.type === "TemplateLiteral" ||

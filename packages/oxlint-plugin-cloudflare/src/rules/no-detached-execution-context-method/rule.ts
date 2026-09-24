@@ -4,7 +4,7 @@
  *
  * @attribution https://developers.cloudflare.com/workers/best-practices/workers-best-practices/ (inspiration; independently implemented)
  */
-import { parentOf, propertyKeyName, unwrapExpression } from "../ast.js";
+import { parentOf, propertyKeyName, unwrapExpression } from "@aurelienbbn/oxlint-kit/ast";
 import type { ESTree, Rule } from "@oxlint/plugins";
 
 const message =

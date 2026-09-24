@@ -1,5 +1,6 @@
 import type { Context, ESTree } from "@oxlint/plugins";
-import { type FunctionNode, parentOf, propertyName, resolveFunction } from "./ast.js";
+import { type FunctionNode, parentOf } from "@aurelienbbn/oxlint-kit/ast";
+import { propertyName, resolveFunction } from "./ast.js";
 import { fileImportsQuery } from "./binding-support.js";
 
 /**

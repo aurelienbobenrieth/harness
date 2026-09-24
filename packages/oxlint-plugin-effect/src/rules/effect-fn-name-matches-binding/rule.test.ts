@@ -1,5 +1,5 @@
 import { expect, it } from "vitest";
-import { fixCode } from "../sota-test-support.ts";
+import { fixCode } from "../test-support.ts";
 import { assertRuleDoesNotReport, assertRuleReports } from "../test-support.ts";
 
 const ruleName = "effect/effect-fn-name-matches-binding";
@@ -54,7 +54,7 @@ it("skips inline, computed, dynamic-name and non-Effect calls", async () => {
 it("honours ignorePattern for deliberate aliases", async () => {
   await expect(
     assertRuleDoesNotReport(ruleName, 'export const handler = Effect.fn("Http.createTodo")(function* () {});\n', {
-      ruleConfig: ["error", { ignorePattern: "^Http\\." }],
+      ruleOptions: { ignorePattern: "^Http\\." },
     }),
   ).resolves.toBeUndefined();
 });

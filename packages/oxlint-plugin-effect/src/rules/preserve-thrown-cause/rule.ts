@@ -1,6 +1,7 @@
 import type { Rule } from "@oxlint/plugins";
+import { isFunctionNode } from "@aurelienbbn/oxlint-kit/ast";
 import { effectMethod } from "../binding-support.js";
-import { ignoresFirstParameter, isFunctionNode, propertyNamed } from "../sota-support.js";
+import { ignoresFirstParameter, propertyNamed } from "../sota-support.js";
 
 const message =
   "Keep the thrown value: accept the catch parameter and store it on the typed error (for example as a cause field) so the original failure and stack survive.";

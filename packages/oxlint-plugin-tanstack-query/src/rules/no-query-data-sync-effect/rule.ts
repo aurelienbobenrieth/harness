@@ -4,8 +4,7 @@
  * @attribution "Breaking React Query's API on purpose" and "React Query and Forms" by Dominik Dorfmeister, tkdodo.eu (concept)
  */
 import type { Context, ESTree, Rule } from "@oxlint/plugins";
-import { isFunctionNode, unwrapExpression, walk } from "../ast.js";
-import { binding } from "../binding-support.js";
+import { binding, isFunctionNode, unwrapExpressionKeepingChain, walk } from "@aurelienbbn/oxlint-kit/ast";
 import { isReactHook, referencesQueryData } from "../query-data-support.js";
 
 const message =
@@ -19,7 +18,7 @@ function isStateSetter(context: Context, callee: ESTree.Node): boolean {
     const declarator = definition.node;
     if (declarator.type !== "VariableDeclarator" || declarator.init === null) return false;
     if (declarator.id.type !== "ArrayPattern" || declarator.id.elements[1] !== definition.name) return false;
-    const call = unwrapExpression(declarator.init);
+    const call = unwrapExpressionKeepingChain(declarator.init);
     return call.type === "CallExpression" && isReactHook(context, call.callee, "useState");
   });
 }
@@ -39,7 +38,7 @@ export const noQueryDataSyncEffect: Rule = {
       CallExpression(node) {
         const callback = node.arguments[0];
         if (callback === undefined || callback.type === "SpreadElement") return;
-        const effect = unwrapExpression(callback);
+        const effect = unwrapExpressionKeepingChain(callback);
         if (!isFunctionNode(effect) || effect.body === null) return;
         if (!effectHooks.some((hook) => isReactHook(context, node.callee, hook))) return;
         walk(effect.body, (candidate) => {

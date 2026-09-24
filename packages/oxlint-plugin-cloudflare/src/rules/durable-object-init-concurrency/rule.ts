@@ -5,17 +5,14 @@
  * @attribution https://developers.cloudflare.com/durable-objects/best-practices/rules-of-durable-objects/ (inspiration; independently implemented)
  */
 import {
-  enclosingClass,
-  extendsWorkersClass,
   isFunctionNode,
-  isShadowed,
   memberPropertyName,
-  methodOf,
   parentOf,
   propertyKeyName,
   unwrapExpression,
   walk,
-} from "../ast.js";
+} from "@aurelienbbn/oxlint-kit/ast";
+import { enclosingClass, extendsWorkersClass, isShadowed, methodOf } from "../ast.js";
 import type { Context, ESTree, Rule } from "@oxlint/plugins";
 
 const unguardedMessage =

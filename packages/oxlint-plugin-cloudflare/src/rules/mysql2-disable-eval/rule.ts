@@ -6,12 +6,12 @@
  */
 import {
   importedNameFrom,
-  isWorkerModule,
   memberPropertyName,
   propertyKeyName,
   unwrapExpression,
   walk,
-} from "../ast.js";
+} from "@aurelienbbn/oxlint-kit/ast";
+import { isWorkerModule } from "../ast.js";
 import type { Context, ESTree, Rule } from "@oxlint/plugins";
 
 const missingMessage =

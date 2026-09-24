@@ -1,5 +1,6 @@
 import type { Rule } from "@oxlint/plugins";
-import { moduleMethod, optionsObject, stringLiteralValue } from "../sota-support.js";
+import { optionsObject, stringLiteralValue } from "@aurelienbbn/oxlint-kit/ast";
+import { moduleMethod } from "../sota-support.js";
 
 const plainStringConstructors: ReadonlySet<string> = new Set(["String", "NonEmptyString", "string", "nonEmptyString"]);
 

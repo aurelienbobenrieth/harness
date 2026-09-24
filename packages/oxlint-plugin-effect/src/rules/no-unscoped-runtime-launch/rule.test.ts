@@ -23,7 +23,7 @@ it("allows configured runtime boundary files", async () => {
   await expect(
     assertRuleDoesNotReport(ruleName, "Layer.launch(AppLayer);\n", {
       filename: "src/main.ts",
-      ruleConfig: ["error", { allow: ["**/src/main.ts"] }],
+      ruleOptions: { allow: ["**/src/main.ts"] },
     }),
   ).resolves.toBeUndefined();
 });

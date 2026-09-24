@@ -1,5 +1,6 @@
 import type { Context, ESTree, Rule } from "@oxlint/plugins";
-import { effectMethod, binding } from "../binding-support.js";
+import { binding } from "@aurelienbbn/oxlint-kit/ast";
+import { effectMethod } from "../binding-support.js";
 
 const message =
   "Fail Effects with a tagged domain error (Schema.TaggedError, Data.TaggedError, or an object with a literal _tag) instead of an untagged literal or a native Error subclass.";

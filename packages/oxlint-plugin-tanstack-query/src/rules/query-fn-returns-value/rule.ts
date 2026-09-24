@@ -5,7 +5,8 @@
  * @attribution @tanstack/eslint-plugin-query no-void-query-fn (concept)
  */
 import type { ESTree, Rule } from "@oxlint/plugins";
-import { unwrapExpression, walkOwnBody } from "../ast.js";
+import { unwrapExpressionKeepingChain } from "@aurelienbbn/oxlint-kit/ast";
+import { walkOwnBody } from "../ast.js";
 import { queryFunction, queryFunctionNames } from "../query-function.js";
 
 const noReturn =
@@ -15,7 +16,7 @@ const emptyReturn =
 
 function isUndefinedValue(argument: ESTree.Node | null): boolean {
   if (argument === null) return true;
-  const expression = unwrapExpression(argument);
+  const expression = unwrapExpressionKeepingChain(argument);
   if (expression.type === "Identifier") return expression.name === "undefined";
   return expression.type === "UnaryExpression" && expression.operator === "void";
 }

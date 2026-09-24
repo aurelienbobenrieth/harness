@@ -1,5 +1,5 @@
 import { expect, it } from "vitest";
-import { fixCode } from "../sota-test-support.ts";
+import { fixCode } from "../test-support.ts";
 import { assertRuleDoesNotReport, assertRuleReports } from "../test-support.ts";
 
 const ruleName = "effect/require-abort-signal";
@@ -22,7 +22,7 @@ it("reports a fetch thunk that ignores the signal parameter", async () => {
 it("reports configured abortable calls", async () => {
   await expect(
     assertRuleReports(ruleName, "const res = Effect.tryPromise(() => axios.get(url));\n", {
-      ruleConfig: ["error", { abortableCalls: ["fetch", "axios.get"] }],
+      ruleOptions: { abortableCalls: ["fetch", "axios.get"] },
     }),
   ).resolves.toBeUndefined();
 });

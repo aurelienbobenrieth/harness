@@ -1,5 +1,6 @@
 import type { ESTree, Rule } from "@oxlint/plugins";
-import { binding, effectMethod, isUnsafeType } from "../binding-support.js";
+import { binding } from "@aurelienbbn/oxlint-kit/ast";
+import { effectMethod, isUnsafeType } from "../binding-support.js";
 
 const methods = new Set(["catch", "catchAll", "catchTag", "catchTags", "mapError"]);
 

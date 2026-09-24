@@ -1,8 +1,13 @@
 /**
  * Forbid `useSelector` selectors that allocate a new object or array without a comparator.
  */
-import { importsFrom, isFunctionNode, memberPropertyName, unwrapExpression } from "../ast.js";
-import { importedNameFrom } from "../binding-support.js";
+import {
+  importedSpecifierName,
+  isFunctionNode,
+  memberPropertyName,
+  unwrapExpressionKeepingChain,
+} from "@aurelienbbn/oxlint-kit/ast";
+import { importsFrom } from "../ast.js";
 import type { ESTree, Rule } from "@oxlint/plugins";
 
 const message =
@@ -16,10 +21,10 @@ const allocatingObjectStatics: ReadonlySet<string> = new Set(["keys", "values", 
 
 function returnedExpression(selector: ESTree.Node): ESTree.Node | undefined {
   if (!isFunctionNode(selector) || selector.body === null) return undefined;
-  if (selector.body.type !== "BlockStatement") return unwrapExpression(selector.body);
+  if (selector.body.type !== "BlockStatement") return unwrapExpressionKeepingChain(selector.body);
   const [only, ...rest] = selector.body.body;
   if (only?.type !== "ReturnStatement" || rest.length > 0 || only.argument === null) return undefined;
-  return unwrapExpression(only.argument);
+  return unwrapExpressionKeepingChain(only.argument);
 }
 
 function allocationKind(result: ESTree.Node): string | undefined {
@@ -54,13 +59,14 @@ export const stableSelectorResult: Rule = {
       },
       CallExpression(node) {
         if (!enabled) return;
-        const standalone = importedNameFrom(context, node.callee, selectorSources) === "useSelector";
+        const standalone =
+          importedSpecifierName(context, node.callee, (source) => selectorSources.includes(source)) === "useSelector";
         if (!standalone && memberPropertyName(node.callee) !== "useSelector") return;
         const selectorIndex = standalone ? 1 : 0;
         if (node.arguments.length > selectorIndex + 1) return;
         const selector = node.arguments[selectorIndex];
         if (selector === undefined || selector.type === "SpreadElement") return;
-        const result = returnedExpression(unwrapExpression(selector));
+        const result = returnedExpression(unwrapExpressionKeepingChain(selector));
         const kind = result === undefined ? undefined : allocationKind(result);
         if (result === undefined || kind === undefined) return;
         context.report({ node: result, messageId: "stableSelectorResult", data: { kind } });

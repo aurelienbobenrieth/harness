@@ -2,15 +2,15 @@
  * Forbid in-place mutation of machine context and of `snapshot.context`.
  */
 import {
-  importsFrom,
+  binding,
   isFunctionNode,
-  isMachineConfigCallee,
   memberPropertyName,
   parentOf,
   propertyKeyName,
-  unwrapExpression,
-} from "../ast.js";
-import { binding, importedName } from "../binding-support.js";
+  unwrapExpressionKeepingChain,
+} from "@aurelienbbn/oxlint-kit/ast";
+import { importsFrom, isMachineConfigCallee } from "../ast.js";
+import { importedName } from "../binding-support.js";
 import type { Context, ESTree, Rule } from "@oxlint/plugins";
 
 const message =
@@ -84,18 +84,18 @@ function isContextParameter(context: Context, node: ESTree.Node): boolean {
 
 function isSnapshotContext(node: ESTree.Node): boolean {
   if (memberPropertyName(node) !== "context" || node.type !== "MemberExpression") return false;
-  const owner = unwrapExpression(node.object);
+  const owner = unwrapExpressionKeepingChain(node.object);
   if (owner.type === "Identifier") return owner.name === "snapshot";
   return owner.type === "CallExpression" && memberPropertyName(owner.callee) === "getSnapshot";
 }
 
 /** True for a member chain of depth >= 1 rooted at a destructured `context` parameter or a snapshot's `.context`. */
 function isContextPath(context: Context, node: ESTree.Node): boolean {
-  let current = unwrapExpression(node);
-  if (current.type === "ChainExpression") current = unwrapExpression(current.expression);
+  let current = unwrapExpressionKeepingChain(node);
+  if (current.type === "ChainExpression") current = unwrapExpressionKeepingChain(current.expression);
   if (current.type !== "MemberExpression") return false;
   for (;;) {
-    const owner = unwrapExpression(current.object);
+    const owner = unwrapExpressionKeepingChain(current.object);
     if (isSnapshotContext(owner)) return true;
     if (owner.type === "MemberExpression") {
       current = owner;

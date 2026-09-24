@@ -62,7 +62,7 @@ conformance-*         structural checks: manifests, layout, build output
 | ---------------------------------------------- | ------------------------------------------------------------------------------------ |
 | `pnpm check`                                   | build, typecheck, lint, format, unit tests, policy + catalog gates                   |
 | `pnpm test`                                    | rebuild, then unit tests (no watch mode: it tested stale `dist`)                     |
-| `pnpm quality:check`                           | clean Knip report; production duplication ≤ 28-clone baseline                        |
+| `pnpm quality:check`                           | clean Knip report; production duplication ≤ 16-clone baseline                        |
 | `pnpm test:coverage`                           | ratcheted coverage for config, agentlint, conformance code                           |
 | `pnpm test:mutation`                           | mutation-tests the conformance-core kernel                                           |
 | `pnpm security:check`                          | audits every dependency class; needs network, so separate in CI                      |

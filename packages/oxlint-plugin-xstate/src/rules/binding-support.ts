@@ -1,56 +1,16 @@
-import type { Context, ESTree, Scope, Variable } from "@oxlint/plugins";
+import { binding, importedSpecifierName } from "@aurelienbbn/oxlint-kit/ast";
+import type { Context, ESTree } from "@oxlint/plugins";
 
-export function binding(context: Context, node: ESTree.Node, name: string): Variable | undefined {
-  let scope: Scope | null = context.sourceCode.getScope(node);
-  while (scope !== null) {
-    const variable = scope.set.get(name);
-    if (variable !== undefined) return variable;
-    scope = scope.upper;
-  }
-  return undefined;
-}
-
+/** Exported name of an identifier or `<namespace>.<member>` imported from `xstate`. */
 export function importedName(context: Context, node: ESTree.Node): string | undefined {
-  return importedNameFrom(context, node, xstateSources);
+  return importedSpecifierName(context, node, (source) => source === "xstate");
 }
 
-const xstateSources: readonly string[] = ["xstate"];
-
-/** Resolve an identifier or `<namespace>.<member>` to its exported name when imported from one of the sources. */
-export function importedNameFrom(context: Context, node: ESTree.Node, sources: readonly string[]): string | undefined {
-  if (
-    node.type === "MemberExpression" &&
-    !node.computed &&
-    node.object.type === "Identifier" &&
-    node.property.type === "Identifier"
-  ) {
-    const imported = (binding(context, node.object, node.object.name)?.defs ?? []).some(
-      (definition) =>
-        definition.node.type === "ImportNamespaceSpecifier" &&
-        definition.parent?.type === "ImportDeclaration" &&
-        sources.includes(String(definition.parent.source.value)),
-    );
-    return imported ? node.property.name : undefined;
-  }
-  if (node.type !== "Identifier") return undefined;
-  for (const definition of binding(context, node, node.name)?.defs ?? []) {
-    if (
-      definition.node.type !== "ImportSpecifier" ||
-      definition.parent?.type !== "ImportDeclaration" ||
-      !sources.includes(String(definition.parent.source.value))
-    )
-      continue;
-    const imported = definition.node.imported;
-    return imported.type === "Identifier" ? imported.name : String(imported.value);
-  }
-  return undefined;
-}
-
-const reactSources: readonly string[] = ["@xstate/react"];
+const reactSources: ReadonlySet<string> = new Set(["@xstate/react"]);
 
 function isReactHookCall(context: Context, node: ESTree.Node | null | undefined, hooks: readonly string[]): boolean {
   if (node?.type !== "CallExpression") return false;
-  const imported = importedNameFrom(context, node.callee, reactSources);
+  const imported = importedSpecifierName(context, node.callee, (source) => reactSources.has(source));
   return imported !== undefined && hooks.includes(imported);
 }
 

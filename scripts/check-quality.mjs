@@ -7,9 +7,12 @@ const report = await runCoreConformanceReport({
   deadExports: { requireKnipConfig: true },
   duplication: {
     requireTool: true,
-    // Each oxlint plugin keeps its own AST helpers so it publishes without a runtime helper dependency;
-    // those per-package copies are the reviewed baseline. Anything above it is new duplication.
-    maxClones: 37,
+    // Shared oxlint AST and test helpers live once in internal/oxlint-kit (bundled into each plugin).
+    // The reviewed baseline left over: 9 near-duplicate blocks between sibling rules of one plugin
+    // (effect, shopify-app, type-evidence), 4 between scripts/test-compatibility.mjs and
+    // scripts/test-packages.mjs, and one each in agentlint judgment-support, conformance fs-support,
+    // and the oxfmt/oxlint config entry points. Anything above it is new duplication.
+    maxClones: 16,
     minLines: 8,
     minTokens: 60,
     ignorePatterns: [

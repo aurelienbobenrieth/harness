@@ -4,15 +4,8 @@
  * @attribution TanStack Query "Testing" guide and "Testing React Query" by Dominik Dorfmeister, tkdodo.eu (concept)
  */
 import type { Context, ESTree, Rule } from "@oxlint/plugins";
-import {
-  calleeName,
-  findProperty,
-  hasSpread,
-  isFunctionNode,
-  optionsObject,
-  parentOf,
-  unwrapExpression,
-} from "../ast.js";
+import { isFunctionNode, optionsObject, parentOf, unwrapExpressionKeepingChain } from "@aurelienbbn/oxlint-kit/ast";
+import { calleeName, findProperty, hasSpread } from "../ast.js";
 import { importedQueryName } from "../binding-support.js";
 
 const sharedClient =
@@ -89,12 +82,12 @@ function retryState(node: ESTree.NewExpression): RetryState {
   const argument = node.arguments[0];
   if (argument === undefined) return "missing";
   if (argument.type === "SpreadElement") return "unknown";
-  let current = unwrapExpression(argument);
+  let current = unwrapExpressionKeepingChain(argument);
   for (const key of ["defaultOptions", "queries"]) {
     if (current.type !== "ObjectExpression") return "unknown";
     const property = findProperty(current, key);
     if (property === undefined) return hasSpread(current) ? "unknown" : "missing";
-    current = unwrapExpression(property.value);
+    current = unwrapExpressionKeepingChain(property.value);
   }
   if (current.type !== "ObjectExpression") return "unknown";
   if (findProperty(current, "retry") !== undefined) return "disabled-or-explicit";

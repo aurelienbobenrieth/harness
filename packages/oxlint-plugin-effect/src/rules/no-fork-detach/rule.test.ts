@@ -1,5 +1,5 @@
 import { expect, it } from "vitest";
-import { fixCode } from "../sota-test-support.ts";
+import { fixCode } from "../test-support.ts";
 import { assertRuleDoesNotReport, assertRuleReports } from "../test-support.ts";
 
 const ruleName = "effect/no-fork-detach";
@@ -69,7 +69,7 @@ it("allows forkDetach in configured files", async () => {
   await expect(
     assertRuleDoesNotReport(ruleName, "const p = heartbeat.pipe(Effect.forkDetach);\n", {
       filename: "src/daemons/heartbeat.ts",
-      ruleConfig: ["error", { allow: ["**/daemons/**"] }],
+      ruleOptions: { allow: ["**/daemons/**"] },
     }),
   ).resolves.toBeUndefined();
 });

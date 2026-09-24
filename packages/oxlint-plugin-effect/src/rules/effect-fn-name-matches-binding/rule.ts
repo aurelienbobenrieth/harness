@@ -1,6 +1,6 @@
 import type { ESTree, Rule } from "@oxlint/plugins";
+import { optionsObject, parentOf, stringLiteralValue } from "@aurelienbbn/oxlint-kit/ast";
 import { effectMethod } from "../binding-support.js";
-import { optionsObject, parentOf, stringLiteralValue } from "../sota-support.js";
 
 function keyName(key: ESTree.Node, computed: boolean): string | undefined {
   if (computed) return undefined;

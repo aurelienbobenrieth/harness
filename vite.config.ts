@@ -49,7 +49,7 @@ export default defineConfig({
     ignorePatterns: ["package-lock.json", ".tmp/**", "local-packages/**"],
   },
   test: {
-    include: ["packages/*/src/**/*.test.ts"],
+    include: ["packages/*/src/**/*.test.ts", "internal/*/src/**/*.test.ts"],
     pool: "forks",
     testTimeout: 15_000,
     coverage: {

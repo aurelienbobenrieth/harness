@@ -1,15 +1,14 @@
 import type { Context, ESTree, Rule } from "@oxlint/plugins";
+import {
+  type FunctionNode,
+  isFunctionNode,
+  optionsObject,
+  unwrapExpressionKeepingChain,
+  walk,
+} from "@aurelienbbn/oxlint-kit/ast";
 import { effectMethod } from "../binding-support.js";
 import { getFilename, isAllowedFile, type RuleContextWithOptions } from "../runtime-support.js";
-import {
-  isFunctionNode,
-  isUnshadowedGlobal,
-  optionsObject,
-  stringArrayOption,
-  unwrapExpression,
-  walk,
-  type FunctionNode,
-} from "../sota-support.js";
+import { isUnshadowedGlobal, stringArrayOption } from "../sota-support.js";
 
 const message =
   "Use Effect.tryPromise with a typed catch mapper: Effect.promise turns every rejection into a defect that catchTag, retry, and error metrics never see.";
@@ -19,10 +18,10 @@ const bodyReaders: ReadonlySet<string> = new Set(["arrayBuffer", "blob", "formDa
 function thunkResult(fn: FunctionNode): ESTree.Node | undefined {
   const body = fn.body;
   if (body === null) return undefined;
-  if (body.type !== "BlockStatement") return unwrapExpression(body);
+  if (body.type !== "BlockStatement") return unwrapExpressionKeepingChain(body);
   const [only, ...rest] = body.body;
   if (only?.type !== "ReturnStatement" || rest.length > 0 || only.argument === null) return undefined;
-  return unwrapExpression(only.argument);
+  return unwrapExpressionKeepingChain(only.argument);
 }
 
 function isGlobalMemberCall(context: Context, node: ESTree.CallExpression, objectName: string): boolean {

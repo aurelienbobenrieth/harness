@@ -1,6 +1,7 @@
 import type { Context, ESTree } from "@oxlint/plugins";
-import { findProperty, parentOf, propertyName, someNode, unwrapExpression } from "./ast.js";
-import { binding, importedQueryName } from "./binding-support.js";
+import { binding, parentOf, unwrapExpressionKeepingChain } from "@aurelienbbn/oxlint-kit/ast";
+import { findProperty, propertyName, someNode } from "./ast.js";
+import { importedQueryName } from "./binding-support.js";
 
 /**
  * Hooks whose `data` is `undefined` until the first fetch settles. Suspense
@@ -95,7 +96,7 @@ function isQueryDataReference(context: Context, identifier: ESTree.Node): boolea
   for (const definition of binding(context, identifier, identifier.name)?.defs ?? []) {
     const declarator = definition.node;
     if (declarator.type !== "VariableDeclarator" || declarator.init === null) continue;
-    const call = unwrapExpression(declarator.init);
+    const call = unwrapExpressionKeepingChain(declarator.init);
     if (call.type !== "CallExpression") continue;
     const hook = importedQueryName(context, call.callee);
     if (hook === undefined || !pendingDataHooks.has(hook)) continue;

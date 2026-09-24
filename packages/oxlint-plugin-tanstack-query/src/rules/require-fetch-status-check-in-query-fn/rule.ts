@@ -4,8 +4,16 @@
  * @attribution TanStack Query "Query Functions" guide and "React Query Error Handling" by Dominik Dorfmeister, tkdodo.eu (concept)
  */
 import type { Context, ESTree, Rule } from "@oxlint/plugins";
-import { type FunctionNode, isFunctionNode, parentOf, propertyName, unwrapExpression, walk } from "../ast.js";
-import { binding, isUnshadowedGlobal } from "../binding-support.js";
+import {
+  binding,
+  type FunctionNode,
+  isFunctionNode,
+  parentOf,
+  unwrapExpressionKeepingChain,
+  walk,
+} from "@aurelienbbn/oxlint-kit/ast";
+import { propertyName } from "../ast.js";
+import { isUnshadowedGlobal } from "../binding-support.js";
 import { queryAndMutationFunctionNames, queryFunction } from "../query-function.js";
 
 const message =
@@ -16,7 +24,7 @@ const statusProperties: ReadonlySet<string> = new Set(["ok", "status"]);
 const bodyReaders: ReadonlySet<string> = new Set(["json", "text", "blob", "arrayBuffer", "formData"]);
 
 function isGlobalFetch(context: Context, call: ESTree.CallExpression): boolean {
-  const callee = unwrapExpression(call.callee);
+  const callee = unwrapExpressionKeepingChain(call.callee);
   if (callee.type === "Identifier") return callee.name === "fetch" && isUnshadowedGlobal(context, callee);
   return (
     callee.type === "MemberExpression" &&
@@ -96,7 +104,7 @@ function delegatesResponse(context: Context, call: ESTree.CallExpression): boole
     if (
       chained?.type === "CallExpression" &&
       chained.callee === parent &&
-      chained.arguments.some((argument) => !isFunctionNode(unwrapExpression(argument)))
+      chained.arguments.some((argument) => !isFunctionNode(unwrapExpressionKeepingChain(argument)))
     )
       return true;
   }

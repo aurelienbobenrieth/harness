@@ -43,7 +43,7 @@ it("allows configured escape-hatch files", async () => {
   await expect(
     assertRuleDoesNotReport(ruleName, "const users: User[] = []; const names = users.map((user) => user.name);\n", {
       filename: "packages/core/src/legacy/users.ts",
-      ruleConfig: ["error", { allow: ["**/legacy/**"] }],
+      ruleOptions: { allow: ["**/legacy/**"] },
     }),
   ).resolves.toBeUndefined();
 });
@@ -52,7 +52,7 @@ it("allows configured ignored objects", async () => {
   await expect(
     assertRuleDoesNotReport(ruleName, "const users: User[] = []; const names = users.map((user) => user.name);\n", {
       filename: "packages/core/src/users.ts",
-      ruleConfig: ["error", { ignoredObjects: ["users"] }],
+      ruleOptions: { ignoredObjects: ["users"] },
     }),
   ).resolves.toBeUndefined();
 });

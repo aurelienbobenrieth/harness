@@ -1,4 +1,5 @@
-import { binding, effectMethod } from "../binding-support.js";
+import { binding } from "@aurelienbbn/oxlint-kit/ast";
+import { effectMethod } from "../binding-support.js";
 import type { ESTree, Rule } from "@oxlint/plugins";
 
 const message = 'Name Effect.fn calls for tracing, for example Effect.fn("service.method")(...).';

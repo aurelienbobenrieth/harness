@@ -3,7 +3,8 @@
  *
  * @attribution ai-automation by Sandro Maglione (inspiration, independently re-implemented)
  */
-import { findProperty, unwrapExpression } from "../ast.js";
+import { unwrapExpressionKeepingChain } from "@aurelienbbn/oxlint-kit/ast";
+import { findProperty } from "../ast.js";
 import { importedName } from "../binding-support.js";
 import type { ESTree, Rule } from "@oxlint/plugins";
 
@@ -16,7 +17,7 @@ const typesMessage =
 function lacksTypes(argument: ESTree.Expression | ESTree.SpreadElement | undefined): boolean {
   if (argument === undefined) return true;
   if (argument.type === "SpreadElement") return false;
-  const config = unwrapExpression(argument);
+  const config = unwrapExpressionKeepingChain(argument);
   if (config.type !== "ObjectExpression") return false;
   if (config.properties.some((property) => property.type !== "Property" || property.computed)) return false;
   return findProperty(config, "types") === undefined;
