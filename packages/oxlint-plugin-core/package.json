@@ -1,6 +1,6 @@
 {
   "name": "@aurelienbbn/oxlint-plugin-core",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Custom oxlint rules for TypeScript projects.",
   "bugs": {
     "url": "https://github.com/aurelienbobenrieth/harness/issues"

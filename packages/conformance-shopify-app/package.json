@@ -1,6 +1,6 @@
 {
   "name": "@aurelienbbn/conformance-shopify-app",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Structural conformance checks for Shopify apps, packaged as a Vitest suite.",
   "bugs": {
     "url": "https://github.com/aurelienbobenrieth/harness/issues"

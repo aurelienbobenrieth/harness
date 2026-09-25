@@ -1,6 +1,6 @@
 {
   "name": "@aurelienbbn/agentlint-plugin-shopify-app",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": true,
   "description": "Custom agentlint rules for Shopify app and extension code.",
   "bugs": {

@@ -1,6 +1,6 @@
 {
   "name": "@aurelienbbn/oxlint-plugin-type-evidence",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Strict oxlint rules preserving TypeScript type evidence at contracts and boundaries.",
   "bugs": {
     "url": "https://github.com/aurelienbobenrieth/harness/issues"

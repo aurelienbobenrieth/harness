@@ -1,6 +1,6 @@
 {
   "name": "@aurelienbbn/oxlint-plugin-xstate",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Custom oxlint rules for XState machines and actors.",
   "bugs": {
     "url": "https://github.com/aurelienbobenrieth/harness/issues"
