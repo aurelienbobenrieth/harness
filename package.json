@@ -53,7 +53,7 @@
     "@voidzero-dev/vite-plus-core": "0.3.2",
     "jscpd": "5.3.0",
     "knip": "6.37.0",
-    "oxfmt": "0.67.0",
+    "oxfmt": "0.70.0",
     "oxlint": "1.82.0",
     "publint": "0.3.24",
     "tsdown": "0.23.0",
