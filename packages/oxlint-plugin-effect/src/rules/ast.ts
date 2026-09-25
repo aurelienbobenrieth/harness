@@ -9,25 +9,22 @@ export function isIdentifier(node: ESTree.Node | undefined, name?: string): node
   return node?.type === "Identifier" && "name" in node && (name === undefined || node.name === name);
 }
 
-export function isJsonMethodCall(
-  node: ESTree.Node | undefined,
-  methodName: "parse" | "stringify",
-): node is ESTree.CallExpression {
-  return (
-    node?.type === "CallExpression" &&
-    node.callee.type === "MemberExpression" &&
-    isIdentifier(node.callee.object, "JSON") &&
-    isIdentifier(node.callee.property, methodName)
-  );
+export function hasPropertyNamed(node: ESTree.Node | undefined, name: string): boolean {
+  if (node?.type !== "ObjectExpression") return false;
+
+  return node.properties.some((property) => {
+    if (property.type !== "Property") return false;
+
+    const key = property.key;
+    return isIdentifier(key, name) || (key.type === "Literal" && key.value === name);
+  });
 }
 
-export function isImmediateFunctionCallWithArgument(
-  node: ESTree.Node | undefined,
-  argumentNode: ESTree.CallExpression,
-  predicate: (callee: ESTree.Node) => boolean,
-): boolean {
-  if (node?.type !== "CallExpression") return false;
-  if (!node.arguments.includes(argumentNode)) return false;
+export type SourceContext = {
+  readonly sourceCode?: { getText: () => string };
+  readonly getSourceCode?: () => { getText: () => string };
+};
 
-  return predicate(node.callee);
+export function getSourceText(context: SourceContext): string | undefined {
+  return context.sourceCode?.getText() ?? context.getSourceCode?.().getText();
 }

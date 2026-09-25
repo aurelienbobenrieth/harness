@@ -1,0 +1,44 @@
+{
+  "name": "@aurelienbbn/oxlint-plugin-xstate",
+  "version": "0.0.0",
+  "description": "Custom oxlint rules for XState machines and actors.",
+  "bugs": {
+    "url": "https://github.com/aurelienbobenrieth/harness/issues"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aurelienbobenrieth/harness.git",
+    "directory": "packages/oxlint-plugin-xstate"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs"
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "prepack": "pnpm build",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@oxlint/plugins": "1.83.0"
+  },
+  "devDependencies": {
+    "@aurelienbbn/oxlint-kit": "workspace:*"
+  },
+  "peerDependencies": {
+    "oxlint": ">=1.82.0 <2.0.0"
+  },
+  "engines": {
+    "node": "^22.19.0 || ^24.11.0"
+  }
+}

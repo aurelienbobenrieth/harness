@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "repository": "aurelienbobenrieth/harness",
+  "defaultBranch": "main",
+  "publicationEnabled": true,
+  "packages": {
+    "@aurelienbbn/agentlint-plugin-core": "draft",
+    "@aurelienbbn/agentlint-plugin-effect": "draft",
+    "@aurelienbbn/agentlint-plugin-shopify-app": "draft",
+    "@aurelienbbn/agentlint-plugin-tanstack-query": "draft",
+    "@aurelienbbn/agentlint-plugin-xstate": "draft",
+    "@aurelienbbn/conformance-cloudflare": "draft",
+    "@aurelienbbn/conformance-core": "candidate",
+    "@aurelienbbn/conformance-shopify-app": "candidate",
+    "@aurelienbbn/oxfmt-config": "candidate",
+    "@aurelienbbn/oxlint-config": "candidate",
+    "@aurelienbbn/oxlint-plugin-cloudflare": "draft",
+    "@aurelienbbn/oxlint-plugin-core": "candidate",
+    "@aurelienbbn/oxlint-plugin-drizzle": "draft",
+    "@aurelienbbn/oxlint-plugin-effect": "candidate",
+    "@aurelienbbn/oxlint-plugin-shopify-app": "candidate",
+    "@aurelienbbn/oxlint-plugin-tanstack-query": "draft",
+    "@aurelienbbn/oxlint-plugin-type-evidence": "candidate",
+    "@aurelienbbn/oxlint-plugin-xstate": "candidate"
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "name": "@aurelienbbn/agentlint-plugin-core",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Custom agentlint rules for general TypeScript projects.",
+  "bugs": {
+    "url": "https://github.com/aurelienbobenrieth/harness/issues"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aurelienbobenrieth/harness.git",
+    "directory": "packages/agentlint-plugin-core"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs"
+    }
+  },
+  "scripts": {
+    "build": "tsdown",
+    "prepack": "pnpm build",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@aurelienbbn/agentlint": "file:../../local-packages/agentlint-current.tgz"
+  },
+  "peerDependencies": {
+    "@aurelienbbn/agentlint": "0.1.5"
+  },
+  "engines": {
+    "node": "^22.19.0 || ^24.11.0"
+  }
+}

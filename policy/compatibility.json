@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "node": "^22.19.0 || ^24.11.0",
+  "registryCheckedAt": "2026-09-24",
+  "peerRanges": {
+    "@aurelienbbn/agentlint": "0.1.5",
+    "oxlint": ">=1.82.0 <2.0.0",
+    "oxlint-tsgolint": "^7.0.2001",
+    "oxfmt": ">=0.67.0 <0.69.0",
+    "vite-plus": "^0.3.2",
+    "vitest": ">=4.1.11 <6.0.0",
+    "stylelint": ">=17.15.0 <18.0.0"
+  },
+  "localAgentlint": {
+    "version": "0.1.5",
+    "path": "local-packages/agentlint-current.tgz",
+    "integrity": "sha512-tu057ahX/SdT3Lf4bmJCMlAEla+qA3zTSheepAWHK6HpNfRI1TkoMSKSFT+3uBvdlN+WNlszyfZBmiHD7Ga4Gg==",
+    "registryIntegrity": "sha512-845ZB/KsP7j1PuL163l11J40WhU1qHP1MPDzRVUExybGZdhAWZuDo/PVAosKGrv1LSBQYqg7Z3QA2nWJx1qDhw==",
+    "registryCompatible": false,
+    "developmentDependency": "file:../../local-packages/agentlint-current.tgz"
+  },
+  "sharedDependencies": {
+    "@types/node": "22.20.3",
+    "vite": "8.3.0",
+    "typescript": "7.0.2",
+    "lit": "3.3.3",
+    "xstate": "5.33.2",
+    "jsdom": "30.1.0"
+  },
+  "profiles": {
+    "baseline": {
+      "oxlint": "1.82.0",
+      "oxlint-tsgolint": "7.0.2001",
+      "oxfmt": "0.67.0",
+      "vite-plus": "0.3.2",
+      "vitest": "4.1.11",
+      "stylelint": "17.15.0"
+    },
+    "current": {
+      "oxlint": "1.83.0",
+      "oxlint-tsgolint": "7.0.2002",
+      "oxfmt": "0.68.0",
+      "vite-plus": "0.3.2",
+      "vitest": "5.0.1",
+      "stylelint": "17.15.0"
+    }
+  }
+}

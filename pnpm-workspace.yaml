@@ -1,6 +1,14 @@
 packages:
   - packages/*
+  - internal/*
+
+allowBuilds:
+  msgpackr-extract: false
 
 overrides:
-  vite: npm:@voidzero-dev/vite-plus-core@latest
-  vitest: 4.1.9
+  vite: npm:@voidzero-dev/vite-plus-core@0.3.2
+  vitest: 4.1.11
+  vite-plus: 0.3.2
+  oxlint: 1.82.0
+  oxfmt: 0.67.0
+  qs: 6.16.0

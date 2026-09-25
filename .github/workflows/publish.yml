@@ -1,36 +1,105 @@
-name: Publish
+name: Prepare and publish release
 
 on:
   workflow_dispatch:
+    inputs:
+      reviewed-sha:
+        description: Full commit SHA reviewed on main
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: harness-release-preparation
+  cancel-in-progress: false
 
 jobs:
-  publish:
-    name: Publish packages to npm
+  prepare:
+    name: Validate reviewed release candidates
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      id-token: write
+    timeout-minutes: 45
     steps:
-      - name: Checkout
-        uses: actions/checkout@v5
+      - name: Checkout the workflow revision
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v5
+        uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v5.0.0
 
       - name: Setup Node
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
         with:
           node-version: 22
           cache: pnpm
-          registry-url: https://registry.npmjs.org
+
+      - name: Verify the reviewed main revision
+        run: node scripts/release.mjs --verify-ref
+        env:
+          HARNESS_REVIEWED_SHA: ${{ inputs.reviewed-sha }}
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
       - name: Run validation suite
-        run: pnpm run check
+        run: pnpm check
 
-      - name: Publish packages
-        run: pnpm release
+      - name: Audit all dependency classes
+        run: pnpm security:check
+
+      - name: Test packed consumers
+        run: pnpm test:package
+
+      - name: Test minimum supported registry tools
+        run: pnpm test:compatibility baseline
+
+      - name: Test current supported registry tools
+        run: pnpm test:compatibility current
+
+      - name: Show release preparation plan
+        run: pnpm release:plan
+
+  publish:
+    name: Publish reviewed candidates to npm
+    needs: prepare
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: npm
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Checkout the workflow revision
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v5.0.0
+
+      # Node 24 bundles an npm that supports trusted publishing (OIDC) and provenance.
+      - name: Setup Node
+        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Verify the reviewed main revision
+        run: node scripts/release.mjs --verify-ref
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          HARNESS_REVIEWED_SHA: ${{ inputs.reviewed-sha }}
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build packages
+        run: pnpm build
+
+      - name: Publish candidates not yet on npm
+        run: node scripts/publish.mjs

@@ -1,0 +1,3765 @@
+{
+  "schemaVersion": 1,
+  "reviewedAt": "2026-09-05",
+  "programs": {
+    "app-store": {
+      "url": "https://shopify.dev/docs/apps/launch/shopify-app-store/app-store-requirements",
+      "categories": [
+        "online-store",
+        "payment",
+        "payment-facilitator",
+        "purchase-option",
+        "product-sourcing",
+        "checkout-customization",
+        "sales-channel",
+        "post-purchase",
+        "mobile-app-builder",
+        "donation",
+        "blockchain"
+      ]
+    },
+    "bfs": {
+      "url": "https://shopify.dev/docs/apps/launch/built-for-shopify/requirements",
+      "categories": [
+        "advertising",
+        "affiliate",
+        "analytics",
+        "carrier",
+        "discount",
+        "email-marketing",
+        "forms",
+        "fulfillment",
+        "invoices",
+        "bundles",
+        "product-reviews",
+        "returns",
+        "sms-marketing",
+        "subscriptions"
+      ]
+    }
+  },
+  "sources": [
+    {
+      "id": "app-store",
+      "url": "https://shopify.dev/docs/apps/launch/shopify-app-store/app-store-requirements",
+      "reviewedAt": "2026-09-05",
+      "sha256": "52dc6cb5f377a919077c58c6032a55fd2c86d14e898603efae8228d8230052d2",
+      "requirementIds": [
+        "1.1.1",
+        "1.1.2",
+        "1.1.3",
+        "1.1.4",
+        "1.1.5",
+        "1.1.6",
+        "1.1.7",
+        "1.1.8",
+        "1.1.9",
+        "1.1.10",
+        "1.1.11",
+        "1.1.12",
+        "1.1.13",
+        "1.1.14",
+        "1.1.15",
+        "1.1.16",
+        "1.2.1",
+        "1.2.2",
+        "1.2.3",
+        "1.3.1",
+        "2.1.1",
+        "2.1.2",
+        "2.1.3",
+        "2.1.4",
+        "2.2.1",
+        "2.2.2",
+        "2.2.3",
+        "2.2.4",
+        "2.2.5",
+        "2.2.6",
+        "2.2.7",
+        "2.2.8",
+        "2.2.9",
+        "2.3.1",
+        "2.3.2",
+        "2.3.3",
+        "2.3.4",
+        "3.1.1",
+        "3.2.1",
+        "3.2.2",
+        "3.2.3",
+        "3.2.4",
+        "3.2.5",
+        "4.1.1",
+        "4.1.2",
+        "4.2.1",
+        "4.2.2",
+        "4.2.3",
+        "4.3.1",
+        "4.3.2",
+        "4.3.3",
+        "4.3.4",
+        "4.3.5",
+        "4.3.6",
+        "4.3.7",
+        "4.3.8",
+        "4.4.1",
+        "4.4.2",
+        "4.4.3",
+        "4.4.4",
+        "4.4.5",
+        "4.5.1",
+        "4.5.2",
+        "4.5.3",
+        "4.5.4",
+        "4.5.5",
+        "4.5.6",
+        "5.1.1",
+        "5.1.2",
+        "5.1.3",
+        "5.1.4",
+        "5.1.5",
+        "5.2.1",
+        "5.2.2",
+        "5.2.3",
+        "5.2.4",
+        "5.2.5",
+        "5.2.6",
+        "5.2.7",
+        "5.2.8",
+        "5.2.9",
+        "5.2.10",
+        "5.2.11",
+        "5.2.12",
+        "5.2.13",
+        "5.2.14",
+        "5.2.15",
+        "5.3.1",
+        "5.3.2",
+        "5.3.3",
+        "5.4.1",
+        "5.4.2",
+        "5.4.3",
+        "5.4.4",
+        "5.4.5",
+        "5.4.6",
+        "5.4.7",
+        "5.4.8",
+        "5.4.9",
+        "5.4.10",
+        "5.4.11",
+        "5.4.12",
+        "5.4.13",
+        "5.4.14",
+        "5.4.15",
+        "5.4.16",
+        "5.4.17",
+        "5.4.18",
+        "5.4.19",
+        "5.5.1",
+        "5.5.2",
+        "5.5.3",
+        "5.5.4",
+        "5.5.5",
+        "5.6.1",
+        "5.6.2",
+        "5.6.3",
+        "5.6.4",
+        "5.6.5",
+        "5.6.6",
+        "5.6.7",
+        "5.6.8",
+        "5.6.9",
+        "5.7.1",
+        "5.7.2",
+        "5.7.3",
+        "5.7.4",
+        "5.7.5",
+        "5.7.6",
+        "5.7.7",
+        "5.7.8",
+        "5.7.9",
+        "5.7.10",
+        "5.7.11",
+        "5.7.12",
+        "5.7.13",
+        "5.7.14",
+        "5.7.15",
+        "5.7.16",
+        "5.7.17",
+        "5.7.18",
+        "5.8.1",
+        "5.8.2",
+        "5.8.3",
+        "5.8.4",
+        "5.8.5",
+        "5.8.6",
+        "5.8.7",
+        "5.8.8",
+        "5.8.9",
+        "5.8.10",
+        "5.9.1",
+        "5.9.2",
+        "5.9.3",
+        "5.10.1",
+        "5.10.2",
+        "5.10.3",
+        "5.10.4",
+        "5.10.5",
+        "5.10.6",
+        "5.10.7",
+        "5.11.1",
+        "5.11.2",
+        "5.11.3",
+        "5.11.4",
+        "5.11.5",
+        "5.11.6",
+        "5.11.7",
+        "5.11.8",
+        "5.11.9",
+        "5.11.10",
+        "5.11.11",
+        "5.11.12",
+        "5.11.13"
+      ]
+    },
+    {
+      "id": "bfs",
+      "url": "https://shopify.dev/docs/apps/launch/built-for-shopify/requirements",
+      "reviewedAt": "2026-09-05",
+      "sha256": "25fc0494f40b41eb4af970a04894a72b7ce1668f4a60f6e189e9338b73ffbca2",
+      "requirementIds": [
+        "1.1.1",
+        "1.1.2",
+        "1.2.1",
+        "1.2.2",
+        "1.2.3",
+        "2.1.1",
+        "2.1.2",
+        "2.1.3",
+        "2.2.1",
+        "2.3.1",
+        "3.1.1",
+        "3.1.2",
+        "3.1.3",
+        "3.1.4",
+        "3.1.5",
+        "3.2.1",
+        "3.2.2",
+        "4.1.1",
+        "4.1.2",
+        "4.1.3",
+        "4.1.4",
+        "4.1.5",
+        "4.1.6",
+        "4.2.1",
+        "4.2.2",
+        "4.2.3",
+        "4.2.4",
+        "4.2.5",
+        "4.2.6",
+        "4.3.1",
+        "4.3.2",
+        "4.3.3",
+        "4.3.4",
+        "4.3.5",
+        "4.3.6",
+        "4.3.7",
+        "5.1.1",
+        "5.1.2",
+        "5.2.1",
+        "5.3.1",
+        "5.4.1",
+        "5.4.2",
+        "5.5.1",
+        "5.5.2",
+        "5.5.3",
+        "5.5.4",
+        "5.6.1",
+        "5.6.2",
+        "5.6.3",
+        "5.6.4",
+        "5.7.1",
+        "5.7.2",
+        "5.7.3",
+        "5.8.1",
+        "5.8.2",
+        "5.8.3",
+        "5.8.4",
+        "5.8.5",
+        "5.8.6",
+        "5.8.7",
+        "5.9.1",
+        "5.10.1",
+        "5.11.1",
+        "5.11.2",
+        "5.12.1",
+        "5.12.2",
+        "5.12.3",
+        "5.12.4",
+        "5.13.1",
+        "5.13.2",
+        "5.13.3",
+        "5.13.4",
+        "5.14.1",
+        "5.14.2",
+        "5.14.3",
+        "5.14.4",
+        "5.14.5"
+      ]
+    },
+    {
+      "id": "component-button",
+      "url": "https://shopify.dev/docs/api/app-home/latest/web-components/actions/button",
+      "reviewedAt": "2026-09-05",
+      "sha256": "e70cce68cbd10a299d439f1371ec765a7ce626367993271b1a0a93e4335d240b",
+      "requirementIds": []
+    },
+    {
+      "id": "component-button-group",
+      "url": "https://shopify.dev/docs/api/app-home/latest/web-components/actions/button-group",
+      "reviewedAt": "2026-09-05",
+      "sha256": "a3f16963cec6a5569c6c9726c5b6f875ece7e7bd48d164a8049419f73dcfc603",
+      "requirementIds": []
+    },
+    {
+      "id": "component-clickable",
+      "url": "https://shopify.dev/docs/api/app-home/latest/web-components/actions/clickable",
+      "reviewedAt": "2026-09-05",
+      "sha256": "c831ea99d7e6ffc0e241772acac792216319eb39f234f73c7124e3d65f9a1f41",
+      "requirementIds": []
+    },
+    {
+      "id": "component-clickable-chip",
+      "url": "https://shopify.dev/docs/api/app-home/latest/web-components/actions/clickable-chip",
+      "reviewedAt": "2026-09-05",
+      "sha256": "14339e567ff2d0d880fcb8632952fd74655498a14e2fae077ec1807060bd0415",
+      "requirementIds": []
+    },
+    {
+      "id": "component-link",
+      "url": "https://shopify.dev/docs/api/app-home/latest/web-components/actions/link",
+      "reviewedAt": "2026-09-05",
+      "sha256": "ed35238c6059d5f15e8ed9973f62bfac508804cd3e4232a1cf13b735e339070b",
+      "requirementIds": []
+    },
+    {
+      "id": "component-menu",
+      "url": "https://shopify.dev/docs/api/app-home/latest/web-components/actions/menu",
+      "reviewedAt": "2026-09-05",
+      "sha256": "f02c27b1980d80d5054d6519ec153d18bc98a9afb9b5841fffbdd55aa6e6bf5b",
+      "requirementIds": []
+    },
+    {
+      "id": "component-badge",
+      "url": "https://shopify.dev/docs/api/app-home/latest/web-components/feedback-and-status-indicators/badge",
+      "reviewedAt": "2026-09-05",
+      "sha256": "b28ea7d73ba3de8613e0bd759f4830ccadcdccb267777cfb72f425b17738900e",
+      "requirementIds": []
+    },
+    {
+      "id": "component-banner",
+      "url": "https://shopify.dev/docs/api/app-home/latest/web-components/feedback-and-status-indicators/banner",
+      "reviewedAt": "2026-09-05",
+      "sha256": "9d45b9611c6febe4eb28999110f429e9984a341b99b16f7714597d55e12ed26f",
+      "requirementIds": []
+    },
+    {
+      "id": "component-spinner",
+      "url": "https://shopify.dev/docs/api/app-home/latest/web-components/feedback-and-status-indicators/spinner",
+      "reviewedAt": "2026-09-05",
+      "sha256": "278301c0b16cbf9232f0076af79a91d853d0559e68970f1fa8c05c9b85a7fe0e",
+      "requirementIds": []
+    },
+    {
+      "id": "component-checkbox",
+      "url": "https://shopify.dev/docs/api/app-home/latest/web-components/forms/checkbox",
+      "reviewedAt": "2026-09-05",
+      "sha256": "c759e618c0edaccf946b8cfa25f68b8dd178375a4cc86f37e9a9f86d20357ad4",
+      "requirementIds": []
+    },
+    {
+      "id": "component-choice-list",
+      "url": "https://shopify.dev/docs/api/app-home/latest/web-components/forms/choice-list",
+      "reviewedAt": "2026-09-05",
+      "sha256": "e0f234a815a51cb713095d8d99e839f76156e8ce39e052483612f10b1cd6ed36",
+      "requirementIds": []
+    },
+    {
+      "id": "component-color-field",
+      "url": "https://shopify.dev/docs/api/app-home/latest/web-components/forms/color-field",
+      "reviewedAt": "2026-09-05",
+      "sha256": "667cbf7c4e333b25affc554b257ca0a669518900f1d51220bea592854f0aff1c",
+      "requirementIds": []
+    },
+    {
+      "id": "component-color-picker",
+      "url": "https://shopify.dev/docs/api/app-home/latest/web-components/forms/color-picker",
+      "reviewedAt": "2026-09-05",
+      "sha256": "f6e6e5b58044030a42c22130fcab6173e95d5d37b9d81e4a558b5e8b06257a8b",
+      "requirementIds": []
+    },
+    {
+      "id": "component-date-field",
+      "url": "https://shopify.dev/docs/api/app-home/latest/web-components/forms/date-field",
+      "reviewedAt": "2026-09-05",
+      "sha256": "6b156246219248ea58cd01702455bf87cf17150dd68575521d0bfb55457809ea",
+      "requirementIds": []
+    },
+    {
+      "id": "component-date-picker",
+      "url": "https://shopify.dev/docs/api/app-home/latest/web-components/forms/date-picker",
+      "reviewedAt": "2026-09-05",
+      "sha256": "86ccbb9a3a28d33e7c2dddd67a36376ca6c2eca724a0d223896b9e5259390156",
+      "requirementIds": []
+    },
+    {
+      "id": "component-drop-zone",
+      "url": "https://shopify.dev/docs/api/app-home/latest/web-components/forms/drop-zone",
+      "reviewedAt": "2026-09-05",
+      "sha256": "b5be174cc76baa32d4f66d9fb43ca181bb42ea5d8679a1553c0ce88c6b7c515b",
+      "requirementIds": []
+    },
+    {
+      "id": "component-email-field",
+      "url": "https://shopify.dev/docs/api/app-home/latest/web-components/forms/email-field",
+      "reviewedAt": "2026-09-05",
+      "sha256": "5d0e1bf83af7492e29d12f9789023cf293f08c0f9dbbfa76cfa2b0b36d638a77",
+      "requirementIds": []
+    },
+    {
+      "id": "component-money-field",
+      "url": "https://shopify.dev/docs/api/app-home/latest/web-components/forms/money-field",
+      "reviewedAt": "2026-09-05",
+      "sha256": "c4f6e11508ded8aa703ecc6c79be24a02488f441b1d0d02ad638afa660fbd097",
+      "requirementIds": []
+    },
+    {
+      "id": "component-number-field",
+      "url": "https://shopify.dev/docs/api/app-home/latest/web-components/forms/number-field",
+      "reviewedAt": "2026-09-05",
+      "sha256": "e3868e1a589e9cb3fdcc35d2f98f26cb7da77758ab6b4931739e9892671f4d8a",
+      "requirementIds": []
+    },
+    {
+      "id": "component-password-field",
+      "url": "https://shopify.dev/docs/api/app-home/latest/web-components/forms/password-field",
+      "reviewedAt": "2026-09-05",
+      "sha256": "d8518277dfe79e98312b0badc13bfa8fbf39c4c80682ba64ca613628004cdf24",
+      "requirementIds": []
+    },
+    {
+      "id": "component-search-field",
+      "url": "https://shopify.dev/docs/api/app-home/latest/web-components/forms/search-field",
+      "reviewedAt": "2026-09-05",
+      "sha256": "b31ac6c4baa2e3fba3523949a1967edf6ab3ed76ba63a1b290898cb7a6d5be33",
+      "requirementIds": []
+    },
+    {
+      "id": "component-select",
+      "url": "https://shopify.dev/docs/api/app-home/latest/web-components/forms/select",
+      "reviewedAt": "2026-09-05",
+      "sha256": "c64489a1a712ba169f98290c57abca3efa18ed66ef7171aa25da5afe1061a8a6",
+      "requirementIds": []
+    },
+    {
+      "id": "component-switch",
+      "url": "https://shopify.dev/docs/api/app-home/latest/web-components/forms/switch",
+      "reviewedAt": "2026-09-05",
+      "sha256": "0f19fe77b7e9c07f097609d768af269e13706689506e1acff4734087e53c830f",
+      "requirementIds": []
+    },
+    {
+      "id": "component-text-area",
+      "url": "https://shopify.dev/docs/api/app-home/latest/web-components/forms/text-area",
+      "reviewedAt": "2026-09-05",
+      "sha256": "59cfa7153c54123aa06f343f4fb6c42fa2d8994f588a1482730eb0702ce9d809",
+      "requirementIds": []
+    },
+    {
+      "id": "component-text-field",
+      "url": "https://shopify.dev/docs/api/app-home/latest/web-components/forms/text-field",
+      "reviewedAt": "2026-09-05",
+      "sha256": "736b112b3dbb36d77239d8a2cc5e268884351621263b7d8161c43e09cced2e80",
+      "requirementIds": []
+    },
+    {
+      "id": "component-url-field",
+      "url": "https://shopify.dev/docs/api/app-home/latest/web-components/forms/url-field",
+      "reviewedAt": "2026-09-05",
+      "sha256": "4d327cd12ba2431b316be6ff0f7c37d0a18ffbe577cbc72595345cbe2ad5a2c6",
+      "requirementIds": []
+    },
+    {
+      "id": "component-box",
+      "url": "https://shopify.dev/docs/api/app-home/latest/web-components/layout-and-structure/box",
+      "reviewedAt": "2026-09-05",
+      "sha256": "593d3fc64180c100d11c0d59a6abdd1cafe5057fa51ec3386b258ff83ebf3601",
+      "requirementIds": []
+    },
+    {
+      "id": "component-divider",
+      "url": "https://shopify.dev/docs/api/app-home/latest/web-components/layout-and-structure/divider",
+      "reviewedAt": "2026-09-05",
+      "sha256": "75eee59c73fa8fdd16b9d8fa46f2e18f2e05c8ad624f152fb6d5c3feee4744d8",
+      "requirementIds": []
+    },
+    {
+      "id": "component-grid",
+      "url": "https://shopify.dev/docs/api/app-home/latest/web-components/layout-and-structure/grid",
+      "reviewedAt": "2026-09-05",
+      "sha256": "dbabd67211eebf5eb9c22527593ca4e363d6909959282c0a9e84894fa652abad",
+      "requirementIds": []
+    },
+    {
+      "id": "component-ordered-list",
+      "url": "https://shopify.dev/docs/api/app-home/latest/web-components/layout-and-structure/ordered-list",
+      "reviewedAt": "2026-09-05",
+      "sha256": "0fbdf845b85232e2be488787688af5f3d85bfafaf00f627e141ca36f11fb6f22",
+      "requirementIds": []
+    },
+    {
+      "id": "component-page",
+      "url": "https://shopify.dev/docs/api/app-home/latest/web-components/layout-and-structure/page",
+      "reviewedAt": "2026-09-05",
+      "sha256": "17680b56418fe8e25df1fcca710bfef71e87d06328993028ef09c66c24cce4a4",
+      "requirementIds": []
+    },
+    {
+      "id": "component-query-container",
+      "url": "https://shopify.dev/docs/api/app-home/latest/web-components/layout-and-structure/query-container",
+      "reviewedAt": "2026-09-05",
+      "sha256": "f0d2a9f3a8f79ce810a21d9bd5565f9534337f195be2b4bb3df0ff014e2269fb",
+      "requirementIds": []
+    },
+    {
+      "id": "component-section",
+      "url": "https://shopify.dev/docs/api/app-home/latest/web-components/layout-and-structure/section",
+      "reviewedAt": "2026-09-05",
+      "sha256": "8634a0bc180d67bd3d83b3f52dfff108127e41531b6034f0faf2d01881b89690",
+      "requirementIds": []
+    },
+    {
+      "id": "component-stack",
+      "url": "https://shopify.dev/docs/api/app-home/latest/web-components/layout-and-structure/stack",
+      "reviewedAt": "2026-09-05",
+      "sha256": "7ac145ae61004a5f9773e0e751dabd9438066ce8740343abe1d72d3411c7d994",
+      "requirementIds": []
+    },
+    {
+      "id": "component-table",
+      "url": "https://shopify.dev/docs/api/app-home/latest/web-components/layout-and-structure/table",
+      "reviewedAt": "2026-09-05",
+      "sha256": "90a3ce3c10d9533fa69208756e518036ec8f707001c5878ad3319c601f32758c",
+      "requirementIds": []
+    },
+    {
+      "id": "component-unordered-list",
+      "url": "https://shopify.dev/docs/api/app-home/latest/web-components/layout-and-structure/unordered-list",
+      "reviewedAt": "2026-09-05",
+      "sha256": "59825580f7cdd73b0c0322bfbb45e2f77c01929b82627e884c28a5b522fea29b",
+      "requirementIds": []
+    },
+    {
+      "id": "component-avatar",
+      "url": "https://shopify.dev/docs/api/app-home/latest/web-components/media-and-visuals/avatar",
+      "reviewedAt": "2026-09-05",
+      "sha256": "0a0a940323219a7df4dafe2a5508e9d1b8a632f5e9adc8c0be478c64a058b37d",
+      "requirementIds": []
+    },
+    {
+      "id": "component-icon",
+      "url": "https://shopify.dev/docs/api/app-home/latest/web-components/media-and-visuals/icon",
+      "reviewedAt": "2026-09-05",
+      "sha256": "4439c56cac3b7748b46ed7b9dcf8a48e399b8c94d58b22e7a700b378878318e6",
+      "requirementIds": []
+    },
+    {
+      "id": "component-image",
+      "url": "https://shopify.dev/docs/api/app-home/latest/web-components/media-and-visuals/image",
+      "reviewedAt": "2026-09-05",
+      "sha256": "460b1927670538187b5d86584bf00e6f472d7f37472e9dff9e53128d8dd3025c",
+      "requirementIds": []
+    },
+    {
+      "id": "component-thumbnail",
+      "url": "https://shopify.dev/docs/api/app-home/latest/web-components/media-and-visuals/thumbnail",
+      "reviewedAt": "2026-09-05",
+      "sha256": "b64b970c569aef1613b4973dfe1f0268c6c43b75e877203526565114eafe8aa8",
+      "requirementIds": []
+    },
+    {
+      "id": "component-modal",
+      "url": "https://shopify.dev/docs/api/app-home/latest/web-components/overlays/modal",
+      "reviewedAt": "2026-09-05",
+      "sha256": "1773cb0b59d93ac3332760e3d946049c9f825dd0531cfe1dbc820f30110e28e0",
+      "requirementIds": []
+    },
+    {
+      "id": "component-popover",
+      "url": "https://shopify.dev/docs/api/app-home/latest/web-components/overlays/popover",
+      "reviewedAt": "2026-09-05",
+      "sha256": "9e89f249a26ec850cc944f4e95c4abae1fb6b42f07bf689b99e5a0cef2dbfecb",
+      "requirementIds": []
+    },
+    {
+      "id": "component-chip",
+      "url": "https://shopify.dev/docs/api/app-home/latest/web-components/typography-and-content/chip",
+      "reviewedAt": "2026-09-05",
+      "sha256": "4756a0d4d04073976a410ac0030b42900f92cc503c9cfa821cfa16847977bd02",
+      "requirementIds": []
+    },
+    {
+      "id": "component-heading",
+      "url": "https://shopify.dev/docs/api/app-home/latest/web-components/typography-and-content/heading",
+      "reviewedAt": "2026-09-05",
+      "sha256": "718af537a0c8a763a8ead0a633b810d73afd218c676e4000ccc91a32859955b4",
+      "requirementIds": []
+    },
+    {
+      "id": "component-paragraph",
+      "url": "https://shopify.dev/docs/api/app-home/latest/web-components/typography-and-content/paragraph",
+      "reviewedAt": "2026-09-05",
+      "sha256": "af797bd372583734694a17a37d9a8bcb98377ada0e0c599c9642b2a83595a115",
+      "requirementIds": []
+    },
+    {
+      "id": "component-text",
+      "url": "https://shopify.dev/docs/api/app-home/latest/web-components/typography-and-content/text",
+      "reviewedAt": "2026-09-05",
+      "sha256": "71260f12ba5441d3a02f0ee60641fc68d7d095a254fc8e6758a298acc9a15145",
+      "requirementIds": []
+    },
+    {
+      "id": "component-tooltip",
+      "url": "https://shopify.dev/docs/api/app-home/latest/web-components/typography-and-content/tooltip",
+      "reviewedAt": "2026-09-05",
+      "sha256": "48331dfa56a141830de670d9db53d13992e02209e2775eb57ea7db5994ab804e",
+      "requirementIds": []
+    },
+    {
+      "id": "component-empty-state",
+      "url": "https://shopify.dev/docs/api/app-home/latest/web-components/feedback-and-status-indicators/empty-state",
+      "reviewedAt": "2026-09-24",
+      "sha256": "6f5ba21d297d97fe677860e89f3b15957da2c0cd7de3cbd3df4c903539efa769",
+      "requirementIds": []
+    },
+    {
+      "id": "component-progress",
+      "url": "https://shopify.dev/docs/api/app-home/latest/web-components/feedback-and-status-indicators/progress",
+      "reviewedAt": "2026-09-24",
+      "sha256": "b2282336959f78ed5d183205d6673edf871f2abd431648b4769afa389a87f106",
+      "requirementIds": []
+    },
+    {
+      "id": "component-number",
+      "url": "https://shopify.dev/docs/api/app-home/latest/web-components/typography-and-content/number",
+      "reviewedAt": "2026-09-24",
+      "sha256": "2690f04facfb40a16cc285c33c022335e3b0d49b3689ce5bdcf9771cebd1c976",
+      "requirementIds": []
+    },
+    {
+      "id": "app-configuration",
+      "url": "https://shopify.dev/docs/apps/build/cli-for-apps/app-configuration",
+      "reviewedAt": "2026-09-05",
+      "sha256": "d578b6299b7087be810f0baff9dfb5c769c14201bec16eedf214c3c03b7a1887",
+      "requirementIds": []
+    },
+    {
+      "id": "api-versioning",
+      "url": "https://shopify.dev/docs/api/usage/versioning",
+      "reviewedAt": "2026-09-05",
+      "sha256": "24fc1fd15bd310b0553b8a5f3fe10b02196f2ba40ee7da0434a76a6271de53c7",
+      "requirementIds": []
+    },
+    {
+      "id": "privacy-webhooks",
+      "url": "https://shopify.dev/docs/apps/build/compliance/privacy-law-compliance",
+      "reviewedAt": "2026-09-05",
+      "sha256": "ea9dee13304ca6cef50f83e94bac56afde96022db9ae7a7109fe1fcfe25624ee",
+      "requirementIds": []
+    },
+    {
+      "id": "webhook-subscriptions",
+      "url": "https://shopify.dev/docs/apps/build/webhooks/subscribe",
+      "reviewedAt": "2026-09-05",
+      "sha256": "77a3540039531b140d76b721d55f615de0c144e5b14c17f5de74e149bc92b934",
+      "requirementIds": []
+    },
+    {
+      "id": "checkout-performance",
+      "url": "https://shopify.dev/docs/apps/build/checkout/extension-performance",
+      "reviewedAt": "2026-09-05",
+      "sha256": "8b6680daf3171d928afe940bfdca6863b13e9583170fe4f0be88c11517567875",
+      "requirementIds": []
+    },
+    {
+      "id": "function-localization",
+      "url": "https://shopify.dev/docs/apps/build/functions/localization-practices-shopify-functions",
+      "reviewedAt": "2026-09-05",
+      "sha256": "4f18c35c18319c1da202f3dc09fbc3eb0753a6de1ced4d7814cab631bd3e49e0",
+      "requirementIds": []
+    },
+    {
+      "id": "accessibility",
+      "url": "https://shopify.dev/docs/apps/build/accessibility",
+      "reviewedAt": "2026-09-05",
+      "sha256": "8953b8880685824c44683dc892bd5323bc6b82e38143fcd79d87148d71723721",
+      "requirementIds": []
+    },
+    {
+      "id": "review-alerts",
+      "url": "https://shopify.dev/docs/apps/design/user-experience/alerts",
+      "reviewedAt": "2026-09-05",
+      "sha256": "d35932ac628421255838d72c4ff38b506f16adce3df994a31e24b562ec1031c6",
+      "requirementIds": []
+    },
+    {
+      "id": "review-content",
+      "url": "https://shopify.dev/docs/apps/design/content",
+      "reviewedAt": "2026-09-05",
+      "sha256": "efd09a76104371b0fb08331cc006d6b449f8c456c2dfbb3aa82c3c1ee5275afc",
+      "requirementIds": []
+    },
+    {
+      "id": "review-forms",
+      "url": "https://shopify.dev/docs/apps/design/user-experience/forms",
+      "reviewedAt": "2026-09-05",
+      "sha256": "e1f6af3ac649f152842577a5fcd7d6ca20c67071d667f5f9afe456803193d576",
+      "requirementIds": []
+    },
+    {
+      "id": "review-onboarding",
+      "url": "https://shopify.dev/docs/apps/design/user-experience/onboarding",
+      "reviewedAt": "2026-09-05",
+      "sha256": "d3f7257e05d9af7a5d35801eaa36338c4e42b48e5326b3acec6c69144ec88f42",
+      "requirementIds": []
+    },
+    {
+      "id": "review-marketing",
+      "url": "https://shopify.dev/docs/apps/design/user-experience/marketing",
+      "reviewedAt": "2026-09-05",
+      "sha256": "84420315cdacc43d45d98f1116499165f266276516f0a8930f7d47e883d6cab4",
+      "requirementIds": []
+    },
+    {
+      "id": "review-app-home-page",
+      "url": "https://shopify.dev/docs/apps/design/user-experience/app-home-page",
+      "reviewedAt": "2026-09-05",
+      "sha256": "7f85085b6e881c5f121054f999a70cba10ffdb5ecc13fe1c1373a8ef4ef5bddf",
+      "requirementIds": []
+    },
+    {
+      "id": "review-navigation",
+      "url": "https://shopify.dev/docs/apps/design/navigation",
+      "reviewedAt": "2026-09-05",
+      "sha256": "c3994f9feda8543a0fb0c4bc7c94de2008b8e87a7c6c83ce15736cbe4b421008",
+      "requirementIds": []
+    },
+    {
+      "id": "review-id-tokens",
+      "url": "https://shopify.dev/docs/apps/build/authentication-authorization/id-tokens",
+      "reviewedAt": "2026-09-05",
+      "sha256": "5b0eb30e51a1e814919bc7f06e94e9eb168b5e1532baf48c4e5a9d41405a11a7",
+      "requirementIds": []
+    },
+    {
+      "id": "review-save-bar-api",
+      "url": "https://shopify.dev/docs/api/app-home/latest/apis/user-interface-and-interactions/save-bar-api",
+      "reviewedAt": "2026-09-05",
+      "sha256": "2130307e44e2a3e07855f86ba920cd133a1e6484c0af0eb43469a0c0f5fd9e71",
+      "requirementIds": []
+    },
+    {
+      "id": "design-voice-and-tone",
+      "url": "https://shopify.dev/docs/apps/design/content/voice-and-tone",
+      "reviewedAt": "2026-09-05",
+      "sha256": "a83c89d3da0ae5f0be629911b3cd26f9e0876d7b7c70bfd684fd714fd34bce97",
+      "requirementIds": []
+    },
+    {
+      "id": "design-grammar-and-mechanics",
+      "url": "https://shopify.dev/docs/apps/design/content/grammar-and-mechanics",
+      "reviewedAt": "2026-09-05",
+      "sha256": "d2a8aecf8a58ed61cfd1f247308fec7e54ca8becfe89dc3d88f6b947fd1ebf0c",
+      "requirementIds": []
+    },
+    {
+      "id": "design-layout",
+      "url": "https://shopify.dev/docs/apps/design/layout",
+      "reviewedAt": "2026-09-05",
+      "sha256": "2006c28133a7e72e34819c2ff06f9b3bfc273f075f968637296a1e64dd7e7806",
+      "requirementIds": []
+    },
+    {
+      "id": "design-visual-design",
+      "url": "https://shopify.dev/docs/apps/design/visual-design",
+      "reviewedAt": "2026-09-05",
+      "sha256": "514734ba8db6d0be6345dbdb11edabecfeef97a01c8208c691d71a39932620bf",
+      "requirementIds": []
+    },
+    {
+      "id": "design-app-structure",
+      "url": "https://shopify.dev/docs/apps/design/app-structure",
+      "reviewedAt": "2026-09-05",
+      "sha256": "6798bb379fd3db5fd481f04f91618867e9421d427c75c4cd96a59550035df33e",
+      "requirementIds": []
+    },
+    {
+      "id": "design-subscription-apps",
+      "url": "https://shopify.dev/docs/apps/design/user-experience/subscription-apps",
+      "reviewedAt": "2026-09-05",
+      "sha256": "a5f748c5172b8a357732e5939eed441cb1deee8950e3fe0d210e6917331555f5",
+      "requirementIds": []
+    },
+    {
+      "id": "iframe-protection",
+      "url": "https://shopify.dev/docs/apps/build/security/set-up-iframe-protection",
+      "reviewedAt": "2026-09-05",
+      "sha256": "6f598f2d45c36299cc2d5ea218aa8c3be8b8fd0cc0d5ccb33d99b0b0a506cb2f",
+      "requirementIds": []
+    },
+    {
+      "id": "webhook-hmac",
+      "url": "https://shopify.dev/docs/apps/build/webhooks/verify-deliveries",
+      "reviewedAt": "2026-09-05",
+      "sha256": "0f78307b4f0701f45a4029b3cdacf052ade84c63cd72a5b1bf56f68a82e11c05",
+      "requirementIds": []
+    },
+    {
+      "id": "storefront-performance",
+      "url": "https://shopify.dev/docs/apps/build/performance/storefront",
+      "reviewedAt": "2026-09-05",
+      "sha256": "56aad72b6b339d82e68827ba14394c8669e6e5497d9b479468f263900ad2cb1c",
+      "requirementIds": []
+    },
+    {
+      "id": "app-store-best-practices",
+      "url": "https://shopify.dev/docs/apps/launch/shopify-app-store/best-practices",
+      "reviewedAt": "2026-09-05",
+      "sha256": "c468052284191134118404603beaf1d3b6e9b94a9c63a9fafbb031d16938217f",
+      "requirementIds": []
+    },
+    {
+      "id": "polaris-cdn-versioning",
+      "url": "https://shopify.dev/changelog/the-polaris-cdn-is-adopting-semantic-versioning",
+      "reviewedAt": "2026-09-24",
+      "sha256": "1440809ecd963948384088e9952057efc205d8b84fa322bb7800a7b8f781b90e",
+      "requirementIds": []
+    },
+    {
+      "id": "flow-templates",
+      "url": "https://shopify.dev/docs/apps/build/flow/templates/reference",
+      "reviewedAt": "2026-09-24",
+      "sha256": "e4fa5d7529185e44e667df7bef65f252677e13175e86e8fa20b2cbe278a046c4",
+      "requirementIds": []
+    },
+    {
+      "id": "flow-action-endpoints",
+      "url": "https://shopify.dev/docs/apps/build/flow/actions/endpoints",
+      "reviewedAt": "2026-09-24",
+      "sha256": "d3d49288bcdd7814d1eab860cc29025311efadacb491215a446b9495c03ed507",
+      "requirementIds": []
+    },
+    {
+      "id": "checkout-web-components",
+      "url": "https://shopify.dev/docs/apps/build/checkout/migrate-to-web-components",
+      "reviewedAt": "2026-09-24",
+      "sha256": "9541a42cfe22b641f256d183e84a05eab3d4ed1924f919682e147e3e6065cb44",
+      "requirementIds": []
+    },
+    {
+      "id": "customer-account-web-components",
+      "url": "https://shopify.dev/docs/apps/build/customer-accounts/migrate-to-web-components",
+      "reviewedAt": "2026-09-24",
+      "sha256": "97465e125a5dc1a98cc3ab4db966ae0b3417836381f9d194dc5cd5a19ec3ef67",
+      "requirementIds": []
+    },
+    {
+      "id": "events-subscriptions",
+      "url": "https://shopify.dev/docs/apps/build/events/subscribe",
+      "reviewedAt": "2026-09-24",
+      "sha256": "97e48db9952f549031b1a505c3d4822bce2d126e844cf5f020b8ebe97814e46e",
+      "requirementIds": []
+    }
+  ],
+  "protocols": {
+    "platform-eligibility": {
+      "kind": "external",
+      "evidence": "Record the applicable platform decision, account status, approved exception or business model review. Source inspection cannot establish eligibility."
+    },
+    "installation-auth": {
+      "kind": "runtime",
+      "evidence": "Exercise new installation, declined consent, uninstall and reinstall with third-party storage blocked. Verify authentication precedes access and tenant identity comes from verified claims."
+    },
+    "checkout-consent": {
+      "kind": "runtime",
+      "evidence": "Run buyer accept, decline and abandonment paths. Compare order totals and selected delivery methods before and after every optional action; retain request and order evidence."
+    },
+    "billing-lifecycle": {
+      "kind": "runtime",
+      "evidence": "Exercise charge approval, rejection, cancellation, plan changes and reinstallation. Match the advertised price to the charge history and document any approved billing exception."
+    },
+    "merchant-copy": {
+      "kind": "review",
+      "evidence": "Review actual rendered copy and translations in context. Verify action meaning, substantiation, terminology, recovery guidance and neutral review requests; lexical triggers are candidates only."
+    },
+    "listing-content": {
+      "kind": "review",
+      "evidence": "Compare every submitted field and image against the running app and source requirement. Review names, branding, claims, pricing placement, languages, geographic limits, tags and image distinctness."
+    },
+    "submission-access": {
+      "kind": "external",
+      "evidence": "Record current submission assets, reachable test accounts, supported-browser recordings and dashboard contacts. Keep credentials outside committed evidence."
+    },
+    "workflow-behavior": {
+      "kind": "runtime",
+      "evidence": "Exercise the exact requirement's successful, empty, loading and failed paths in the applicable surface. Record route, revision, environment and observable outcome."
+    },
+    "data-synchronization": {
+      "kind": "runtime",
+      "evidence": "Compare owned records on both sides of the integration after create, edit, delete, retry and out-of-order delivery. Verify tenant isolation and required lifecycle API calls."
+    },
+    "api-integration": {
+      "kind": "runtime",
+      "evidence": "Trace the feature's actual requests and extension callbacks. Verify the required API and object semantics, category exceptions, retry handling and resulting Shopify state."
+    },
+    "scope-justification": {
+      "kind": "review",
+      "evidence": "Map each required and optional permission to an exercised feature. Record restricted-scope approval separately; a manifest string does not prove necessity or access."
+    },
+    "transport-security": {
+      "kind": "runtime",
+      "evidence": "Inspect served routes, redirects and TLS validation across configured domains. Test unauthorized requests, tenant separation and callback verification; HTTPS syntax alone proves none of these."
+    },
+    "embedded-navigation": {
+      "kind": "runtime",
+      "evidence": "Exercise every primary route, deep link, back action, account connection and disconnection inside Shopify. Verify active navigation, fresh login behavior and approved external-surface exceptions."
+    },
+    "rendered-accessibility": {
+      "kind": "runtime",
+      "evidence": "Test rendered pages with keyboard and assistive technology, mobile widths and zoom. Check focus movement, accessible names, contrast, errors, loading announcements and responsive reachability."
+    },
+    "forms-and-recovery": {
+      "kind": "runtime",
+      "evidence": "Exercise untouched, edited, invalid, submitted, failed and retry states. Check contextual errors, retained values, save/discard navigation guards and accessible feedback."
+    },
+    "modal-interaction": {
+      "kind": "runtime",
+      "evidence": "Open and dismiss overlays through real merchant actions. Verify focus return, Escape behavior, action hierarchy and that unrelated events or timers cannot launch intrusive flows."
+    },
+    "onboarding-and-home": {
+      "kind": "runtime",
+      "evidence": "Walk a fresh merchant through setup, dismiss completed guidance and revisit home. Verify integration status, useful ongoing data and explanations for requested information."
+    },
+    "promotion-and-entitlements": {
+      "kind": "runtime",
+      "evidence": "Review each promotional and plan-gated state for the relevant surface. Exercise dismissal across sessions, inaccessible features, upgrade routes and non-Plus accounts."
+    },
+    "live-preview": {
+      "kind": "runtime",
+      "evidence": "Edit visual settings at desktop and mobile widths. Compare preview updates with the saved result, and verify controls and preview remain usable together where required."
+    },
+    "theme-integration": {
+      "kind": "runtime",
+      "evidence": "Install, enable, preview, disable and uninstall the app integration in representative themes. Check editor behavior, asset cleanup, onboarding links and any approved theme-write exception."
+    },
+    "admin-metrics": {
+      "kind": "runtime",
+      "evidence": "Supply a complete app-scoped 28-day dashboard or observability export with each required percentile and sample count. Evaluate it with evaluateShopifyPerformance; retain raw provenance."
+    },
+    "storefront-performance": {
+      "kind": "runtime",
+      "evidence": "Measure before and after installation with matching store, theme, pages, devices and runner settings. Retain all runs and evaluate the score change; local results do not replace Shopify assessment."
+    },
+    "carrier-metrics": {
+      "kind": "runtime",
+      "evidence": "Supply complete 28-day request population, latency percentile and success ratio. Evaluate both carrier-specific and general checkout criteria; do not substitute a synthetic benchmark."
+    },
+    "fulfillment-metrics": {
+      "kind": "runtime",
+      "evidence": "Supply complete 28-day fulfillment populations, eligible-order exclusions and timely-response ratios. Evaluate required metrics and inspect raw lifecycle evidence for the selected requirement."
+    },
+    "customer-account-flow": {
+      "kind": "runtime",
+      "evidence": "Exercise authenticated account ownership, subscription or return management, expired sessions and a second customer's access attempt. Verify the required customer-account integration."
+    },
+    "subscription-lifecycle": {
+      "kind": "runtime",
+      "evidence": "Exercise selling plans, contract updates, cancellation, payment-method changes, portal links, variants, currencies and deferred or prepaid pricing. Reconcile UI, API state and customer communications."
+    },
+    "payment-flow": {
+      "kind": "runtime",
+      "evidence": "Exercise the approved gateway's payment, cancellation, failure, refund and test flows on supported browsers and devices. Verify amounts, return destinations and permitted extension targets."
+    },
+    "fulfillment-workflow": {
+      "kind": "runtime",
+      "evidence": "Exercise merchant-requested fulfillment, unpaid orders, callbacks, tracking and cancellations. Verify state transitions and required API results, including retries and rejected requests."
+    },
+    "sales-channel-flow": {
+      "kind": "runtime",
+      "evidence": "Exercise connection, eligibility, publication, rejection, product feedback, attribution and disconnection. Reconcile the channel UI with Shopify state and buyer checkout."
+    },
+    "post-purchase-flow": {
+      "kind": "runtime",
+      "evidence": "Exercise accepted and declined offers, repeated offers, quantity and variant changes, and completion. Reconcile product data and total cost; inspect the exact source restrictions."
+    },
+    "donation-flow": {
+      "kind": "runtime",
+      "evidence": "Exercise the donation widget and checkout, then reconcile collection, operating-cost disclosure and merchant-visible distribution evidence with the exact requirement."
+    },
+    "blockchain-flow": {
+      "kind": "runtime",
+      "evidence": "Exercise approval gates, purchase, minting, claim delivery and fulfillment tracking in a test environment. Review on-chain payloads for personal information and preserve recipient authorization."
+    }
+  },
+  "tools": {
+    "no-admin-rest-api": {
+      "kind": "rule",
+      "package": "oxlint-plugin-shopify-app",
+      "member": "no-admin-rest-api",
+      "boundary": "Checks recognized source forms only. Dynamic values, wrappers, cross-file behavior and runtime accessibility require the linked evidence protocol; apply the documented surface and category scope."
+    },
+    "no-asset-api-theme-writes": {
+      "kind": "rule",
+      "package": "oxlint-plugin-shopify-app",
+      "member": "no-asset-api-theme-writes",
+      "boundary": "Checks recognized source forms only. Dynamic values, wrappers, cross-file behavior and runtime accessibility require the linked evidence protocol; apply the documented surface and category scope."
+    },
+    "no-draft-order-custom-discounts": {
+      "kind": "rule",
+      "package": "oxlint-plugin-shopify-app",
+      "member": "no-draft-order-custom-discounts",
+      "boundary": "Checks recognized source forms only. Dynamic values, wrappers, cross-file behavior and runtime accessibility require the linked evidence protocol; apply the documented surface and category scope."
+    },
+    "no-nav-emoji": {
+      "kind": "rule",
+      "package": "oxlint-plugin-shopify-app",
+      "member": "no-nav-emoji",
+      "boundary": "Checks recognized source forms only. Dynamic values, wrappers, cross-file behavior and runtime accessibility require the linked evidence protocol; apply the documented surface and category scope."
+    },
+    "no-script-tag-api": {
+      "kind": "rule",
+      "package": "oxlint-plugin-shopify-app",
+      "member": "no-script-tag-api",
+      "boundary": "Checks recognized source forms only. Dynamic values, wrappers, cross-file behavior and runtime accessibility require the linked evidence protocol; apply the documented surface and category scope."
+    },
+    "no-viewport-zoom-disable": {
+      "kind": "rule",
+      "package": "oxlint-plugin-shopify-app",
+      "member": "no-viewport-zoom-disable",
+      "boundary": "Checks recognized source forms only. Dynamic values, wrappers, cross-file behavior and runtime accessibility require the linked evidence protocol; apply the documented surface and category scope."
+    },
+    "require-fetch-abort-signal": {
+      "kind": "rule",
+      "package": "oxlint-plugin-shopify-app",
+      "member": "require-fetch-abort-signal",
+      "boundary": "Checks recognized source forms only. Dynamic values, wrappers, cross-file behavior and runtime accessibility require the linked evidence protocol; apply the documented surface and category scope."
+    },
+    "s-action-slot-contract": {
+      "kind": "rule",
+      "package": "oxlint-plugin-shopify-app",
+      "member": "s-action-slot-contract",
+      "boundary": "Checks recognized source forms only. Dynamic values, wrappers, cross-file behavior and runtime accessibility require the linked evidence protocol; apply the documented surface and category scope."
+    },
+    "s-button-accessible-name": {
+      "kind": "rule",
+      "package": "oxlint-plugin-shopify-app",
+      "member": "s-button-accessible-name",
+      "boundary": "Checks recognized source forms only. Dynamic values, wrappers, cross-file behavior and runtime accessibility require the linked evidence protocol; apply the documented surface and category scope."
+    },
+    "s-button-submit-no-navigation": {
+      "kind": "rule",
+      "package": "oxlint-plugin-shopify-app",
+      "member": "s-button-submit-no-navigation",
+      "boundary": "Checks recognized source forms only. Dynamic values, wrappers, cross-file behavior and runtime accessibility require the linked evidence protocol; apply the documented surface and category scope."
+    },
+    "s-clickable-accessible-name": {
+      "kind": "rule",
+      "package": "oxlint-plugin-shopify-app",
+      "member": "s-clickable-accessible-name",
+      "boundary": "Checks recognized source forms only. Dynamic values, wrappers, cross-file behavior and runtime accessibility require the linked evidence protocol; apply the documented surface and category scope."
+    },
+    "s-form-control-label-required": {
+      "kind": "rule",
+      "package": "oxlint-plugin-shopify-app",
+      "member": "s-form-control-label-required",
+      "boundary": "Checks recognized source forms only. Dynamic values, wrappers, cross-file behavior and runtime accessibility require the linked evidence protocol; apply the documented surface and category scope."
+    },
+    "s-modal-actions-use-slots": {
+      "kind": "rule",
+      "package": "oxlint-plugin-shopify-app",
+      "member": "s-modal-actions-use-slots",
+      "boundary": "Checks recognized source forms only. Dynamic values, wrappers, cross-file behavior and runtime accessibility require the linked evidence protocol; apply the documented surface and category scope."
+    },
+    "s-modal-heading-required": {
+      "kind": "rule",
+      "package": "oxlint-plugin-shopify-app",
+      "member": "s-modal-heading-required",
+      "boundary": "Checks recognized source forms only. Dynamic values, wrappers, cross-file behavior and runtime accessibility require the linked evidence protocol; apply the documented surface and category scope."
+    },
+    "s-money-field-no-currency-symbol": {
+      "kind": "rule",
+      "package": "oxlint-plugin-shopify-app",
+      "member": "s-money-field-no-currency-symbol",
+      "boundary": "Checks recognized source forms only. Dynamic values, wrappers, cross-file behavior and runtime accessibility require the linked evidence protocol; apply the documented surface and category scope."
+    },
+    "s-page-aside-visible": {
+      "kind": "rule",
+      "package": "oxlint-plugin-shopify-app",
+      "member": "s-page-aside-visible",
+      "boundary": "Checks recognized source forms only. Dynamic values, wrappers, cross-file behavior and runtime accessibility require the linked evidence protocol; apply the documented surface and category scope."
+    },
+    "s-spinner-accessible-label": {
+      "kind": "rule",
+      "package": "oxlint-plugin-shopify-app",
+      "member": "s-spinner-accessible-label",
+      "boundary": "Checks recognized source forms only. Dynamic values, wrappers, cross-file behavior and runtime accessibility require the linked evidence protocol; apply the documented surface and category scope."
+    },
+    "s-tooltip-no-interactive-content": {
+      "kind": "rule",
+      "package": "oxlint-plugin-shopify-app",
+      "member": "s-tooltip-no-interactive-content",
+      "boundary": "Checks recognized source forms only. Dynamic values, wrappers, cross-file behavior and runtime accessibility require the linked evidence protocol; apply the documented surface and category scope."
+    },
+    "action-label-clarity": {
+      "kind": "rule",
+      "package": "agentlint-plugin-shopify-app",
+      "member": "shopify-app/action-label-clarity",
+      "boundary": "Schedules contextual review on configured triggers. A trigger is not a proven violation and absence of a trigger does not establish compliance. Private agentlint preview dependency remains required."
+    },
+    "app-ux-review": {
+      "kind": "rule",
+      "package": "agentlint-plugin-shopify-app",
+      "member": "shopify-app/app-ux-review",
+      "boundary": "Schedules contextual review on configured triggers. A trigger is not a proven violation and absence of a trigger does not establish compliance. Private agentlint preview dependency remains required. Requires explicit route/file targets and applicable review areas; the default instance is dormant."
+    },
+    "banner-usage": {
+      "kind": "rule",
+      "package": "agentlint-plugin-shopify-app",
+      "member": "shopify-app/banner-usage",
+      "boundary": "Schedules contextual review on configured triggers. A trigger is not a proven violation and absence of a trigger does not establish compliance. Private agentlint preview dependency remains required."
+    },
+    "checkout-network-discipline": {
+      "kind": "rule",
+      "package": "agentlint-plugin-shopify-app",
+      "member": "shopify-app/checkout-network-discipline",
+      "boundary": "Schedules contextual review on configured triggers. A trigger is not a proven violation and absence of a trigger does not establish compliance. Private agentlint preview dependency remains required."
+    },
+    "destructive-action-review": {
+      "kind": "rule",
+      "package": "agentlint-plugin-shopify-app",
+      "member": "shopify-app/destructive-action-review",
+      "boundary": "Schedules contextual review on configured triggers. A trigger is not a proven violation and absence of a trigger does not establish compliance. Private agentlint preview dependency remains required."
+    },
+    "form-error-recovery": {
+      "kind": "rule",
+      "package": "agentlint-plugin-shopify-app",
+      "member": "shopify-app/form-error-recovery",
+      "boundary": "Schedules contextual review on configured triggers. A trigger is not a proven violation and absence of a trigger does not establish compliance. Private agentlint preview dependency remains required."
+    },
+    "modal-workflow-review": {
+      "kind": "rule",
+      "package": "agentlint-plugin-shopify-app",
+      "member": "shopify-app/modal-workflow-review",
+      "boundary": "Schedules contextual review on configured triggers. A trigger is not a proven violation and absence of a trigger does not establish compliance. Private agentlint preview dependency remains required."
+    },
+    "no-pressure-copy": {
+      "kind": "rule",
+      "package": "agentlint-plugin-shopify-app",
+      "member": "shopify-app/no-pressure-copy",
+      "boundary": "Schedules contextual review on configured triggers. A trigger is not a proven violation and absence of a trigger does not establish compliance. Private agentlint preview dependency remains required."
+    },
+    "review-solicitation": {
+      "kind": "rule",
+      "package": "agentlint-plugin-shopify-app",
+      "member": "shopify-app/review-solicitation",
+      "boundary": "Schedules contextual review on configured triggers. A trigger is not a proven violation and absence of a trigger does not establish compliance. Private agentlint preview dependency remains required."
+    },
+    "session-token-auth": {
+      "kind": "rule",
+      "package": "agentlint-plugin-shopify-app",
+      "member": "shopify-app/session-token-auth",
+      "boundary": "Schedules contextual review on configured triggers. A trigger is not a proven violation and absence of a trigger does not establish compliance. Private agentlint preview dependency remains required."
+    },
+    "settings-save-bar": {
+      "kind": "rule",
+      "package": "agentlint-plugin-shopify-app",
+      "member": "shopify-app/settings-save-bar",
+      "boundary": "Schedules contextual review on configured triggers. A trigger is not a proven violation and absence of a trigger does not establish compliance. Private agentlint preview dependency remains required."
+    },
+    "app-bridge-script": {
+      "kind": "check",
+      "package": "conformance-shopify-app",
+      "member": "app-bridge-script",
+      "boundary": "Checks selected local manifests, entries or output only; inspect options and category exceptions. Presence and syntax do not prove served behavior or platform acceptance."
+    },
+    "checkout-bundle-size": {
+      "kind": "check",
+      "package": "conformance-shopify-app",
+      "member": "checkout-bundle-size",
+      "boundary": "Checks selected local manifests, entries or output only; inspect options and category exceptions. Presence and syntax do not prove served behavior or platform acceptance."
+    },
+    "compliance-webhooks": {
+      "kind": "check",
+      "package": "conformance-shopify-app",
+      "member": "compliance-webhooks",
+      "boundary": "Checks selected local manifests, entries or output only; inspect options and category exceptions. Presence and syntax do not prove served behavior or platform acceptance."
+    },
+    "functions-localization": {
+      "kind": "check",
+      "package": "conformance-shopify-app",
+      "member": "functions-localization",
+      "boundary": "Checks selected local manifests, entries or output only; inspect options and category exceptions. Presence and syntax do not prove served behavior or platform acceptance."
+    },
+    "app-url-security": {
+      "kind": "check",
+      "package": "conformance-shopify-app",
+      "member": "app-url-security",
+      "boundary": "Checks selected local manifests, entries or output only; inspect options and category exceptions. Presence and syntax do not prove served behavior or platform acceptance."
+    },
+    "webhook-subscription-contract": {
+      "kind": "check",
+      "package": "conformance-shopify-app",
+      "member": "webhook-subscription-contract",
+      "boundary": "Checks selected local manifests, entries or output only; inspect options and category exceptions. Presence and syntax do not prove served behavior or platform acceptance."
+    },
+    "api-version-contract": {
+      "kind": "check",
+      "package": "conformance-shopify-app",
+      "member": "api-version-contract",
+      "boundary": "Checks selected local manifests, entries or output only; inspect options and category exceptions. Presence and syntax do not prove served behavior or platform acceptance."
+    },
+    "built-for-shopify-extensions": {
+      "kind": "check",
+      "package": "conformance-shopify-app",
+      "member": "built-for-shopify-extensions",
+      "boundary": "Checks selected local manifests, entries or output only; inspect options and category exceptions. Presence and syntax do not prove served behavior or platform acceptance."
+    },
+    "performance-evidence": {
+      "kind": "export",
+      "package": "conformance-shopify-app",
+      "member": "evaluateShopifyPerformance",
+      "boundary": "Validates supplied numeric aggregates, units, population sizes, windows and identity. Does not collect data, authenticate provenance or grant eligibility."
+    },
+    "native-jsx-accessibility": {
+      "kind": "upstream",
+      "reference": "examples/shopify/app-home.oxlintrc.json",
+      "boundary": "Runs existing Oxlint JSX accessibility rules on native elements. Does not infer custom-element shadow DOM, contrast, keyboard flows or rendered content."
+    },
+    "component-types": {
+      "kind": "upstream",
+      "reference": "https://shopify.dev/docs/api/app-home/latest/web-components",
+      "boundary": "Use the official component TypeScript declarations for the actual surface/version. Property types do not enforce UX, slots or meaningful labels; no runtime component-type certification is claimed."
+    },
+    "iframe-protection": {
+      "kind": "export",
+      "package": "conformance-shopify-app",
+      "member": "evaluateShopifyIframeProtection",
+      "boundary": "Checks one supplied response and verified tenant identity. Caller owns authentication and route coverage; standalone findings are advisory."
+    },
+    "webhook-hmac": {
+      "kind": "export",
+      "package": "conformance-shopify-app",
+      "member": "probeShopifyWebhookHmac",
+      "boundary": "Runs valid and invalid signed requests through a caller-supplied isolated handler. Caller owns side effects and real delivery coverage; never use production credentials."
+    },
+    "storefront-performance": {
+      "kind": "export",
+      "package": "conformance-shopify-app",
+      "member": "evaluateShopifyStorefrontPerformance",
+      "boundary": "Compares supplied mobile before/after evidence using weighted home/product/collection scores. Does not collect runs or prove app setup, matching pages, provenance or platform acceptance."
+    },
+    "listing-inputs": {
+      "kind": "check",
+      "package": "conformance-shopify-app",
+      "member": "listing-inputs",
+      "boundary": "Opt-in via optionalShopifyAppChecks: parked because the Partner Dashboard enforces listing limits at entry. Checks only supplied listing fields, counts, image header dimensions, contained paths and exact duplicate bytes. Omitted fields, decoded image integrity, semantic content, translations and visual similarity require review."
+    },
+    "s-known-components": {
+      "kind": "rule",
+      "package": "oxlint-plugin-shopify-app",
+      "member": "s-known-components",
+      "boundary": "Checks recognized source forms only. Dynamic values, wrappers, cross-file behavior and runtime accessibility require the linked evidence protocol; apply the documented surface and category scope. Reads the installed @shopify/polaris-types manifest; silent when none resolves."
+    },
+    "flow-action-handler-review": {
+      "kind": "rule",
+      "package": "agentlint-plugin-shopify-app",
+      "member": "shopify-app/flow-action-handler-review",
+      "boundary": "Schedules contextual review on configured triggers. A trigger is not a proven violation and absence of a trigger does not establish compliance. Private agentlint preview dependency remains required."
+    },
+    "polaris-cdn-track": {
+      "kind": "check",
+      "package": "conformance-shopify-app",
+      "member": "polaris-cdn-track",
+      "boundary": "Checks selected local manifests, entries or output only; inspect options and category exceptions. Presence and syntax do not prove served behavior or platform acceptance. Scripts injected at run time are invisible."
+    },
+    "flow-template-contract": {
+      "kind": "check",
+      "package": "conformance-shopify-app",
+      "member": "flow-template-contract",
+      "boundary": "Checks selected local manifests, entries or output only; inspect options and category exceptions. Presence and syntax do not prove served behavior or platform acceptance. Workflow value, titles, spelling and one-click safety stay with Shopify's template review."
+    },
+    "extension-framework-contract": {
+      "kind": "check",
+      "package": "conformance-shopify-app",
+      "member": "extension-framework-contract",
+      "boundary": "Checks selected local manifests, entries or output only; inspect options and category exceptions. Presence and syntax do not prove served behavior or platform acceptance. Wrappers and shared packages outside the extension are not followed."
+    }
+  },
+  "requirements": [
+    {
+      "id": "app-store/1.1.1",
+      "source": "app-store",
+      "category": "general",
+      "protocol": "installation-auth",
+      "tools": ["session-token-auth"]
+    },
+    {
+      "id": "app-store/1.1.2",
+      "source": "app-store",
+      "category": "general",
+      "protocol": "checkout-consent",
+      "tools": []
+    },
+    {
+      "id": "app-store/1.1.3",
+      "source": "app-store",
+      "category": "general",
+      "protocol": "platform-eligibility",
+      "tools": []
+    },
+    {
+      "id": "app-store/1.1.4",
+      "source": "app-store",
+      "category": "general",
+      "protocol": "merchant-copy",
+      "tools": ["no-pressure-copy"]
+    },
+    {
+      "id": "app-store/1.1.5",
+      "source": "app-store",
+      "category": "general",
+      "protocol": "platform-eligibility",
+      "tools": []
+    },
+    {
+      "id": "app-store/1.1.6",
+      "source": "app-store",
+      "category": "general",
+      "protocol": "platform-eligibility",
+      "tools": []
+    },
+    {
+      "id": "app-store/1.1.7",
+      "source": "app-store",
+      "category": "general",
+      "protocol": "platform-eligibility",
+      "tools": []
+    },
+    {
+      "id": "app-store/1.1.8",
+      "source": "app-store",
+      "category": "general",
+      "protocol": "platform-eligibility",
+      "tools": []
+    },
+    {
+      "id": "app-store/1.1.9",
+      "source": "app-store",
+      "category": "general",
+      "protocol": "checkout-consent",
+      "tools": ["app-ux-review"]
+    },
+    {
+      "id": "app-store/1.1.10",
+      "source": "app-store",
+      "category": "general",
+      "protocol": "checkout-consent",
+      "tools": []
+    },
+    {
+      "id": "app-store/1.1.11",
+      "source": "app-store",
+      "category": "general",
+      "protocol": "platform-eligibility",
+      "tools": []
+    },
+    {
+      "id": "app-store/1.1.12",
+      "source": "app-store",
+      "category": "general",
+      "protocol": "platform-eligibility",
+      "tools": []
+    },
+    {
+      "id": "app-store/1.1.13",
+      "source": "app-store",
+      "category": "general",
+      "protocol": "platform-eligibility",
+      "tools": []
+    },
+    {
+      "id": "app-store/1.1.14",
+      "source": "app-store",
+      "category": "general",
+      "protocol": "platform-eligibility",
+      "tools": []
+    },
+    {
+      "id": "app-store/1.1.15",
+      "source": "app-store",
+      "category": "general",
+      "protocol": "checkout-consent",
+      "tools": []
+    },
+    {
+      "id": "app-store/1.1.16",
+      "source": "app-store",
+      "category": "general",
+      "protocol": "platform-eligibility",
+      "tools": []
+    },
+    {
+      "id": "app-store/1.2.1",
+      "source": "app-store",
+      "category": "general",
+      "protocol": "billing-lifecycle",
+      "tools": []
+    },
+    {
+      "id": "app-store/1.2.2",
+      "source": "app-store",
+      "category": "general",
+      "protocol": "billing-lifecycle",
+      "tools": []
+    },
+    {
+      "id": "app-store/1.2.3",
+      "source": "app-store",
+      "category": "general",
+      "protocol": "billing-lifecycle",
+      "tools": []
+    },
+    {
+      "id": "app-store/1.3.1",
+      "source": "app-store",
+      "category": "general",
+      "protocol": "merchant-copy",
+      "tools": ["review-solicitation"]
+    },
+    {
+      "id": "app-store/2.1.1",
+      "source": "app-store",
+      "category": "general",
+      "protocol": "workflow-behavior",
+      "tools": []
+    },
+    {
+      "id": "app-store/2.1.2",
+      "source": "app-store",
+      "category": "general",
+      "protocol": "workflow-behavior",
+      "tools": []
+    },
+    {
+      "id": "app-store/2.1.3",
+      "source": "app-store",
+      "category": "general",
+      "protocol": "workflow-behavior",
+      "tools": []
+    },
+    {
+      "id": "app-store/2.1.4",
+      "source": "app-store",
+      "category": "general",
+      "protocol": "data-synchronization",
+      "tools": []
+    },
+    {
+      "id": "app-store/2.2.1",
+      "source": "app-store",
+      "category": "general",
+      "protocol": "api-integration",
+      "tools": []
+    },
+    {
+      "id": "app-store/2.2.2",
+      "source": "app-store",
+      "category": "general",
+      "protocol": "embedded-navigation",
+      "tools": ["app-bridge-script"]
+    },
+    {
+      "id": "app-store/2.2.3",
+      "source": "app-store",
+      "category": "general",
+      "protocol": "embedded-navigation",
+      "tools": ["app-bridge-script"]
+    },
+    {
+      "id": "app-store/2.2.4",
+      "source": "app-store",
+      "category": "general",
+      "protocol": "api-integration",
+      "tools": ["no-admin-rest-api"]
+    },
+    {
+      "id": "app-store/2.2.5",
+      "source": "app-store",
+      "category": "general",
+      "protocol": "workflow-behavior",
+      "tools": ["app-ux-review"]
+    },
+    {
+      "id": "app-store/2.2.6",
+      "source": "app-store",
+      "category": "general",
+      "protocol": "promotion-and-entitlements",
+      "tools": ["app-ux-review"]
+    },
+    {
+      "id": "app-store/2.2.7",
+      "source": "app-store",
+      "category": "general",
+      "protocol": "modal-interaction",
+      "tools": ["modal-workflow-review", "app-ux-review"]
+    },
+    {
+      "id": "app-store/2.2.8",
+      "source": "app-store",
+      "category": "general",
+      "protocol": "api-integration",
+      "tools": ["app-ux-review"]
+    },
+    {
+      "id": "app-store/2.2.9",
+      "source": "app-store",
+      "category": "general",
+      "protocol": "promotion-and-entitlements",
+      "tools": ["app-ux-review"]
+    },
+    {
+      "id": "app-store/2.3.1",
+      "source": "app-store",
+      "category": "general",
+      "protocol": "installation-auth",
+      "tools": []
+    },
+    {
+      "id": "app-store/2.3.2",
+      "source": "app-store",
+      "category": "general",
+      "protocol": "installation-auth",
+      "tools": ["session-token-auth"]
+    },
+    {
+      "id": "app-store/2.3.3",
+      "source": "app-store",
+      "category": "general",
+      "protocol": "installation-auth",
+      "tools": []
+    },
+    {
+      "id": "app-store/2.3.4",
+      "source": "app-store",
+      "category": "general",
+      "protocol": "installation-auth",
+      "tools": ["session-token-auth"]
+    },
+    {
+      "id": "app-store/3.1.1",
+      "source": "app-store",
+      "category": "general",
+      "protocol": "transport-security",
+      "tools": ["app-url-security", "webhook-subscription-contract"]
+    },
+    {
+      "id": "app-store/3.2.1",
+      "source": "app-store",
+      "category": "general",
+      "protocol": "scope-justification",
+      "tools": []
+    },
+    {
+      "id": "app-store/3.2.2",
+      "source": "app-store",
+      "category": "general",
+      "protocol": "scope-justification",
+      "tools": []
+    },
+    {
+      "id": "app-store/3.2.3",
+      "source": "app-store",
+      "category": "general",
+      "protocol": "scope-justification",
+      "tools": []
+    },
+    {
+      "id": "app-store/3.2.4",
+      "source": "app-store",
+      "category": "general",
+      "protocol": "scope-justification",
+      "tools": []
+    },
+    {
+      "id": "app-store/3.2.5",
+      "source": "app-store",
+      "category": "general",
+      "protocol": "scope-justification",
+      "tools": []
+    },
+    {
+      "id": "app-store/4.1.1",
+      "source": "app-store",
+      "category": "general",
+      "protocol": "listing-content",
+      "tools": []
+    },
+    {
+      "id": "app-store/4.1.2",
+      "source": "app-store",
+      "category": "general",
+      "protocol": "listing-content",
+      "tools": []
+    },
+    {
+      "id": "app-store/4.2.1",
+      "source": "app-store",
+      "category": "general",
+      "protocol": "listing-content",
+      "tools": []
+    },
+    {
+      "id": "app-store/4.2.2",
+      "source": "app-store",
+      "category": "general",
+      "protocol": "listing-content",
+      "tools": []
+    },
+    {
+      "id": "app-store/4.2.3",
+      "source": "app-store",
+      "category": "general",
+      "protocol": "listing-content",
+      "tools": []
+    },
+    {
+      "id": "app-store/4.3.1",
+      "source": "app-store",
+      "category": "general",
+      "protocol": "listing-content",
+      "tools": []
+    },
+    {
+      "id": "app-store/4.3.2",
+      "source": "app-store",
+      "category": "general",
+      "protocol": "listing-content",
+      "tools": []
+    },
+    {
+      "id": "app-store/4.3.3",
+      "source": "app-store",
+      "category": "general",
+      "protocol": "listing-content",
+      "tools": []
+    },
+    {
+      "id": "app-store/4.3.4",
+      "source": "app-store",
+      "category": "general",
+      "protocol": "listing-content",
+      "tools": []
+    },
+    {
+      "id": "app-store/4.3.5",
+      "source": "app-store",
+      "category": "general",
+      "protocol": "listing-content",
+      "tools": []
+    },
+    {
+      "id": "app-store/4.3.6",
+      "source": "app-store",
+      "category": "general",
+      "protocol": "listing-content",
+      "tools": []
+    },
+    {
+      "id": "app-store/4.3.7",
+      "source": "app-store",
+      "category": "general",
+      "protocol": "listing-content",
+      "tools": []
+    },
+    {
+      "id": "app-store/4.3.8",
+      "source": "app-store",
+      "category": "general",
+      "protocol": "listing-content",
+      "tools": []
+    },
+    {
+      "id": "app-store/4.4.1",
+      "source": "app-store",
+      "category": "general",
+      "protocol": "listing-content",
+      "tools": []
+    },
+    {
+      "id": "app-store/4.4.2",
+      "source": "app-store",
+      "category": "general",
+      "protocol": "listing-content",
+      "tools": []
+    },
+    {
+      "id": "app-store/4.4.3",
+      "source": "app-store",
+      "category": "general",
+      "protocol": "listing-content",
+      "tools": []
+    },
+    {
+      "id": "app-store/4.4.4",
+      "source": "app-store",
+      "category": "general",
+      "protocol": "listing-content",
+      "tools": []
+    },
+    {
+      "id": "app-store/4.4.5",
+      "source": "app-store",
+      "category": "general",
+      "protocol": "listing-content",
+      "tools": ["listing-inputs"]
+    },
+    {
+      "id": "app-store/4.5.1",
+      "source": "app-store",
+      "category": "general",
+      "protocol": "submission-access",
+      "tools": []
+    },
+    {
+      "id": "app-store/4.5.2",
+      "source": "app-store",
+      "category": "general",
+      "protocol": "submission-access",
+      "tools": []
+    },
+    {
+      "id": "app-store/4.5.3",
+      "source": "app-store",
+      "category": "general",
+      "protocol": "submission-access",
+      "tools": []
+    },
+    {
+      "id": "app-store/4.5.4",
+      "source": "app-store",
+      "category": "general",
+      "protocol": "submission-access",
+      "tools": []
+    },
+    {
+      "id": "app-store/4.5.5",
+      "source": "app-store",
+      "category": "general",
+      "protocol": "submission-access",
+      "tools": []
+    },
+    {
+      "id": "app-store/4.5.6",
+      "source": "app-store",
+      "category": "general",
+      "protocol": "submission-access",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.1.1",
+      "source": "app-store",
+      "category": "online-store",
+      "protocol": "theme-integration",
+      "tools": ["no-asset-api-theme-writes", "no-script-tag-api"]
+    },
+    {
+      "id": "app-store/5.1.2",
+      "source": "app-store",
+      "category": "online-store",
+      "protocol": "theme-integration",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.1.3",
+      "source": "app-store",
+      "category": "online-store",
+      "protocol": "theme-integration",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.1.4",
+      "source": "app-store",
+      "category": "online-store",
+      "protocol": "merchant-copy",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.1.5",
+      "source": "app-store",
+      "category": "online-store",
+      "protocol": "data-synchronization",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.2.1",
+      "source": "app-store",
+      "category": "payment",
+      "protocol": "submission-access",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.2.2",
+      "source": "app-store",
+      "category": "payment",
+      "protocol": "submission-access",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.2.3",
+      "source": "app-store",
+      "category": "payment",
+      "protocol": "payment-flow",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.2.4",
+      "source": "app-store",
+      "category": "payment",
+      "protocol": "api-integration",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.2.5",
+      "source": "app-store",
+      "category": "payment",
+      "protocol": "payment-flow",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.2.6",
+      "source": "app-store",
+      "category": "payment",
+      "protocol": "payment-flow",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.2.7",
+      "source": "app-store",
+      "category": "payment",
+      "protocol": "payment-flow",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.2.8",
+      "source": "app-store",
+      "category": "payment",
+      "protocol": "platform-eligibility",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.2.9",
+      "source": "app-store",
+      "category": "payment",
+      "protocol": "payment-flow",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.2.10",
+      "source": "app-store",
+      "category": "payment",
+      "protocol": "payment-flow",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.2.11",
+      "source": "app-store",
+      "category": "payment",
+      "protocol": "payment-flow",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.2.12",
+      "source": "app-store",
+      "category": "payment",
+      "protocol": "promotion-and-entitlements",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.2.13",
+      "source": "app-store",
+      "category": "payment",
+      "protocol": "merchant-copy",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.2.14",
+      "source": "app-store",
+      "category": "payment",
+      "protocol": "payment-flow",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.2.15",
+      "source": "app-store",
+      "category": "payment",
+      "protocol": "promotion-and-entitlements",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.3.1",
+      "source": "app-store",
+      "category": "payment-facilitator",
+      "protocol": "platform-eligibility",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.3.2",
+      "source": "app-store",
+      "category": "payment-facilitator",
+      "protocol": "api-integration",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.3.3",
+      "source": "app-store",
+      "category": "payment-facilitator",
+      "protocol": "billing-lifecycle",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.4.1",
+      "source": "app-store",
+      "category": "purchase-option",
+      "protocol": "submission-access",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.4.2",
+      "source": "app-store",
+      "category": "purchase-option",
+      "protocol": "scope-justification",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.4.3",
+      "source": "app-store",
+      "category": "purchase-option",
+      "protocol": "scope-justification",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.4.4",
+      "source": "app-store",
+      "category": "purchase-option",
+      "protocol": "submission-access",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.4.5",
+      "source": "app-store",
+      "category": "purchase-option",
+      "protocol": "customer-account-flow",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.4.6",
+      "source": "app-store",
+      "category": "purchase-option",
+      "protocol": "subscription-lifecycle",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.4.7",
+      "source": "app-store",
+      "category": "purchase-option",
+      "protocol": "customer-account-flow",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.4.8",
+      "source": "app-store",
+      "category": "purchase-option",
+      "protocol": "customer-account-flow",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.4.9",
+      "source": "app-store",
+      "category": "purchase-option",
+      "protocol": "customer-account-flow",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.4.10",
+      "source": "app-store",
+      "category": "purchase-option",
+      "protocol": "subscription-lifecycle",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.4.11",
+      "source": "app-store",
+      "category": "purchase-option",
+      "protocol": "subscription-lifecycle",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.4.12",
+      "source": "app-store",
+      "category": "purchase-option",
+      "protocol": "subscription-lifecycle",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.4.13",
+      "source": "app-store",
+      "category": "purchase-option",
+      "protocol": "customer-account-flow",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.4.14",
+      "source": "app-store",
+      "category": "purchase-option",
+      "protocol": "subscription-lifecycle",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.4.15",
+      "source": "app-store",
+      "category": "purchase-option",
+      "protocol": "subscription-lifecycle",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.4.16",
+      "source": "app-store",
+      "category": "purchase-option",
+      "protocol": "subscription-lifecycle",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.4.17",
+      "source": "app-store",
+      "category": "purchase-option",
+      "protocol": "subscription-lifecycle",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.4.18",
+      "source": "app-store",
+      "category": "purchase-option",
+      "protocol": "subscription-lifecycle",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.4.19",
+      "source": "app-store",
+      "category": "purchase-option",
+      "protocol": "subscription-lifecycle",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.5.1",
+      "source": "app-store",
+      "category": "product-sourcing",
+      "protocol": "fulfillment-workflow",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.5.2",
+      "source": "app-store",
+      "category": "product-sourcing",
+      "protocol": "data-synchronization",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.5.3",
+      "source": "app-store",
+      "category": "product-sourcing",
+      "protocol": "billing-lifecycle",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.5.4",
+      "source": "app-store",
+      "category": "product-sourcing",
+      "protocol": "platform-eligibility",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.5.5",
+      "source": "app-store",
+      "category": "product-sourcing",
+      "protocol": "fulfillment-workflow",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.6.1",
+      "source": "app-store",
+      "category": "checkout-customization",
+      "protocol": "workflow-behavior",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.6.2",
+      "source": "app-store",
+      "category": "checkout-customization",
+      "protocol": "promotion-and-entitlements",
+      "tools": ["app-ux-review"]
+    },
+    {
+      "id": "app-store/5.6.3",
+      "source": "app-store",
+      "category": "checkout-customization",
+      "protocol": "promotion-and-entitlements",
+      "tools": ["app-ux-review"]
+    },
+    {
+      "id": "app-store/5.6.4",
+      "source": "app-store",
+      "category": "checkout-customization",
+      "protocol": "workflow-behavior",
+      "tools": ["app-ux-review"]
+    },
+    {
+      "id": "app-store/5.6.5",
+      "source": "app-store",
+      "category": "checkout-customization",
+      "protocol": "checkout-consent",
+      "tools": ["app-ux-review"]
+    },
+    {
+      "id": "app-store/5.6.6",
+      "source": "app-store",
+      "category": "checkout-customization",
+      "protocol": "promotion-and-entitlements",
+      "tools": ["app-ux-review"]
+    },
+    {
+      "id": "app-store/5.6.7",
+      "source": "app-store",
+      "category": "checkout-customization",
+      "protocol": "workflow-behavior",
+      "tools": ["app-ux-review"]
+    },
+    {
+      "id": "app-store/5.6.8",
+      "source": "app-store",
+      "category": "checkout-customization",
+      "protocol": "workflow-behavior",
+      "tools": ["app-ux-review"]
+    },
+    {
+      "id": "app-store/5.6.9",
+      "source": "app-store",
+      "category": "checkout-customization",
+      "protocol": "workflow-behavior",
+      "tools": ["app-ux-review"]
+    },
+    {
+      "id": "app-store/5.7.1",
+      "source": "app-store",
+      "category": "sales-channel",
+      "protocol": "platform-eligibility",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.7.2",
+      "source": "app-store",
+      "category": "sales-channel",
+      "protocol": "sales-channel-flow",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.7.3",
+      "source": "app-store",
+      "category": "sales-channel",
+      "protocol": "sales-channel-flow",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.7.4",
+      "source": "app-store",
+      "category": "sales-channel",
+      "protocol": "sales-channel-flow",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.7.5",
+      "source": "app-store",
+      "category": "sales-channel",
+      "protocol": "sales-channel-flow",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.7.6",
+      "source": "app-store",
+      "category": "sales-channel",
+      "protocol": "sales-channel-flow",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.7.7",
+      "source": "app-store",
+      "category": "sales-channel",
+      "protocol": "sales-channel-flow",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.7.8",
+      "source": "app-store",
+      "category": "sales-channel",
+      "protocol": "sales-channel-flow",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.7.9",
+      "source": "app-store",
+      "category": "sales-channel",
+      "protocol": "sales-channel-flow",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.7.10",
+      "source": "app-store",
+      "category": "sales-channel",
+      "protocol": "sales-channel-flow",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.7.11",
+      "source": "app-store",
+      "category": "sales-channel",
+      "protocol": "sales-channel-flow",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.7.12",
+      "source": "app-store",
+      "category": "sales-channel",
+      "protocol": "sales-channel-flow",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.7.13",
+      "source": "app-store",
+      "category": "sales-channel",
+      "protocol": "sales-channel-flow",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.7.14",
+      "source": "app-store",
+      "category": "sales-channel",
+      "protocol": "sales-channel-flow",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.7.15",
+      "source": "app-store",
+      "category": "sales-channel",
+      "protocol": "sales-channel-flow",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.7.16",
+      "source": "app-store",
+      "category": "sales-channel",
+      "protocol": "sales-channel-flow",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.7.17",
+      "source": "app-store",
+      "category": "sales-channel",
+      "protocol": "sales-channel-flow",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.7.18",
+      "source": "app-store",
+      "category": "sales-channel",
+      "protocol": "sales-channel-flow",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.8.1",
+      "source": "app-store",
+      "category": "post-purchase",
+      "protocol": "platform-eligibility",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.8.2",
+      "source": "app-store",
+      "category": "post-purchase",
+      "protocol": "post-purchase-flow",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.8.3",
+      "source": "app-store",
+      "category": "post-purchase",
+      "protocol": "post-purchase-flow",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.8.4",
+      "source": "app-store",
+      "category": "post-purchase",
+      "protocol": "post-purchase-flow",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.8.5",
+      "source": "app-store",
+      "category": "post-purchase",
+      "protocol": "post-purchase-flow",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.8.6",
+      "source": "app-store",
+      "category": "post-purchase",
+      "protocol": "post-purchase-flow",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.8.7",
+      "source": "app-store",
+      "category": "post-purchase",
+      "protocol": "post-purchase-flow",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.8.8",
+      "source": "app-store",
+      "category": "post-purchase",
+      "protocol": "post-purchase-flow",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.8.9",
+      "source": "app-store",
+      "category": "post-purchase",
+      "protocol": "promotion-and-entitlements",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.8.10",
+      "source": "app-store",
+      "category": "post-purchase",
+      "protocol": "post-purchase-flow",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.9.1",
+      "source": "app-store",
+      "category": "mobile-app-builder",
+      "protocol": "workflow-behavior",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.9.2",
+      "source": "app-store",
+      "category": "mobile-app-builder",
+      "protocol": "workflow-behavior",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.9.3",
+      "source": "app-store",
+      "category": "mobile-app-builder",
+      "protocol": "workflow-behavior",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.10.1",
+      "source": "app-store",
+      "category": "donation",
+      "protocol": "donation-flow",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.10.2",
+      "source": "app-store",
+      "category": "donation",
+      "protocol": "donation-flow",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.10.3",
+      "source": "app-store",
+      "category": "donation",
+      "protocol": "donation-flow",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.10.4",
+      "source": "app-store",
+      "category": "donation",
+      "protocol": "platform-eligibility",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.10.5",
+      "source": "app-store",
+      "category": "donation",
+      "protocol": "theme-integration",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.10.6",
+      "source": "app-store",
+      "category": "donation",
+      "protocol": "billing-lifecycle",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.10.7",
+      "source": "app-store",
+      "category": "donation",
+      "protocol": "donation-flow",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.11.1",
+      "source": "app-store",
+      "category": "blockchain",
+      "protocol": "platform-eligibility",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.11.2",
+      "source": "app-store",
+      "category": "blockchain",
+      "protocol": "blockchain-flow",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.11.3",
+      "source": "app-store",
+      "category": "blockchain",
+      "protocol": "blockchain-flow",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.11.4",
+      "source": "app-store",
+      "category": "blockchain",
+      "protocol": "blockchain-flow",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.11.5",
+      "source": "app-store",
+      "category": "blockchain",
+      "protocol": "blockchain-flow",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.11.6",
+      "source": "app-store",
+      "category": "blockchain",
+      "protocol": "blockchain-flow",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.11.7",
+      "source": "app-store",
+      "category": "blockchain",
+      "protocol": "platform-eligibility",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.11.8",
+      "source": "app-store",
+      "category": "blockchain",
+      "protocol": "platform-eligibility",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.11.9",
+      "source": "app-store",
+      "category": "blockchain",
+      "protocol": "platform-eligibility",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.11.10",
+      "source": "app-store",
+      "category": "blockchain",
+      "protocol": "blockchain-flow",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.11.11",
+      "source": "app-store",
+      "category": "blockchain",
+      "protocol": "blockchain-flow",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.11.12",
+      "source": "app-store",
+      "category": "blockchain",
+      "protocol": "blockchain-flow",
+      "tools": []
+    },
+    {
+      "id": "app-store/5.11.13",
+      "source": "app-store",
+      "category": "blockchain",
+      "protocol": "submission-access",
+      "tools": []
+    },
+    {
+      "id": "bfs/1.1.1",
+      "source": "bfs",
+      "category": "general",
+      "protocol": "platform-eligibility",
+      "tools": []
+    },
+    {
+      "id": "bfs/1.1.2",
+      "source": "bfs",
+      "category": "general",
+      "protocol": "platform-eligibility",
+      "tools": []
+    },
+    {
+      "id": "bfs/1.2.1",
+      "source": "bfs",
+      "category": "general",
+      "protocol": "platform-eligibility",
+      "tools": []
+    },
+    {
+      "id": "bfs/1.2.2",
+      "source": "bfs",
+      "category": "general",
+      "protocol": "platform-eligibility",
+      "tools": []
+    },
+    {
+      "id": "bfs/1.2.3",
+      "source": "bfs",
+      "category": "general",
+      "protocol": "platform-eligibility",
+      "tools": []
+    },
+    {
+      "id": "bfs/2.1.1",
+      "source": "bfs",
+      "category": "general",
+      "protocol": "admin-metrics",
+      "tools": ["performance-evidence"]
+    },
+    {
+      "id": "bfs/2.1.2",
+      "source": "bfs",
+      "category": "general",
+      "protocol": "admin-metrics",
+      "tools": ["performance-evidence"]
+    },
+    {
+      "id": "bfs/2.1.3",
+      "source": "bfs",
+      "category": "general",
+      "protocol": "admin-metrics",
+      "tools": ["performance-evidence"]
+    },
+    {
+      "id": "bfs/2.2.1",
+      "source": "bfs",
+      "category": "general",
+      "protocol": "storefront-performance",
+      "tools": ["storefront-performance"]
+    },
+    {
+      "id": "bfs/2.3.1",
+      "source": "bfs",
+      "category": "general",
+      "protocol": "carrier-metrics",
+      "tools": ["performance-evidence"]
+    },
+    {
+      "id": "bfs/3.1.1",
+      "source": "bfs",
+      "category": "general",
+      "protocol": "embedded-navigation",
+      "tools": ["app-bridge-script", "session-token-auth"]
+    },
+    {
+      "id": "bfs/3.1.2",
+      "source": "bfs",
+      "category": "general",
+      "protocol": "embedded-navigation",
+      "tools": ["app-ux-review"]
+    },
+    {
+      "id": "bfs/3.1.3",
+      "source": "bfs",
+      "category": "general",
+      "protocol": "embedded-navigation",
+      "tools": ["app-ux-review"]
+    },
+    {
+      "id": "bfs/3.1.4",
+      "source": "bfs",
+      "category": "general",
+      "protocol": "onboarding-and-home",
+      "tools": ["app-ux-review"]
+    },
+    {
+      "id": "bfs/3.1.5",
+      "source": "bfs",
+      "category": "general",
+      "protocol": "embedded-navigation",
+      "tools": ["app-ux-review"]
+    },
+    {
+      "id": "bfs/3.2.1",
+      "source": "bfs",
+      "category": "general",
+      "protocol": "theme-integration",
+      "tools": ["no-asset-api-theme-writes"]
+    },
+    {
+      "id": "bfs/3.2.2",
+      "source": "bfs",
+      "category": "general",
+      "protocol": "theme-integration",
+      "tools": ["no-asset-api-theme-writes"]
+    },
+    {
+      "id": "bfs/4.1.1",
+      "source": "bfs",
+      "category": "general",
+      "protocol": "rendered-accessibility",
+      "tools": ["native-jsx-accessibility", "component-types", "app-ux-review"]
+    },
+    {
+      "id": "bfs/4.1.2",
+      "source": "bfs",
+      "category": "general",
+      "protocol": "rendered-accessibility",
+      "tools": ["native-jsx-accessibility", "component-types", "app-ux-review", "no-viewport-zoom-disable"]
+    },
+    {
+      "id": "bfs/4.1.3",
+      "source": "bfs",
+      "category": "general",
+      "protocol": "embedded-navigation",
+      "tools": ["app-ux-review"]
+    },
+    {
+      "id": "bfs/4.1.4",
+      "source": "bfs",
+      "category": "general",
+      "protocol": "embedded-navigation",
+      "tools": ["app-ux-review", "no-nav-emoji"]
+    },
+    {
+      "id": "bfs/4.1.5",
+      "source": "bfs",
+      "category": "general",
+      "protocol": "forms-and-recovery",
+      "tools": ["settings-save-bar"]
+    },
+    {
+      "id": "bfs/4.1.6",
+      "source": "bfs",
+      "category": "general",
+      "protocol": "modal-interaction",
+      "tools": [
+        "s-modal-heading-required",
+        "s-modal-actions-use-slots",
+        "s-action-slot-contract",
+        "modal-workflow-review"
+      ]
+    },
+    {
+      "id": "bfs/4.2.1",
+      "source": "bfs",
+      "category": "general",
+      "protocol": "merchant-copy",
+      "tools": ["action-label-clarity", "app-ux-review"]
+    },
+    {
+      "id": "bfs/4.2.2",
+      "source": "bfs",
+      "category": "general",
+      "protocol": "onboarding-and-home",
+      "tools": ["app-ux-review"]
+    },
+    {
+      "id": "bfs/4.2.3",
+      "source": "bfs",
+      "category": "general",
+      "protocol": "onboarding-and-home",
+      "tools": ["app-ux-review"]
+    },
+    {
+      "id": "bfs/4.2.4",
+      "source": "bfs",
+      "category": "general",
+      "protocol": "forms-and-recovery",
+      "tools": ["form-error-recovery"]
+    },
+    {
+      "id": "bfs/4.2.5",
+      "source": "bfs",
+      "category": "general",
+      "protocol": "forms-and-recovery",
+      "tools": ["destructive-action-review", "app-ux-review"]
+    },
+    {
+      "id": "bfs/4.2.6",
+      "source": "bfs",
+      "category": "general",
+      "protocol": "live-preview",
+      "tools": ["app-ux-review"]
+    },
+    {
+      "id": "bfs/4.3.1",
+      "source": "bfs",
+      "category": "general",
+      "protocol": "merchant-copy",
+      "tools": ["no-pressure-copy"]
+    },
+    {
+      "id": "bfs/4.3.2",
+      "source": "bfs",
+      "category": "general",
+      "protocol": "merchant-copy",
+      "tools": ["no-pressure-copy"]
+    },
+    {
+      "id": "bfs/4.3.3",
+      "source": "bfs",
+      "category": "general",
+      "protocol": "modal-interaction",
+      "tools": ["modal-workflow-review", "banner-usage"]
+    },
+    {
+      "id": "bfs/4.3.4",
+      "source": "bfs",
+      "category": "general",
+      "protocol": "promotion-and-entitlements",
+      "tools": ["app-ux-review"]
+    },
+    {
+      "id": "bfs/4.3.5",
+      "source": "bfs",
+      "category": "general",
+      "protocol": "promotion-and-entitlements",
+      "tools": []
+    },
+    {
+      "id": "bfs/4.3.6",
+      "source": "bfs",
+      "category": "general",
+      "protocol": "promotion-and-entitlements",
+      "tools": ["banner-usage"]
+    },
+    {
+      "id": "bfs/4.3.7",
+      "source": "bfs",
+      "category": "general",
+      "protocol": "promotion-and-entitlements",
+      "tools": ["app-ux-review"]
+    },
+    {
+      "id": "bfs/5.1.1",
+      "source": "bfs",
+      "category": "advertising",
+      "protocol": "api-integration",
+      "tools": ["no-script-tag-api"]
+    },
+    {
+      "id": "bfs/5.1.2",
+      "source": "bfs",
+      "category": "advertising",
+      "protocol": "api-integration",
+      "tools": ["built-for-shopify-extensions"]
+    },
+    {
+      "id": "bfs/5.2.1",
+      "source": "bfs",
+      "category": "affiliate",
+      "protocol": "api-integration",
+      "tools": ["no-script-tag-api"]
+    },
+    {
+      "id": "bfs/5.3.1",
+      "source": "bfs",
+      "category": "analytics",
+      "protocol": "api-integration",
+      "tools": ["no-script-tag-api"]
+    },
+    {
+      "id": "bfs/5.4.1",
+      "source": "bfs",
+      "category": "carrier",
+      "protocol": "carrier-metrics",
+      "tools": ["performance-evidence"]
+    },
+    {
+      "id": "bfs/5.4.2",
+      "source": "bfs",
+      "category": "carrier",
+      "protocol": "carrier-metrics",
+      "tools": ["performance-evidence"]
+    },
+    {
+      "id": "bfs/5.5.1",
+      "source": "bfs",
+      "category": "discount",
+      "protocol": "api-integration",
+      "tools": []
+    },
+    {
+      "id": "bfs/5.5.2",
+      "source": "bfs",
+      "category": "discount",
+      "protocol": "api-integration",
+      "tools": ["no-draft-order-custom-discounts"]
+    },
+    {
+      "id": "bfs/5.5.3",
+      "source": "bfs",
+      "category": "discount",
+      "protocol": "api-integration",
+      "tools": []
+    },
+    {
+      "id": "bfs/5.5.4",
+      "source": "bfs",
+      "category": "discount",
+      "protocol": "api-integration",
+      "tools": []
+    },
+    {
+      "id": "bfs/5.6.1",
+      "source": "bfs",
+      "category": "email-marketing",
+      "protocol": "api-integration",
+      "tools": ["no-script-tag-api"]
+    },
+    {
+      "id": "bfs/5.6.2",
+      "source": "bfs",
+      "category": "email-marketing",
+      "protocol": "data-synchronization",
+      "tools": []
+    },
+    {
+      "id": "bfs/5.6.3",
+      "source": "bfs",
+      "category": "email-marketing",
+      "protocol": "api-integration",
+      "tools": ["built-for-shopify-extensions"]
+    },
+    {
+      "id": "bfs/5.6.4",
+      "source": "bfs",
+      "category": "email-marketing",
+      "protocol": "api-integration",
+      "tools": []
+    },
+    {
+      "id": "bfs/5.7.1",
+      "source": "bfs",
+      "category": "forms",
+      "protocol": "api-integration",
+      "tools": ["built-for-shopify-extensions"]
+    },
+    {
+      "id": "bfs/5.7.2",
+      "source": "bfs",
+      "category": "forms",
+      "protocol": "api-integration",
+      "tools": []
+    },
+    {
+      "id": "bfs/5.7.3",
+      "source": "bfs",
+      "category": "forms",
+      "protocol": "data-synchronization",
+      "tools": []
+    },
+    {
+      "id": "bfs/5.8.1",
+      "source": "bfs",
+      "category": "fulfillment",
+      "protocol": "fulfillment-metrics",
+      "tools": ["performance-evidence"]
+    },
+    {
+      "id": "bfs/5.8.2",
+      "source": "bfs",
+      "category": "fulfillment",
+      "protocol": "fulfillment-metrics",
+      "tools": ["performance-evidence"]
+    },
+    {
+      "id": "bfs/5.8.3",
+      "source": "bfs",
+      "category": "fulfillment",
+      "protocol": "fulfillment-metrics",
+      "tools": ["performance-evidence"]
+    },
+    {
+      "id": "bfs/5.8.4",
+      "source": "bfs",
+      "category": "fulfillment",
+      "protocol": "fulfillment-workflow",
+      "tools": []
+    },
+    {
+      "id": "bfs/5.8.5",
+      "source": "bfs",
+      "category": "fulfillment",
+      "protocol": "fulfillment-metrics",
+      "tools": ["performance-evidence"]
+    },
+    {
+      "id": "bfs/5.8.6",
+      "source": "bfs",
+      "category": "fulfillment",
+      "protocol": "fulfillment-metrics",
+      "tools": ["performance-evidence"]
+    },
+    {
+      "id": "bfs/5.8.7",
+      "source": "bfs",
+      "category": "fulfillment",
+      "protocol": "fulfillment-metrics",
+      "tools": ["performance-evidence"]
+    },
+    {
+      "id": "bfs/5.9.1",
+      "source": "bfs",
+      "category": "invoices",
+      "protocol": "api-integration",
+      "tools": ["built-for-shopify-extensions"]
+    },
+    {
+      "id": "bfs/5.10.1",
+      "source": "bfs",
+      "category": "bundles",
+      "protocol": "api-integration",
+      "tools": []
+    },
+    {
+      "id": "bfs/5.11.1",
+      "source": "bfs",
+      "category": "product-reviews",
+      "protocol": "api-integration",
+      "tools": ["built-for-shopify-extensions"]
+    },
+    {
+      "id": "bfs/5.11.2",
+      "source": "bfs",
+      "category": "product-reviews",
+      "protocol": "api-integration",
+      "tools": ["built-for-shopify-extensions"]
+    },
+    {
+      "id": "bfs/5.12.1",
+      "source": "bfs",
+      "category": "returns",
+      "protocol": "data-synchronization",
+      "tools": []
+    },
+    {
+      "id": "bfs/5.12.2",
+      "source": "bfs",
+      "category": "returns",
+      "protocol": "data-synchronization",
+      "tools": []
+    },
+    {
+      "id": "bfs/5.12.3",
+      "source": "bfs",
+      "category": "returns",
+      "protocol": "data-synchronization",
+      "tools": []
+    },
+    {
+      "id": "bfs/5.12.4",
+      "source": "bfs",
+      "category": "returns",
+      "protocol": "customer-account-flow",
+      "tools": ["built-for-shopify-extensions"]
+    },
+    {
+      "id": "bfs/5.13.1",
+      "source": "bfs",
+      "category": "sms-marketing",
+      "protocol": "api-integration",
+      "tools": ["no-script-tag-api"]
+    },
+    {
+      "id": "bfs/5.13.2",
+      "source": "bfs",
+      "category": "sms-marketing",
+      "protocol": "data-synchronization",
+      "tools": []
+    },
+    {
+      "id": "bfs/5.13.3",
+      "source": "bfs",
+      "category": "sms-marketing",
+      "protocol": "api-integration",
+      "tools": ["built-for-shopify-extensions"]
+    },
+    {
+      "id": "bfs/5.13.4",
+      "source": "bfs",
+      "category": "sms-marketing",
+      "protocol": "api-integration",
+      "tools": []
+    },
+    {
+      "id": "bfs/5.14.1",
+      "source": "bfs",
+      "category": "subscriptions",
+      "protocol": "subscription-lifecycle",
+      "tools": []
+    },
+    {
+      "id": "bfs/5.14.2",
+      "source": "bfs",
+      "category": "subscriptions",
+      "protocol": "theme-integration",
+      "tools": ["built-for-shopify-extensions"]
+    },
+    {
+      "id": "bfs/5.14.3",
+      "source": "bfs",
+      "category": "subscriptions",
+      "protocol": "subscription-lifecycle",
+      "tools": []
+    },
+    {
+      "id": "bfs/5.14.4",
+      "source": "bfs",
+      "category": "subscriptions",
+      "protocol": "customer-account-flow",
+      "tools": ["built-for-shopify-extensions"]
+    },
+    {
+      "id": "bfs/5.14.5",
+      "source": "bfs",
+      "category": "subscriptions",
+      "protocol": "customer-account-flow",
+      "tools": ["built-for-shopify-extensions"]
+    }
+  ],
+  "guidance": [
+    {
+      "id": "component-button",
+      "source": "component-button",
+      "protocol": "rendered-accessibility",
+      "tools": [
+        "component-types",
+        "s-known-components",
+        "s-button-accessible-name",
+        "s-button-submit-no-navigation",
+        "action-label-clarity",
+        "destructive-action-review"
+      ],
+      "surfaces": ["app-home"]
+    },
+    {
+      "id": "component-button-group",
+      "source": "component-button-group",
+      "protocol": "rendered-accessibility",
+      "tools": ["component-types", "s-known-components", "app-ux-review"],
+      "surfaces": ["app-home"]
+    },
+    {
+      "id": "component-clickable",
+      "source": "component-clickable",
+      "protocol": "rendered-accessibility",
+      "tools": ["component-types", "s-known-components", "s-clickable-accessible-name"],
+      "surfaces": ["app-home"]
+    },
+    {
+      "id": "component-clickable-chip",
+      "source": "component-clickable-chip",
+      "protocol": "rendered-accessibility",
+      "tools": ["component-types", "s-known-components", "app-ux-review"],
+      "surfaces": ["app-home"]
+    },
+    {
+      "id": "component-link",
+      "source": "component-link",
+      "protocol": "rendered-accessibility",
+      "tools": ["component-types", "s-known-components", "app-ux-review"],
+      "surfaces": ["app-home"]
+    },
+    {
+      "id": "component-menu",
+      "source": "component-menu",
+      "protocol": "rendered-accessibility",
+      "tools": ["component-types", "s-known-components", "app-ux-review"],
+      "surfaces": ["app-home"]
+    },
+    {
+      "id": "component-badge",
+      "source": "component-badge",
+      "protocol": "rendered-accessibility",
+      "tools": ["component-types", "s-known-components", "app-ux-review"],
+      "surfaces": ["app-home"]
+    },
+    {
+      "id": "component-banner",
+      "source": "component-banner",
+      "protocol": "rendered-accessibility",
+      "tools": ["component-types", "s-known-components", "banner-usage"],
+      "surfaces": ["app-home"]
+    },
+    {
+      "id": "component-spinner",
+      "source": "component-spinner",
+      "protocol": "rendered-accessibility",
+      "tools": ["component-types", "s-known-components", "s-spinner-accessible-label"],
+      "surfaces": ["app-home"]
+    },
+    {
+      "id": "component-checkbox",
+      "source": "component-checkbox",
+      "protocol": "forms-and-recovery",
+      "tools": [
+        "component-types",
+        "s-known-components",
+        "app-ux-review",
+        "s-form-control-label-required",
+        "form-error-recovery"
+      ],
+      "surfaces": ["app-home"]
+    },
+    {
+      "id": "component-choice-list",
+      "source": "component-choice-list",
+      "protocol": "forms-and-recovery",
+      "tools": [
+        "component-types",
+        "s-known-components",
+        "app-ux-review",
+        "s-form-control-label-required",
+        "form-error-recovery"
+      ],
+      "surfaces": ["app-home"]
+    },
+    {
+      "id": "component-color-field",
+      "source": "component-color-field",
+      "protocol": "forms-and-recovery",
+      "tools": [
+        "component-types",
+        "s-known-components",
+        "app-ux-review",
+        "s-form-control-label-required",
+        "form-error-recovery"
+      ],
+      "surfaces": ["app-home"]
+    },
+    {
+      "id": "component-color-picker",
+      "source": "component-color-picker",
+      "protocol": "forms-and-recovery",
+      "tools": ["component-types", "s-known-components", "app-ux-review"],
+      "surfaces": ["app-home"]
+    },
+    {
+      "id": "component-date-field",
+      "source": "component-date-field",
+      "protocol": "forms-and-recovery",
+      "tools": [
+        "component-types",
+        "s-known-components",
+        "app-ux-review",
+        "s-form-control-label-required",
+        "form-error-recovery"
+      ],
+      "surfaces": ["app-home"]
+    },
+    {
+      "id": "component-date-picker",
+      "source": "component-date-picker",
+      "protocol": "forms-and-recovery",
+      "tools": ["component-types", "s-known-components", "app-ux-review"],
+      "surfaces": ["app-home"]
+    },
+    {
+      "id": "component-drop-zone",
+      "source": "component-drop-zone",
+      "protocol": "forms-and-recovery",
+      "tools": [
+        "component-types",
+        "s-known-components",
+        "app-ux-review",
+        "s-form-control-label-required",
+        "form-error-recovery"
+      ],
+      "surfaces": ["app-home"]
+    },
+    {
+      "id": "component-email-field",
+      "source": "component-email-field",
+      "protocol": "forms-and-recovery",
+      "tools": [
+        "component-types",
+        "s-known-components",
+        "app-ux-review",
+        "s-form-control-label-required",
+        "form-error-recovery"
+      ],
+      "surfaces": ["app-home"]
+    },
+    {
+      "id": "component-money-field",
+      "source": "component-money-field",
+      "protocol": "forms-and-recovery",
+      "tools": [
+        "component-types",
+        "s-known-components",
+        "s-money-field-no-currency-symbol",
+        "s-form-control-label-required",
+        "form-error-recovery"
+      ],
+      "surfaces": ["app-home"]
+    },
+    {
+      "id": "component-number-field",
+      "source": "component-number-field",
+      "protocol": "forms-and-recovery",
+      "tools": [
+        "component-types",
+        "s-known-components",
+        "app-ux-review",
+        "s-form-control-label-required",
+        "form-error-recovery"
+      ],
+      "surfaces": ["app-home"]
+    },
+    {
+      "id": "component-password-field",
+      "source": "component-password-field",
+      "protocol": "forms-and-recovery",
+      "tools": [
+        "component-types",
+        "s-known-components",
+        "app-ux-review",
+        "s-form-control-label-required",
+        "form-error-recovery"
+      ],
+      "surfaces": ["app-home"]
+    },
+    {
+      "id": "component-search-field",
+      "source": "component-search-field",
+      "protocol": "forms-and-recovery",
+      "tools": [
+        "component-types",
+        "s-known-components",
+        "app-ux-review",
+        "s-form-control-label-required",
+        "form-error-recovery"
+      ],
+      "surfaces": ["app-home"]
+    },
+    {
+      "id": "component-select",
+      "source": "component-select",
+      "protocol": "forms-and-recovery",
+      "tools": [
+        "component-types",
+        "s-known-components",
+        "app-ux-review",
+        "s-form-control-label-required",
+        "form-error-recovery"
+      ],
+      "surfaces": ["app-home"]
+    },
+    {
+      "id": "component-switch",
+      "source": "component-switch",
+      "protocol": "forms-and-recovery",
+      "tools": [
+        "component-types",
+        "s-known-components",
+        "app-ux-review",
+        "s-form-control-label-required",
+        "form-error-recovery"
+      ],
+      "surfaces": ["app-home"]
+    },
+    {
+      "id": "component-text-area",
+      "source": "component-text-area",
+      "protocol": "forms-and-recovery",
+      "tools": [
+        "component-types",
+        "s-known-components",
+        "app-ux-review",
+        "s-form-control-label-required",
+        "form-error-recovery"
+      ],
+      "surfaces": ["app-home"]
+    },
+    {
+      "id": "component-text-field",
+      "source": "component-text-field",
+      "protocol": "forms-and-recovery",
+      "tools": [
+        "component-types",
+        "s-known-components",
+        "app-ux-review",
+        "s-form-control-label-required",
+        "form-error-recovery"
+      ],
+      "surfaces": ["app-home"]
+    },
+    {
+      "id": "component-url-field",
+      "source": "component-url-field",
+      "protocol": "forms-and-recovery",
+      "tools": [
+        "component-types",
+        "s-known-components",
+        "app-ux-review",
+        "s-form-control-label-required",
+        "form-error-recovery"
+      ],
+      "surfaces": ["app-home"]
+    },
+    {
+      "id": "component-box",
+      "source": "component-box",
+      "protocol": "rendered-accessibility",
+      "tools": ["component-types", "s-known-components", "app-ux-review"],
+      "surfaces": ["app-home"]
+    },
+    {
+      "id": "component-divider",
+      "source": "component-divider",
+      "protocol": "rendered-accessibility",
+      "tools": ["component-types", "s-known-components", "app-ux-review"],
+      "surfaces": ["app-home"]
+    },
+    {
+      "id": "component-grid",
+      "source": "component-grid",
+      "protocol": "rendered-accessibility",
+      "tools": ["component-types", "s-known-components", "app-ux-review"],
+      "surfaces": ["app-home"]
+    },
+    {
+      "id": "component-ordered-list",
+      "source": "component-ordered-list",
+      "protocol": "rendered-accessibility",
+      "tools": ["component-types", "s-known-components", "app-ux-review"],
+      "surfaces": ["app-home"]
+    },
+    {
+      "id": "component-page",
+      "source": "component-page",
+      "protocol": "rendered-accessibility",
+      "tools": [
+        "component-types",
+        "s-known-components",
+        "s-page-aside-visible",
+        "s-action-slot-contract",
+        "app-ux-review"
+      ],
+      "surfaces": ["app-home"]
+    },
+    {
+      "id": "component-query-container",
+      "source": "component-query-container",
+      "protocol": "rendered-accessibility",
+      "tools": ["component-types", "s-known-components", "app-ux-review"],
+      "surfaces": ["app-home"]
+    },
+    {
+      "id": "component-section",
+      "source": "component-section",
+      "protocol": "rendered-accessibility",
+      "tools": ["component-types", "s-known-components", "app-ux-review"],
+      "surfaces": ["app-home"]
+    },
+    {
+      "id": "component-stack",
+      "source": "component-stack",
+      "protocol": "rendered-accessibility",
+      "tools": ["component-types", "s-known-components", "app-ux-review"],
+      "surfaces": ["app-home"]
+    },
+    {
+      "id": "component-table",
+      "source": "component-table",
+      "protocol": "rendered-accessibility",
+      "tools": ["component-types", "s-known-components", "app-ux-review"],
+      "surfaces": ["app-home"]
+    },
+    {
+      "id": "component-unordered-list",
+      "source": "component-unordered-list",
+      "protocol": "rendered-accessibility",
+      "tools": ["component-types", "s-known-components", "app-ux-review"],
+      "surfaces": ["app-home"]
+    },
+    {
+      "id": "component-avatar",
+      "source": "component-avatar",
+      "protocol": "rendered-accessibility",
+      "tools": ["component-types", "s-known-components", "app-ux-review"],
+      "surfaces": ["app-home"]
+    },
+    {
+      "id": "component-icon",
+      "source": "component-icon",
+      "protocol": "rendered-accessibility",
+      "tools": ["component-types", "s-known-components", "app-ux-review"],
+      "surfaces": ["app-home"]
+    },
+    {
+      "id": "component-image",
+      "source": "component-image",
+      "protocol": "rendered-accessibility",
+      "tools": ["component-types", "s-known-components", "app-ux-review"],
+      "surfaces": ["app-home"]
+    },
+    {
+      "id": "component-thumbnail",
+      "source": "component-thumbnail",
+      "protocol": "rendered-accessibility",
+      "tools": ["component-types", "s-known-components", "app-ux-review"],
+      "surfaces": ["app-home"]
+    },
+    {
+      "id": "component-modal",
+      "source": "component-modal",
+      "protocol": "rendered-accessibility",
+      "tools": [
+        "component-types",
+        "s-known-components",
+        "s-modal-actions-use-slots",
+        "s-modal-heading-required",
+        "s-action-slot-contract",
+        "modal-workflow-review"
+      ],
+      "surfaces": ["app-home"]
+    },
+    {
+      "id": "component-popover",
+      "source": "component-popover",
+      "protocol": "rendered-accessibility",
+      "tools": ["component-types", "s-known-components", "app-ux-review"],
+      "surfaces": ["app-home"]
+    },
+    {
+      "id": "component-chip",
+      "source": "component-chip",
+      "protocol": "rendered-accessibility",
+      "tools": ["component-types", "s-known-components", "app-ux-review"],
+      "surfaces": ["app-home"]
+    },
+    {
+      "id": "component-heading",
+      "source": "component-heading",
+      "protocol": "rendered-accessibility",
+      "tools": ["component-types", "s-known-components", "app-ux-review"],
+      "surfaces": ["app-home"]
+    },
+    {
+      "id": "component-paragraph",
+      "source": "component-paragraph",
+      "protocol": "rendered-accessibility",
+      "tools": ["component-types", "s-known-components", "app-ux-review"],
+      "surfaces": ["app-home"]
+    },
+    {
+      "id": "component-text",
+      "source": "component-text",
+      "protocol": "rendered-accessibility",
+      "tools": ["component-types", "s-known-components", "app-ux-review"],
+      "surfaces": ["app-home"]
+    },
+    {
+      "id": "component-tooltip",
+      "source": "component-tooltip",
+      "protocol": "rendered-accessibility",
+      "tools": ["component-types", "s-known-components", "s-tooltip-no-interactive-content"],
+      "surfaces": ["app-home"]
+    },
+    {
+      "id": "component-empty-state",
+      "source": "component-empty-state",
+      "protocol": "rendered-accessibility",
+      "tools": ["component-types", "s-known-components", "app-ux-review"],
+      "surfaces": ["app-home"]
+    },
+    {
+      "id": "component-progress",
+      "source": "component-progress",
+      "protocol": "rendered-accessibility",
+      "tools": ["component-types", "s-known-components"],
+      "surfaces": ["app-home"]
+    },
+    {
+      "id": "component-number",
+      "source": "component-number",
+      "protocol": "rendered-accessibility",
+      "tools": ["component-types", "s-known-components"],
+      "surfaces": ["app-home"]
+    },
+    {
+      "id": "app-configuration",
+      "source": "app-configuration",
+      "protocol": "api-integration",
+      "tools": ["app-url-security", "webhook-subscription-contract", "api-version-contract"],
+      "surfaces": ["server"]
+    },
+    {
+      "id": "api-versioning",
+      "source": "api-versioning",
+      "protocol": "api-integration",
+      "tools": ["api-version-contract"],
+      "surfaces": ["server"]
+    },
+    {
+      "id": "privacy-webhooks",
+      "source": "privacy-webhooks",
+      "protocol": "transport-security",
+      "tools": ["compliance-webhooks"],
+      "surfaces": ["server"]
+    },
+    {
+      "id": "webhook-subscriptions",
+      "source": "webhook-subscriptions",
+      "protocol": "api-integration",
+      "tools": ["webhook-subscription-contract"],
+      "surfaces": ["server"]
+    },
+    {
+      "id": "checkout-performance",
+      "source": "checkout-performance",
+      "protocol": "workflow-behavior",
+      "tools": ["checkout-bundle-size", "require-fetch-abort-signal", "checkout-network-discipline"],
+      "surfaces": ["checkout"]
+    },
+    {
+      "id": "function-localization",
+      "source": "function-localization",
+      "protocol": "merchant-copy",
+      "tools": ["functions-localization"],
+      "surfaces": ["functions"]
+    },
+    {
+      "id": "accessibility",
+      "source": "accessibility",
+      "protocol": "rendered-accessibility",
+      "tools": ["native-jsx-accessibility", "no-viewport-zoom-disable"],
+      "surfaces": ["app-home", "admin-extension", "checkout", "customer-account", "storefront"]
+    },
+    {
+      "id": "review-alerts",
+      "source": "review-alerts",
+      "protocol": "merchant-copy",
+      "tools": ["app-ux-review"],
+      "surfaces": ["app-home"]
+    },
+    {
+      "id": "review-content",
+      "source": "review-content",
+      "protocol": "merchant-copy",
+      "tools": ["app-ux-review"],
+      "surfaces": ["app-home"]
+    },
+    {
+      "id": "review-forms",
+      "source": "review-forms",
+      "protocol": "forms-and-recovery",
+      "tools": ["app-ux-review"],
+      "surfaces": ["app-home"]
+    },
+    {
+      "id": "review-onboarding",
+      "source": "review-onboarding",
+      "protocol": "onboarding-and-home",
+      "tools": ["app-ux-review"],
+      "surfaces": ["app-home"]
+    },
+    {
+      "id": "review-marketing",
+      "source": "review-marketing",
+      "protocol": "promotion-and-entitlements",
+      "tools": ["app-ux-review"],
+      "surfaces": ["app-home"]
+    },
+    {
+      "id": "review-app-home-page",
+      "source": "review-app-home-page",
+      "protocol": "onboarding-and-home",
+      "tools": ["app-ux-review"],
+      "surfaces": ["app-home"]
+    },
+    {
+      "id": "review-navigation",
+      "source": "review-navigation",
+      "protocol": "embedded-navigation",
+      "tools": ["app-ux-review"],
+      "surfaces": ["app-home"]
+    },
+    {
+      "id": "review-id-tokens",
+      "source": "review-id-tokens",
+      "protocol": "installation-auth",
+      "tools": ["session-token-auth"],
+      "surfaces": ["server"]
+    },
+    {
+      "id": "review-save-bar-api",
+      "source": "review-save-bar-api",
+      "protocol": "forms-and-recovery",
+      "tools": ["settings-save-bar"],
+      "surfaces": ["app-home"]
+    },
+    {
+      "id": "design-voice-and-tone",
+      "source": "design-voice-and-tone",
+      "protocol": "merchant-copy",
+      "tools": ["app-ux-review"],
+      "surfaces": ["app-home"]
+    },
+    {
+      "id": "design-grammar-and-mechanics",
+      "source": "design-grammar-and-mechanics",
+      "protocol": "merchant-copy",
+      "tools": ["app-ux-review"],
+      "surfaces": ["app-home"]
+    },
+    {
+      "id": "design-layout",
+      "source": "design-layout",
+      "protocol": "rendered-accessibility",
+      "tools": ["app-ux-review"],
+      "surfaces": ["app-home"]
+    },
+    {
+      "id": "design-visual-design",
+      "source": "design-visual-design",
+      "protocol": "rendered-accessibility",
+      "tools": ["app-ux-review"],
+      "surfaces": ["app-home"]
+    },
+    {
+      "id": "design-app-structure",
+      "source": "design-app-structure",
+      "protocol": "embedded-navigation",
+      "tools": ["app-ux-review"],
+      "surfaces": ["app-home"]
+    },
+    {
+      "id": "design-subscription-apps",
+      "source": "design-subscription-apps",
+      "protocol": "subscription-lifecycle",
+      "tools": [],
+      "surfaces": ["storefront", "customer-account"]
+    },
+    {
+      "id": "iframe-protection",
+      "source": "iframe-protection",
+      "protocol": "transport-security",
+      "tools": ["iframe-protection"],
+      "surfaces": ["server"]
+    },
+    {
+      "id": "webhook-hmac",
+      "source": "webhook-hmac",
+      "protocol": "transport-security",
+      "tools": ["webhook-hmac"],
+      "surfaces": ["server"]
+    },
+    {
+      "id": "storefront-performance",
+      "source": "storefront-performance",
+      "protocol": "storefront-performance",
+      "tools": ["storefront-performance"],
+      "surfaces": ["storefront"]
+    },
+    {
+      "id": "listing-best-practices",
+      "source": "app-store-best-practices",
+      "protocol": "listing-content",
+      "tools": ["listing-inputs"],
+      "surfaces": ["listing"]
+    },
+    {
+      "id": "checkout-best-practices",
+      "source": "app-store-best-practices",
+      "protocol": "checkout-consent",
+      "tools": ["checkout-network-discipline", "app-ux-review"],
+      "surfaces": ["checkout"]
+    },
+    {
+      "id": "polaris-cdn-versioning",
+      "source": "polaris-cdn-versioning",
+      "protocol": "rendered-accessibility",
+      "tools": ["polaris-cdn-track", "component-types"],
+      "surfaces": ["app-home"]
+    },
+    {
+      "id": "flow-templates",
+      "source": "flow-templates",
+      "protocol": "workflow-behavior",
+      "tools": ["flow-template-contract"],
+      "surfaces": ["admin-extension"]
+    },
+    {
+      "id": "flow-action-endpoints",
+      "source": "flow-action-endpoints",
+      "protocol": "api-integration",
+      "tools": ["flow-action-handler-review"],
+      "surfaces": ["server"]
+    },
+    {
+      "id": "checkout-web-components",
+      "source": "checkout-web-components",
+      "protocol": "workflow-behavior",
+      "tools": ["extension-framework-contract"],
+      "surfaces": ["checkout"]
+    },
+    {
+      "id": "customer-account-web-components",
+      "source": "customer-account-web-components",
+      "protocol": "workflow-behavior",
+      "tools": ["extension-framework-contract"],
+      "surfaces": ["customer-account"]
+    },
+    {
+      "id": "events-subscriptions",
+      "source": "events-subscriptions",
+      "protocol": "api-integration",
+      "tools": ["webhook-subscription-contract", "compliance-webhooks"],
+      "surfaces": ["server"]
+    }
+  ]
+}

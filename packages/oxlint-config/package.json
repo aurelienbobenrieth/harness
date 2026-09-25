@@ -1,17 +1,39 @@
 {
   "name": "@aurelienbbn/oxlint-config",
   "version": "0.0.0",
-  "description": "Strict reusable oxlint config for TypeScript projects.",
+  "description": "Opinionated strict reusable oxlint config for TypeScript projects.",
+  "bugs": {
+    "url": "https://github.com/aurelienbobenrieth/harness/issues"
+  },
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aurelienbobenrieth/harness.git",
+    "directory": "packages/oxlint-config"
+  },
   "files": [
-    "configs"
+    "dist"
   ],
   "type": "module",
   "exports": {
-    ".": "./configs/strict.json",
-    "./strict": "./configs/strict.json"
+    ".": {
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs"
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "prepack": "pnpm build",
+    "typecheck": "tsc --noEmit"
   },
   "peerDependencies": {
-    "oxlint": ">=1.71.0"
+    "oxlint": ">=1.82.0 <2.0.0",
+    "oxlint-tsgolint": "^7.0.2001"
+  },
+  "engines": {
+    "node": "^22.19.0 || ^24.11.0"
   }
 }

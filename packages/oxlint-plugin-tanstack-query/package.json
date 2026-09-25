@@ -1,0 +1,42 @@
+{
+  "name": "@aurelienbbn/oxlint-plugin-tanstack-query",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Custom oxlint rules for TanStack Query failure modes the official plugin does not cover.",
+  "bugs": {
+    "url": "https://github.com/aurelienbobenrieth/harness/issues"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aurelienbobenrieth/harness.git",
+    "directory": "packages/oxlint-plugin-tanstack-query"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs"
+    }
+  },
+  "scripts": {
+    "build": "tsdown",
+    "prepack": "pnpm build",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@oxlint/plugins": "1.83.0"
+  },
+  "devDependencies": {
+    "@aurelienbbn/oxlint-kit": "workspace:*"
+  },
+  "peerDependencies": {
+    "oxlint": ">=1.82.0 <2.0.0"
+  },
+  "engines": {
+    "node": "^22.19.0 || ^24.11.0"
+  }
+}

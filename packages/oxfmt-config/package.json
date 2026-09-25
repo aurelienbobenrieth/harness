@@ -1,0 +1,38 @@
+{
+  "name": "@aurelienbbn/oxfmt-config",
+  "version": "0.0.0",
+  "description": "Reusable oxfmt config for JavaScript and TypeScript projects.",
+  "bugs": {
+    "url": "https://github.com/aurelienbobenrieth/harness/issues"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aurelienbobenrieth/harness.git",
+    "directory": "packages/oxfmt-config"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs"
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "prepack": "pnpm build",
+    "typecheck": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "oxfmt": ">=0.67.0 <0.69.0"
+  },
+  "engines": {
+    "node": "^22.19.0 || ^24.11.0"
+  }
+}
