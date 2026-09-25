@@ -14,9 +14,9 @@ flowchart LR
 ```
 
 > [!NOTE]
-> **All 18 packages are release candidates.** They publish through one manual, approval-gated workflow. See [release](docs/release-readiness.md).
+> **All 21 packages are release candidates.** They publish through one manual, approval-gated workflow. See [release](docs/release-readiness.md).
 
-## 18 packages, all on npm
+## 21 packages, all on npm
 
 | Package                                                                       | Kind                                         |   Size | npm                                                                                                                                                                    |
 | ----------------------------------------------------------------------------- | -------------------------------------------- | -----: | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -30,14 +30,17 @@ flowchart LR
 | [`oxlint-plugin-tanstack-query`](packages/oxlint-plugin-tanstack-query)       | rules · gaps the official plugin misses      |      8 | [![npm](https://img.shields.io/npm/v/@aurelienbbn/oxlint-plugin-tanstack-query?label=)](https://www.npmjs.com/package/@aurelienbbn/oxlint-plugin-tanstack-query)       |
 | [`oxlint-plugin-cloudflare`](packages/oxlint-plugin-cloudflare)               | rules · Workers, Durable Objects, Workflows  |      7 | [![npm](https://img.shields.io/npm/v/@aurelienbbn/oxlint-plugin-cloudflare?label=)](https://www.npmjs.com/package/@aurelienbbn/oxlint-plugin-cloudflare)               |
 | [`oxlint-plugin-drizzle`](packages/oxlint-plugin-drizzle)                     | rules · Drizzle schemas                      |      1 | [![npm](https://img.shields.io/npm/v/@aurelienbbn/oxlint-plugin-drizzle?label=)](https://www.npmjs.com/package/@aurelienbbn/oxlint-plugin-drizzle)                     |
+| [`oxlint-plugin-alchemy`](packages/oxlint-plugin-alchemy)                     | rules · Alchemy runtimes                     |      4 | [![npm](https://img.shields.io/npm/v/@aurelienbbn/oxlint-plugin-alchemy?label=)](https://www.npmjs.com/package/@aurelienbbn/oxlint-plugin-alchemy)                     |
 | [`agentlint-plugin-core`](packages/agentlint-plugin-core)                     | agent reviews · TypeScript                   |     24 | [![npm](https://img.shields.io/npm/v/@aurelienbbn/agentlint-plugin-core?label=)](https://www.npmjs.com/package/@aurelienbbn/agentlint-plugin-core)                     |
 | [`agentlint-plugin-effect`](packages/agentlint-plugin-effect)                 | agent reviews · Effect                       |      3 | [![npm](https://img.shields.io/npm/v/@aurelienbbn/agentlint-plugin-effect?label=)](https://www.npmjs.com/package/@aurelienbbn/agentlint-plugin-effect)                 |
 | [`agentlint-plugin-tanstack-query`](packages/agentlint-plugin-tanstack-query) | agent reviews · TanStack Query               |      4 | [![npm](https://img.shields.io/npm/v/@aurelienbbn/agentlint-plugin-tanstack-query?label=)](https://www.npmjs.com/package/@aurelienbbn/agentlint-plugin-tanstack-query) |
 | [`agentlint-plugin-shopify-app`](packages/agentlint-plugin-shopify-app)       | agent reviews · Shopify                      |     15 | [![npm](https://img.shields.io/npm/v/@aurelienbbn/agentlint-plugin-shopify-app?label=)](https://www.npmjs.com/package/@aurelienbbn/agentlint-plugin-shopify-app)       |
 | [`agentlint-plugin-xstate`](packages/agentlint-plugin-xstate)                 | agent reviews · XState                       |      5 | [![npm](https://img.shields.io/npm/v/@aurelienbbn/agentlint-plugin-xstate?label=)](https://www.npmjs.com/package/@aurelienbbn/agentlint-plugin-xstate)                 |
+| [`agentlint-plugin-alchemy`](packages/agentlint-plugin-alchemy)               | agent reviews · Alchemy stacks               |      6 | [![npm](https://img.shields.io/npm/v/@aurelienbbn/agentlint-plugin-alchemy?label=)](https://www.npmjs.com/package/@aurelienbbn/agentlint-plugin-alchemy)               |
 | [`conformance-core`](packages/conformance-core)                               | checks · any repo, Vitest adapter            |      5 | [![npm](https://img.shields.io/npm/v/@aurelienbbn/conformance-core?label=)](https://www.npmjs.com/package/@aurelienbbn/conformance-core)                               |
 | [`conformance-shopify-app`](packages/conformance-shopify-app)                 | checks · Shopify app structure, Vitest suite |     13 | [![npm](https://img.shields.io/npm/v/@aurelienbbn/conformance-shopify-app?label=)](https://www.npmjs.com/package/@aurelienbbn/conformance-shopify-app)                 |
 | [`conformance-cloudflare`](packages/conformance-cloudflare)                   | checks · Wrangler config, Hyperdrive         |      6 | [![npm](https://img.shields.io/npm/v/@aurelienbbn/conformance-cloudflare?label=)](https://www.npmjs.com/package/@aurelienbbn/conformance-cloudflare)                   |
+| [`conformance-alchemy`](packages/conformance-alchemy)                         | checks · Alchemy state, CI, previews         |      4 | [![npm](https://img.shields.io/npm/v/@aurelienbbn/conformance-alchemy?label=)](https://www.npmjs.com/package/@aurelienbbn/conformance-alchemy)                         |
 
 All names are scoped `@aurelienbbn/…`. Parked outside this repo until a later release: 4 Shopify theme packages, 2 Lit plugins, `oio`. Each package README ends with its generated rule/check inventory. Tested hosts and ranges: [compatibility](docs/compatibility.md).
 
@@ -62,8 +65,8 @@ conformance-*         structural checks: manifests, layout, build output
 | `pnpm test:coverage`                           | ratcheted coverage for config, agentlint, conformance code                            |
 | `pnpm test:mutation`                           | mutation-tests the conformance-core kernel                                            |
 | `pnpm security:check`                          | audits every dependency class; needs network, so separate in CI                       |
-| `pnpm test:compatibility baseline` / `current` | installs the 18 packed candidates outside the workspace against public-registry tools |
-| `pnpm test:package`                            | exercises all 18 packed packages with the registry agentlint engine                   |
+| `pnpm test:compatibility baseline` / `current` | installs the 21 packed candidates outside the workspace against public-registry tools |
+| `pnpm test:package`                            | exercises all 21 packed packages with the registry agentlint engine                   |
 | `pnpm release:plan`                            | versions, draft exclusions, blockers. Changes nothing; publishing is CI-only          |
 | `pnpm catalog`                                 | regenerates rule/check inventories and credits (after build)                          |
 

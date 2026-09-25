@@ -8,6 +8,7 @@
   "exports": {
     "./ast": "./src/ast.ts",
     "./padding": "./src/padding.ts",
+    "./secret-name": "./src/secret-name.ts",
     "./testing": "./src/testing.ts"
   },
   "scripts": {

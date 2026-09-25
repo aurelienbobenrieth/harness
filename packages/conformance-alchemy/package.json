@@ -1,0 +1,68 @@
+{
+  "name": "@aurelienbbn/conformance-alchemy",
+  "version": "0.0.0",
+  "description": "Structural conformance checks for Alchemy v2 projects: state, CI, previews, pinning. Packaged as a Vitest suite.",
+  "keywords": [
+    "alchemy",
+    "ci",
+    "conformance",
+    "infrastructure-as-code",
+    "vitest"
+  ],
+  "homepage": "https://github.com/aurelienbobenrieth/harness/tree/main/packages/conformance-alchemy#readme",
+  "bugs": {
+    "url": "https://github.com/aurelienbobenrieth/harness/issues"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Aurélien Bobenrieth",
+    "url": "https://github.com/aurelienbobenrieth"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aurelienbobenrieth/harness.git",
+    "directory": "packages/conformance-alchemy"
+  },
+  "files": [
+    "dist",
+    "CHANGELOG.md"
+  ],
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs"
+    },
+    "./vitest": {
+      "types": "./dist/vitest.d.mts",
+      "import": "./dist/vitest.mjs"
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "prepack": "pnpm build",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "oxc-parser": "0.150.0",
+    "yaml": "2.9.1"
+  },
+  "devDependencies": {
+    "@aurelienbbn/conformance-core": "workspace:*",
+    "vitest": "4.1.11"
+  },
+  "peerDependencies": {
+    "vitest": ">=4.1.11 <6.0.0"
+  },
+  "peerDependenciesMeta": {
+    "vitest": {
+      "optional": true
+    }
+  },
+  "engines": {
+    "node": "^22.19.0 || ^24.11.0"
+  }
+}

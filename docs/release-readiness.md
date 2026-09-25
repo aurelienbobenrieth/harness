@@ -14,11 +14,11 @@ flowchart LR
 
 ## Every package is a candidate or a draft
 
-**[policy/release.json](../policy/release.json) classifies all 18 packages; an unlisted addition or removal fails `pnpm release:check`.**
+**[policy/release.json](../policy/release.json) classifies all 21 packages; an unlisted addition or removal fails `pnpm release:check`.**
 
 | Class        | Count | Meaning                                                           | Boundary                                                  |
 | ------------ | ----: | ----------------------------------------------------------------- | --------------------------------------------------------- |
-| ✅ Candidate |    18 | Documented contracts + consumer checks. **Not stable readiness.** | Published by the release workflow.                        |
+| ✅ Candidate |    21 | Documented contracts + consumer checks. **Not stable readiness.** | Published by the release workflow.                        |
 | 🧪 Draft     |     0 | Preview with a material adoption limitation.                      | `private: true` required; selecting it for release fails. |
 
 No drafts today. A future draft packs and tests locally; **candidates' runtime, optional, and peer dependencies cannot require one.** Parked outside the repo: 4 Shopify theme packages, both Lit plugins, `oio`.
@@ -91,7 +91,7 @@ Local runs don't prove remote ones. **Both release jobs reject a SHA that differ
 | main protection: fresh **Validate** required | ✅                | GitHub API, 2026-09-21                    |
 | main protection includes administrators      | ✅                | GitHub API, 2026-09-21                    |
 | required approvals                           | ⚠️ 0              | one collaborator, also the sole CODEOWNER |
-| npm trusted publishers (18 candidates)       | ❌ not configured | needs npmjs.com access                    |
+| npm trusted publishers (21 candidates)       | ❌ not configured | needs npmjs.com access                    |
 | `npm` environment: required reviewer         | ✅ owner          | GitHub API, 2026-09-24                    |
 | `npm` environment: protected branches only   | ✅                | GitHub API, 2026-09-24                    |
 
