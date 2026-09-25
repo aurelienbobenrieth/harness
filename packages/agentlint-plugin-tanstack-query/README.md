@@ -1,5 +1,7 @@
 # @aurelienbbn/agentlint-plugin-tanstack-query
 
+[![npm](https://img.shields.io/npm/v/@aurelienbbn/agentlint-plugin-tanstack-query)](https://www.npmjs.com/package/@aurelienbbn/agentlint-plugin-tanstack-query) [![downloads](https://img.shields.io/npm/dm/@aurelienbbn/agentlint-plugin-tanstack-query)](https://www.npmjs.com/package/@aurelienbbn/agentlint-plugin-tanstack-query) [![CI](https://github.com/aurelienbobenrieth/harness/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/aurelienbobenrieth/harness/actions/workflows/ci.yml) [![license](https://img.shields.io/npm/l/@aurelienbbn/agentlint-plugin-tanstack-query)](https://github.com/aurelienbobenrieth/harness/blob/main/packages/agentlint-plugin-tanstack-query/LICENSE) [![node](https://img.shields.io/node/v/@aurelienbbn/agentlint-plugin-tanstack-query)](https://github.com/aurelienbobenrieth/harness/blob/main/packages/agentlint-plugin-tanstack-query/package.json)
+
 **4 agentlint reviews for TanStack Query: every query and mutation shows its loading, error and stale states; data is fetched by key, not by command.**
 
 > [!WARNING]

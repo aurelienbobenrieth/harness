@@ -1,5 +1,7 @@
 # @aurelienbbn/conformance-shopify-app
 
+[![npm](https://img.shields.io/npm/v/@aurelienbbn/conformance-shopify-app)](https://www.npmjs.com/package/@aurelienbbn/conformance-shopify-app) [![downloads](https://img.shields.io/npm/dm/@aurelienbbn/conformance-shopify-app)](https://www.npmjs.com/package/@aurelienbbn/conformance-shopify-app) [![CI](https://github.com/aurelienbobenrieth/harness/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/aurelienbobenrieth/harness/actions/workflows/ci.yml) [![license](https://img.shields.io/npm/l/@aurelienbbn/conformance-shopify-app)](https://github.com/aurelienbobenrieth/harness/blob/main/packages/conformance-shopify-app/LICENSE) [![node](https://img.shields.io/node/v/@aurelienbbn/conformance-shopify-app)](https://github.com/aurelienbobenrieth/harness/blob/main/packages/conformance-shopify-app/package.json)
+
 **13 static checks for Shopify app repos, plus 4 evaluators for evidence you supply.**
 
 ```text

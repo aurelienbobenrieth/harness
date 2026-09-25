@@ -1,5 +1,7 @@
 # @aurelienbbn/oxlint-plugin-shopify-app
 
+[![npm](https://img.shields.io/npm/v/@aurelienbbn/oxlint-plugin-shopify-app)](https://www.npmjs.com/package/@aurelienbbn/oxlint-plugin-shopify-app) [![downloads](https://img.shields.io/npm/dm/@aurelienbbn/oxlint-plugin-shopify-app)](https://www.npmjs.com/package/@aurelienbbn/oxlint-plugin-shopify-app) [![CI](https://github.com/aurelienbobenrieth/harness/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/aurelienbobenrieth/harness/actions/workflows/ci.yml) [![license](https://img.shields.io/npm/l/@aurelienbbn/oxlint-plugin-shopify-app)](https://github.com/aurelienbobenrieth/harness/blob/main/packages/oxlint-plugin-shopify-app/LICENSE) [![node](https://img.shields.io/node/v/@aurelienbbn/oxlint-plugin-shopify-app)](https://github.com/aurelienbobenrieth/harness/blob/main/packages/oxlint-plugin-shopify-app/package.json)
+
 **27 oxlint rules for Shopify apps and extensions: the static slice of App Store, Built for Shopify, Admin API, and Polaris App Home requirements.**
 
 > [!WARNING]

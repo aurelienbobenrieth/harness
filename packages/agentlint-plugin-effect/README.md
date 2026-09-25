@@ -1,5 +1,7 @@
 # @aurelienbbn/agentlint-plugin-effect
 
+[![npm](https://img.shields.io/npm/v/@aurelienbbn/agentlint-plugin-effect)](https://www.npmjs.com/package/@aurelienbbn/agentlint-plugin-effect) [![downloads](https://img.shields.io/npm/dm/@aurelienbbn/agentlint-plugin-effect)](https://www.npmjs.com/package/@aurelienbbn/agentlint-plugin-effect) [![CI](https://github.com/aurelienbobenrieth/harness/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/aurelienbobenrieth/harness/actions/workflows/ci.yml) [![license](https://img.shields.io/npm/l/@aurelienbbn/agentlint-plugin-effect)](https://github.com/aurelienbobenrieth/harness/blob/main/packages/agentlint-plugin-effect/LICENSE) [![node](https://img.shields.io/node/v/@aurelienbbn/agentlint-plugin-effect)](https://github.com/aurelienbobenrieth/harness/blob/main/packages/agentlint-plugin-effect/package.json)
+
 **3 agentlint reviews for Effect: Schema-owned contracts, bounded retries, layers built once.**
 
 > [!WARNING]

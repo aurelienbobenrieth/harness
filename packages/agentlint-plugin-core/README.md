@@ -1,5 +1,7 @@
 # @aurelienbbn/agentlint-plugin-core
 
+[![npm](https://img.shields.io/npm/v/@aurelienbbn/agentlint-plugin-core)](https://www.npmjs.com/package/@aurelienbbn/agentlint-plugin-core) [![downloads](https://img.shields.io/npm/dm/@aurelienbbn/agentlint-plugin-core)](https://www.npmjs.com/package/@aurelienbbn/agentlint-plugin-core) [![CI](https://github.com/aurelienbobenrieth/harness/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/aurelienbobenrieth/harness/actions/workflows/ci.yml) [![license](https://img.shields.io/npm/l/@aurelienbbn/agentlint-plugin-core)](https://github.com/aurelienbobenrieth/harness/blob/main/packages/agentlint-plugin-core/LICENSE) [![node](https://img.shields.io/node/v/@aurelienbbn/agentlint-plugin-core)](https://github.com/aurelienbobenrieth/harness/blob/main/packages/agentlint-plugin-core/package.json)
+
 **24 agentlint reviews for any TypeScript repo: a deterministic trigger finds the spot, an agent or a human settles it.**
 
 > [!WARNING]

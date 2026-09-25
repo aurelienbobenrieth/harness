@@ -1,5 +1,7 @@
 # @aurelienbbn/oxfmt-config
 
+[![npm](https://img.shields.io/npm/v/@aurelienbbn/oxfmt-config)](https://www.npmjs.com/package/@aurelienbbn/oxfmt-config) [![downloads](https://img.shields.io/npm/dm/@aurelienbbn/oxfmt-config)](https://www.npmjs.com/package/@aurelienbbn/oxfmt-config) [![CI](https://github.com/aurelienbobenrieth/harness/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/aurelienbobenrieth/harness/actions/workflows/ci.yml) [![license](https://img.shields.io/npm/l/@aurelienbbn/oxfmt-config)](https://github.com/aurelienbobenrieth/harness/blob/main/packages/oxfmt-config/LICENSE) [![node](https://img.shields.io/node/v/@aurelienbbn/oxfmt-config)](https://github.com/aurelienbobenrieth/harness/blob/main/packages/oxfmt-config/package.json)
+
 **One oxfmt config for every JS/TS repo: 120 columns, double quotes, trailing commas, multiline JSDoc, sorted `package.json`.**
 
 ```sh

@@ -1,5 +1,7 @@
 # @aurelienbbn/agentlint-plugin-shopify-app
 
+[![npm](https://img.shields.io/npm/v/@aurelienbbn/agentlint-plugin-shopify-app)](https://www.npmjs.com/package/@aurelienbbn/agentlint-plugin-shopify-app) [![downloads](https://img.shields.io/npm/dm/@aurelienbbn/agentlint-plugin-shopify-app)](https://www.npmjs.com/package/@aurelienbbn/agentlint-plugin-shopify-app) [![CI](https://github.com/aurelienbobenrieth/harness/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/aurelienbobenrieth/harness/actions/workflows/ci.yml) [![license](https://img.shields.io/npm/l/@aurelienbbn/agentlint-plugin-shopify-app)](https://github.com/aurelienbobenrieth/harness/blob/main/packages/agentlint-plugin-shopify-app/LICENSE) [![node](https://img.shields.io/node/v/@aurelienbbn/agentlint-plugin-shopify-app)](https://github.com/aurelienbobenrieth/harness/blob/main/packages/agentlint-plugin-shopify-app/package.json)
+
 **15 agentlint reviews for Shopify apps and extensions: a deterministic trigger finds the spot, a reviewer checks it against Shopify's own guidance.**
 
 > [!WARNING]

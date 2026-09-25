@@ -1,5 +1,7 @@
 # @aurelienbbn/agentlint-plugin-xstate
 
+[![npm](https://img.shields.io/npm/v/@aurelienbbn/agentlint-plugin-xstate)](https://www.npmjs.com/package/@aurelienbbn/agentlint-plugin-xstate) [![downloads](https://img.shields.io/npm/dm/@aurelienbbn/agentlint-plugin-xstate)](https://www.npmjs.com/package/@aurelienbbn/agentlint-plugin-xstate) [![CI](https://github.com/aurelienbobenrieth/harness/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/aurelienbobenrieth/harness/actions/workflows/ci.yml) [![license](https://img.shields.io/npm/l/@aurelienbbn/agentlint-plugin-xstate)](https://github.com/aurelienbobenrieth/harness/blob/main/packages/agentlint-plugin-xstate/LICENSE) [![node](https://img.shields.io/node/v/@aurelienbbn/agentlint-plugin-xstate)](https://github.com/aurelienbobenrieth/harness/blob/main/packages/agentlint-plugin-xstate/package.json)
+
 **5 agentlint reviews for XState v5: every actor has an owner, every failure a path, every persisted snapshot a version.**
 
 > [!WARNING]
