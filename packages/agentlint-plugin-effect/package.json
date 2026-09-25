@@ -1,6 +1,6 @@
 {
   "name": "@aurelienbbn/agentlint-plugin-effect",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Custom agentlint rules for Effect projects.",
   "keywords": [
     "agentlint",

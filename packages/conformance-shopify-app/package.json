@@ -1,6 +1,6 @@
 {
   "name": "@aurelienbbn/conformance-shopify-app",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Structural conformance checks for Shopify apps, packaged as a Vitest suite.",
   "keywords": [
     "app-store",
