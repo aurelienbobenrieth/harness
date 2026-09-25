@@ -1,6 +1,6 @@
 {
   "name": "@aurelienbbn/oxlint-plugin-cloudflare",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Custom oxlint rules for Cloudflare Workers, Durable Objects, and Workflows.",
   "keywords": [
     "cloudflare",
