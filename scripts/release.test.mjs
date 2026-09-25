@@ -56,6 +56,12 @@ function fixture() {
             directory: `packages/${directory}`,
           },
           bugs: { url: `https://github.com/${repository}/issues` },
+          description: "Example package.",
+          keywords: ["example", "lint", "typescript"],
+          homepage: `https://github.com/${repository}/tree/main/packages/${directory}#readme`,
+          author: { name: "Example Author" },
+          files: ["dist", "CHANGELOG.md"],
+          publishConfig: { access: "public" },
         },
       };
     }),
@@ -113,6 +119,41 @@ for (const [name, mutate, expected] of [
       input.policy.publicationEnabled = "yes";
     },
     /Set publicationEnabled explicitly/,
+  ],
+  [
+    "candidate without keywords",
+    (input) => {
+      input.manifests[0].manifest.keywords = ["one"];
+    },
+    /at least three npm keywords/,
+  ],
+  [
+    "candidate homepage outside its README",
+    (input) => {
+      input.manifests[0].manifest.homepage = "https://example.com";
+    },
+    /point homepage at the package README/,
+  ],
+  [
+    "candidate without an author",
+    (input) => {
+      delete input.manifests[0].manifest.author;
+    },
+    /name the author/,
+  ],
+  [
+    "candidate without its changelog",
+    (input) => {
+      input.manifests[0].manifest.files = ["dist"];
+    },
+    /publish CHANGELOG.md/,
+  ],
+  [
+    "candidate without public access",
+    (input) => {
+      delete input.manifests[0].manifest.publishConfig;
+    },
+    /publish with public access/,
   ],
   [
     "incorrect repository identity",

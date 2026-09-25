@@ -2,17 +2,31 @@
   "name": "@aurelienbbn/oxlint-plugin-type-evidence",
   "version": "0.1.0",
   "description": "Strict oxlint rules preserving TypeScript type evidence at contracts and boundaries.",
+  "keywords": [
+    "lint",
+    "oxlint",
+    "oxlint-plugin",
+    "strict",
+    "type-safety",
+    "typescript"
+  ],
+  "homepage": "https://github.com/aurelienbobenrieth/harness/tree/main/packages/oxlint-plugin-type-evidence#readme",
   "bugs": {
     "url": "https://github.com/aurelienbobenrieth/harness/issues"
   },
   "license": "MIT",
+  "author": {
+    "name": "Aurélien Bobenrieth",
+    "url": "https://github.com/aurelienbobenrieth"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/aurelienbobenrieth/harness.git",
     "directory": "packages/oxlint-plugin-type-evidence"
   },
   "files": [
-    "dist"
+    "dist",
+    "CHANGELOG.md"
   ],
   "type": "module",
   "exports": {

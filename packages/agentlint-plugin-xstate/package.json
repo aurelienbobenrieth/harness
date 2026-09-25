@@ -2,17 +2,31 @@
   "name": "@aurelienbbn/agentlint-plugin-xstate",
   "version": "0.1.0",
   "description": "Custom agentlint rules for XState machines and actors.",
+  "keywords": [
+    "agentlint",
+    "agentlint-plugin",
+    "ai-agents",
+    "code-review",
+    "state-machine",
+    "xstate"
+  ],
+  "homepage": "https://github.com/aurelienbobenrieth/harness/tree/main/packages/agentlint-plugin-xstate#readme",
   "bugs": {
     "url": "https://github.com/aurelienbobenrieth/harness/issues"
   },
   "license": "MIT",
+  "author": {
+    "name": "Aurélien Bobenrieth",
+    "url": "https://github.com/aurelienbobenrieth"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/aurelienbobenrieth/harness.git",
     "directory": "packages/agentlint-plugin-xstate"
   },
   "files": [
-    "dist"
+    "dist",
+    "CHANGELOG.md"
   ],
   "type": "module",
   "exports": {

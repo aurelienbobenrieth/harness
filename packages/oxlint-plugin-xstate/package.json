@@ -2,17 +2,31 @@
   "name": "@aurelienbbn/oxlint-plugin-xstate",
   "version": "0.1.0",
   "description": "Custom oxlint rules for XState machines and actors.",
+  "keywords": [
+    "lint",
+    "oxlint",
+    "oxlint-plugin",
+    "state-machine",
+    "typescript",
+    "xstate"
+  ],
+  "homepage": "https://github.com/aurelienbobenrieth/harness/tree/main/packages/oxlint-plugin-xstate#readme",
   "bugs": {
     "url": "https://github.com/aurelienbobenrieth/harness/issues"
   },
   "license": "MIT",
+  "author": {
+    "name": "Aurélien Bobenrieth",
+    "url": "https://github.com/aurelienbobenrieth"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/aurelienbobenrieth/harness.git",
     "directory": "packages/oxlint-plugin-xstate"
   },
   "files": [
-    "dist"
+    "dist",
+    "CHANGELOG.md"
   ],
   "type": "module",
   "exports": {

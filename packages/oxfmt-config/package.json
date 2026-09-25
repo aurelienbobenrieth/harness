@@ -2,17 +2,30 @@
   "name": "@aurelienbbn/oxfmt-config",
   "version": "0.1.0",
   "description": "Reusable oxfmt config for JavaScript and TypeScript projects.",
+  "keywords": [
+    "code-style",
+    "formatter",
+    "oxfmt",
+    "oxfmt-config",
+    "typescript"
+  ],
+  "homepage": "https://github.com/aurelienbobenrieth/harness/tree/main/packages/oxfmt-config#readme",
   "bugs": {
     "url": "https://github.com/aurelienbobenrieth/harness/issues"
   },
   "license": "MIT",
+  "author": {
+    "name": "Aurélien Bobenrieth",
+    "url": "https://github.com/aurelienbobenrieth"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/aurelienbobenrieth/harness.git",
     "directory": "packages/oxfmt-config"
   },
   "files": [
-    "dist"
+    "dist",
+    "CHANGELOG.md"
   ],
   "type": "module",
   "exports": {

@@ -2,17 +2,31 @@
   "name": "@aurelienbbn/oxlint-plugin-cloudflare",
   "version": "0.1.0",
   "description": "Custom oxlint rules for Cloudflare Workers, Durable Objects, and Workflows.",
+  "keywords": [
+    "cloudflare",
+    "cloudflare-workers",
+    "durable-objects",
+    "lint",
+    "oxlint",
+    "oxlint-plugin"
+  ],
+  "homepage": "https://github.com/aurelienbobenrieth/harness/tree/main/packages/oxlint-plugin-cloudflare#readme",
   "bugs": {
     "url": "https://github.com/aurelienbobenrieth/harness/issues"
   },
   "license": "MIT",
+  "author": {
+    "name": "Aurélien Bobenrieth",
+    "url": "https://github.com/aurelienbobenrieth"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/aurelienbobenrieth/harness.git",
     "directory": "packages/oxlint-plugin-cloudflare"
   },
   "files": [
-    "dist"
+    "dist",
+    "CHANGELOG.md"
   ],
   "type": "module",
   "exports": {

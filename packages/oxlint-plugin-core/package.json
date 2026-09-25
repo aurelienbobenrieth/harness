@@ -2,17 +2,31 @@
   "name": "@aurelienbbn/oxlint-plugin-core",
   "version": "0.1.0",
   "description": "Custom oxlint rules for TypeScript projects.",
+  "keywords": [
+    "code-quality",
+    "lint",
+    "oxlint",
+    "oxlint-plugin",
+    "testing",
+    "typescript"
+  ],
+  "homepage": "https://github.com/aurelienbobenrieth/harness/tree/main/packages/oxlint-plugin-core#readme",
   "bugs": {
     "url": "https://github.com/aurelienbobenrieth/harness/issues"
   },
   "license": "MIT",
+  "author": {
+    "name": "Aurélien Bobenrieth",
+    "url": "https://github.com/aurelienbobenrieth"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/aurelienbobenrieth/harness.git",
     "directory": "packages/oxlint-plugin-core"
   },
   "files": [
-    "dist"
+    "dist",
+    "CHANGELOG.md"
   ],
   "type": "module",
   "exports": {
