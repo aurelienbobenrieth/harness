@@ -18,3 +18,16 @@ updates:
         patterns:
           - effect
           - "@effect/*"
+    # These tools define the tested support floor in policy/compatibility.json (root dev versions must equal the
+    # baseline profile). Moving them is a deliberate compatibility change, done by hand with the profiles.
+    ignore:
+      - dependency-name: oxlint
+      - dependency-name: oxlint-tsgolint
+      - dependency-name: oxfmt
+      - dependency-name: vite-plus
+      - dependency-name: "@voidzero-dev/vite-plus-core"
+      - dependency-name: vitest
+      - dependency-name: "@aurelienbbn/agentlint"
+      # Node types follow the lowest supported Node major (22), not the newest.
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]

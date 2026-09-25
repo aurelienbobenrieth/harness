@@ -170,7 +170,10 @@ export function validateWorkflowPolicy(workflows) {
           );
         }
         if (step.uses?.startsWith("changesets/action@"))
-          assert.equal(step.with?.publish, undefined, `${file}/${id}: do not configure a Changesets publisher.`);
+          assert.ok(
+            step.with?.publish === undefined && step.with?.["publish-script"] === undefined,
+            `${file}/${id}: do not configure a Changesets publisher.`,
+          );
         assert.doesNotMatch(
           step.run ?? "",
           /\b(?:npm|pnpm|changeset|changesets)\s+(?:--\S+\s+)*publish\b/,
@@ -297,7 +300,11 @@ export function validateWorkflowPolicy(workflows) {
   const versionSteps = versionJob.steps.filter((step) => step.uses?.startsWith("changesets/action@"));
   assert.equal(versionSteps.length, 1, "Require one Changesets version PR action.");
   const versionStep = versionSteps[0];
-  assert.equal(versionStep.with?.version, "bash scripts/version.sh", "Use the reviewed version-only command.");
+  assert.equal(
+    versionStep.with?.["version-script"],
+    "bash scripts/version.sh",
+    "Use the reviewed version-only command.",
+  );
   assert.ok(
     versionJob.steps.findIndex((step) => step.run === "pnpm release:check") < versionJob.steps.indexOf(versionStep),
     "Validate release policy before updating the version PR.",

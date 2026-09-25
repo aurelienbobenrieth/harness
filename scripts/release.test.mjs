@@ -431,7 +431,7 @@ for (const [name, mutate, expected] of [
   [
     "Changesets action publisher",
     (workflows) => {
-      workflows["release.yml"].jobs.version.steps.at(-1).with.publish = "pnpm publish";
+      workflows["release.yml"].jobs.version.steps.at(-1).with["publish-script"] = "pnpm publish";
     },
     /do not configure a Changesets publisher/,
   ],
