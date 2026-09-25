@@ -16,6 +16,7 @@ import { noUnsafeEffectBody } from "./rules/no-unsafe-effect-body/rule.js";
 import { noUnsafeErrorMapper } from "./rules/no-unsafe-error-mapper/rule.js";
 import { noUntypedTryPromiseCatch } from "./rules/no-untyped-try-promise-catch/rule.js";
 import { noUnscopedRuntimeLaunch } from "./rules/no-unscoped-runtime-launch/rule.js";
+import { paddingAfterDependencies } from "./rules/padding-after-dependencies/rule.js";
 import { preferEffectArrayHelpers } from "./rules/prefer-effect-array-helpers/rule.js";
 import { preferMatch } from "./rules/prefer-match/rule.js";
 import { requireAllConcurrency } from "./rules/require-all-concurrency/rule.js";
@@ -56,6 +57,7 @@ export default eslintCompatPlugin({
     "no-unsafe-error-mapper": noUnsafeErrorMapper,
     "no-untyped-try-promise-catch": noUntypedTryPromiseCatch,
     "no-unscoped-runtime-launch": noUnscopedRuntimeLaunch,
+    "padding-after-dependencies": paddingAfterDependencies,
     "prefer-effect-array-helpers": preferEffectArrayHelpers,
     "prefer-match": preferMatch,
     "require-all-concurrency": requireAllConcurrency,

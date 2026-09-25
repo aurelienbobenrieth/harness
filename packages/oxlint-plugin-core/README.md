@@ -2,7 +2,7 @@
 
 [![npm](https://img.shields.io/npm/v/@aurelienbbn/oxlint-plugin-core)](https://www.npmjs.com/package/@aurelienbbn/oxlint-plugin-core) [![downloads](https://img.shields.io/npm/dm/@aurelienbbn/oxlint-plugin-core)](https://www.npmjs.com/package/@aurelienbbn/oxlint-plugin-core) [![CI](https://github.com/aurelienbobenrieth/harness/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/aurelienbobenrieth/harness/actions/workflows/ci.yml) [![license](https://img.shields.io/npm/l/@aurelienbbn/oxlint-plugin-core)](https://github.com/aurelienbobenrieth/harness/blob/main/packages/oxlint-plugin-core/LICENSE) [![node](https://img.shields.io/node/v/@aurelienbbn/oxlint-plugin-core)](https://github.com/aurelienbobenrieth/harness/blob/main/packages/oxlint-plugin-core/package.json)
 
-**15 oxlint rules for any TypeScript codebase: swallowed errors, flaky or hollow tests, test code in production, anonymous public contracts.**
+**16 oxlint rules for any TypeScript codebase: swallowed errors, flaky or hollow tests, test code in production, anonymous public contracts, cramped exits.**
 
 ```sh
 pnpm add -D @aurelienbbn/oxlint-plugin-core oxlint   # oxlint >=1.82.0 <2.0.0
@@ -19,7 +19,7 @@ pnpm add -D @aurelienbbn/oxlint-plugin-core oxlint   # oxlint >=1.82.0 <2.0.0
 }
 ```
 
-**No preset, no autofix.** Enable each rule by name; every fix needs a decision a tool can't make.
+**No preset, one autofix.** Enable each rule by name; every fix but `padding-before-exit`'s blank line needs a decision a tool can't make.
 
 <details>
 <summary>Rules by job, options, and the decision each fix needs</summary>
@@ -30,6 +30,7 @@ pnpm add -D @aurelienbbn/oxlint-plugin-core oxlint   # oxlint >=1.82.0 <2.0.0
 | 🧪 tests     | `no-weak-test-assertions`, `no-test-sleeps`, `no-stubbed-subject`, `no-ambient-nondeterminism-in-tests`, `no-vitest-mocking`, `no-vitest-in-source`, `no-test-logic-in-production` |
 | 📜 contracts | `no-exported-anonymous-object-return`, `no-multi-positional-parameters`, `no-mutable-exported-state`, `no-reexport-only-modules`, `no-let`                                         |
 | 💬 comments  | `no-dead-comments`                                                                                                                                                                 |
+| ↕️ layout    | `padding-before-exit` (autofix)                                                                                                                                                    |
 
 | Rule                                 | Option                                       | Default                                 |
 | ------------------------------------ | -------------------------------------------- | --------------------------------------- |
@@ -241,6 +242,20 @@ Also closing-brace labels and placeholder scaffolding; narration counts only whe
 
 </details>
 
+## ↕️ An exit stands apart from the work above it
+
+`padding-before-exit`: a `return` or `throw` that follows another statement in the same block, switch case, or program body gets a blank line above it (and above its leading comments). **Autofix inserts it.** The first statement of a list is exempt. Concept: ESLint's `padding-line-between-statements`.
+
+```ts
+const sum = items.reduce(add, 0);
+return sum; // ❌
+
+const sum = items.reduce(add, 0);
+
+return sum; // ✅
+if (!items.length) return 0; // ✅ first statement of its list
+```
+
 ## ⚠️ Migration
 
 | Now reports    | Example                                                                                                    | Fix (no autofix)                                                 |
@@ -287,6 +302,7 @@ Generated from package exports by `pnpm catalog`. Rule-specific options and limi
 | `no-vitest-in-source`                 | Disallow importing vitest from non-test source files.                                                                                                                                                                                      |
 | `no-vitest-mocking`                   | Disallow Vitest mocking APIs in favor of deterministic test doubles.                                                                                                                                                                       |
 | `no-weak-test-assertions`             | Disallow individual tests whose only assertions check existence, a bare call, a `typeof` or `Object` instance, wildcard-only matcher arguments, a value against itself or a literal against a literal, or a local mock's own return value. |
+| `padding-before-exit`                 | Require a blank line before a return or throw statement that follows another statement in the same block, switch case, or program body.                                                                                                    |
 
 ### Credited concepts
 
@@ -294,5 +310,6 @@ Generated from package exports by `pnpm catalog`. Rule-specific options and limi
 - "Test Logic in Production" (G. Meszaros, xUnit Test Patterns) (concept)
 - code-slop by asyrafhussin (MIT, concept re-implemented)
 - code-slop by asyrafhussin (MIT, concept re-implemented) — closing-brace labels and placeholder
+- https://eslint.org/docs/latest/rules/padding-line-between-statements (MIT; concept, independently implemented)
 
 <!-- harness-catalog:end -->

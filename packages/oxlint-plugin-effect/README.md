@@ -2,7 +2,7 @@
 
 [![npm](https://img.shields.io/npm/v/@aurelienbbn/oxlint-plugin-effect)](https://www.npmjs.com/package/@aurelienbbn/oxlint-plugin-effect) [![downloads](https://img.shields.io/npm/dm/@aurelienbbn/oxlint-plugin-effect)](https://www.npmjs.com/package/@aurelienbbn/oxlint-plugin-effect) [![CI](https://github.com/aurelienbobenrieth/harness/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/aurelienbobenrieth/harness/actions/workflows/ci.yml) [![license](https://img.shields.io/npm/l/@aurelienbbn/oxlint-plugin-effect)](https://github.com/aurelienbobenrieth/harness/blob/main/packages/oxlint-plugin-effect/LICENSE) [![node](https://img.shields.io/node/v/@aurelienbbn/oxlint-plugin-effect)](https://github.com/aurelienbobenrieth/harness/blob/main/packages/oxlint-plugin-effect/package.json)
 
-**34 oxlint rules for Effect code: runtime boundaries, failure channels, concurrency, services, Schema. Only what `@effect/tsgo` doesn't own.**
+**35 oxlint rules for Effect code: runtime boundaries, failure channels, concurrency, services, Schema. Only what `@effect/tsgo` doesn't own.**
 
 ```sh
 pnpm add -D @aurelienbbn/oxlint-plugin-effect oxlint   # oxlint >=1.82.0 <2.0.0
@@ -67,16 +67,16 @@ Effect.tryPromise({
 
 - **Concurrency rules demand an explicit choice**; they don't claim omitted concurrency is unbounded.
 - **Same `allow` paths on `no-run-promise-in-runtime` and `no-unscoped-runtime-launch`:** shared boundary matching.
-- 🎨 `dependencies-first`, `no-switch`, `prefer-match`, `prefer-effect-array-helpers`, `schema-type-adjacent` are opinionated. **Suppress at the exceptional call site**, not in the shared config.
+- 🎨 `dependencies-first`, `padding-after-dependencies`, `no-switch`, `prefer-match`, `prefer-effect-array-helpers`, `schema-type-adjacent` are opinionated. **Suppress at the exceptional call site**, not in the shared config.
 
 <details>
-<summary>34 rules by job</summary>
+<summary>35 rules by job</summary>
 
 | Job                       | Rules                                                                                                                                                                                                                  |
 | ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 🚨 failures (9)           | `no-catch-all-cause`, `no-effect-ordie`, `no-swallowed-failure`, `no-untyped-try-promise-catch`, `preserve-thrown-cause`, `no-unsafe-error-mapper`, `require-tagged-effect-fail`, `no-effect-promise`, `bounded-retry` |
 | 🚪 runtime boundaries (7) | `no-run-promise-in-runtime`, `no-unscoped-runtime-launch`, `prefer-run-main`, `no-fork-detach`, `no-managed-runtime-per-call`, `prefer-it-effect` (opt-in, needs `@effect/vitest`), `no-fake-timers-in-effect-tests`   |
-| 🧬 bodies & tracing (5)   | `no-unsafe-effect-body`, `require-named-effect-fn`, `effect-fn-name-matches-binding`, `no-dynamic-span-name`, `dependencies-first` 🎨                                                                                  |
+| 🧬 bodies & tracing (6)   | `no-unsafe-effect-body`, `require-named-effect-fn`, `effect-fn-name-matches-binding`, `no-dynamic-span-name`, `dependencies-first` 🎨, `padding-after-dependencies` 🎨                                                 |
 | 🧩 services & layers (4)  | `no-service-constructor-imports`, `no-service-dependency-parameters`, `no-service-option`, `no-static-service-forwarders`                                                                                              |
 | 📐 Schema & config (3)    | `no-schema-any`, `schema-type-adjacent` 🎨, `require-redacted-secret-config`                                                                                                                                           |
 | ⚡ concurrency (3)        | `require-all-concurrency`, `require-for-each-concurrency`, `require-abort-signal`                                                                                                                                      |
@@ -113,9 +113,22 @@ Effect.tryPromise({
 
 </details>
 
-## 0 autofix, 5 suggestions
+## 1 autofix, 5 suggestions
 
-**No rule has one behavior-preserving rewrite:** error type, runtime boundary, concurrency policy, layer owner, tracing name, and platform adapter need project knowledge.
+**Only `padding-after-dependencies` has one behavior-preserving rewrite:** it inserts the blank line below the leading service dependencies. Every other fix needs project knowledge: error type, runtime boundary, concurrency policy, layer owner, tracing name, platform adapter.
+
+```ts
+Effect.gen(function* () {
+  const repo = yield* UserRepo;
+  const user = yield* repo.findUser(id); // ❌ padding-after-dependencies
+});
+
+Effect.gen(function* () {
+  const repo = yield* UserRepo;
+
+  const user = yield* repo.findUser(id); // ✅ dependencies stand apart
+});
+```
 
 <details>
 <summary>The 5 editor suggestions</summary>
@@ -176,6 +189,7 @@ Generated from package exports by `pnpm catalog`. Rule-specific options and limi
 | `no-unsafe-error-mapper`           | Disallow unknown and any in Effect error mapper parameters.                                                                                                                                                  |
 | `no-unscoped-runtime-launch`       | Disallow Effect.runFork, runSync, runSyncExit, runCallback, their run*With variants, and Layer.launch outside configured runtime boundaries.                                                                 |
 | `no-untyped-try-promise-catch`     | Require Effect.try and Effect.tryPromise to map thrown or rejected values with a catch handler.                                                                                                              |
+| `padding-after-dependencies`       | Require a blank line after the leading service dependencies of an Effect.gen, Effect.fn, or Effect.fnUntraced generator body when logic follows them.                                                        |
 | `prefer-effect-array-helpers`      | Prefer Effect array helpers over native array helper methods.                                                                                                                                                |
 | `prefer-it-effect`                 | Prefer it.effect from @effect/vitest over Effect.runPromise or Effect.runSync inside plain it/test callbacks in test files (opt-in; requires @effect/vitest).                                                |
 | `prefer-match`                     | Prefer Match from effect over chained literal ternaries.                                                                                                                                                     |

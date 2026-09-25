@@ -14,6 +14,7 @@ import { noTestSleeps } from "./rules/no-test-sleeps/rule.js";
 import { noVitestInSource } from "./rules/no-vitest-in-source/rule.js";
 import { noVitestMocking } from "./rules/no-vitest-mocking/rule.js";
 import { noWeakTestAssertions } from "./rules/no-weak-test-assertions/rule.js";
+import { paddingBeforeExit } from "./rules/padding-before-exit/rule.js";
 
 export default eslintCompatPlugin({
   meta: {
@@ -35,5 +36,6 @@ export default eslintCompatPlugin({
     "no-vitest-in-source": noVitestInSource,
     "no-vitest-mocking": noVitestMocking,
     "no-weak-test-assertions": noWeakTestAssertions,
+    "padding-before-exit": paddingBeforeExit,
   },
 });
