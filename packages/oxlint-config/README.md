@@ -1,5 +1,7 @@
 # @aurelienbbn/oxlint-config
 
+[![npm](https://img.shields.io/npm/v/@aurelienbbn/oxlint-config)](https://www.npmjs.com/package/@aurelienbbn/oxlint-config) [![downloads](https://img.shields.io/npm/dm/@aurelienbbn/oxlint-config)](https://www.npmjs.com/package/@aurelienbbn/oxlint-config) [![CI](https://github.com/aurelienbobenrieth/harness/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/aurelienbobenrieth/harness/actions/workflows/ci.yml) [![license](https://img.shields.io/npm/l/@aurelienbbn/oxlint-config)](https://github.com/aurelienbobenrieth/harness/blob/main/packages/oxlint-config/LICENSE) [![node](https://img.shields.io/node/v/@aurelienbbn/oxlint-config)](https://github.com/aurelienbobenrieth/harness/blob/main/packages/oxlint-config/package.json)
+
 **Strict oxlint for TypeScript: every stable category at `error`, type-aware, warnings denied, every rule conflict settled.**
 
 ```sh

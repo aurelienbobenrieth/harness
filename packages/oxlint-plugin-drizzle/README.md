@@ -1,5 +1,7 @@
 # @aurelienbbn/oxlint-plugin-drizzle
 
+[![npm](https://img.shields.io/npm/v/@aurelienbbn/oxlint-plugin-drizzle)](https://www.npmjs.com/package/@aurelienbbn/oxlint-plugin-drizzle) [![downloads](https://img.shields.io/npm/dm/@aurelienbbn/oxlint-plugin-drizzle)](https://www.npmjs.com/package/@aurelienbbn/oxlint-plugin-drizzle) [![CI](https://github.com/aurelienbobenrieth/harness/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/aurelienbobenrieth/harness/actions/workflows/ci.yml) [![license](https://img.shields.io/npm/l/@aurelienbbn/oxlint-plugin-drizzle)](https://github.com/aurelienbobenrieth/harness/blob/main/packages/oxlint-plugin-drizzle/LICENSE) [![node](https://img.shields.io/node/v/@aurelienbbn/oxlint-plugin-drizzle)](https://github.com/aurelienbobenrieth/harness/blob/main/packages/oxlint-plugin-drizzle/package.json)
+
 **1 oxlint rule for Drizzle Postgres schemas: every foreign-key column leads an index, before production traffic finds the sequential scan.**
 
 > [!NOTE]

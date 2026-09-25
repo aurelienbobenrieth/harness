@@ -1,5 +1,7 @@
 # @aurelienbbn/conformance-cloudflare
 
+[![npm](https://img.shields.io/npm/v/@aurelienbbn/conformance-cloudflare)](https://www.npmjs.com/package/@aurelienbbn/conformance-cloudflare) [![downloads](https://img.shields.io/npm/dm/@aurelienbbn/conformance-cloudflare)](https://www.npmjs.com/package/@aurelienbbn/conformance-cloudflare) [![CI](https://github.com/aurelienbobenrieth/harness/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/aurelienbobenrieth/harness/actions/workflows/ci.yml) [![license](https://img.shields.io/npm/l/@aurelienbbn/conformance-cloudflare)](https://github.com/aurelienbobenrieth/harness/blob/main/packages/conformance-cloudflare/LICENSE) [![node](https://img.shields.io/node/v/@aurelienbbn/conformance-cloudflare)](https://github.com/aurelienbobenrieth/harness/blob/main/packages/conformance-cloudflare/package.json)
+
 **6 checks that catch Cloudflare Workers config mistakes Wrangler lets through: stale types, secrets in `vars`, bindings missing in an environment, an old compatibility date, logs off, and a broken Hyperdrive setup.**
 
 ```text

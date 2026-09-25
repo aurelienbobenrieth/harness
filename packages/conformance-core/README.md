@@ -1,5 +1,7 @@
 # @aurelienbbn/conformance-core
 
+[![npm](https://img.shields.io/npm/v/@aurelienbbn/conformance-core)](https://www.npmjs.com/package/@aurelienbbn/conformance-core) [![downloads](https://img.shields.io/npm/dm/@aurelienbbn/conformance-core)](https://www.npmjs.com/package/@aurelienbbn/conformance-core) [![CI](https://github.com/aurelienbobenrieth/harness/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/aurelienbobenrieth/harness/actions/workflows/ci.yml) [![license](https://img.shields.io/npm/l/@aurelienbbn/conformance-core)](https://github.com/aurelienbobenrieth/harness/blob/main/packages/conformance-core/LICENSE) [![node](https://img.shields.io/node/v/@aurelienbbn/conformance-core)](https://github.com/aurelienbobenrieth/harness/blob/main/packages/conformance-core/package.json)
+
 **5 repo-hygiene checks for any TypeScript repo. Plain functions or one Vitest file.**
 
 ```ts

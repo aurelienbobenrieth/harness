@@ -1,5 +1,7 @@
 # Harness
 
+[![CI](https://github.com/aurelienbobenrieth/harness/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/aurelienbobenrieth/harness/actions/workflows/ci.yml) [![license](https://img.shields.io/github/license/aurelienbobenrieth/harness)](https://github.com/aurelienbobenrieth/harness/blob/main/LICENSE)
+
 **Lint rules, tool configs, conformance checks, and agent skills that steer TypeScript projects, so the same mistake is caught by a tool the second time.**
 
 ```mermaid
