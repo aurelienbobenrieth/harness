@@ -16,36 +16,30 @@ flowchart LR
 > [!NOTE]
 > **All 18 packages are release candidates.** They publish through one manual, approval-gated workflow. See [release](docs/release-readiness.md).
 
-## 18 packages, 3 maturity levels
+## 18 packages, all on npm
 
-```text
-candidate  ██████████████████  18  release candidates, consumer-tested
-draft                           0
-parked     ███████              7  outside this repo: 4 Shopify theme pkgs, 2 Lit plugins, oio
-```
+| Package                                                                       | Kind                                         |   Size | npm                                                                                                                                                                    |
+| ----------------------------------------------------------------------------- | -------------------------------------------- | -----: | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`oxlint-config`](packages/oxlint-config)                                     | preset                                       | config | [![npm](https://img.shields.io/npm/v/@aurelienbbn/oxlint-config?label=)](https://www.npmjs.com/package/@aurelienbbn/oxlint-config)                                     |
+| [`oxfmt-config`](packages/oxfmt-config)                                       | preset                                       | config | [![npm](https://img.shields.io/npm/v/@aurelienbbn/oxfmt-config?label=)](https://www.npmjs.com/package/@aurelienbbn/oxfmt-config)                                       |
+| [`oxlint-plugin-core`](packages/oxlint-plugin-core)                           | rules · TypeScript                           |     16 | [![npm](https://img.shields.io/npm/v/@aurelienbbn/oxlint-plugin-core?label=)](https://www.npmjs.com/package/@aurelienbbn/oxlint-plugin-core)                           |
+| [`oxlint-plugin-effect`](packages/oxlint-plugin-effect)                       | rules · Effect                               |     35 | [![npm](https://img.shields.io/npm/v/@aurelienbbn/oxlint-plugin-effect?label=)](https://www.npmjs.com/package/@aurelienbbn/oxlint-plugin-effect)                       |
+| [`oxlint-plugin-shopify-app`](packages/oxlint-plugin-shopify-app)             | rules · Shopify apps & extensions            |     27 | [![npm](https://img.shields.io/npm/v/@aurelienbbn/oxlint-plugin-shopify-app?label=)](https://www.npmjs.com/package/@aurelienbbn/oxlint-plugin-shopify-app)             |
+| [`oxlint-plugin-xstate`](packages/oxlint-plugin-xstate)                       | rules · XState                               |     11 | [![npm](https://img.shields.io/npm/v/@aurelienbbn/oxlint-plugin-xstate?label=)](https://www.npmjs.com/package/@aurelienbbn/oxlint-plugin-xstate)                       |
+| [`oxlint-plugin-type-evidence`](packages/oxlint-plugin-type-evidence)         | rules · TS boundary & assertion contracts    |     10 | [![npm](https://img.shields.io/npm/v/@aurelienbbn/oxlint-plugin-type-evidence?label=)](https://www.npmjs.com/package/@aurelienbbn/oxlint-plugin-type-evidence)         |
+| [`oxlint-plugin-tanstack-query`](packages/oxlint-plugin-tanstack-query)       | rules · gaps the official plugin misses      |      8 | [![npm](https://img.shields.io/npm/v/@aurelienbbn/oxlint-plugin-tanstack-query?label=)](https://www.npmjs.com/package/@aurelienbbn/oxlint-plugin-tanstack-query)       |
+| [`oxlint-plugin-cloudflare`](packages/oxlint-plugin-cloudflare)               | rules · Workers, Durable Objects, Workflows  |      7 | [![npm](https://img.shields.io/npm/v/@aurelienbbn/oxlint-plugin-cloudflare?label=)](https://www.npmjs.com/package/@aurelienbbn/oxlint-plugin-cloudflare)               |
+| [`oxlint-plugin-drizzle`](packages/oxlint-plugin-drizzle)                     | rules · Drizzle schemas                      |      1 | [![npm](https://img.shields.io/npm/v/@aurelienbbn/oxlint-plugin-drizzle?label=)](https://www.npmjs.com/package/@aurelienbbn/oxlint-plugin-drizzle)                     |
+| [`agentlint-plugin-core`](packages/agentlint-plugin-core)                     | agent reviews · TypeScript                   |     24 | [![npm](https://img.shields.io/npm/v/@aurelienbbn/agentlint-plugin-core?label=)](https://www.npmjs.com/package/@aurelienbbn/agentlint-plugin-core)                     |
+| [`agentlint-plugin-effect`](packages/agentlint-plugin-effect)                 | agent reviews · Effect                       |      3 | [![npm](https://img.shields.io/npm/v/@aurelienbbn/agentlint-plugin-effect?label=)](https://www.npmjs.com/package/@aurelienbbn/agentlint-plugin-effect)                 |
+| [`agentlint-plugin-tanstack-query`](packages/agentlint-plugin-tanstack-query) | agent reviews · TanStack Query               |      4 | [![npm](https://img.shields.io/npm/v/@aurelienbbn/agentlint-plugin-tanstack-query?label=)](https://www.npmjs.com/package/@aurelienbbn/agentlint-plugin-tanstack-query) |
+| [`agentlint-plugin-shopify-app`](packages/agentlint-plugin-shopify-app)       | agent reviews · Shopify                      |     15 | [![npm](https://img.shields.io/npm/v/@aurelienbbn/agentlint-plugin-shopify-app?label=)](https://www.npmjs.com/package/@aurelienbbn/agentlint-plugin-shopify-app)       |
+| [`agentlint-plugin-xstate`](packages/agentlint-plugin-xstate)                 | agent reviews · XState                       |      5 | [![npm](https://img.shields.io/npm/v/@aurelienbbn/agentlint-plugin-xstate?label=)](https://www.npmjs.com/package/@aurelienbbn/agentlint-plugin-xstate)                 |
+| [`conformance-core`](packages/conformance-core)                               | checks · any repo, Vitest adapter            |      5 | [![npm](https://img.shields.io/npm/v/@aurelienbbn/conformance-core?label=)](https://www.npmjs.com/package/@aurelienbbn/conformance-core)                               |
+| [`conformance-shopify-app`](packages/conformance-shopify-app)                 | checks · Shopify app structure, Vitest suite |     13 | [![npm](https://img.shields.io/npm/v/@aurelienbbn/conformance-shopify-app?label=)](https://www.npmjs.com/package/@aurelienbbn/conformance-shopify-app)                 |
+| [`conformance-cloudflare`](packages/conformance-cloudflare)                   | checks · Wrangler config, Hyperdrive         |      6 | [![npm](https://img.shields.io/npm/v/@aurelienbbn/conformance-cloudflare?label=)](https://www.npmjs.com/package/@aurelienbbn/conformance-cloudflare)                   |
 
-| Package                           | Kind                                         |   Size | Status |
-| --------------------------------- | -------------------------------------------- | -----: | ------ |
-| `oxlint-config`                   | preset                                       | config | ✅     |
-| `oxfmt-config`                    | preset                                       | config | ✅     |
-| `oxlint-plugin-core`              | rules · TypeScript                           |     15 | ✅     |
-| `oxlint-plugin-effect`            | rules · Effect                               |     34 | ✅     |
-| `oxlint-plugin-shopify-app`       | rules · Shopify apps & extensions            |     27 | ✅     |
-| `oxlint-plugin-xstate`            | rules · XState                               |     11 | ✅     |
-| `oxlint-plugin-type-evidence`     | rules · TS boundary & assertion contracts    |     10 | ✅     |
-| `oxlint-plugin-tanstack-query`    | rules · gaps the official plugin misses      |      8 | ✅     |
-| `oxlint-plugin-cloudflare`        | rules · Workers, Durable Objects, Workflows  |      7 | ✅     |
-| `oxlint-plugin-drizzle`           | rules · Drizzle schemas                      |      1 | ✅     |
-| `agentlint-plugin-core`           | agent reviews · TypeScript                   |     24 | ✅     |
-| `agentlint-plugin-effect`         | agent reviews · Effect                       |      3 | ✅     |
-| `agentlint-plugin-tanstack-query` | agent reviews · TanStack Query               |      4 | ✅     |
-| `agentlint-plugin-shopify-app`    | agent reviews · Shopify                      |     15 | ✅     |
-| `agentlint-plugin-xstate`         | agent reviews · XState                       |      5 | ✅     |
-| `conformance-core`                | checks · any repo, Vitest adapter            |      5 | ✅     |
-| `conformance-shopify-app`         | checks · Shopify app structure, Vitest suite |     13 | ✅     |
-| `conformance-cloudflare`          | checks · Wrangler config, Hyperdrive         |      6 | ✅     |
-
-All names are scoped `@aurelienbbn/…`. Each package README ends with its generated rule/check inventory. Tested hosts and ranges: [compatibility](docs/compatibility.md).
+All names are scoped `@aurelienbbn/…`. Parked outside this repo until a later release: 4 Shopify theme packages, 2 Lit plugins, `oio`. Each package README ends with its generated rule/check inventory. Tested hosts and ranges: [compatibility](docs/compatibility.md).
 
 ## What goes where
 

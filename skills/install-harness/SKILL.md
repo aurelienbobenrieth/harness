@@ -10,7 +10,7 @@ description: Add Harness lint, format, conformance packages, and skills to a con
 - Domains from actual source and dependencies, never docs mentions: core for TypeScript; Effect, Lit, XState, Shopify app/theme only when used. Conformance also needs its project inputs.
 - Version: per package README, compatibility policy, release eligibility; must exist in the configured registry and support the consumer's Node and tools. Pin exact. Newest ≠ compatible.
 - No eligible version → report it, install the rest. Never publish or invent a release. Local tarballs only for requested preview adoption.
-- The five agentlint plugins target the checked-in agentlint archive, whose API differs from public npm `agentlint` at the same version. Never substitute the public package. Preview = explicit local setup, reviewed artifacts, verified integrity.
+- The five agentlint plugins peer on the published `@aurelienbbn/agentlint` engine in the range their README states; install it from npm like any peer. Never substitute the unscoped `agentlint` package, and never install these plugins into the agentlint repo's own gate: they would check the engine with an older release of itself.
 
 - **Official tooling first:** for Effect, Cloudflare, Shopify, PlanetScale, Alchemy, or Drizzle, wire what [official-tooling](references/official-tooling.md) lists before any Harness equivalent.
 

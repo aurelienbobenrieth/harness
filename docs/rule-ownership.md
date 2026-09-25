@@ -15,13 +15,13 @@ flowchart LR
   U -- yes --> R
 ```
 
-**`pnpm catalog:check` enforces two-sided fixtures on all 164 rules and 24 checks.** A rule missing from its README's generated inventory can't ship.
+**`pnpm catalog:check` enforces two-sided fixtures on all 166 rules and 24 checks.** A rule missing from its README's generated inventory can't ship.
 
 ```text
- oxlint-plugin-effect            ██████████████████████████████████ 34
+ oxlint-plugin-effect            ███████████████████████████████████ 35
  oxlint-plugin-shopify-app       ███████████████████████████        27
  agentlint-plugin-core           ████████████████████████           24
- oxlint-plugin-core              ███████████████                    15
+ oxlint-plugin-core              ████████████████                   16
  agentlint-plugin-shopify-app    ███████████████                    15
  oxlint-plugin-xstate            ███████████                        11
  oxlint-plugin-type-evidence     ██████████                         10
@@ -31,7 +31,7 @@ flowchart LR
  agentlint-plugin-tanstack-query ████                                4
  agentlint-plugin-effect         ███                                 3
  oxlint-plugin-drizzle           █                                   1
-                                                        rules  = 164
+                                                        rules  = 166
  conformance-shopify-app         █████████████                      13
  conformance-cloudflare          ██████                              6
  conformance-core                █████                               5
