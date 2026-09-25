@@ -1,5 +1,5 @@
 import { expect, it } from "vitest";
-import { assertRuleDoesNotReport, assertRuleReports } from "../test-support.ts";
+import { assertRuleDoesNotReport, assertRuleReports, reportedMessages } from "../test-support.ts";
 
 const ruleName = "effect/no-unsafe-effect-body";
 
@@ -77,6 +77,42 @@ it("leaves try/catch, await, and global timers to @effect/tsgo and the type chec
         "const c = Effect.gen(async function* () { return await load(); });",
         "",
       ].join("\n"),
+    ),
+  ).resolves.toBeUndefined();
+});
+
+it("reports throw inside a body passed to an aliased named gen import", async () => {
+  await expect(
+    assertRuleReports(
+      ruleName,
+      'import { gen as g } from "effect/Effect";\nconst program = g(function* () { throw new Error("boom"); });\n',
+    ),
+  ).resolves.toBeUndefined();
+});
+
+it("ignores throw inside a body passed to a same-named local gen", async () => {
+  await expect(
+    assertRuleDoesNotReport(
+      ruleName,
+      'const gen = (body: unknown) => body;\nconst program = gen(function* () { throw new Error("boom"); });\n',
+    ),
+  ).resolves.toBeUndefined();
+});
+
+it("reports throw inside a generator declaration passed to two Effect body constructors once", async () => {
+  await expect(
+    reportedMessages(
+      ruleName,
+      'function* program() { throw new Error("boom"); }\nexport const a = Effect.gen(program);\nexport const b = Effect.fn("b")(program);\n',
+    ),
+  ).resolves.toHaveLength(1);
+});
+
+it("ignores throw inside a generator declaration passed only to a non-Effect constructor", async () => {
+  await expect(
+    assertRuleDoesNotReport(
+      ruleName,
+      'function* program() { throw new Error("boom"); }\nexport const run = Other.gen(program);\n',
     ),
   ).resolves.toBeUndefined();
 });

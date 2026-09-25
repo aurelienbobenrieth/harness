@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { assertRuleDoesNotReport, assertRuleReports, fixCode } from "../test-support.ts";
+import { assertRuleDoesNotReport, assertRuleReports, fixCode, reportedMessages } from "../test-support.ts";
 
 const ruleName = "effect/padding-after-dependencies";
 
@@ -109,6 +109,59 @@ describe("stays silent", () => {
       "const Effect = { gen: (body) => body };\nconst program = Effect.gen(function* () {\n  const repo = yield* UserRepo;\n  return yield* repo.findUser(id);\n});\n",
     ],
   ])("%s", async (_name, code) => {
+    await expect(assertRuleDoesNotReport(ruleName, code)).resolves.toBeUndefined();
+  });
+});
+
+const gluedBody = "  const repo = yield* UserRepo;\n  yield* repo.warm();\n";
+const paddedBody = "  const repo = yield* UserRepo;\n\n  yield* repo.warm();\n";
+
+describe("named imports from effect/Effect", () => {
+  it.each([
+    ["an aliased gen", 'import { gen as g } from "effect/Effect";\nconst program = g(function* () {'],
+    ["fn", 'import { fn } from "effect/Effect";\nconst run = fn("run")(function* () {'],
+    ["fnUntraced", 'import { fnUntraced } from "effect/Effect";\nconst run = fnUntraced(function* () {'],
+    ["fnUntracedEager", 'import { fnUntracedEager } from "effect/Effect";\nconst run = fnUntracedEager(function* () {'],
+  ])("pads a body passed to %s", async (_name, head) => {
+    await expect(fixCode(ruleName, `${head}\n${gluedBody}});\n`)).resolves.toBe(`${head}\n${paddedBody}});\n`);
+  });
+
+  it("ignores a body passed to a same-named local gen", async () => {
+    await expect(
+      assertRuleDoesNotReport(
+        ruleName,
+        `const gen = (body: unknown) => body;\nconst program = gen(function* () {\n${gluedBody}});\n`,
+      ),
+    ).resolves.toBeUndefined();
+  });
+});
+
+describe("generator bodies passed by reference", () => {
+  it("pads a function declaration passed to Effect.gen twice, reporting once", async () => {
+    const uses = "export const a = Effect.gen(program);\nexport const b = Effect.gen(program);\n";
+    await expect(reportedMessages(ruleName, `function* program() {\n${gluedBody}}\n${uses}`)).resolves.toHaveLength(1);
+    await expect(fixCode(ruleName, `function* program() {\n${gluedBody}}\n${uses}`)).resolves.toBe(
+      `function* program() {\n${paddedBody}}\n${uses}`,
+    );
+  });
+
+  it('pads a const generator expression passed to Effect.fn("run")', async () => {
+    const use = 'export const run = Effect.fn("run")(program);\n';
+    await expect(fixCode(ruleName, `const program = function* () {\n${gluedBody}};\n${use}`)).resolves.toBe(
+      `const program = function* () {\n${paddedBody}};\n${use}`,
+    );
+  });
+
+  it.each([
+    [
+      "a declaration passed only to a non-Effect constructor",
+      `function* program() {\n${gluedBody}}\nexport const run = Other.gen(program);\n`,
+    ],
+    [
+      "a declaration whose name is shadowed where Effect.gen receives it",
+      `function* program() {\n${gluedBody}}\nexport function wrap(program: unknown) {\n  return Effect.gen(program);\n}\n`,
+    ],
+  ])("ignores %s", async (_name, code) => {
     await expect(assertRuleDoesNotReport(ruleName, code)).resolves.toBeUndefined();
   });
 });

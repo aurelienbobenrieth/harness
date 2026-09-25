@@ -3,7 +3,7 @@
  * Effect generator body and the first statement of logic below them.
  */
 import { statementPadding } from "@aurelienbbn/oxlint-kit/padding";
-import type { Rule } from "@oxlint/plugins";
+import type { ESTree, Rule } from "@oxlint/plugins";
 import { effectBodyMethod, isServiceDependency } from "../binding-support.js";
 
 export const paddingAfterDependencies: Rule = {
@@ -20,22 +20,22 @@ export const paddingAfterDependencies: Rule = {
     schema: [],
   },
   createOnce(context) {
-    return {
-      FunctionExpression(node) {
-        if (!node.generator || node.body === null || effectBodyMethod(context, node) === undefined) return;
-        const statements = node.body.body;
-        const logicIndex = statements.findIndex((statement) => !isServiceDependency(context, statement));
-        const lastDependency = statements[logicIndex - 1];
-        const logic = statements[logicIndex];
-        if (lastDependency === undefined || logic === undefined) return;
-        const gap = statementPadding(context.sourceCode, lastDependency, logic);
-        if (gap.padded) return;
-        context.report({
-          node: lastDependency,
-          messageId: "padding",
-          fix: (fixer) => fixer.replaceTextRange(gap.range, gap.text),
-        });
-      },
+    const check = (node: ESTree.Function): void => {
+      if (!node.generator || node.body === null || effectBodyMethod(context, node) === undefined) return;
+      const statements = node.body.body;
+      const logicIndex = statements.findIndex((statement) => !isServiceDependency(context, statement));
+      const lastDependency = statements[logicIndex - 1];
+      const logic = statements[logicIndex];
+      if (lastDependency === undefined || logic === undefined) return;
+      const gap = statementPadding(context.sourceCode, lastDependency, logic);
+      if (gap.padded) return;
+      context.report({
+        node: lastDependency,
+        messageId: "padding",
+        fix: (fixer) => fixer.replaceTextRange(gap.range, gap.text),
+      });
     };
+
+    return { FunctionDeclaration: check, FunctionExpression: check };
   },
 };

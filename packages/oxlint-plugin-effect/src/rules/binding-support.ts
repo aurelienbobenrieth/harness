@@ -1,5 +1,5 @@
-import { binding } from "@aurelienbbn/oxlint-kit/ast";
-import type { Context, ESTree } from "@oxlint/plugins";
+import { binding, importedSpecifierName } from "@aurelienbbn/oxlint-kit/ast";
+import type { Context, ESTree, Variable } from "@oxlint/plugins";
 
 /**
  * Recognize a root Effect module (`Effect`, `Layer`, `Schema`...) through its import and aliases without matching
@@ -46,16 +46,62 @@ export function effectMethod(context: Context, node: ESTree.Node): string | unde
 const effectBodyMethods: ReadonlySet<string> = new Set(["gen", "fn", "fnUntraced", "fnUntracedEager"]);
 
 /**
- * Resolve the Effect body constructor a function is passed to, covering the direct form `Effect.gen(function* ...)`
- * and the curried form `Effect.fn("name")(function* ...)`.
+ * Resolve the Effect function a callee denotes: a member of an alias-aware `Effect` namespace (`Effect.gen`) or a
+ * named import from `effect/Effect` (`import { gen as g } from "effect/Effect"`). A same-named local never matches.
  */
-export function effectBodyMethod(context: Context, node: ESTree.Node): string | undefined {
+function effectCallee(context: Context, callee: ESTree.Node): string | undefined {
+  return (
+    effectMethod(context, callee) ?? importedSpecifierName(context, callee, (source) => source === "effect/Effect")
+  );
+}
+
+/** Resolve the body constructor of the call `node` is an argument of, direct (`gen(body)`) or curried (`fn("x")(body)`). */
+function bodyCallMethod(context: Context, node: ESTree.Node): string | undefined {
   const parent = node.parent;
   if (parent?.type !== "CallExpression") return undefined;
   if (!parent.arguments.some((argument) => argument === node)) return undefined;
 
-  const method = effectMethod(context, parent.callee.type === "CallExpression" ? parent.callee.callee : parent.callee);
+  const method = effectCallee(context, parent.callee.type === "CallExpression" ? parent.callee.callee : parent.callee);
   return method !== undefined && effectBodyMethods.has(method) ? method : undefined;
+}
+
+/**
+ * The variable a generator is bound to when declared by name: `function* program() {}` or
+ * `const program = function* () {}`.
+ */
+function generatorBinding(context: Context, node: ESTree.Node): Variable | undefined {
+  if (node.type === "FunctionDeclaration" && node.id !== null) {
+    const id = node.id;
+    return context.sourceCode.getDeclaredVariables(node).find((variable) => variable.identifiers.includes(id));
+  }
+  const declarator = node.parent;
+  if (
+    node.type !== "FunctionExpression" ||
+    declarator?.type !== "VariableDeclarator" ||
+    declarator.init !== node ||
+    declarator.id.type !== "Identifier"
+  )
+    return undefined;
+  const id = declarator.id;
+  return context.sourceCode.getDeclaredVariables(declarator).find((variable) => variable.identifiers.includes(id));
+}
+
+/**
+ * Resolve the Effect body constructor a generator runs under. Covers a generator passed inline, directly
+ * (`Effect.gen(function* ...)`) or curried (`Effect.fn("name")(function* ...)`), through a namespace or a named
+ * import, and a named generator passed by reference (`function* program() {}; Effect.gen(program)`), resolved
+ * through its scope binding rather than its name.
+ */
+export function effectBodyMethod(context: Context, node: ESTree.Node): string | undefined {
+  const inline = bodyCallMethod(context, node);
+  if (inline !== undefined) return inline;
+  if (!(node.type === "FunctionDeclaration" || node.type === "FunctionExpression") || !node.generator) return undefined;
+
+  for (const reference of generatorBinding(context, node)?.references ?? []) {
+    const method = reference.isRead() ? bodyCallMethod(context, reference.identifier) : undefined;
+    if (method !== undefined) return method;
+  }
+  return undefined;
 }
 
 /**
