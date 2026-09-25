@@ -26,19 +26,27 @@ export function selectPublishable({ policy, manifests, published }) {
     .toSorted((a, b) => a.name.localeCompare(b.name));
 }
 
-/** Windows exposes npm and pnpm as .cmd shims, which Node only spawns through a shell; arguments here are fixed. */
-function run(command, args, cwd) {
+/**
+ * Windows exposes npm and pnpm as .cmd shims, which Node only spawns through a shell; arguments here are fixed.
+ * `quiet` hides expected stderr (a 404 for an unpublished version).
+ */
+function run(command, args, cwd, { quiet = false } = {}) {
   return execFileSync(command, args, {
     cwd,
     encoding: "utf8",
     shell: process.platform === "win32",
-    stdio: ["ignore", "pipe", "inherit"],
+    stdio: ["ignore", "pipe", quiet ? "ignore" : "inherit"],
   }).trim();
+}
+
+/** Hands npm the terminal so a local publish can complete npm's two-factor web confirmation. */
+function runInteractive(command, args, cwd) {
+  execFileSync(command, args, { cwd, shell: process.platform === "win32", stdio: "inherit" });
 }
 
 function isPublished(name, version) {
   try {
-    return run("npm", ["view", `${name}@${version}`, "version"], process.cwd()) === version;
+    return run("npm", ["view", `${name}@${version}`, "version"], process.cwd(), { quiet: true }) === version;
   } catch {
     return false;
   }
@@ -73,7 +81,7 @@ async function main() {
       assert.ok(tarball, `${target.name}: pnpm pack produced no tarball.`);
       const args = ["publish", path.join(output, tarball), "--access", "public"];
       if (inCi) args.push("--provenance");
-      run("npm", args, root);
+      runInteractive("npm", args, root);
       console.log(`Published ${target.name}@${target.version}${inCi ? " with provenance" : ""}.`);
     }
   } finally {
