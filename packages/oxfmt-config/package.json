@@ -1,6 +1,6 @@
 {
   "name": "@aurelienbbn/oxfmt-config",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Reusable oxfmt config for JavaScript and TypeScript projects.",
   "bugs": {
     "url": "https://github.com/aurelienbobenrieth/harness/issues"

@@ -1,6 +1,6 @@
 {
   "name": "@aurelienbbn/oxlint-config",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Opinionated strict reusable oxlint config for TypeScript projects.",
   "bugs": {
     "url": "https://github.com/aurelienbobenrieth/harness/issues"

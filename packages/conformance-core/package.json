@@ -1,6 +1,6 @@
 {
   "name": "@aurelienbbn/conformance-core",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Stack-agnostic repo hygiene conformance checks, packaged as a Vitest suite.",
   "bugs": {
     "url": "https://github.com/aurelienbobenrieth/harness/issues"
