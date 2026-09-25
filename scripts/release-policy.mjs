@@ -68,6 +68,21 @@ export function validateReleasePolicy({ policy, manifests, changesets }) {
       `https://github.com/${policy.repository}/issues`,
       `${manifest.name}: fix issue URL.`,
     );
+    if (maturity === "candidate") {
+      assert.ok(manifest.description?.trim(), `${manifest.name}: add a description for npm search.`);
+      assert.ok(
+        Array.isArray(manifest.keywords) && manifest.keywords.length >= 3,
+        `${manifest.name}: add at least three npm keywords.`,
+      );
+      assert.equal(
+        manifest.homepage,
+        `https://github.com/${policy.repository}/tree/main/packages/${directory}#readme`,
+        `${manifest.name}: point homepage at the package README.`,
+      );
+      assert.ok(manifest.author?.name?.trim(), `${manifest.name}: name the author.`);
+      assert.ok(manifest.files?.includes("CHANGELOG.md"), `${manifest.name}: publish CHANGELOG.md.`);
+      assert.equal(manifest.publishConfig?.access, "public", `${manifest.name}: publish with public access.`);
+    }
     if (maturity === "draft") assert.equal(manifest.private, true, `${manifest.name}: draft packages must be private.`);
     else assert.notEqual(manifest.private, true, `${manifest.name}: private packages must be classified as draft.`);
     for (const field of ["dependencies", "optionalDependencies", "peerDependencies"]) {
