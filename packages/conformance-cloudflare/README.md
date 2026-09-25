@@ -9,7 +9,7 @@
 ```
 
 > [!WARNING]
-> **Private draft, a static preflight.** `wrangler deploy --dry-run`, the config schema, and `tsc` against generated types stay authoritative for config validity and binding existence.
+> **A static preflight.** `wrangler deploy --dry-run`, the config schema, and `tsc` against generated types stay authoritative for config validity and binding existence.
 
 ## One file, six tests
 

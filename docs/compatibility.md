@@ -1,19 +1,20 @@
 # Consumer compatibility
 
-**9 release candidates pass as fresh registry consumers on two pinned tool profiles. Not on npm yet.** Evidence for the specified consumers, not certification of every downstream project.
+**18 release candidates pass as fresh registry consumers on two pinned tool profiles.** Evidence for the specified consumers, not certification of every downstream project.
 
 ```text
-candidate  █████████   9  public release candidates, tested as registry consumers
-draft      █████████   9  private: 5 agentlint plugins, tanstack-query, cloudflare ×2, drizzle
-parked     ███████     7  outside this repo: 4 Shopify theme pkgs, 2 Lit plugins, oio
+candidate  ██████████████████  18  public release candidates, tested as registry consumers
+draft                           0
+parked     ███████              7  outside this repo: 4 Shopify theme pkgs, 2 Lit plugins, oio
 ```
 
 ## Every host has a floor and a tested ceiling
 
-Source of truth: [policy/compatibility.json](../policy/compatibility.json). ESM only, Node `^22.19.0 || ^24.11.0` (floor set by the draft CLI's Undici dependency).
+Source of truth: [policy/compatibility.json](../policy/compatibility.json). ESM only, Node `^22.19.0 || ^24.11.0` (floor set by the agentlint CLI's Undici dependency).
 
 | Host            | Declared support    | `baseline` | `current` |
 | --------------- | ------------------- | ---------- | --------- |
+| agentlint       | `>=0.3.0 <0.4.0`    | 0.3.0      | 0.3.0     |
 | oxlint          | `>=1.82.0 <2.0.0`   | 1.82.0     | 1.83.0    |
 | oxlint-tsgolint | `^7.0.2001`         | 7.0.2001   | 7.0.2002  |
 | oxfmt           | `>=0.67.0 <0.69.0`  | 0.67.0     | 0.68.0    |
@@ -30,7 +31,7 @@ Both pin TypeScript 7.0.2 · Vite 8.3.0 · `@types/node` 22.20.3 · Lit 3.3.3 ·
 <details>
 <summary>Registry sources, pending upgrades, host types</summary>
 
-- Checked against the public npm registry on 2026-09-24 (matches `registryCheckedAt`): [oxlint](https://registry.npmjs.org/oxlint/1.83.0), [Vite Plus](https://registry.npmjs.org/vite-plus/0.3.2), [Vitest](https://registry.npmjs.org/vitest/5.0.1), [Stylelint](https://registry.npmjs.org/stylelint/17.15.0).
+- Checked against the public npm registry on 2026-09-24 (matches `registryCheckedAt`): [agentlint](https://registry.npmjs.org/@aurelienbbn%2Fagentlint/0.3.0), [oxlint](https://registry.npmjs.org/oxlint/1.83.0), [Vite Plus](https://registry.npmjs.org/vite-plus/0.3.2), [Vitest](https://registry.npmjs.org/vitest/5.0.1), [Stylelint](https://registry.npmjs.org/stylelint/17.15.0).
 - Newer, not adopted (2026-09-24): oxlint 1.85.0, oxfmt 0.70.0 (outside `<0.69.0`), Vite Plus 0.3.3 and 1.0.0-rc.0, jsdom 30.1.1.
 - Parked `conformance-shopify-theme` keeps TypeScript 6.0.3 at runtime: TypeScript 7 drops the compiler API it uses to resolve event names.
 - Config packages import host types from `oxlint` and `oxfmt`. Vite+ re-exports them, so the same objects work in its `lint` and `fmt` fields without Vite+ in either peer contract.
@@ -53,22 +54,22 @@ Each registry profile, then deletes its temporary consumer:
 
 ```mermaid
 flowchart LR
-  P["pack 9 candidates"] --> I["install outside workspace"]
+  P["pack 18 candidates"] --> I["install outside workspace"]
   I --> A["audit fresh graph"]
   A --> T["strict types"]
-  T --> R["7 consumer tests"]
+  T --> R["consumer tests"]
   R --> V["validate JSON report"]
 ```
 
 **The workspace's clean audit proves nothing about the consumer** (different aliases and transitive resolutions); a consumer audit failure fails the command. Candidates come from [release policy](../policy/release.json).
 
 - ✅ strict peers and engines, installed direct versions checked
-- ❌ no automatic peer install, lifecycle scripts, overrides, or local archives
+- ❌ no automatic peer install, lifecycle scripts, overrides, or local archives: the agentlint engine comes from npm like every other host
 - ⚠️ transitive deps follow upstream manifests: fresh-install test, not a locked replay
 
-**One profile:** 9 archives · 11 exports · licenses + READMEs · complete declarations with `skipLibCheck: false` · 7 tests · 0 skips. Every runner/check gets passing and failing input, across: all oxlint plugins in one policy, the Shopify App Home recipe, the formatter config, strict type-aware lint (real oxlint-tsgolint assignment diagnostic, clean after the fix), both conformance APIs, and the closed-design-system example (**API wiring only; Tailwind build not run**).
+**One profile:** 18 archives · every public export · licenses + READMEs · complete declarations with `skipLibCheck: false` · 0 skips. Every runner/check gets passing and failing input, across: all 5 agentlint presets composed in one typed config with every rule's own fixtures, the agentlint CLI (`check` on broken and clean input, `init --preset` with all 5 starter presets, `rules test`, `next`), all oxlint plugins in one policy, the Shopify App Home recipe, the formatter config, strict type-aware lint (real oxlint-tsgolint assignment diagnostic, clean after the fix), both conformance APIs, and the closed-design-system example (**API wiring only; Tailwind build not run**).
 
-**A green exit code isn't enough.** Commands parse Vitest's JSON report and fail on a missing test file, unexecuted passes, unfinished or unexpected skips, or any skip in a registry profile. The draft consumer allows each of its 4 named core exclusions once, in the original acceptance suite. 6 regression cases guard this.
+**A green exit code isn't enough.** Commands parse Vitest's JSON report and fail on a missing test file, unexecuted passes, unfinished or unexpected skips, or any skip in a registry profile. The package consumer allows each of its 4 named core exclusions once, in the original acceptance suite. 6 regression cases guard this.
 
 ## Evidence: 24 advisories → 0, all runs local Windows x64
 
@@ -110,25 +111,17 @@ No advisory IDs ignored; no security override forces a dependency across a major
 
 </details>
 
-## Private draft boundary
+## Agentlint engine
 
-**Local and public agentlint both say 0.1.5. They are different, incompatible packages.**
+**The 5 agentlint plugins peer on `@aurelienbbn/agentlint` `>=0.3.0 <0.4.0` and develop against exactly 0.3.0 from npm.** No local engine archive is involved anywhere: the workspace, `pnpm test:package`, and both registry profiles install the same published engine.
 
-|               | Public npm 0.1.5                                                               | Local reviewed archive                                                                |
-| ------------- | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------- |
-| node type     | `AgentReviewNode`                                                              | `AgentlintNode`                                                                       |
-| report API    | `context.flag`                                                                 | `context.report`                                                                      |
-| rule contract | rule `meta`                                                                    | versioned `standard` / `detector` / `binding`, explicit `state` / `change` lifecycles |
-| SHA-512       | [registry metadata](https://registry.npmjs.org/@aurelienbbn%2Fagentlint/0.1.5) | reviewed hash in the compatibility policy                                             |
-
-The 5 plugins' exact-version peer is a local integration constraint; `private: true` plus release-policy checks block publication. **Promotion needs all three:** a compatible, independently versioned upstream release · registry-only consumer acceptance · an explicit maturity change.
-
-Today `pnpm test:agentlint-current` installs all 5 against the hash-pinned local archive (no registry, no sibling checkout): 6 packed archives on the exact local runtime graph, typed imports, real parser fixtures, all 5 domains through the CLI. Details: [agentlint contract](agentlint-contract.md).
+- `pnpm compatibility:check` requires every plugin's dev engine to equal the `baseline` profile and every profile engine to satisfy the peer range.
+- Both registry profiles run `runners.test.ts`: the 5 presets in one typed `defineConfig`, each rule's own fixtures through `@aurelienbbn/agentlint/testing`, and the CLI across all 5 domains. Details: [agentlint contract](agentlint-contract.md).
 
 <details>
 <summary>Historical pre-migration run</summary>
 
-26 tests, three intentional conformance skips, 25 public exports, on Effect beta.85. Doesn't validate the current engine archive. Its declaration-error exception is removed: registry consumers require complete declarations.
+26 tests, three intentional conformance skips, 25 public exports, on Effect beta.85. Doesn't validate the current engine. Its declaration-error exception is removed: registry consumers require complete declarations.
 
 </details>
 
@@ -139,8 +132,8 @@ Today `pnpm test:agentlint-current` installs all 5 against the hash-pinned local
 - [ ] regenerate the lockfile if dev dependencies changed
 - [ ] run the [five commands](#five-commands-reproduce-the-evidence)
 
-**The baseline must match the dev toolchain wherever a tool is a root dependency.** `pnpm compatibility:check` (24 accept/reject regression tests) rejects missing host peers or profiles, unbounded or empty ranges, unpinned profile versions, test hosts outside their peer range, mismatched Node support, and unreviewed local agentlint archive changes.
+**The baseline must match the dev toolchain wherever a tool is a root dependency.** `pnpm compatibility:check` (25 accept/reject regression tests) rejects missing host peers or profiles, unbounded or empty ranges, unpinned profile versions, test hosts outside their peer range, mismatched Node support, and agentlint plugins developed against an engine other than the baseline.
 
 Ranges: exact, caret, and bounded stable intervals only, independently implemented after [node-semver range semantics](https://github.com/npm/node-semver#caret-ranges-123-025-004) (ISC). New syntax needs matching accept and reject tests.
 
-**Not established** (consumer project and draft CLI must prove these): production browser accessibility, live Shopify acceptance, load performance, recovery from interrupted filesystem writes.
+**Not established** (consumer project and agentlint CLI must prove these): production browser accessibility, live Shopify acceptance, load performance, recovery from interrupted filesystem writes.

@@ -3,7 +3,7 @@
 **24 agentlint reviews for any TypeScript repo: a deterministic trigger finds the spot, an agent or a human settles it.**
 
 > [!WARNING]
-> **Private draft.** Built against the reviewed archive `local-packages/agentlint-current.tgz`; public agentlint 0.1.5 is API-incompatible. [Evidence](../../docs/compatibility.md#private-draft-boundary).
+> Requires the engine `@aurelienbbn/agentlint` `>=0.3.0 <0.4.0` as a peer. [Evidence](../../docs/compatibility.md#agentlint-engine).
 
 ```text
 strictPreset   ████████████             12  settled rules

@@ -6,5 +6,3 @@ coverage/
 *.log
 .tmp/
 .stryker-tmp/
-local-packages/*.tgz
-!local-packages/agentlint-current.tgz

@@ -19,6 +19,9 @@ importers:
       '@arethetypeswrong/cli':
         specifier: 0.18.5
         version: 0.18.5
+      '@aurelienbbn/agentlint':
+        specifier: 0.3.0
+        version: 0.3.0(redis@6.2.1)
       '@changesets/changelog-github':
         specifier: 1.0.1
         version: 1.0.1
@@ -80,32 +83,32 @@ importers:
   packages/agentlint-plugin-core:
     devDependencies:
       '@aurelienbbn/agentlint':
-        specifier: file:../../local-packages/agentlint-current.tgz
-        version: file:local-packages/agentlint-current.tgz(redis@6.2.1)
+        specifier: 0.3.0
+        version: 0.3.0(redis@6.2.1)
 
   packages/agentlint-plugin-effect:
     devDependencies:
       '@aurelienbbn/agentlint':
-        specifier: file:../../local-packages/agentlint-current.tgz
-        version: file:local-packages/agentlint-current.tgz(redis@6.2.1)
+        specifier: 0.3.0
+        version: 0.3.0(redis@6.2.1)
 
   packages/agentlint-plugin-shopify-app:
     devDependencies:
       '@aurelienbbn/agentlint':
-        specifier: file:../../local-packages/agentlint-current.tgz
-        version: file:local-packages/agentlint-current.tgz(redis@6.2.1)
+        specifier: 0.3.0
+        version: 0.3.0(redis@6.2.1)
 
   packages/agentlint-plugin-tanstack-query:
     devDependencies:
       '@aurelienbbn/agentlint':
-        specifier: file:../../local-packages/agentlint-current.tgz
-        version: file:local-packages/agentlint-current.tgz(redis@6.2.1)
+        specifier: 0.3.0
+        version: 0.3.0(redis@6.2.1)
 
   packages/agentlint-plugin-xstate:
     devDependencies:
       '@aurelienbbn/agentlint':
-        specifier: file:../../local-packages/agentlint-current.tgz
-        version: file:local-packages/agentlint-current.tgz(redis@6.2.1)
+        specifier: 0.3.0
+        version: 0.3.0(redis@6.2.1)
 
   packages/conformance-cloudflare:
     dependencies:
@@ -276,9 +279,8 @@ packages:
     resolution: {integrity: sha512-9ytjzGwxjm9Uz7I9avfbt5vlQt6uk9uRRESzJjqrznl6WKvI6dwYTo+vJ3U02Wrq/mR3iql/PzhvHhKdJIAjDQ==}
     engines: {node: '>=20'}
 
-  '@aurelienbbn/agentlint@file:local-packages/agentlint-current.tgz':
-    resolution: {integrity: sha512-tu057ahX/SdT3Lf4bmJCMlAEla+qA3zTSheepAWHK6HpNfRI1TkoMSKSFT+3uBvdlN+WNlszyfZBmiHD7Ga4Gg==, tarball: file:local-packages/agentlint-current.tgz}
-    version: 0.1.5
+  '@aurelienbbn/agentlint@0.3.0':
+    resolution: {integrity: sha512-ql2gh4xvhhXQrbIdJBLWqQIY17D9urxijdJ9WD2Xe+QLtviVcXdj1unY0EA6ej7zfInUiWaUl3jcv8Sty+Jo7Q==}
     engines: {node: '>=22.19.0'}
     hasBin: true
 
@@ -3436,7 +3438,7 @@ snapshots:
       typescript: 5.6.1-rc
       validate-npm-package-name: 5.0.1
 
-  '@aurelienbbn/agentlint@file:local-packages/agentlint-current.tgz(redis@6.2.1)':
+  '@aurelienbbn/agentlint@0.3.0(redis@6.2.1)':
     dependencies:
       '@effect/platform-node': 4.0.0-rc.115(effect@4.0.0-rc.115)(redis@6.2.1)
       '@effect/platform-node-shared': 4.0.0-rc.115(effect@4.0.0-rc.115)

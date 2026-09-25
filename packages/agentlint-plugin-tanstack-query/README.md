@@ -3,7 +3,7 @@
 **4 agentlint reviews for TanStack Query: every query and mutation shows its loading, error and stale states; data is fetched by key, not by command.**
 
 > [!WARNING]
-> **Private draft.** Built against the reviewed archive `local-packages/agentlint-current.tgz`; public agentlint 0.1.5 is API-incompatible. [Evidence](../../docs/compatibility.md#private-draft-boundary).
+> Requires the engine `@aurelienbbn/agentlint` `>=0.3.0 <0.4.0` as a peer. [Evidence](../../docs/compatibility.md#agentlint-engine).
 
 ## Quick start
 

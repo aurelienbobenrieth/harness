@@ -8,9 +8,9 @@ await mkdir(path.join(runnerRoot, "blocks"), { recursive: true });
 export const writeFixture = (target: string, content: string): Promise<void> =>
   writeFile(path.join(runnerRoot, target), content);
 
-export function run(executable: string, args: readonly string[], expectedExit: number): string {
+export function run(executable: string, args: readonly string[], expectedExit: number, cwd = runnerRoot): string {
   const result = spawnSync(process.execPath, [executable, ...args], {
-    cwd: runnerRoot,
+    cwd,
     encoding: "utf8",
     windowsHide: true,
     timeout: 30_000,

@@ -5,6 +5,9 @@ packages:
 allowBuilds:
   msgpackr-extract: false
 
+minimumReleaseAgeExclude:
+  - "@aurelienbbn/agentlint@0.3.0"
+
 overrides:
   vite: npm:@voidzero-dev/vite-plus-core@0.3.2
   vitest: 4.1.11

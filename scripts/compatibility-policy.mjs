@@ -1,5 +1,4 @@
 import assert from "node:assert/strict";
-import { createHash } from "node:crypto";
 
 const versionPattern = "(?:0|[1-9]\\d*)\\.(?:0|[1-9]\\d*)\\.(?:0|[1-9]\\d*)";
 
@@ -31,19 +30,8 @@ function supportedIntervals(range, owner) {
   });
 }
 
-export function validateCompatibility({ policy, rootManifest, packages, agentlintArchive }) {
+export function validateCompatibility({ policy, rootManifest, packages }) {
   assert.equal(policy.schemaVersion, 1);
-  assert.equal(
-    policy.localAgentlint.registryCompatible,
-    false,
-    "Audit the public agentlint API before changing readiness",
-  );
-  assert.notEqual(policy.localAgentlint.integrity, policy.localAgentlint.registryIntegrity);
-  assert.equal(
-    `sha512-${createHash("sha512").update(agentlintArchive).digest("base64")}`,
-    policy.localAgentlint.integrity,
-    "The local agentlint archive changed; review its API and update compatibility evidence",
-  );
   assert.equal(rootManifest.engines.node, policy.node, "Root Node support must match compatibility policy");
   const intervals = Object.fromEntries(
     Object.entries({ node: policy.node, ...policy.peerRanges }).map(([peer, range]) => [
@@ -59,9 +47,7 @@ export function validateCompatibility({ policy, rootManifest, packages, agentlin
   for (const [name, profile] of Object.entries(policy.profiles)) {
     assert.deepEqual(
       Object.keys(profile).toSorted(),
-      Object.keys(policy.peerRanges)
-        .filter((peer) => peer !== "@aurelienbbn/agentlint")
-        .toSorted(),
+      Object.keys(policy.peerRanges).toSorted(),
       `${name}: every public peer needs an explicit test version`,
     );
     for (const [dependency, version] of Object.entries({
@@ -117,6 +103,10 @@ export function validateCompatibility({ policy, rootManifest, packages, agentlin
       assert.equal(range, policy.peerRanges[peer], `${directory}/${peer}: use the reviewed bounded peer contract`);
     }
     if (directory.startsWith("agentlint-plugin-"))
-      assert.equal(manifest.devDependencies["@aurelienbbn/agentlint"], policy.localAgentlint.developmentDependency);
+      assert.equal(
+        manifest.devDependencies?.["@aurelienbbn/agentlint"],
+        policy.profiles.baseline["@aurelienbbn/agentlint"],
+        `${directory}: develop against the baseline agentlint engine`,
+      );
   }
 }

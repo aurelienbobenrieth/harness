@@ -12,7 +12,7 @@ export default defineConfig({
       node: true,
     },
     plugins: ["typescript", "node", "unicorn", "vitest", "import"],
-    ignorePatterns: ["packages/*/dist/**", ".tmp/**", ".stryker-tmp/**", "local-packages/**"],
+    ignorePatterns: ["packages/*/dist/**", ".tmp/**", ".stryker-tmp/**"],
     rules: {
       "typescript/no-explicit-any": "error",
       "typescript/no-non-null-assertion": "error",
@@ -46,7 +46,7 @@ export default defineConfig({
     tabWidth: 2,
     arrowParens: "always",
     sortPackageJson: true,
-    ignorePatterns: ["package-lock.json", ".tmp/**", "local-packages/**"],
+    ignorePatterns: ["package-lock.json", ".tmp/**"],
   },
   test: {
     include: ["packages/*/src/**/*.test.ts", "internal/*/src/**/*.test.ts"],

@@ -1,7 +1,6 @@
 /* eslint-disable no-await-in-loop -- Validate one installed package at a time with deterministic export indexes. */
 import assert from "node:assert/strict";
 import { execFile } from "node:child_process";
-import { createHash } from "node:crypto";
 import { access, copyFile, mkdir, mkdtemp, readFile, readdir, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
@@ -11,14 +10,6 @@ import { validateConsumerResults } from "./consumer-results.mjs";
 const execute = promisify(execFile);
 const root = path.resolve(import.meta.dirname, "..");
 const compatibility = JSON.parse(await readFile(path.join(root, "policy/compatibility.json"), "utf8"));
-const agentlintArchive = path.join(root, compatibility.localAgentlint.path);
-assert.equal(
-  `sha512-${createHash("sha512")
-    .update(await readFile(agentlintArchive))
-    .digest("base64")}`,
-  compatibility.localAgentlint.integrity,
-  "Local agentlint archive differs from the reviewed compatibility artifact",
-);
 const packageManager = process.env.npm_execpath;
 assert.ok(packageManager, "Run with pnpm test:package");
 const temporary = await mkdtemp(path.join(tmpdir(), "harness-packed-consumer-"));
@@ -71,7 +62,6 @@ try {
   const dependencies = {
     ...compatibility.sharedDependencies,
     ...compatibility.profiles.baseline,
-    "@aurelienbbn/agentlint": `file:${agentlintArchive.replaceAll("\\", "/")}`,
   };
   for (const manifest of packages) {
     const archive = path.join(archives, `${manifest.name.replace("@", "").replace("/", "-")}-${manifest.version}.tgz`);
@@ -105,10 +95,10 @@ try {
     "strict-peer-dependencies=true\nengine-strict=true\nauto-install-peers=false\n",
   );
   console.log(
-    `Installing ${packages.length} tarballs in an isolated local-draft consumer (reviewed agentlint archive and Vite Plus alias)...`,
+    `Installing ${packages.length} tarballs in an isolated consumer (registry agentlint engine and Vite Plus alias)...`,
   );
   await run([packageManager, "install", "--ignore-scripts", "--no-frozen-lockfile"]);
-  console.log("Auditing the fresh draft consumer dependency graph...");
+  console.log("Auditing the fresh consumer dependency graph...");
   await run([packageManager, "audit", "--audit-level=low"]);
   const fixtures = await readdir(path.join(root, "scripts/fixtures/consumer"));
   await copyFile(
