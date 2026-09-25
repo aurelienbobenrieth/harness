@@ -2,17 +2,31 @@
   "name": "@aurelienbbn/oxlint-plugin-shopify-app",
   "version": "0.1.0",
   "description": "Custom oxlint rules for Shopify app and extension code.",
+  "keywords": [
+    "lint",
+    "oxlint",
+    "oxlint-plugin",
+    "polaris",
+    "shopify",
+    "shopify-app"
+  ],
+  "homepage": "https://github.com/aurelienbobenrieth/harness/tree/main/packages/oxlint-plugin-shopify-app#readme",
   "bugs": {
     "url": "https://github.com/aurelienbobenrieth/harness/issues"
   },
   "license": "MIT",
+  "author": {
+    "name": "Aurélien Bobenrieth",
+    "url": "https://github.com/aurelienbobenrieth"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/aurelienbobenrieth/harness.git",
     "directory": "packages/oxlint-plugin-shopify-app"
   },
   "files": [
-    "dist"
+    "dist",
+    "CHANGELOG.md"
   ],
   "type": "module",
   "exports": {

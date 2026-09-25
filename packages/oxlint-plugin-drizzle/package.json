@@ -2,17 +2,31 @@
   "name": "@aurelienbbn/oxlint-plugin-drizzle",
   "version": "0.1.0",
   "description": "Custom oxlint rules for Drizzle ORM schemas.",
+  "keywords": [
+    "drizzle",
+    "drizzle-orm",
+    "lint",
+    "oxlint",
+    "oxlint-plugin",
+    "postgres"
+  ],
+  "homepage": "https://github.com/aurelienbobenrieth/harness/tree/main/packages/oxlint-plugin-drizzle#readme",
   "bugs": {
     "url": "https://github.com/aurelienbobenrieth/harness/issues"
   },
   "license": "MIT",
+  "author": {
+    "name": "Aurélien Bobenrieth",
+    "url": "https://github.com/aurelienbobenrieth"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/aurelienbobenrieth/harness.git",
     "directory": "packages/oxlint-plugin-drizzle"
   },
   "files": [
-    "dist"
+    "dist",
+    "CHANGELOG.md"
   ],
   "type": "module",
   "exports": {

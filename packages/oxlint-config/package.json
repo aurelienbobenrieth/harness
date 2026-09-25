@@ -2,17 +2,31 @@
   "name": "@aurelienbbn/oxlint-config",
   "version": "0.1.0",
   "description": "Opinionated strict reusable oxlint config for TypeScript projects.",
+  "keywords": [
+    "lint",
+    "linter",
+    "oxlint",
+    "oxlint-config",
+    "strict",
+    "typescript"
+  ],
+  "homepage": "https://github.com/aurelienbobenrieth/harness/tree/main/packages/oxlint-config#readme",
   "bugs": {
     "url": "https://github.com/aurelienbobenrieth/harness/issues"
   },
   "license": "MIT",
+  "author": {
+    "name": "Aurélien Bobenrieth",
+    "url": "https://github.com/aurelienbobenrieth"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/aurelienbobenrieth/harness.git",
     "directory": "packages/oxlint-config"
   },
   "files": [
-    "dist"
+    "dist",
+    "CHANGELOG.md"
   ],
   "type": "module",
   "exports": {

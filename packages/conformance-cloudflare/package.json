@@ -2,17 +2,31 @@
   "name": "@aurelienbbn/conformance-cloudflare",
   "version": "0.1.0",
   "description": "Structural conformance checks for Cloudflare Workers projects, packaged as a Vitest suite.",
+  "keywords": [
+    "cloudflare",
+    "cloudflare-workers",
+    "conformance",
+    "hyperdrive",
+    "vitest",
+    "wrangler"
+  ],
+  "homepage": "https://github.com/aurelienbobenrieth/harness/tree/main/packages/conformance-cloudflare#readme",
   "bugs": {
     "url": "https://github.com/aurelienbobenrieth/harness/issues"
   },
   "license": "MIT",
+  "author": {
+    "name": "Aurélien Bobenrieth",
+    "url": "https://github.com/aurelienbobenrieth"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/aurelienbobenrieth/harness.git",
     "directory": "packages/conformance-cloudflare"
   },
   "files": [
-    "dist"
+    "dist",
+    "CHANGELOG.md"
   ],
   "type": "module",
   "exports": {

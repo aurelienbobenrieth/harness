@@ -2,17 +2,32 @@
   "name": "@aurelienbbn/agentlint-plugin-shopify-app",
   "version": "0.1.0",
   "description": "Custom agentlint rules for Shopify app and extension code.",
+  "keywords": [
+    "agentlint",
+    "agentlint-plugin",
+    "ai-agents",
+    "code-review",
+    "polaris",
+    "shopify",
+    "shopify-app"
+  ],
+  "homepage": "https://github.com/aurelienbobenrieth/harness/tree/main/packages/agentlint-plugin-shopify-app#readme",
   "bugs": {
     "url": "https://github.com/aurelienbobenrieth/harness/issues"
   },
   "license": "MIT",
+  "author": {
+    "name": "Aurélien Bobenrieth",
+    "url": "https://github.com/aurelienbobenrieth"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/aurelienbobenrieth/harness.git",
     "directory": "packages/agentlint-plugin-shopify-app"
   },
   "files": [
-    "dist"
+    "dist",
+    "CHANGELOG.md"
   ],
   "type": "module",
   "exports": {

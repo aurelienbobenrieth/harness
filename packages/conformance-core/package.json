@@ -2,17 +2,31 @@
   "name": "@aurelienbbn/conformance-core",
   "version": "0.1.0",
   "description": "Stack-agnostic repo hygiene conformance checks, packaged as a Vitest suite.",
+  "keywords": [
+    "conformance",
+    "jscpd",
+    "knip",
+    "repository-hygiene",
+    "tsconfig",
+    "vitest"
+  ],
+  "homepage": "https://github.com/aurelienbobenrieth/harness/tree/main/packages/conformance-core#readme",
   "bugs": {
     "url": "https://github.com/aurelienbobenrieth/harness/issues"
   },
   "license": "MIT",
+  "author": {
+    "name": "Aurélien Bobenrieth",
+    "url": "https://github.com/aurelienbobenrieth"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/aurelienbobenrieth/harness.git",
     "directory": "packages/conformance-core"
   },
   "files": [
-    "dist"
+    "dist",
+    "CHANGELOG.md"
   ],
   "type": "module",
   "exports": {

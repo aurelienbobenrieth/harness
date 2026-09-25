@@ -2,17 +2,31 @@
   "name": "@aurelienbbn/oxlint-plugin-effect",
   "version": "0.1.0",
   "description": "Custom oxlint rules for Effect projects.",
+  "keywords": [
+    "effect",
+    "effect-ts",
+    "lint",
+    "oxlint",
+    "oxlint-plugin",
+    "typescript"
+  ],
+  "homepage": "https://github.com/aurelienbobenrieth/harness/tree/main/packages/oxlint-plugin-effect#readme",
   "bugs": {
     "url": "https://github.com/aurelienbobenrieth/harness/issues"
   },
   "license": "MIT",
+  "author": {
+    "name": "Aurélien Bobenrieth",
+    "url": "https://github.com/aurelienbobenrieth"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/aurelienbobenrieth/harness.git",
     "directory": "packages/oxlint-plugin-effect"
   },
   "files": [
-    "dist"
+    "dist",
+    "CHANGELOG.md"
   ],
   "type": "module",
   "exports": {
