@@ -18,7 +18,7 @@ flowchart LR
 **`pnpm catalog:check` enforces two-sided fixtures on all 166 rules and 24 checks.** A rule missing from its README's generated inventory can't ship.
 
 ```text
- oxlint-plugin-effect            ███████████████████████████████████35
+ oxlint-plugin-effect            ███████████████████████████████████ 35
  oxlint-plugin-shopify-app       ███████████████████████████        27
  agentlint-plugin-core           ████████████████████████           24
  oxlint-plugin-core              ████████████████                   16
