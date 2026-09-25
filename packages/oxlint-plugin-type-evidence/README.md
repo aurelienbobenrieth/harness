@@ -1,5 +1,7 @@
 # @aurelienbbn/oxlint-plugin-type-evidence
 
+[![npm](https://img.shields.io/npm/v/@aurelienbbn/oxlint-plugin-type-evidence)](https://www.npmjs.com/package/@aurelienbbn/oxlint-plugin-type-evidence) [![downloads](https://img.shields.io/npm/dm/@aurelienbbn/oxlint-plugin-type-evidence)](https://www.npmjs.com/package/@aurelienbbn/oxlint-plugin-type-evidence) [![CI](https://github.com/aurelienbobenrieth/harness/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/aurelienbobenrieth/harness/actions/workflows/ci.yml) [![license](https://img.shields.io/npm/l/@aurelienbbn/oxlint-plugin-type-evidence)](https://github.com/aurelienbobenrieth/harness/blob/main/packages/oxlint-plugin-type-evidence/LICENSE) [![node](https://img.shields.io/node/v/@aurelienbbn/oxlint-plugin-type-evidence)](https://github.com/aurelienbobenrieth/harness/blob/main/packages/oxlint-plugin-type-evidence/package.json)
+
 **10 oxlint rules that stop TypeScript from losing what it knows: no laundering casts, no `unknown` leaking past boundaries, no widening a value you just wrote.**
 
 ```sh

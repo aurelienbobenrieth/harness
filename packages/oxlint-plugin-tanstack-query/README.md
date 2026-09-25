@@ -1,5 +1,7 @@
 # @aurelienbbn/oxlint-plugin-tanstack-query
 
+[![npm](https://img.shields.io/npm/v/@aurelienbbn/oxlint-plugin-tanstack-query)](https://www.npmjs.com/package/@aurelienbbn/oxlint-plugin-tanstack-query) [![downloads](https://img.shields.io/npm/dm/@aurelienbbn/oxlint-plugin-tanstack-query)](https://www.npmjs.com/package/@aurelienbbn/oxlint-plugin-tanstack-query) [![CI](https://github.com/aurelienbobenrieth/harness/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/aurelienbobenrieth/harness/actions/workflows/ci.yml) [![license](https://img.shields.io/npm/l/@aurelienbbn/oxlint-plugin-tanstack-query)](https://github.com/aurelienbobenrieth/harness/blob/main/packages/oxlint-plugin-tanstack-query/LICENSE) [![node](https://img.shields.io/node/v/@aurelienbbn/oxlint-plugin-tanstack-query)](https://github.com/aurelienbobenrieth/harness/blob/main/packages/oxlint-plugin-tanstack-query/package.json)
+
 **8 oxlint rules for TanStack Query v5 bugs that compile, type-check, stay silent in production, and slip past `@tanstack/eslint-plugin-query`.**
 
 **Never re-implements an official rule.** Load the official plugin alongside via `jsPlugins`, or let `withTanstackQueryLayer` from `@aurelienbbn/oxlint-config` wire both via `companionPlugins`.

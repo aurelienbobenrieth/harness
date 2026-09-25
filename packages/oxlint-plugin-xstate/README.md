@@ -1,5 +1,7 @@
 # @aurelienbbn/oxlint-plugin-xstate
 
+[![npm](https://img.shields.io/npm/v/@aurelienbbn/oxlint-plugin-xstate)](https://www.npmjs.com/package/@aurelienbbn/oxlint-plugin-xstate) [![downloads](https://img.shields.io/npm/dm/@aurelienbbn/oxlint-plugin-xstate)](https://www.npmjs.com/package/@aurelienbbn/oxlint-plugin-xstate) [![CI](https://github.com/aurelienbobenrieth/harness/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/aurelienbobenrieth/harness/actions/workflows/ci.yml) [![license](https://img.shields.io/npm/l/@aurelienbbn/oxlint-plugin-xstate)](https://github.com/aurelienbobenrieth/harness/blob/main/packages/oxlint-plugin-xstate/LICENSE) [![node](https://img.shields.io/node/v/@aurelienbbn/oxlint-plugin-xstate)](https://github.com/aurelienbobenrieth/harness/blob/main/packages/oxlint-plugin-xstate/package.json)
+
 **11 oxlint rules for XState v5 machines built with `setup().createMachine()`, the shape `eslint-plugin-xstate` can't see.**
 
 |                                    | `eslint-plugin-xstate`                   | this plugin               |

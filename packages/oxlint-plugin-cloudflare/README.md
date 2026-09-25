@@ -1,5 +1,7 @@
 # @aurelienbbn/oxlint-plugin-cloudflare
 
+[![npm](https://img.shields.io/npm/v/@aurelienbbn/oxlint-plugin-cloudflare)](https://www.npmjs.com/package/@aurelienbbn/oxlint-plugin-cloudflare) [![downloads](https://img.shields.io/npm/dm/@aurelienbbn/oxlint-plugin-cloudflare)](https://www.npmjs.com/package/@aurelienbbn/oxlint-plugin-cloudflare) [![CI](https://github.com/aurelienbobenrieth/harness/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/aurelienbobenrieth/harness/actions/workflows/ci.yml) [![license](https://img.shields.io/npm/l/@aurelienbbn/oxlint-plugin-cloudflare)](https://github.com/aurelienbobenrieth/harness/blob/main/packages/oxlint-plugin-cloudflare/LICENSE) [![node](https://img.shields.io/node/v/@aurelienbbn/oxlint-plugin-cloudflare)](https://github.com/aurelienbobenrieth/harness/blob/main/packages/oxlint-plugin-cloudflare/package.json)
+
 **7 oxlint rules for Cloudflare Workers, Durable Objects, and Workflows: bugs that type-check and pass `wrangler deploy`, then fail under real traffic.**
 
 > [!NOTE]
