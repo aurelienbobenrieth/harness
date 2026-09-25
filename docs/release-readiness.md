@@ -115,14 +115,14 @@ Local runs don't prove remote ones. **Both release jobs reject a SHA that differ
 <details>
 <summary>Pins and rejected drift</summary>
 
-Resolved from each action's canonical repository on 2026-09-05, annotated tags peeled to commits:
+Resolved from each action's canonical repository on 2026-09-25, annotated tags peeled to commits:
 
 | Action             | Release | Commit                                     |
 | ------------------ | ------- | ------------------------------------------ |
-| actions/checkout   | v5.1.0  | `fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09` |
-| actions/setup-node | v5.0.0  | `a0853c24544627f65ddf259abe73b1d18a591444` |
-| pnpm/action-setup  | v5.0.0  | `fc06bc1257f339d1d5d8b3a19a8cae5388b55320` |
-| changesets/action  | v1.7.0  | `6a0a831ff30acef54f2c6aa1cbbc1096b066edaf` |
+| actions/checkout   | v7.0.1  | `3d3c42e5aac5ba805825da76410c181273ba90b1` |
+| actions/setup-node | v7.0.0  | `820762786026740c76f36085b0efc47a31fe5020` |
+| pnpm/action-setup  | v6.1.0  | `ea17c68df8912ef543352723c149a84f56e3d413` |
+| changesets/action  | v2.1.2  | `ae32849d5ba541f9ae29e40e22a623bc13562f51` |
 
 Rejected: mutable action references · unexpected token permissions (`id-token: write` only on the publish job) · a publish job without the `npm` environment, preparation, or SHA verification · publish commands outside `scripts/publish.mjs` · persisted checkout credentials outside the version writer · stored release secrets · skipped aggregate checks · ignored validation failures, including via expressions · excluded runtime matrix legs · runtime setup not using the matrix · a Changesets publishing input · the version PR writer invoking Changesets before its release-policy gate.
 
