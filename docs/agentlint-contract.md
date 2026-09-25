@@ -68,8 +68,8 @@ Evidence fingerprint and sufficient authority must also match. **Architectural a
 ```text
  @aurelienbbn/agentlint 0.3.0 (npm)
    ├─▶ plugin tests ........ typed builds, rule tests, real-parser fixtures  (pnpm check)
-   ├─▶ package consumer .... all 18 packed packages, fresh install          (pnpm test:package)
-   └─▶ registry profiles ... 18 candidates, public registry, strict peers   (pnpm test:compatibility baseline|current)
+   ├─▶ package consumer .... all 21 packed packages, fresh install          (pnpm test:package)
+   └─▶ registry profiles ... 21 candidates, public registry, strict peers   (pnpm test:compatibility baseline|current)
 ```
 
 Both consumers run the agentlint suite: all 5 presets in one typed config, every rule's fixtures, and the CLI (`check`, `init --preset`, `rules test`, `next`) across all 5 domains.
