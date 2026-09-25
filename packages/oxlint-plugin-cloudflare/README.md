@@ -2,8 +2,8 @@
 
 **7 oxlint rules for Cloudflare Workers, Durable Objects, and Workflows: bugs that type-check and pass `wrangler deploy`, then fail under real traffic.**
 
-> [!WARNING]
-> **Private draft.** Versioned and tested in this repo, not a release candidate. No consumer has calibrated it yet.
+> [!NOTE]
+> **Release candidate.** No consumer has calibrated it yet.
 
 ```sh
 pnpm add -D @aurelienbbn/oxlint-plugin-cloudflare oxlint   # oxlint >=1.82.0 <2.0.0

@@ -3,7 +3,7 @@
 **5 agentlint reviews for XState v5: every actor has an owner, every failure a path, every persisted snapshot a version.**
 
 > [!WARNING]
-> **Private draft.** Built against the reviewed archive `local-packages/agentlint-current.tgz`; public agentlint 0.1.5 is API-incompatible. [Evidence](../../docs/compatibility.md#private-draft-boundary).
+> Requires the engine `@aurelienbbn/agentlint` `>=0.3.0 <0.4.0` as a peer. [Evidence](../../docs/compatibility.md#agentlint-engine).
 
 ```text
 oxlint-plugin-xstate      mechanical, setup-aware checks

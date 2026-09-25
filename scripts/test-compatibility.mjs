@@ -81,7 +81,7 @@ try {
     const installed = JSON.parse(await readFile(path.join(consumer, "node_modules", name, "package.json"), "utf8"));
     assert.equal(installed.version, version, `${name}: consumer must run the pinned version`);
   }
-  for (const fixture of ["lint-runners.test.ts", "runner-support.ts", "compatibility.test.ts"])
+  for (const fixture of ["lint-runners.test.ts", "runners.test.ts", "runner-support.ts", "compatibility.test.ts"])
     await copyFile(path.join(root, "scripts/fixtures/consumer", fixture), path.join(consumer, fixture));
   await copyFile(
     path.join(root, "examples/shopify/app-home.oxlintrc.json"),
@@ -142,7 +142,7 @@ try {
     JSON.parse(await readFile(path.join(consumer, "consumer-results.json"), "utf8")),
     {
       root: consumer,
-      expectedFiles: ["exports.test.ts", "lint-runners.test.ts", "compatibility.test.ts"],
+      expectedFiles: ["exports.test.ts", "lint-runners.test.ts", "runners.test.ts", "compatibility.test.ts"],
     },
   );
   console.log(

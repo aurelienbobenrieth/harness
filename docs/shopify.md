@@ -35,7 +35,7 @@
 | admin, carrier, fulfillment, storefront performance                                    | conformance performance evaluators                                            | supplied measurements meet thresholds       |
 | app-wide applicability, missing evidence                                               | [Shopify review skill](../skills/shopify-review/SKILL.md) + planner           | scope + pending work, never acceptance      |
 
-Oxlint + conformance: public-registry consumer validation. 🔒 agentlint: private draft, same version as public but a different API ([contract](agentlint-contract.md)).
+Oxlint + conformance: public-registry consumer validation. Agentlint: packed-consumer and registry validation on the public engine 0.3.x ([contract](agentlint-contract.md)).
 
 ## Shopify's own agent tooling complements this review
 

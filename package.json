@@ -15,7 +15,6 @@
     "fmt": "vp fmt",
     "fmt:check": "vp fmt --check",
     "test": "pnpm build && pnpm test:unit",
-    "bundle": "pnpm -r exec pnpm pack --pack-destination ../../local-packages",
     "changeset": "changeset",
     "version-packages": "changeset version",
     "release": "node scripts/release.mjs",
@@ -40,11 +39,11 @@
     "test:mutation": "stryker run",
     "catalog": "node scripts/check-catalog.mjs --write",
     "catalog:check": "node scripts/check-catalog.mjs",
-    "test:package": "node scripts/test-packages.mjs",
-    "test:agentlint-current": "node scripts/test-agentlint-current.mjs"
+    "test:package": "node scripts/test-packages.mjs"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "0.18.5",
+    "@aurelienbbn/agentlint": "0.3.0",
     "@changesets/changelog-github": "1.0.1",
     "@changesets/cli": "3.0.3",
     "@stryker-mutator/core": "10.0.0",

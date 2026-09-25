@@ -2,8 +2,8 @@
 
 **1 oxlint rule for Drizzle Postgres schemas: every foreign-key column leads an index, before production traffic finds the sequential scan.**
 
-> [!WARNING]
-> **Private draft.** Versioned and tested in this repo, not a release candidate. No consumer has calibrated it yet.
+> [!NOTE]
+> **Release candidate.** No consumer has calibrated it yet.
 
 ```sh
 pnpm add -D @aurelienbbn/oxlint-plugin-drizzle oxlint   # oxlint >=1.82.0 <2.0.0

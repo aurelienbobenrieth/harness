@@ -13,6 +13,6 @@ Route down? An issue asking **only** for a private channel, or an established pr
 confirm receipt ─▶ reproduce ─▶ agree disclosure window ─▶ advisory + fix      (no response-time or support SLA)
 ```
 
-**Covered:** latest source, [release policy](policy/release.json) candidates. **Not:** private drafts, historical branches (no backports), a full audit of your app (checks cover only documented contracts).
+**Covered:** latest source, [release policy](policy/release.json) candidates. **Not:** drafts, historical branches (no backports), a full audit of your app (checks cover only documented contracts).
 
 Private vulnerability reporting, alerts, Dependabot security updates: verified 2026-09-21 ([release readiness](docs/release-readiness.md)).

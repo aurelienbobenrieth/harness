@@ -18,10 +18,10 @@ flowchart LR
 
 | Class        | Count | Meaning                                                           | Boundary                                                  |
 | ------------ | ----: | ----------------------------------------------------------------- | --------------------------------------------------------- |
-| ✅ Candidate |     9 | Documented contracts + consumer checks. **Not stable readiness.** | Published by the release workflow.                        |
-| 🧪 Draft     |     9 | Preview with a material adoption limitation.                      | `private: true` required; selecting it for release fails. |
+| ✅ Candidate |    18 | Documented contracts + consumer checks. **Not stable readiness.** | Published by the release workflow.                        |
+| 🧪 Draft     |     0 | Preview with a material adoption limitation.                      | `private: true` required; selecting it for release fails. |
 
-Drafts: 5 agentlint plugins ([unreleased local API](compatibility.md#private-draft-boundary)) `oxlint-plugin-tanstack-query`, both Cloudflare packages, and `oxlint-plugin-drizzle` (rules untested against real consumers). They pack and test locally; **candidates' runtime, optional, and peer dependencies cannot require one.** Parked outside the repo: 4 Shopify theme packages, both Lit plugins, `oio`.
+No drafts today. A future draft packs and tests locally; **candidates' runtime, optional, and peer dependencies cannot require one.** Parked outside the repo: 4 Shopify theme packages, both Lit plugins, `oio`.
 
 <details>
 <summary>How Changesets treats private drafts</summary>
@@ -91,7 +91,7 @@ Local runs don't prove remote ones. **Both release jobs reject a SHA that differ
 | main protection: fresh **Validate** required | ✅                | GitHub API, 2026-09-21                    |
 | main protection includes administrators      | ✅                | GitHub API, 2026-09-21                    |
 | required approvals                           | ⚠️ 0              | one collaborator, also the sole CODEOWNER |
-| npm trusted publishers (9 candidates)        | ❌ not configured | needs npmjs.com access                    |
+| npm trusted publishers (18 candidates)       | ❌ not configured | needs npmjs.com access                    |
 | `npm` environment: required reviewer         | ✅ owner          | GitHub API, 2026-09-24                    |
 | `npm` environment: protected branches only   | ✅                | GitHub API, 2026-09-24                    |
 
@@ -103,7 +103,7 @@ Local runs don't prove remote ones. **Both release jobs reject a SHA that differ
 
 ## Before the first publish
 
-- [ ] On npmjs.com, add a trusted publisher to each of the 9 candidates: repository `aurelienbobenrieth/harness`, workflow `publish.yml`, environment `npm`.
+- [ ] On npmjs.com, add a trusted publisher to each candidate: repository `aurelienbobenrieth/harness`, workflow `publish.yml`, environment `npm`.
 - [ ] If npm won't attach a trusted publisher to a package that doesn't exist yet, publish once locally: `npm login`, merge the version PR, then `node scripts/publish.mjs` on a clean `main` (no provenance locally).
 
 `scripts/publish.mjs` publishes only candidates, skips versions already on npm (safe to rerun), packs with pnpm, and publishes with `--access public` plus `--provenance` in CI. **No npm token is stored anywhere.**

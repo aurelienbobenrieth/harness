@@ -1,7 +1,6 @@
 {
   "name": "@aurelienbbn/agentlint-plugin-xstate",
   "version": "0.1.0",
-  "private": true,
   "description": "Custom agentlint rules for XState machines and actors.",
   "bugs": {
     "url": "https://github.com/aurelienbobenrieth/harness/issues"
@@ -22,16 +21,19 @@
       "import": "./dist/index.mjs"
     }
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "tsdown",
     "prepack": "pnpm build",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
-    "@aurelienbbn/agentlint": "file:../../local-packages/agentlint-current.tgz"
+    "@aurelienbbn/agentlint": "0.3.0"
   },
   "peerDependencies": {
-    "@aurelienbbn/agentlint": "0.1.5"
+    "@aurelienbbn/agentlint": ">=0.3.0 <0.4.0"
   },
   "engines": {
     "node": "^22.19.0 || ^24.11.0"

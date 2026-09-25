@@ -2,9 +2,6 @@
 
 **8 oxlint rules for TanStack Query v5 bugs that compile, type-check, stay silent in production, and slip past `@tanstack/eslint-plugin-query`.**
 
-> [!WARNING]
-> **Private draft.** Versioned and tested in this repo, not a release candidate.
-
 **Never re-implements an official rule.** Load the official plugin alongside via `jsPlugins`, or let `withTanstackQueryLayer` from `@aurelienbbn/oxlint-config` wire both via `companionPlugins`.
 
 ```json

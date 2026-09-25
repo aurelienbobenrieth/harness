@@ -3,7 +3,7 @@
 **3 agentlint reviews for Effect: Schema-owned contracts, bounded retries, layers built once.**
 
 > [!WARNING]
-> **Private draft.** Built against the reviewed archive `local-packages/agentlint-current.tgz`; public agentlint 0.1.5 is API-incompatible. [Evidence](../../docs/compatibility.md#private-draft-boundary).
+> Requires the engine `@aurelienbbn/agentlint` `>=0.3.0 <0.4.0` as a peer. [Evidence](../../docs/compatibility.md#agentlint-engine).
 
 ## Quick start
 

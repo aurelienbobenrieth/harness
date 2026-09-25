@@ -6,7 +6,6 @@ import { validateCompatibility } from "./compatibility-policy.mjs";
 
 const root = path.resolve(import.meta.dirname, "..");
 const policy = JSON.parse(await readFile(path.join(root, "policy/compatibility.json"), "utf8"));
-const agentlintArchive = await readFile(path.join(root, policy.localAgentlint.path));
 const sample = {
   policy,
   rootManifest: {
@@ -26,14 +25,14 @@ const sample = {
       manifest: {
         engines: { node: policy.node },
         peerDependencies: { "@aurelienbbn/agentlint": policy.peerRanges["@aurelienbbn/agentlint"] },
-        devDependencies: { "@aurelienbbn/agentlint": policy.localAgentlint.developmentDependency },
+        devDependencies: { "@aurelienbbn/agentlint": policy.profiles.baseline["@aurelienbbn/agentlint"] },
       },
     },
   ],
 };
-const fixture = () => ({ ...structuredClone(sample), agentlintArchive });
+const fixture = () => structuredClone(sample);
 
-test("accepts reviewed bounded hosts and the matching local artifact", () => {
+test("accepts reviewed bounded hosts and the baseline agentlint engine", () => {
   assert.doesNotThrow(() => validateCompatibility(fixture()));
 });
 
@@ -132,12 +131,14 @@ test("rejects a development toolchain that no longer matches the tested baseline
   assert.throws(() => validateCompatibility(input), /baseline must match the development toolchain/);
 });
 
-test("rejects unreviewed local archive changes and registry compatibility claims", () => {
-  assert.throws(
-    () => validateCompatibility({ ...fixture(), agentlintArchive: Buffer.from("different archive") }),
-    /local agentlint archive changed/,
-  );
+test("rejects an agentlint plugin developed against an engine other than the baseline", () => {
   const input = fixture();
-  input.policy.localAgentlint.registryCompatible = true;
-  assert.throws(() => validateCompatibility(input), /Audit the public agentlint API/);
+  input.packages[1].manifest.devDependencies["@aurelienbbn/agentlint"] = "file:../../engine.tgz";
+  assert.throws(() => validateCompatibility(input), /develop against the baseline agentlint engine/);
+});
+
+test("rejects an agentlint engine profile outside the declared plugin peer range", () => {
+  const input = fixture();
+  input.policy.profiles.current["@aurelienbbn/agentlint"] = "0.4.0";
+  assert.throws(() => validateCompatibility(input), /tested version must satisfy its declared peer range/);
 });
