@@ -58,6 +58,22 @@ export function effectBodyMethod(context: Context, node: ESTree.Node): string | 
   return method !== undefined && effectBodyMethods.has(method) ? method : undefined;
 }
 
+/**
+ * Recognize a service dependency statement in an Effect body: a single-declarator `const x = yield* Service`
+ * whose operand is a capitalized identifier, or `const x = yield* Effect.service(...)`.
+ */
+export function isServiceDependency(context: Context, statement: ESTree.Node): boolean {
+  const initial =
+    statement.type === "VariableDeclaration" && statement.declarations.length === 1
+      ? statement.declarations[0]?.init
+      : undefined;
+  const argument = initial?.type === "YieldExpression" && initial.delegate ? initial.argument : undefined;
+  return (
+    (argument?.type === "Identifier" && /^[A-Z]/.test(argument.name)) ||
+    (argument?.type === "CallExpression" && effectMethod(context, argument.callee) === "service")
+  );
+}
+
 /** Resolve same-file aliases without revisiting cyclic type graphs. */
 export function isUnsafeType(context: Context, type: ESTree.TSType, seen = new Set<ESTree.Node>()): boolean {
   if (seen.has(type)) return false;
