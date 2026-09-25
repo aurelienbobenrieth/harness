@@ -44,7 +44,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@oxlint/plugins": "1.83.0"
+    "@oxlint/plugins": "1.85.0"
   },
   "devDependencies": {
     "@aurelienbbn/oxlint-kit": "workspace:*"
