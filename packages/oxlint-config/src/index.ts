@@ -309,6 +309,24 @@ export const effectTsgoSettledRules = {
   "effecttsgo/redundant-or-die": "off",
 } satisfies RuleEntries;
 
+/**
+ * Strict-preset rules that contradict an `@effect/tsgo` diagnostic or an idiom Effect's own API requires. The Effect
+ * side wins; each rule keeps reporting what it exists for outside that idiom.
+ *
+ * - `typescript/promise-function-async`: its autofix adds `async`, which `effecttsgo/async-function` then reports.
+ * - `eslint/new-cap`: Effect constructors are PascalCase functions (`Schema.Struct(…)`, `Context.Tag(…)`).
+ *   `new lowercase()` still reports.
+ * - `eslint/func-names`: `Effect.gen(function* () { … })` takes an anonymous generator. Other anonymous function
+ *   expressions still report.
+ * - `node/no-sync`: `Effect.runSync` runs an Effect at a runtime edge, not blocking I/O. `fs.*Sync` still reports.
+ */
+export const effectIdiomRules = {
+  "eslint/func-names": ["error", "always", { generators: "never" }],
+  "eslint/new-cap": ["error", { capIsNew: false }],
+  "node/no-sync": ["error", { ignores: ["runSync"] }],
+  "typescript/promise-function-async": "off",
+} satisfies RuleEntries;
+
 export interface EffectTsgoLayerOptions {
   /**
    * An oxlint preset exported by `@effect/tsgo/oxlint-presets`, usually `recommended`. The consumer installs
@@ -319,7 +337,7 @@ export interface EffectTsgoLayerOptions {
 
 /**
  * Adds the opt-in `@effect/tsgo` layer to a lint config: the given preset, the native `effecttsgo` plugin,
- * `effectTsgoOwnerRules`, and `effectTsgoSettledRules`. The consumer installs `@effect/tsgo` and runs
+ * `effectTsgoOwnerRules`, `effectTsgoSettledRules`, and `effectIdiomRules`. The consumer installs `@effect/tsgo` and runs
  * `effect-tsgo patch --oxlint`; rules already set on the config win over the layer, and config options win over
  * the preset's options.
  *
@@ -341,6 +359,7 @@ export function withEffectTsgoLayer(config: OxlintConfig, options: EffectTsgoLay
       ...preset.rules,
       ...effectTsgoOwnerRules,
       ...effectTsgoSettledRules,
+      ...effectIdiomRules,
       ...config.rules,
     },
   });
