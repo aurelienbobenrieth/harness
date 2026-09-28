@@ -35,7 +35,7 @@ Returns a plain `OxlintConfig`: works with oxlint directly or as Vite+'s `lint` 
 | `layerDirectionOverride({ files, forbidden, message })` | 🔌 one `overrides` entry banning cross-layer imports |
 | `nurseryCandidateRules`                                 | 🔌 4 nursery rules to trial                          |
 
-Also: `testFileGlobs`, `vagueTestTitlePattern`, `tanstackQueryRules`, `tanstackQueryPluginSpecifier`, `effectTsgoPluginName`, `effectTsgoOwnerRules`, `effectTsgoSettledRules`, `importGraphRules`, type `OxlintConfig`.
+Also: `testFileGlobs`, `vagueTestTitlePattern`, `tanstackQueryRules`, `tanstackQueryPluginSpecifier`, `effectTsgoPluginName`, `effectTsgoOwnerRules`, `effectTsgoSettledRules`, `effectIdiomRules`, `importGraphRules`, type `OxlintConfig`.
 
 ## What the preset sets
 
@@ -211,7 +211,7 @@ import { defineConfig } from "oxlint";
 export default defineConfig(withEffectTsgoLayer(defineStrictOxlintConfig(), { preset: recommended }));
 ```
 
-Merges the preset's rules, adds `effecttsgo` to `plugins`, then `effectTsgoOwnerRules` and `effectTsgoSettledRules`. Config rules and options win. The preset reports at `warn`; the strict preset's `denyWarnings` makes those blocking. Editor LSP (`@effect/language-service` in `tsconfig.json` `plugins`): set `"diagnostics": false`, or every finding shows twice.
+Merges the preset's rules, adds `effecttsgo` to `plugins`, then `effectTsgoOwnerRules`, `effectTsgoSettledRules` and `effectIdiomRules`. Config rules and options win. The preset reports at `warn`; the strict preset's `denyWarnings` makes those blocking. Editor LSP (`@effect/language-service` in `tsconfig.json` `plugins`): set `"diagnostics": false`, or every finding shows twice.
 
 > [!WARNING]
 > **Version lock.** `@effect/tsgo` 0.45.0 supports oxlint 1.81.0 / 1.82.0, oxlint-tsgolint 7.0.2001, TypeScript 7.0.2, and `effect-tsgo patch` refuses anything else. That is the [compatibility](../../docs/compatibility.md) `baseline` row; the `current` row (oxlint 1.83.0, oxlint-tsgolint 7.0.2002) is outside it. **Pin the baseline row** until a tsgo release widens its matrix.
@@ -238,6 +238,15 @@ Every overlap with `@aurelienbbn/oxlint-plugin-effect`, settled once:
 | `try-catch-in-effect-gen`, `global-timers-in-effect`     | `no-unsafe-effect-body`                      | tsgo owns           | the Harness rule keeps only its `throw` check                                                                                                                      |
 
 Not running `@aurelienbbn/oxlint-plugin-effect`? The four `off` rules lose their reason: set them back in `rules`.
+
+`effectIdiomRules`: strict-preset rules that contradict `@effect/tsgo` or an idiom Effect's API requires. The Effect side wins; each rule still reports outside that idiom.
+
+| Strict rule                         | Setting                | Why                                                                  |
+| ----------------------------------- | ---------------------- | -------------------------------------------------------------------- |
+| `typescript/promise-function-async` | `off`                  | its autofix adds `async`, which `effecttsgo/async-function` reports  |
+| `eslint/new-cap`                    | `capIsNew: false`      | Effect constructors are PascalCase functions: `Schema.Struct(…)`     |
+| `eslint/func-names`                 | `generators: "never"`  | `Effect.gen(function* () { … })` takes an anonymous generator        |
+| `node/no-sync`                      | `ignores: ["runSync"]` | `Effect.runSync` runs an Effect at an edge; `fs.*Sync` still reports |
 
 Credit: preset shape, the `effecttsgo` plugin name, and every diagnostic name come from [Effect-TS/tsgo](https://github.com/Effect-TS/tsgo) (MIT).
 

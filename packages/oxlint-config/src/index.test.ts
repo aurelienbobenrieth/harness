@@ -6,6 +6,7 @@ import { promisify } from "node:util";
 import { expect, it } from "vitest";
 import {
   defineStrictOxlintConfig,
+  effectIdiomRules,
   effectTsgoOwnerRules,
   effectTsgoSettledRules,
   importGraphRules,
@@ -279,6 +280,53 @@ it("keeps oxlint's default plugins when the config sets none and leaves the pres
 
   expect(config.plugins).toEqual(["eslint", "typescript", "unicorn", "oxc", "effecttsgo"]);
   expect(effectTsgoPresetFixture).toEqual(presetBefore);
+});
+
+it("lets @effect/tsgo and Effect idioms win over the strict rules that contradict them", () => {
+  const config = withEffectTsgoLayer(defineStrictOxlintConfig(), { preset: effectTsgoPresetFixture });
+
+  expect(effectIdiomRules).toEqual({
+    "eslint/func-names": ["error", "always", { generators: "never" }],
+    "eslint/new-cap": ["error", { capIsNew: false }],
+    "node/no-sync": ["error", { ignores: ["runSync"] }],
+    "typescript/promise-function-async": "off",
+  });
+  expect(config.rules).toMatchObject(effectIdiomRules);
+});
+
+it("accepts Effect constructors, anonymous Effect.gen generators, and Effect.runSync under the installed oxlint", async () => {
+  const diagnostics = await lintWith(defineStrictOxlintConfig({ rules: effectIdiomRules }), {
+    "src/program.ts": [
+      'import { Effect, Schema } from "effect";',
+      "export const User = Schema.Struct({ id: Schema.String });",
+      "export const program = Effect.gen(function* () {",
+      "  return yield* Effect.succeed(User);",
+      "});",
+      "export const user = Effect.runSync(program);",
+    ].join("\n"),
+  });
+  const codes = diagnostics.map((diagnostic) => diagnostic.code);
+
+  expect(codes).not.toContain("eslint(new-cap)");
+  expect(codes).not.toContain("eslint(func-names)");
+  expect(codes).not.toContain("node(no-sync)");
+});
+
+it("still reports lowercase constructors, anonymous functions, and blocking fs calls under the Effect idiom rules", async () => {
+  const diagnostics = await lintWith(defineStrictOxlintConfig({ rules: effectIdiomRules }), {
+    "src/legacy.ts": [
+      'import { readFileSync } from "node:fs";',
+      "class widget {}",
+      "export const made = new widget();",
+      "export const handler = [1].map(function (value) { return value; });",
+      'export const text = readFileSync("a.txt", "utf8");',
+    ].join("\n"),
+  });
+  const codes = diagnostics.map((diagnostic) => diagnostic.code);
+
+  expect(codes).toContain("eslint(new-cap)");
+  expect(codes).toContain("eslint(func-names)");
+  expect(codes).toContain("node(no-sync)");
 });
 
 it("pins the vitest rules that close assertion loopholes instead of relying on their category", () => {
