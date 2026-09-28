@@ -1,5 +1,11 @@
 # @aurelienbbn/oxlint-config
 
+## 0.2.0
+
+### Minor Changes
+
+- [#25](https://github.com/aurelienbobenrieth/harness/pull/25) [`c812441`](https://github.com/aurelienbobenrieth/harness/commit/c812441dc93e718ff0585dddf1cd5d9229260de7) Thanks [@aurelienbobenrieth](https://github.com/aurelienbobenrieth)! - `withEffectTsgoLayer` now applies `effectIdiomRules`: `@effect/tsgo` wins over `typescript/promise-function-async`, and `eslint/new-cap`, `eslint/func-names` and `node/no-sync` accept Effect constructors, `Effect.gen` generators and `Effect.runSync`.
+
 ## 0.1.1
 
 ### Patch Changes
