@@ -84,11 +84,26 @@ export const strictOxlintConfig = {
       files: testFileGlobs,
       plugins: ["vitest"],
       rules: {
+        // Expected values are the oracle and stay literal (agentlint `expected-value-recomputed`), and
+        // `vitest/prefer-expect-assertions` wants a literal count. Source files keep the rule.
+        "eslint/no-magic-numbers": "off",
         "vitest/no-importing-vitest-globals": "off",
         "vitest/no-standalone-expect": "off",
         "vitest/prefer-called-with": "error",
         "vitest/prefer-to-be-falsy": "off",
         "vitest/prefer-to-be-truthy": "off",
+        // The Harness conformance suites register their tests through one documented top-level call.
+        "vitest/require-hook": [
+          "error",
+          {
+            allowedFunctionCalls: [
+              "alchemyConformance",
+              "cloudflareConformance",
+              "coreConformance",
+              "shopifyAppConformance",
+            ],
+          },
+        ],
         "vitest/require-to-throw-message": "error",
         "vitest/valid-title": ["error", { mustNotMatch: vagueTestTitlePattern }],
       },
