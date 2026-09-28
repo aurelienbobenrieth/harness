@@ -1,5 +1,11 @@
 # @aurelienbbn/oxlint-config
 
+## 0.3.0
+
+### Minor Changes
+
+- [#28](https://github.com/aurelienbobenrieth/harness/pull/28) [`cfda09e`](https://github.com/aurelienbobenrieth/harness/commit/cfda09e2903fe606ee681ae930ec384c34ab0a00) Thanks [@aurelienbobenrieth](https://github.com/aurelienbobenrieth)! - Test files: `vitest/require-hook` allows the documented top-level `alchemyConformance`, `cloudflareConformance`, `coreConformance` and `shopifyAppConformance` calls, and `eslint/no-magic-numbers` is off so expected values and `expect.assertions(n)` stay literal. Source files keep both rules.
+
 ## 0.2.0
 
 ### Minor Changes
