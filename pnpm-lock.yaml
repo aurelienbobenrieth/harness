@@ -80,6 +80,12 @@ importers:
         specifier: 1.85.0
         version: 1.85.0
 
+  packages/agentlint-plugin-alchemy:
+    devDependencies:
+      '@aurelienbbn/agentlint':
+        specifier: 0.3.0
+        version: 0.3.0(redis@6.2.1)
+
   packages/agentlint-plugin-core:
     devDependencies:
       '@aurelienbbn/agentlint':
@@ -109,6 +115,22 @@ importers:
       '@aurelienbbn/agentlint':
         specifier: 0.3.0
         version: 0.3.0(redis@6.2.1)
+
+  packages/conformance-alchemy:
+    dependencies:
+      oxc-parser:
+        specifier: 0.150.0
+        version: 0.150.0
+      yaml:
+        specifier: 2.9.1
+        version: 2.9.1
+    devDependencies:
+      '@aurelienbbn/conformance-core':
+        specifier: workspace:*
+        version: link:../conformance-core
+      vitest:
+        specifier: 4.1.11
+        version: 4.1.11(@types/node@22.20.4)(@vitest/browser-preview@4.1.11)(@vitest/coverage-v8@4.1.11)(vite@8.1.0(@types/node@22.20.4)(jiti@2.7.0)(yaml@2.9.1))
 
   packages/conformance-cloudflare:
     dependencies:
@@ -157,6 +179,19 @@ importers:
       oxlint-tsgolint:
         specifier: ^7.0.2001
         version: 7.0.2001
+
+  packages/oxlint-plugin-alchemy:
+    dependencies:
+      '@oxlint/plugins':
+        specifier: 1.85.0
+        version: 1.85.0
+      oxlint:
+        specifier: 1.82.0
+        version: 1.82.0(oxlint-tsgolint@7.0.2001)(vite-plus@0.3.2(@arethetypeswrong/core@0.18.5)(@types/node@22.20.4)(@vitest/coverage-v8@4.1.11)(jiti@2.7.0)(publint@0.3.24)(typescript@7.0.2)(yaml@2.9.1))
+    devDependencies:
+      '@aurelienbbn/oxlint-kit':
+        specifier: workspace:*
+        version: link:../../internal/oxlint-kit
 
   packages/oxlint-plugin-cloudflare:
     dependencies:

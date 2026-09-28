@@ -1,0 +1,59 @@
+{
+  "name": "@aurelienbbn/oxlint-plugin-alchemy",
+  "version": "0.0.0",
+  "description": "Custom oxlint rules for Alchemy v2 (Infrastructure as Effects) stacks and runtimes.",
+  "keywords": [
+    "alchemy",
+    "cloudflare",
+    "effect",
+    "infrastructure-as-code",
+    "lint",
+    "oxlint",
+    "oxlint-plugin"
+  ],
+  "homepage": "https://github.com/aurelienbobenrieth/harness/tree/main/packages/oxlint-plugin-alchemy#readme",
+  "bugs": {
+    "url": "https://github.com/aurelienbobenrieth/harness/issues"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Aurélien Bobenrieth",
+    "url": "https://github.com/aurelienbobenrieth"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aurelienbobenrieth/harness.git",
+    "directory": "packages/oxlint-plugin-alchemy"
+  },
+  "files": [
+    "dist",
+    "CHANGELOG.md"
+  ],
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs"
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "prepack": "pnpm build",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@oxlint/plugins": "1.85.0"
+  },
+  "devDependencies": {
+    "@aurelienbbn/oxlint-kit": "workspace:*"
+  },
+  "peerDependencies": {
+    "oxlint": ">=1.82.0 <2.0.0"
+  },
+  "engines": {
+    "node": "^22.19.0 || ^24.11.0"
+  }
+}

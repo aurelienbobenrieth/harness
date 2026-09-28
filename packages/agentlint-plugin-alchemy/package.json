@@ -1,0 +1,55 @@
+{
+  "name": "@aurelienbbn/agentlint-plugin-alchemy",
+  "version": "0.0.0",
+  "description": "Custom agentlint rules for Alchemy v2 (Infrastructure as Effects) stacks.",
+  "keywords": [
+    "agentlint",
+    "agentlint-plugin",
+    "ai-agents",
+    "alchemy",
+    "code-review",
+    "infrastructure-as-code"
+  ],
+  "homepage": "https://github.com/aurelienbobenrieth/harness/tree/main/packages/agentlint-plugin-alchemy#readme",
+  "bugs": {
+    "url": "https://github.com/aurelienbobenrieth/harness/issues"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Aurélien Bobenrieth",
+    "url": "https://github.com/aurelienbobenrieth"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aurelienbobenrieth/harness.git",
+    "directory": "packages/agentlint-plugin-alchemy"
+  },
+  "files": [
+    "dist",
+    "CHANGELOG.md"
+  ],
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs"
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "prepack": "pnpm build",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@aurelienbbn/agentlint": "0.3.0"
+  },
+  "peerDependencies": {
+    "@aurelienbbn/agentlint": ">=0.3.0 <0.4.0"
+  },
+  "engines": {
+    "node": "^22.19.0 || ^24.11.0"
+  }
+}
