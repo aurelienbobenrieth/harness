@@ -94,6 +94,7 @@ restriction  ██████  error
 | `unicorn/prefer-includes`                                 | `typescript/prefer-includes`                         | typed duplicate                                                               |
 | `unicorn/prefer-string-starts-ends-with`                  | `typescript/prefer-string-starts-ends-with`          | typed duplicate                                                               |
 | `unicorn/prefer-array-find`                               | `typescript/prefer-find`                             | typed duplicate                                                               |
+| `eslint/no-magic-numbers` (test files only)               | `vitest/prefer-expect-assertions`                    | expected values are the oracle and stay literal; `expect.assertions(n)` too   |
 
 > [!WARNING]
 > **The typed side wins only because `typeAware: true`.** Turn it off: re-enable the untyped rules.
@@ -111,11 +112,12 @@ it("rejects improperly signed tokens", …) // ✅
 
 Pinned so an upstream category move can't drop them:
 
-| Rule                              | Owns                                                                                        |
-| --------------------------------- | ------------------------------------------------------------------------------------------- |
-| `vitest/require-to-throw-message` | bare `toThrow()` / `rejects.toThrow()` (`core/no-weak-test-assertions` skips this)          |
-| `vitest/prefer-called-with`       | bare `toHaveBeenCalled()`: makes existing interaction assertions exact, doesn't create them |
-| `vitest/valid-title`              | `mustNotMatch: vagueTestTitlePattern`                                                       |
+| Rule                              | Owns                                                                                                |
+| --------------------------------- | --------------------------------------------------------------------------------------------------- |
+| `vitest/require-to-throw-message` | bare `toThrow()` / `rejects.toThrow()` (`core/no-weak-test-assertions` skips this)                  |
+| `vitest/prefer-called-with`       | bare `toHaveBeenCalled()`: makes existing interaction assertions exact, doesn't create them         |
+| `vitest/valid-title`              | `mustNotMatch: vagueTestTitlePattern`                                                               |
+| `vitest/require-hook`             | top-level setup; `allowedFunctionCalls` admits the four Harness `*Conformance({ root })` registrars |
 
 Whether to assert a call at all: agentlint `core/test-behavior-coverage`. `toHaveBeenCalledWith(expect.anything())`: `core/no-weak-test-assertions`.
 

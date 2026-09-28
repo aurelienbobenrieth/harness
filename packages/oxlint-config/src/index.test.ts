@@ -338,6 +338,47 @@ it("pins the vitest rules that close assertion loopholes instead of relying on t
   expect(testOverride.rules["vitest/valid-title"]).toEqual(["error", { mustNotMatch: vagueTestTitlePattern }]);
 });
 
+it("lets test files register Harness conformance suites at top level and keep literal expected values", () => {
+  const [testOverride] = strictOxlintConfig.overrides;
+
+  expect(testOverride.rules["vitest/require-hook"]).toEqual([
+    "error",
+    {
+      allowedFunctionCalls: ["alchemyConformance", "cloudflareConformance", "coreConformance", "shopifyAppConformance"],
+    },
+  ]);
+  expect(testOverride.rules["eslint/no-magic-numbers"]).toBe("off");
+});
+
+it("accepts a top-level conformance registrar and literal oracles in tests under the installed oxlint", async () => {
+  const diagnostics = await lintWith(defineStrictOxlintConfig(), {
+    "src/conformance.test.ts": [
+      'import { alchemyConformance } from "@aurelienbbn/conformance-alchemy/vitest";',
+      'alchemyConformance({ root: "." });',
+    ].join("\n"),
+    "src/total.test.ts": [
+      'import { expect, it } from "vitest";',
+      'import { total } from "./total";',
+      'it("adds two line items", () => { expect.assertions(1); expect(total(2, 3)).toBe(5); });',
+    ].join("\n"),
+  });
+  const codes = diagnostics.map((diagnostic) => diagnostic.code);
+
+  expect(codes).not.toContain("vitest(require-hook)");
+  expect(codes).not.toContain("eslint(no-magic-numbers)");
+});
+
+it("still reports other top-level test calls and magic numbers in source files", async () => {
+  const diagnostics = await lintWith(defineStrictOxlintConfig(), {
+    "src/setup.test.ts": ['import { seedDatabase } from "./seed";', "seedDatabase();"].join("\n"),
+    "src/area.ts": "export function area(side: number): number {\n  return side * 7;\n}\n",
+  });
+  const findings = diagnostics.map((diagnostic) => `${diagnostic.filename.split("/").at(-1)} ${diagnostic.code}`);
+
+  expect(findings).toContain("setup.test.ts vitest(require-hook)");
+  expect(findings).toContain("area.ts eslint(no-magic-numbers)");
+});
+
 it("allows assertions inside Effect-aware tests", async () => {
   const diagnostics = await lintWith(defineStrictOxlintConfig(), {
     "src/effect.test.ts": [
