@@ -63,6 +63,7 @@ export const strictOxlintConfig = {
     "eslint/one-var": ["error", "never"],
     "eslint/prefer-promise-reject-errors": "off",
     "eslint/require-await": "off",
+    "eslint/sort-keys": "off",
     "node/no-top-level-await": "off",
     "oxc/no-async-await": "off",
     "oxc/no-optional-chaining": "off",
