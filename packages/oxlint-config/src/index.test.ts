@@ -330,8 +330,24 @@ it("lets @effect/tsgo and Effect idioms win over the strict rules that contradic
     "eslint/func-names": ["error", "always", { generators: "never" }],
     "eslint/max-classes-per-file": "off",
     "eslint/new-cap": ["error", { capIsNew: false }],
+    "eslint/no-redeclare": "off",
     "node/no-sync": ["error", { ignores: ["runSync"] }],
+    "typescript/prefer-readonly-parameter-types": [
+      "error",
+      {
+        allow: [
+          {
+            from: "package",
+            name: ["Effect", "Fragment", "Loader", "None", "Option", "Redacted", "Some", "Utc"],
+            package: "effect",
+          },
+        ],
+        ignoreInferredTypes: true,
+        treatMethodsAsReadonly: true,
+      },
+    ],
     "typescript/promise-function-async": "off",
+    "unicorn/throw-new-error": "off",
   });
   expect(config.rules).toMatchObject(effectIdiomRules);
 });
@@ -355,6 +371,23 @@ it("accepts Effect constructors, anonymous Effect.gen generators, Effect.runSync
   expect(codes).not.toContain("eslint(func-names)");
   expect(codes).not.toContain("node(no-sync)");
   expect(codes).not.toContain("eslint(max-classes-per-file)");
+});
+
+it("accepts a Schema and its same-named type, and a Schema.TaggedError class factory, under the installed oxlint", async () => {
+  const diagnostics = await lintWith(defineStrictOxlintConfig({ rules: effectIdiomRules }), {
+    "src/user.ts": [
+      'import { Schema } from "effect";',
+      'export const UserId = Schema.String.pipe(Schema.brand("UserId"));',
+      "export type UserId = typeof UserId.Type;",
+      'export class UserNotFoundError extends Schema.TaggedError<UserNotFoundError>()("UserNotFoundError", {',
+      "  id: UserId,",
+      "}) {}",
+    ].join("\n"),
+  });
+  const codes = diagnostics.map((diagnostic) => diagnostic.code);
+
+  expect(codes).not.toContain("eslint(no-redeclare)");
+  expect(codes).not.toContain("unicorn(throw-new-error)");
 });
 
 it("still reports lowercase constructors, anonymous functions, and blocking fs calls under the Effect idiom rules", async () => {

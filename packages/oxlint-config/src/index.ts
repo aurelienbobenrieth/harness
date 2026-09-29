@@ -339,13 +339,37 @@ export const effectTsgoSettledRules = {
  * - `node/no-sync`: `Effect.runSync` runs an Effect at a runtime edge, not blocking I/O. `fs.*Sync` still reports.
  * - `eslint/max-classes-per-file`: tagged errors, `Schema.Class` models and services are all classes, so a domain
  *   module that keeps its schemas beside the errors it raises holds several. The rule has no option to tell them apart.
+ * - `eslint/no-redeclare`: a Schema and its type share a name (`const User = Schema.Struct(…)` beside
+ *   `type User = typeof User.Type`). TypeScript itself rejects real redeclarations.
+ * - `unicorn/throw-new-error`: reports the `Schema.TaggedError<Self>()(…)` class factory, and its autofix emits
+ *   `new Schema.TaggedError…`, which does not compile.
+ * - `typescript/prefer-readonly-parameter-types`: Effect's data types carry methods, symbol keys and lazy caches, so the
+ *   deep check rejects every Effect-typed parameter. Methods count as readonly; Effect's immutable types (`Effect`,
+ *   `Option`, `DateTime.Utc`, `Redacted`, SQL `Fragment`, `Migrator.Loader`) are allowed by name; an inferred callback
+ *   parameter is left to its source type. A mutable array or object parameter still reports.
  */
 export const effectIdiomRules = {
   "eslint/func-names": ["error", "always", { generators: "never" }],
   "eslint/max-classes-per-file": "off",
   "eslint/new-cap": ["error", { capIsNew: false }],
+  "eslint/no-redeclare": "off",
   "node/no-sync": ["error", { ignores: ["runSync"] }],
+  "typescript/prefer-readonly-parameter-types": [
+    "error",
+    {
+      allow: [
+        {
+          from: "package",
+          name: ["Effect", "Fragment", "Loader", "None", "Option", "Redacted", "Some", "Utc"],
+          package: "effect",
+        },
+      ],
+      ignoreInferredTypes: true,
+      treatMethodsAsReadonly: true,
+    },
+  ],
   "typescript/promise-function-async": "off",
+  "unicorn/throw-new-error": "off",
 } satisfies RuleEntries;
 
 export interface EffectTsgoLayerOptions {
