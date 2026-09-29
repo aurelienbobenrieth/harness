@@ -37,6 +37,7 @@ Defect → reproduce the symptom at its boundary first, cheapest distinguishing 
 | Dependencies point inward: core never imports adapters, tests, or mutable shared state        | `no-mutable-exported-state`, `no-vitest-in-source`    |
 | One declared public surface per package (`exports`); consumers never deep-import              | packed consumer install                               |
 | Unit, test, and fixtures colocated; the folder deletes as a whole                             | —                                                     |
+| Group by domain: errors live beside their schemas and API, not a file each; folder once big   | —                                                     |
 | Duplicate until the third real use shows the shape; one adapter is hypothetical, two are real | `single-use-extraction-review`, `isomorphic-mapping`  |
 | An abstraction growing per-caller branches → inline it back, re-extract                       | `abstraction-earns-keep`                              |
 
