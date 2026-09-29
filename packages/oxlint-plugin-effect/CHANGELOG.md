@@ -1,5 +1,11 @@
 # @aurelienbbn/oxlint-plugin-effect
 
+## 0.3.0
+
+### Minor Changes
+
+- [#30](https://github.com/aurelienbobenrieth/harness/pull/30) [`f446a1e`](https://github.com/aurelienbobenrieth/harness/commit/f446a1e049010ef3cd48346a23149c6a55b353f8) Thanks [@aurelienbobenrieth](https://github.com/aurelienbobenrieth)! - Add `tagged-error-name`, which reports a class extending `Schema.TaggedError`, `Schema.TaggedErrorClass` or `Data.TaggedError` whose name lacks the error suffix (option `suffix`, default `"Error"`) or whose literal `_tag` differs from the class name. Report only: a rename crosses files.
+
 ## 0.2.0
 
 ### Minor Changes
