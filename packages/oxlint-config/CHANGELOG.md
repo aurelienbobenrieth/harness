@@ -1,5 +1,11 @@
 # @aurelienbbn/oxlint-config
 
+## 0.4.0
+
+### Minor Changes
+
+- [#30](https://github.com/aurelienbobenrieth/harness/pull/30) [`f446a1e`](https://github.com/aurelienbobenrieth/harness/commit/f446a1e049010ef3cd48346a23149c6a55b353f8) Thanks [@aurelienbobenrieth](https://github.com/aurelienbobenrieth)! - `effectIdiomRules` turns off `eslint/max-classes-per-file`: tagged errors, `Schema.Class` models and services are classes, so a domain module that keeps its schemas beside the errors it raises no longer has to split into one file per class.
+
 ## 0.3.0
 
 ### Minor Changes
