@@ -159,6 +159,20 @@ it("sizes functions by statements and files by code lines, so formatting never t
   expect(codesIn("crowded.ts")).toContain("eslint(max-statements)");
 });
 
+it("keeps object keys in declaration order, where the order carries meaning", async () => {
+  const diagnostics = await lintWith(defineStrictOxlintConfig(), {
+    "src/declared.ts": [
+      "export const row = {",
+      '  id: "job-1",',
+      '  kind: "sync",',
+      '  createdAt: "2026-09-29",',
+      "};",
+    ].join("\n"),
+  });
+
+  expect(diagnostics.map((diagnostic) => diagnostic.code)).not.toContain("eslint(sort-keys)");
+});
+
 it("keeps every oxlint default plugin, because setting plugins replaces the defaults", () => {
   expect(strictOxlintConfig.plugins).toEqual(expect.arrayContaining(["eslint", "typescript", "unicorn", "oxc"]));
 });
