@@ -139,6 +139,6 @@ test("rejects an agentlint plugin developed against an engine other than the bas
 
 test("rejects an agentlint engine profile outside the declared plugin peer range", () => {
   const input = fixture();
-  input.policy.profiles.current["@aurelienbbn/agentlint"] = "0.4.0";
+  input.policy.profiles.current["@aurelienbbn/agentlint"] = "0.5.0";
   assert.throws(() => validateCompatibility(input), /tested version must satisfy its declared peer range/);
 });

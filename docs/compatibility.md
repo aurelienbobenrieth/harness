@@ -14,7 +14,7 @@ Source of truth: [policy/compatibility.json](../policy/compatibility.json). ESM 
 
 | Host            | Declared support    | `baseline` | `current` |
 | --------------- | ------------------- | ---------- | --------- |
-| agentlint       | `>=0.3.0 <0.4.0`    | 0.3.0      | 0.3.0     |
+| agentlint       | `>=0.3.0 <0.5.0`    | 0.3.0      | 0.4.0     |
 | oxlint          | `>=1.82.0 <2.0.0`   | 1.82.0     | 1.83.0    |
 | oxlint-tsgolint | `^7.0.2001`         | 7.0.2001   | 7.0.2002  |
 | oxfmt           | `>=0.67.0 <0.69.0`  | 0.67.0     | 0.68.0    |
@@ -32,6 +32,7 @@ Both pin TypeScript 7.0.2 · Vite 8.3.0 · `@types/node` 22.20.3 · Lit 3.3.3 ·
 <summary>Registry sources, pending upgrades, host types</summary>
 
 - Checked against the public npm registry on 2026-09-24 (matches `registryCheckedAt`): [agentlint](https://registry.npmjs.org/@aurelienbbn%2Fagentlint/0.3.0), [oxlint](https://registry.npmjs.org/oxlint/1.83.0), [Vite Plus](https://registry.npmjs.org/vite-plus/0.3.2), [Vitest](https://registry.npmjs.org/vitest/5.0.1), [Stylelint](https://registry.npmjs.org/stylelint/17.15.0).
+- Adopted as `current` from the registry on 2026-09-29: [agentlint 0.4.0](https://registry.npmjs.org/@aurelienbbn%2Fagentlint/0.4.0), whose TSX grammar accepts `&` in JSX string attributes.
 - Newer, not adopted (2026-09-24): oxlint 1.85.0, oxfmt 0.70.0 (outside `<0.69.0`), Vite Plus 0.3.3 and 1.0.0-rc.0, jsdom 30.1.1.
 - Parked `conformance-shopify-theme` keeps TypeScript 6.0.3 at runtime: TypeScript 7 drops the compiler API it uses to resolve event names.
 - Config packages import host types from `oxlint` and `oxfmt`. Vite+ re-exports them, so the same objects work in its `lint` and `fmt` fields without Vite+ in either peer contract.
