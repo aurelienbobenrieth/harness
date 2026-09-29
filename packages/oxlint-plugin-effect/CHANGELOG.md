@@ -1,5 +1,11 @@
 # @aurelienbbn/oxlint-plugin-effect
 
+## 0.5.0
+
+### Minor Changes
+
+- [#39](https://github.com/aurelienbobenrieth/harness/pull/39) [`600ed27`](https://github.com/aurelienbobenrieth/harness/commit/600ed273aed70a8cb7475f70403720929894df56) Thanks [@aurelienbobenrieth](https://github.com/aurelienbobenrieth)! - `@aurelienbbn/oxlint-plugin-effect` adds `effect/no-array-method-this-argument` and `effect/no-array-sort`, completing the Effect-aware array checks: unicorn's versions report Effect's data-first helpers (`Arr.filter(xs, f)`, where `f` is taken for a `thisArg`) and `Arr.sort(order)`, which returns a new array. `@aurelienbbn/oxlint-config`'s `effectIdiomRules` turns the two unicorn rules off in favor of them.
+
 ## 0.4.0
 
 ### Minor Changes
