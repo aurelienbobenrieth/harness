@@ -19,6 +19,33 @@ export function isModuleNamespace(context: Context, node: ESTree.Node, moduleNam
   });
 }
 
+function isEffectModuleSource(source: unknown): source is string {
+  return (
+    typeof source === "string" && (source === "effect" || source.startsWith("effect/") || source.startsWith("@effect/"))
+  );
+}
+
+/**
+ * The Effect module an identifier is imported as: `effect/Option` for `import * as Option from "effect/Option"` or
+ * `import { Option } from "effect"`, the package path for `@effect/*`. `undefined` for a local or a non-Effect import.
+ */
+export function effectModuleOf(context: Context, node: ESTree.Node): string | undefined {
+  if (node.type !== "Identifier") return undefined;
+  const definition = binding(context, node, node.name)?.defs.find(
+    (candidate) => candidate.parent?.type === "ImportDeclaration",
+  );
+  if (definition?.parent?.type !== "ImportDeclaration") return undefined;
+  const source = definition.parent.source.value;
+  if (!isEffectModuleSource(source)) return undefined;
+  if (
+    source === "effect" &&
+    definition.node.type === "ImportSpecifier" &&
+    definition.node.imported.type === "Identifier"
+  )
+    return `effect/${definition.node.imported.name}`;
+  return source;
+}
+
 /** Recognize Effect imports and aliases without matching local shadows. */
 function isEffectNamespace(context: Context, node: ESTree.Node): boolean {
   return isModuleNamespace(context, node, "Effect");

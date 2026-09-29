@@ -2,7 +2,7 @@
 
 [![npm](https://img.shields.io/npm/v/@aurelienbbn/oxlint-plugin-effect)](https://www.npmjs.com/package/@aurelienbbn/oxlint-plugin-effect) [![downloads](https://img.shields.io/npm/dm/@aurelienbbn/oxlint-plugin-effect)](https://www.npmjs.com/package/@aurelienbbn/oxlint-plugin-effect) [![CI](https://github.com/aurelienbobenrieth/harness/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/aurelienbobenrieth/harness/actions/workflows/ci.yml) [![license](https://img.shields.io/npm/l/@aurelienbbn/oxlint-plugin-effect)](https://github.com/aurelienbobenrieth/harness/blob/main/packages/oxlint-plugin-effect/LICENSE) [![node](https://img.shields.io/node/v/@aurelienbbn/oxlint-plugin-effect)](https://github.com/aurelienbobenrieth/harness/blob/main/packages/oxlint-plugin-effect/package.json)
 
-**36 oxlint rules for Effect code: runtime boundaries, failure channels, concurrency, services, Schema. Only what `@effect/tsgo` doesn't own.**
+**38 oxlint rules for Effect code: runtime boundaries, failure channels, concurrency, services, Schema. Only what `@effect/tsgo` doesn't own.**
 
 ```sh
 pnpm add -D @aurelienbbn/oxlint-plugin-effect oxlint   # oxlint >=1.82.0 <2.0.0
@@ -74,7 +74,7 @@ Effect.tryPromise({
 - 🎨 `dependencies-first`, `padding-after-dependencies`, `no-switch`, `prefer-match`, `prefer-effect-array-helpers`, `schema-type-adjacent`, `tagged-error-name` are opinionated. **Suppress at the exceptional call site**, not in the shared config.
 
 <details>
-<summary>36 rules by job</summary>
+<summary>38 rules by job</summary>
 
 | Job                       | Rules                                                                                                                                                                                                                                          |
 | ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -85,6 +85,7 @@ Effect.tryPromise({
 | 📐 Schema & config (3)    | `no-schema-any`, `schema-type-adjacent` 🎨, `require-redacted-secret-config`                                                                                                                                                                   |
 | ⚡ concurrency (3)        | `require-all-concurrency`, `require-for-each-concurrency`, `require-abort-signal`                                                                                                                                                              |
 | 🎨 style (3)              | `no-switch`, `prefer-match`, `prefer-effect-array-helpers`                                                                                                                                                                                     |
+| 🔁 arrays (2)             | `no-array-callback-reference`, `no-array-for-each`: unicorn's array checks, skipping Effect modules (`Option.some`, `Effect.forEach`)                                                                                                          |
 
 </details>
 
@@ -175,6 +176,8 @@ Generated from package exports by `pnpm catalog`. Rule-specific options and limi
 | `bounded-retry`                    | Require Effect.retry policies visible in the same file to carry a bound such as Schedule.recurs, Schedule.upTo, Schedule.during, times, while, or until.                                                     |
 | `dependencies-first`               | Yield service dependencies before runtime logic in Effect bodies.                                                                                                                                            |
 | `effect-fn-name-matches-binding`   | Require the last dot-segment of an Effect.fn span name to equal the variable or property the function is bound to.                                                                                           |
+| `no-array-callback-reference`      | Disallow passing a function reference to an array method's callback, skipping calls on Effect modules that are not arrays.                                                                                   |
+| `no-array-for-each`                | Disallow Array#forEach in favor of for…of, skipping Effect's forEach helpers (`Effect.forEach`).                                                                                                             |
 | `no-catch-all-cause`               | Disallow Effect.catchCause, catchCauseIf, catchCauseFilter, catchDefect, ignoreCause, sandbox, Layer.catchCause, and Effect 3 catchAllCause because they catch defects.                                      |
 | `no-dynamic-span-name`             | Disallow template literals with runtime values and string concatenation as span names in Effect.fn, Effect.withSpan, withSpanScoped, useSpan, makeSpan, makeSpanScoped, Layer.withSpan, and Stream.withSpan. |
 | `no-effect-ordie`                  | Disallow Effect.orDie, Effect.orDieWith, Layer.orDie, and Effect.catch handlers that only die outside configured escape hatches.                                                                             |
@@ -219,5 +222,7 @@ Generated from package exports by `pnpm catalog`. Rule-specific options and limi
 - OpenTelemetry Tracing API specification, span name guidance "most general string ... low cardinality" (Apache-2.0, concept)
 - ai-automation by Sandro Maglione (inspiration, independently re-implemented)
 - anti-slop by Dillon Mulroy (MIT, concept re-implemented)
+- eslint-plugin-unicorn `no-array-callback-reference` (MIT; rule concept, independently re-implemented)
+- eslint-plugin-unicorn `no-array-for-each` (MIT; rule concept, independently re-implemented)
 
 <!-- harness-catalog:end -->
