@@ -347,6 +347,8 @@ it("lets @effect/tsgo and Effect idioms win over the strict rules that contradic
       },
     ],
     "typescript/promise-function-async": "off",
+    "unicorn/no-array-callback-reference": "off",
+    "unicorn/no-array-for-each": "off",
     "unicorn/throw-new-error": "off",
   });
   expect(config.rules).toMatchObject(effectIdiomRules);
@@ -388,6 +390,28 @@ it("accepts a Schema and its same-named type, and a Schema.TaggedError class fac
 
   expect(codes).not.toContain("eslint(no-redeclare)");
   expect(codes).not.toContain("unicorn(throw-new-error)");
+});
+
+const codesOf = (diagnostics: readonly Diagnostic[]): string[] => diagnostics.map((diagnostic) => diagnostic.code);
+
+it("leaves Option.some, Option.filter and Effect.forEach to the Effect plugin's array rules", async () => {
+  const source = [
+    // Namespace imports, as Effect's docs write them: the unicorn rules take `Option` for an array there.
+    'import * as Effect from "effect/Effect";',
+    'import * as Option from "effect/Option";',
+    "declare const isKept: (value: string) => boolean;",
+    "declare const load: (id: string) => Effect.Effect<string>;",
+    'export const kept = Option.filter(Option.some("a"), isKept);',
+    'export const loaded = Effect.forEach(["a"], load);',
+  ].join("\n");
+  const strict = await lintWith(defineStrictOxlintConfig(), { "src/program.ts": source });
+  const settled = await lintWith(defineStrictOxlintConfig({ rules: effectIdiomRules }), { "src/program.ts": source });
+
+  expect(codesOf(strict)).toEqual(
+    expect.arrayContaining(["unicorn(no-array-callback-reference)", "unicorn(no-array-for-each)"]),
+  );
+  expect(codesOf(settled)).not.toContain("unicorn(no-array-callback-reference)");
+  expect(codesOf(settled)).not.toContain("unicorn(no-array-for-each)");
 });
 
 it("still reports lowercase constructors, anonymous functions, and blocking fs calls under the Effect idiom rules", async () => {
@@ -567,6 +591,16 @@ it("adds the import-graph layer only on request, with two rules on and the rest 
 
 it("keeps the oxlint default plugins when the import-graph layer wraps a config without a plugin list", () => {
   expect(withImportGraphLayer({ rules: {} }).plugins).toEqual(["eslint", "typescript", "unicorn", "oxc", "import"]);
+});
+
+it("exempts the given package entry points from oxc/no-barrel-file, which the import graph turns on", () => {
+  const config = withImportGraphLayer(defineStrictOxlintConfig(), { entrypoints: ["packages/*/src/index.ts"] });
+
+  expect(config.overrides?.at(-1)).toEqual({
+    files: ["packages/*/src/index.ts"],
+    rules: { "oxc/no-barrel-file": "off" },
+  });
+  expect(withImportGraphLayer(defineStrictOxlintConfig()).overrides).toEqual(defineStrictOxlintConfig().overrides);
 });
 
 it("pins every import rule the installed oxlint ships, so none arrives through a category", async () => {

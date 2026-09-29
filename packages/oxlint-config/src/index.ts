@@ -286,13 +286,31 @@ export const importGraphRules = {
   "import/unambiguous": "off",
 } satisfies RuleEntries;
 
+export interface ImportGraphLayerOptions {
+  /**
+   * Package entry points (a `src/index.ts` per package): barrels by design, the public surface a package's `exports`
+   * names. Loading the `import` plugin builds the module graph, which lets `oxc/no-barrel-file` count what a barrel
+   * loads; these files are exempt from it.
+   */
+  readonly entrypoints?: readonly string[];
+}
+
 /**
  * Adds the opt-in import-graph layer: the `import` plugin with only `import/no-cycle` and
- * `import/no-self-import` enabled. Rules already set on the config win over the layer.
+ * `import/no-self-import` enabled, and `oxc/no-barrel-file` off for the given package entry points. Rules already set
+ * on the config win over the layer.
  */
-export function withImportGraphLayer(config: OxlintConfig = defineStrictOxlintConfig()): OxlintConfig {
+export function withImportGraphLayer(
+  config: OxlintConfig = defineStrictOxlintConfig(),
+  options: ImportGraphLayerOptions = {},
+): OxlintConfig {
+  const entrypoints = options.entrypoints ?? [];
+  const entrypointOverrides: OverrideEntry[] =
+    entrypoints.length === 0 ? [] : [{ files: [...entrypoints], rules: { "oxc/no-barrel-file": "off" } }];
+
   return structuredClone({
     ...config,
+    overrides: [...(config.overrides ?? []), ...entrypointOverrides],
     plugins: mergeList(config.plugins ?? defaultOxlintPlugins, ["import" as const]),
     rules: {
       ...importGraphRules,
@@ -343,6 +361,10 @@ export const effectTsgoSettledRules = {
  *   `type User = typeof User.Type`). TypeScript itself rejects real redeclarations.
  * - `unicorn/throw-new-error`: reports the `Schema.TaggedError<Self>()(…)` class factory, and its autofix emits
  *   `new Schema.TaggedError…`, which does not compile.
+ * - `unicorn/no-array-callback-reference`, `unicorn/no-array-for-each`: Effect's modules share array method names
+ *   (`Option.some(value)`, `Option.filter`, `Effect.forEach`) and the rules take no options to tell them apart.
+ *   `@aurelienbbn/oxlint-plugin-effect`'s `effect/no-array-callback-reference` and `effect/no-array-for-each` report the
+ *   same array misuse and skip Effect modules; without that plugin, set these two back in `rules`.
  * - `typescript/prefer-readonly-parameter-types`: Effect's data types carry methods, symbol keys and lazy caches, so the
  *   deep check rejects every Effect-typed parameter. Methods count as readonly; Effect's immutable types (`Effect`,
  *   `Option`, `DateTime.Utc`, `Redacted`, SQL `Fragment`, `Migrator.Loader`) are allowed by name; an inferred callback
@@ -369,6 +391,8 @@ export const effectIdiomRules = {
     },
   ],
   "typescript/promise-function-async": "off",
+  "unicorn/no-array-callback-reference": "off",
+  "unicorn/no-array-for-each": "off",
   "unicorn/throw-new-error": "off",
 } satisfies RuleEntries;
 
