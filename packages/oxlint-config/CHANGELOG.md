@@ -1,5 +1,15 @@
 # @aurelienbbn/oxlint-config
 
+## 0.7.0
+
+### Minor Changes
+
+- [#38](https://github.com/aurelienbobenrieth/harness/pull/38) [`5d0da99`](https://github.com/aurelienbobenrieth/harness/commit/5d0da99bedb7eabc4f6a1b49899f38b75faedc77) Thanks [@aurelienbobenrieth](https://github.com/aurelienbobenrieth)! - `@aurelienbbn/oxlint-plugin-effect` adds `effect/no-array-callback-reference` and `effect/no-array-for-each`: unicorn's array checks, re-implemented to skip calls on modules imported from Effect (`Option.some(value)`, `Option.filter`, `Effect.forEach`), which the unicorn rules take for arrays under namespace imports. `effect/Array` helpers, which pass the index like native methods, are still checked.
+
+  `@aurelienbbn/oxlint-config`: `effectIdiomRules` turns `unicorn/no-array-callback-reference` and `unicorn/no-array-for-each` off in favor of those rules (without the plugin, set them back in `rules`). `withImportGraphLayer` takes `{ entrypoints }`, package entry points exempt from `oxc/no-barrel-file`, which the import graph makes count modules.
+
+- [#36](https://github.com/aurelienbobenrieth/harness/pull/36) [`79ae244`](https://github.com/aurelienbobenrieth/harness/commit/79ae244bf431f370c70b955d9aae6eebd57730f4) Thanks [@aurelienbobenrieth](https://github.com/aurelienbobenrieth)! - `effectIdiomRules` (applied by `withEffectTsgoLayer`) now also settles three strict rules that misread idiomatic Effect code: `eslint/no-redeclare` and `unicorn/throw-new-error` are off (a Schema beside its same-named type, the `Schema.TaggedError<Self>()(…)` factory), and `typescript/prefer-readonly-parameter-types` treats methods as readonly, ignores inferred parameter types, and allows Effect's immutable types by name. Consumers that set these rules themselves can drop their overrides; nothing that passed before reports now.
+
 ## 0.6.0
 
 ### Minor Changes
