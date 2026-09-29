@@ -13,7 +13,7 @@ function mergeList<T>(
 }
 
 export const defaultOxfmtConfig = {
-  printWidth: 120,
+  printWidth: 100,
   semi: true,
   singleQuote: false,
   trailingComma: "all",

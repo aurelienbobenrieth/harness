@@ -132,6 +132,33 @@ it("can remove default plugins and does not share nested rule options", () => {
   );
 });
 
+it("sizes functions by statements and files by code lines, so formatting never trips a size rule", async () => {
+  const wrappedCall = ["  consume(", "    1,", "    2,", "    3,", "  );"];
+  const diagnostics = await lintWith(defineStrictOxlintConfig(), {
+    "src/reflowed.ts": [
+      ...Array.from({ length: 300 }, () => "// documentation"),
+      "declare function consume(...values: readonly number[]): void;",
+      "export function reflowed(): void {",
+      ...Array.from({ length: 12 }, () => wrappedCall)
+        .flat()
+        .slice(0, 50),
+      "}",
+    ].join("\n"),
+    "src/crowded.ts": [
+      "declare function consume(value: number): void;",
+      "export function crowded(): void {",
+      ...Array.from({ length: 11 }, (_, index) => `  consume(${String(index)});`),
+      "}",
+    ].join("\n"),
+  });
+  const codesIn = (file: string) =>
+    diagnostics.filter((diagnostic) => diagnostic.filename.endsWith(file)).map((diagnostic) => diagnostic.code);
+
+  expect(codesIn("reflowed.ts")).not.toContain("eslint(max-lines-per-function)");
+  expect(codesIn("reflowed.ts")).not.toContain("eslint(max-lines)");
+  expect(codesIn("crowded.ts")).toContain("eslint(max-statements)");
+});
+
 it("keeps every oxlint default plugin, because setting plugins replaces the defaults", () => {
   expect(strictOxlintConfig.plugins).toEqual(expect.arrayContaining(["eslint", "typescript", "unicorn", "oxc"]));
 });

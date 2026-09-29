@@ -52,6 +52,8 @@ export const strictOxlintConfig = {
   plugins: ["eslint", "typescript", "unicorn", "oxc", "node", "promise"],
   rules: {
     "eslint/default-case": "off",
+    "eslint/max-lines": ["error", { max: 300, skipBlankLines: true, skipComments: true }],
+    "eslint/max-lines-per-function": "off",
     "eslint/no-implied-eval": "off",
     "eslint/no-ternary": "off",
     "eslint/no-throw-literal": "off",

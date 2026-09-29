@@ -2,7 +2,7 @@
 
 [![npm](https://img.shields.io/npm/v/@aurelienbbn/oxfmt-config)](https://www.npmjs.com/package/@aurelienbbn/oxfmt-config) [![downloads](https://img.shields.io/npm/dm/@aurelienbbn/oxfmt-config)](https://www.npmjs.com/package/@aurelienbbn/oxfmt-config) [![CI](https://github.com/aurelienbobenrieth/harness/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/aurelienbobenrieth/harness/actions/workflows/ci.yml) [![license](https://img.shields.io/npm/l/@aurelienbbn/oxfmt-config)](https://github.com/aurelienbobenrieth/harness/blob/main/packages/oxfmt-config/LICENSE) [![node](https://img.shields.io/node/v/@aurelienbbn/oxfmt-config)](https://github.com/aurelienbobenrieth/harness/blob/main/packages/oxfmt-config/package.json)
 
-**One oxfmt config for every JS/TS repo: 120 columns, double quotes, trailing commas, multiline JSDoc, sorted `package.json`.**
+**One oxfmt config for every JS/TS repo: 100 columns, double quotes, trailing commas, multiline JSDoc, sorted `package.json`.**
 
 ```sh
 pnpm add -D @aurelienbbn/oxfmt-config oxfmt   # oxfmt >=0.67.0 <0.69.0 · Node ^22.19.0 || ^24.11.0
@@ -31,7 +31,7 @@ Plain `OxfmtConfig`: works with oxfmt directly or as Vite+'s `fmt` config, no Vi
 
 | Setting                     | Value                                       |
 | --------------------------- | ------------------------------------------- |
-| `printWidth`                | `120`                                       |
+| `printWidth`                | `100`                                       |
 | `tabWidth`                  | `2`                                         |
 | `semi`                      | `true`                                      |
 | `singleQuote`               | `false`                                     |
