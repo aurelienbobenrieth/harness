@@ -1,5 +1,11 @@
 # @aurelienbbn/oxlint-config
 
+## 0.6.0
+
+### Minor Changes
+
+- [#34](https://github.com/aurelienbobenrieth/harness/pull/34) [`43772cd`](https://github.com/aurelienbobenrieth/harness/commit/43772cd73c565012e120119cbd816b8a48277587) Thanks [@aurelienbobenrieth](https://github.com/aurelienbobenrieth)! - `eslint/sort-keys` is off in the strict preset. Declaration order carries meaning that alphabetical order erases: an Effect Schema or Drizzle table lists `id` first and timestamps last, and Drizzle keeps that order as the physical column order. Code that is already sorted stays valid.
+
 ## 0.5.0
 
 ### Minor Changes
