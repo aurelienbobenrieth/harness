@@ -334,9 +334,12 @@ export const effectTsgoSettledRules = {
  * - `eslint/func-names`: `Effect.gen(function* () { … })` takes an anonymous generator. Other anonymous function
  *   expressions still report.
  * - `node/no-sync`: `Effect.runSync` runs an Effect at a runtime edge, not blocking I/O. `fs.*Sync` still reports.
+ * - `eslint/max-classes-per-file`: tagged errors, `Schema.Class` models and services are all classes, so a domain
+ *   module that keeps its schemas beside the errors it raises holds several. The rule has no option to tell them apart.
  */
 export const effectIdiomRules = {
   "eslint/func-names": ["error", "always", { generators: "never" }],
+  "eslint/max-classes-per-file": "off",
   "eslint/new-cap": ["error", { capIsNew: false }],
   "node/no-sync": ["error", { ignores: ["runSync"] }],
   "typescript/promise-function-async": "off",
