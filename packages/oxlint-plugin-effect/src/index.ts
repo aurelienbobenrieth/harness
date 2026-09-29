@@ -2,6 +2,8 @@ import { eslintCompatPlugin } from "@oxlint/plugins";
 import { dependenciesFirst } from "./rules/dependencies-first/rule.js";
 import { noArrayCallbackReference } from "./rules/no-array-callback-reference/rule.js";
 import { noArrayForEach } from "./rules/no-array-for-each/rule.js";
+import { noArrayMethodThisArgument } from "./rules/no-array-method-this-argument/rule.js";
+import { noArraySort } from "./rules/no-array-sort/rule.js";
 import { noCatchAllCause } from "./rules/no-catch-all-cause/rule.js";
 import { noDynamicSpanName } from "./rules/no-dynamic-span-name/rule.js";
 import { noEffectOrDie } from "./rules/no-effect-ordie/rule.js";
@@ -46,6 +48,8 @@ export default eslintCompatPlugin({
     "dependencies-first": dependenciesFirst,
     "no-array-callback-reference": noArrayCallbackReference,
     "no-array-for-each": noArrayForEach,
+    "no-array-method-this-argument": noArrayMethodThisArgument,
+    "no-array-sort": noArraySort,
     "no-catch-all-cause": noCatchAllCause,
     "no-dynamic-span-name": noDynamicSpanName,
     "no-effect-ordie": noEffectOrDie,

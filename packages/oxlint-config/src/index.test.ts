@@ -349,6 +349,8 @@ it("lets @effect/tsgo and Effect idioms win over the strict rules that contradic
     "typescript/promise-function-async": "off",
     "unicorn/no-array-callback-reference": "off",
     "unicorn/no-array-for-each": "off",
+    "unicorn/no-array-method-this-argument": "off",
+    "unicorn/no-array-sort": "off",
     "unicorn/throw-new-error": "off",
   });
   expect(config.rules).toMatchObject(effectIdiomRules);
@@ -394,24 +396,36 @@ it("accepts a Schema and its same-named type, and a Schema.TaggedError class fac
 
 const codesOf = (diagnostics: readonly Diagnostic[]): string[] => diagnostics.map((diagnostic) => diagnostic.code);
 
-it("leaves Option.some, Option.filter and Effect.forEach to the Effect plugin's array rules", async () => {
+it("leaves Option.some, Option.filter, Effect.forEach, Arr.filter and Arr.sort to the Effect plugin's array rules", async () => {
   const source = [
     // Namespace imports, as Effect's docs write them: the unicorn rules take `Option` for an array there.
+    'import * as Arr from "effect/Array";',
     'import * as Effect from "effect/Effect";',
     'import * as Option from "effect/Option";',
+    'import * as Order from "effect/Order";',
     "declare const isKept: (value: string) => boolean;",
     "declare const load: (id: string) => Effect.Effect<string>;",
+    "declare const names: readonly string[];",
     'export const kept = Option.filter(Option.some("a"), isKept);',
     'export const loaded = Effect.forEach(["a"], load);',
+    "export const keptNames = Arr.filter(names, isKept);",
+    "export const sorted = Arr.sort(Order.Number);",
   ].join("\n");
   const strict = await lintWith(defineStrictOxlintConfig(), { "src/program.ts": source });
   const settled = await lintWith(defineStrictOxlintConfig({ rules: effectIdiomRules }), { "src/program.ts": source });
 
   expect(codesOf(strict)).toEqual(
-    expect.arrayContaining(["unicorn(no-array-callback-reference)", "unicorn(no-array-for-each)"]),
+    expect.arrayContaining([
+      "unicorn(no-array-callback-reference)",
+      "unicorn(no-array-for-each)",
+      "unicorn(no-array-method-this-argument)",
+      "unicorn(no-array-sort)",
+    ]),
   );
   expect(codesOf(settled)).not.toContain("unicorn(no-array-callback-reference)");
   expect(codesOf(settled)).not.toContain("unicorn(no-array-for-each)");
+  expect(codesOf(settled)).not.toContain("unicorn(no-array-method-this-argument)");
+  expect(codesOf(settled)).not.toContain("unicorn(no-array-sort)");
 });
 
 it("still reports lowercase constructors, anonymous functions, and blocking fs calls under the Effect idiom rules", async () => {
