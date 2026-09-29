@@ -1,5 +1,11 @@
 # @aurelienbbn/oxlint-config
 
+## 0.5.0
+
+### Minor Changes
+
+- [#32](https://github.com/aurelienbobenrieth/harness/pull/32) [`9bd7af2`](https://github.com/aurelienbobenrieth/harness/commit/9bd7af247d7ef03a1f1c3f80befe14123545a1d1) Thanks [@aurelienbobenrieth](https://github.com/aurelienbobenrieth)! - Size rules no longer depend on formatting. `eslint/max-lines-per-function` is off, since `eslint/max-statements` already bounds a function by what it does. `eslint/max-lines` stays at 300 but skips blank and comment lines, so JSDoc and a narrower print width no longer count toward it.
+
 ## 0.4.0
 
 ### Minor Changes

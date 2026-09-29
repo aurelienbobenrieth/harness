@@ -1,5 +1,11 @@
 # @aurelienbbn/oxfmt-config
 
+## 0.2.0
+
+### Minor Changes
+
+- [#32](https://github.com/aurelienbobenrieth/harness/pull/32) [`9bd7af2`](https://github.com/aurelienbobenrieth/harness/commit/9bd7af247d7ef03a1f1c3f80befe14123545a1d1) Thanks [@aurelienbobenrieth](https://github.com/aurelienbobenrieth)! - `printWidth` drops from 120 to 100, oxfmt's own default and the width executor and t3code format at. Re-run `vp fmt` after upgrading; pass `printWidth: 120` to `defineOxfmtConfig` to keep the old width.
+
 ## 0.1.1
 
 ### Patch Changes
