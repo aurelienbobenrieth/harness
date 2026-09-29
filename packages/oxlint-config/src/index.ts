@@ -361,10 +361,11 @@ export const effectTsgoSettledRules = {
  *   `type User = typeof User.Type`). TypeScript itself rejects real redeclarations.
  * - `unicorn/throw-new-error`: reports the `Schema.TaggedError<Self>()(…)` class factory, and its autofix emits
  *   `new Schema.TaggedError…`, which does not compile.
- * - `unicorn/no-array-callback-reference`, `unicorn/no-array-for-each`: Effect's modules share array method names
- *   (`Option.some(value)`, `Option.filter`, `Effect.forEach`) and the rules take no options to tell them apart.
- *   `@aurelienbbn/oxlint-plugin-effect`'s `effect/no-array-callback-reference` and `effect/no-array-for-each` report the
- *   same array misuse and skip Effect modules; without that plugin, set these two back in `rules`.
+ * - `unicorn/no-array-callback-reference`, `unicorn/no-array-for-each`, `unicorn/no-array-method-this-argument`,
+ *   `unicorn/no-array-sort`: Effect's modules share array method names (`Option.some(value)`, `Option.filter`,
+ *   `Effect.forEach`, `Arr.filter(xs, f)`, `Arr.sort(order)`) and the rules take no options to tell them apart.
+ *   `@aurelienbbn/oxlint-plugin-effect`'s `effect/no-array-*` rules of the same names report the same array misuse and
+ *   skip Effect modules; without that plugin, set these four back in `rules`.
  * - `typescript/prefer-readonly-parameter-types`: Effect's data types carry methods, symbol keys and lazy caches, so the
  *   deep check rejects every Effect-typed parameter. Methods count as readonly; Effect's immutable types (`Effect`,
  *   `Option`, `DateTime.Utc`, `Redacted`, SQL `Fragment`, `Migrator.Loader`) are allowed by name; an inferred callback
@@ -393,6 +394,8 @@ export const effectIdiomRules = {
   "typescript/promise-function-async": "off",
   "unicorn/no-array-callback-reference": "off",
   "unicorn/no-array-for-each": "off",
+  "unicorn/no-array-method-this-argument": "off",
+  "unicorn/no-array-sort": "off",
   "unicorn/throw-new-error": "off",
 } satisfies RuleEntries;
 
