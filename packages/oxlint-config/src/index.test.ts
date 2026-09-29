@@ -287,6 +287,7 @@ it("lets @effect/tsgo and Effect idioms win over the strict rules that contradic
 
   expect(effectIdiomRules).toEqual({
     "eslint/func-names": ["error", "always", { generators: "never" }],
+    "eslint/max-classes-per-file": "off",
     "eslint/new-cap": ["error", { capIsNew: false }],
     "node/no-sync": ["error", { ignores: ["runSync"] }],
     "typescript/promise-function-async": "off",
@@ -294,10 +295,12 @@ it("lets @effect/tsgo and Effect idioms win over the strict rules that contradic
   expect(config.rules).toMatchObject(effectIdiomRules);
 });
 
-it("accepts Effect constructors, anonymous Effect.gen generators, and Effect.runSync under the installed oxlint", async () => {
+it("accepts Effect constructors, anonymous Effect.gen generators, Effect.runSync, and a module of Effect classes under the installed oxlint", async () => {
   const diagnostics = await lintWith(defineStrictOxlintConfig({ rules: effectIdiomRules }), {
     "src/program.ts": [
       'import { Effect, Schema } from "effect";',
+      'export class Account extends Schema.Class<Account>("Account")({ id: Schema.String }) {}',
+      'export class AccountNotFoundError extends Schema.TaggedError<AccountNotFoundError>()("AccountNotFoundError", {}) {}',
       "export const User = Schema.Struct({ id: Schema.String });",
       "export const program = Effect.gen(function* () {",
       "  return yield* Effect.succeed(User);",
@@ -310,6 +313,7 @@ it("accepts Effect constructors, anonymous Effect.gen generators, and Effect.run
   expect(codes).not.toContain("eslint(new-cap)");
   expect(codes).not.toContain("eslint(func-names)");
   expect(codes).not.toContain("node(no-sync)");
+  expect(codes).not.toContain("eslint(max-classes-per-file)");
 });
 
 it("still reports lowercase constructors, anonymous functions, and blocking fs calls under the Effect idiom rules", async () => {

@@ -2,7 +2,7 @@
 
 [![npm](https://img.shields.io/npm/v/@aurelienbbn/oxlint-plugin-effect)](https://www.npmjs.com/package/@aurelienbbn/oxlint-plugin-effect) [![downloads](https://img.shields.io/npm/dm/@aurelienbbn/oxlint-plugin-effect)](https://www.npmjs.com/package/@aurelienbbn/oxlint-plugin-effect) [![CI](https://github.com/aurelienbobenrieth/harness/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/aurelienbobenrieth/harness/actions/workflows/ci.yml) [![license](https://img.shields.io/npm/l/@aurelienbbn/oxlint-plugin-effect)](https://github.com/aurelienbobenrieth/harness/blob/main/packages/oxlint-plugin-effect/LICENSE) [![node](https://img.shields.io/node/v/@aurelienbbn/oxlint-plugin-effect)](https://github.com/aurelienbobenrieth/harness/blob/main/packages/oxlint-plugin-effect/package.json)
 
-**35 oxlint rules for Effect code: runtime boundaries, failure channels, concurrency, services, Schema. Only what `@effect/tsgo` doesn't own.**
+**36 oxlint rules for Effect code: runtime boundaries, failure channels, concurrency, services, Schema. Only what `@effect/tsgo` doesn't own.**
 
 ```sh
 pnpm add -D @aurelienbbn/oxlint-plugin-effect oxlint   # oxlint >=1.82.0 <2.0.0
@@ -58,6 +58,9 @@ const program = Effect.fail(new DomainError({ reason })); // ✅ tagged error
 const load = (id: string) => Effect.fn(`users.load.${id}`)(body); // ❌ no-dynamic-span-name
 const load = Effect.fn("users.load")(body); // ✅ ids go in span attributes
 
+class NotFound extends Schema.TaggedError<NotFound>()("Missing", {}) {} // ❌ tagged-error-name, twice
+class NotFoundError extends Schema.TaggedError<NotFoundError>()("NotFoundError", {}) {} // ✅ catchTag greps to the class
+
 Effect.tryPromise(() => fetch(url)); // ❌ no-untyped-try-promise-catch, require-abort-signal
 Effect.tryPromise({
   try: (signal) => fetch(url, { signal }),
@@ -67,20 +70,21 @@ Effect.tryPromise({
 
 - **Concurrency rules demand an explicit choice**; they don't claim omitted concurrency is unbounded.
 - **Same `allow` paths on `no-run-promise-in-runtime` and `no-unscoped-runtime-launch`:** shared boundary matching.
-- 🎨 `dependencies-first`, `padding-after-dependencies`, `no-switch`, `prefer-match`, `prefer-effect-array-helpers`, `schema-type-adjacent` are opinionated. **Suppress at the exceptional call site**, not in the shared config.
+- **`tagged-error-name` clashes with tsgo `deterministic-keys` only when tsgo's `keyPatterns` gain an `error` target**: that target wants a package-qualified tag (`pkg/file/NotFoundError`). Keep errors out of `keyPatterns`, or turn this rule off.
+- 🎨 `dependencies-first`, `padding-after-dependencies`, `no-switch`, `prefer-match`, `prefer-effect-array-helpers`, `schema-type-adjacent`, `tagged-error-name` are opinionated. **Suppress at the exceptional call site**, not in the shared config.
 
 <details>
-<summary>35 rules by job</summary>
+<summary>36 rules by job</summary>
 
-| Job                       | Rules                                                                                                                                                                                                                  |
-| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 🚨 failures (9)           | `no-catch-all-cause`, `no-effect-ordie`, `no-swallowed-failure`, `no-untyped-try-promise-catch`, `preserve-thrown-cause`, `no-unsafe-error-mapper`, `require-tagged-effect-fail`, `no-effect-promise`, `bounded-retry` |
-| 🚪 runtime boundaries (7) | `no-run-promise-in-runtime`, `no-unscoped-runtime-launch`, `prefer-run-main`, `no-fork-detach`, `no-managed-runtime-per-call`, `prefer-it-effect` (opt-in, needs `@effect/vitest`), `no-fake-timers-in-effect-tests`   |
-| 🧬 bodies & tracing (6)   | `no-unsafe-effect-body`, `require-named-effect-fn`, `effect-fn-name-matches-binding`, `no-dynamic-span-name`, `dependencies-first` 🎨, `padding-after-dependencies` 🎨                                                 |
-| 🧩 services & layers (4)  | `no-service-constructor-imports`, `no-service-dependency-parameters`, `no-service-option`, `no-static-service-forwarders`                                                                                              |
-| 📐 Schema & config (3)    | `no-schema-any`, `schema-type-adjacent` 🎨, `require-redacted-secret-config`                                                                                                                                           |
-| ⚡ concurrency (3)        | `require-all-concurrency`, `require-for-each-concurrency`, `require-abort-signal`                                                                                                                                      |
-| 🎨 style (3)              | `no-switch`, `prefer-match`, `prefer-effect-array-helpers`                                                                                                                                                             |
+| Job                       | Rules                                                                                                                                                                                                                                          |
+| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 🚨 failures (10)          | `no-catch-all-cause`, `no-effect-ordie`, `no-swallowed-failure`, `no-untyped-try-promise-catch`, `preserve-thrown-cause`, `no-unsafe-error-mapper`, `require-tagged-effect-fail`, `no-effect-promise`, `bounded-retry`, `tagged-error-name` 🎨 |
+| 🚪 runtime boundaries (7) | `no-run-promise-in-runtime`, `no-unscoped-runtime-launch`, `prefer-run-main`, `no-fork-detach`, `no-managed-runtime-per-call`, `prefer-it-effect` (opt-in, needs `@effect/vitest`), `no-fake-timers-in-effect-tests`                           |
+| 🧬 bodies & tracing (6)   | `no-unsafe-effect-body`, `require-named-effect-fn`, `effect-fn-name-matches-binding`, `no-dynamic-span-name`, `dependencies-first` 🎨, `padding-after-dependencies` 🎨                                                                         |
+| 🧩 services & layers (4)  | `no-service-constructor-imports`, `no-service-dependency-parameters`, `no-service-option`, `no-static-service-forwarders`                                                                                                                      |
+| 📐 Schema & config (3)    | `no-schema-any`, `schema-type-adjacent` 🎨, `require-redacted-secret-config`                                                                                                                                                                   |
+| ⚡ concurrency (3)        | `require-all-concurrency`, `require-for-each-concurrency`, `require-abort-signal`                                                                                                                                                              |
+| 🎨 style (3)              | `no-switch`, `prefer-match`, `prefer-effect-array-helpers`                                                                                                                                                                                     |
 
 </details>
 
@@ -110,6 +114,7 @@ Effect.tryPromise({
 | `effect-fn-name-matches-binding`   | `ignorePattern`         | none                                                                                                        |
 | `no-service-constructor-imports`   | `serviceModules`        | none (project-local sources always count)                                                                   |
 | `no-service-dependency-parameters` | `serviceTypeNames`      | `[]`                                                                                                        |
+| `tagged-error-name`                | `suffix`                | `"Error"`                                                                                                   |
 
 </details>
 
@@ -202,6 +207,7 @@ Generated from package exports by `pnpm catalog`. Rule-specific options and limi
 | `require-redacted-secret-config`   | Require Config.Redacted instead of Config.String or Config.NonEmptyString for configuration keys whose name looks like a secret.                                                                             |
 | `require-tagged-effect-fail`       | Require tagged error values for Effect.fail and Effect.failSync, rejecting literals, native Errors, and same-file untagged Error subclasses.                                                                 |
 | `schema-type-adjacent`             | Keep a Schema's matching type alias adjacent, allowing whitespace and JSDoc.                                                                                                                                 |
+| `tagged-error-name`                | Require classes extending Schema.TaggedError, Schema.TaggedErrorClass, or Data.TaggedError to end with the error suffix and to use their class name as the literal _tag.                                     |
 
 ### Credited concepts
 

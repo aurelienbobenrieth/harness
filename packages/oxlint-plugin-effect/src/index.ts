@@ -24,6 +24,7 @@ import { requireForEachConcurrency } from "./rules/require-for-each-concurrency/
 import { requireNamedEffectFn } from "./rules/require-named-effect-fn/rule.js";
 import { requireTaggedEffectFail } from "./rules/require-tagged-effect-fail/rule.js";
 import { schemaTypeAdjacent } from "./rules/schema-type-adjacent/rule.js";
+import { taggedErrorName } from "./rules/tagged-error-name/rule.js";
 import { boundedRetry } from "./rules/bounded-retry/rule.js";
 import { effectFnNameMatchesBinding } from "./rules/effect-fn-name-matches-binding/rule.js";
 import { noEffectPromise } from "./rules/no-effect-promise/rule.js";
@@ -65,6 +66,7 @@ export default eslintCompatPlugin({
     "require-named-effect-fn": requireNamedEffectFn,
     "require-tagged-effect-fail": requireTaggedEffectFail,
     "schema-type-adjacent": schemaTypeAdjacent,
+    "tagged-error-name": taggedErrorName,
     "bounded-retry": boundedRetry,
     "effect-fn-name-matches-binding": effectFnNameMatchesBinding,
     "no-effect-promise": noEffectPromise,

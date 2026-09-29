@@ -243,12 +243,13 @@ Not running `@aurelienbbn/oxlint-plugin-effect`? The four `off` rules lose their
 
 `effectIdiomRules`: strict-preset rules that contradict `@effect/tsgo` or an idiom Effect's API requires. The Effect side wins; each rule still reports outside that idiom.
 
-| Strict rule                         | Setting                | Why                                                                  |
-| ----------------------------------- | ---------------------- | -------------------------------------------------------------------- |
-| `typescript/promise-function-async` | `off`                  | its autofix adds `async`, which `effecttsgo/async-function` reports  |
-| `eslint/new-cap`                    | `capIsNew: false`      | Effect constructors are PascalCase functions: `Schema.Struct(…)`     |
-| `eslint/func-names`                 | `generators: "never"`  | `Effect.gen(function* () { … })` takes an anonymous generator        |
-| `node/no-sync`                      | `ignores: ["runSync"]` | `Effect.runSync` runs an Effect at an edge; `fs.*Sync` still reports |
+| Strict rule                         | Setting                | Why                                                                                          |
+| ----------------------------------- | ---------------------- | -------------------------------------------------------------------------------------------- |
+| `typescript/promise-function-async` | `off`                  | its autofix adds `async`, which `effecttsgo/async-function` reports                          |
+| `eslint/new-cap`                    | `capIsNew: false`      | Effect constructors are PascalCase functions: `Schema.Struct(…)`                             |
+| `eslint/func-names`                 | `generators: "never"`  | `Effect.gen(function* () { … })` takes an anonymous generator                                |
+| `node/no-sync`                      | `ignores: ["runSync"]` | `Effect.runSync` runs an Effect at an edge; `fs.*Sync` still reports                         |
+| `eslint/max-classes-per-file`       | `off`                  | tagged errors, `Schema.Class` models and services are classes; a domain module holds several |
 
 Credit: preset shape, the `effecttsgo` plugin name, and every diagnostic name come from [Effect-TS/tsgo](https://github.com/Effect-TS/tsgo) (MIT).
 
