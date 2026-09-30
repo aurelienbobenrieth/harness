@@ -76,7 +76,7 @@ Node 24.11.0       ●       ●     floor: build + both registry profiles      
 Local runs don't prove remote ones. **Both release jobs reject a SHA that differs from the workflow revision or checkout**; inputs via environment variables, time-bounded jobs, serialized runs.
 
 > [!IMPORTANT]
-> **Version PRs trigger CI on their own only once the release App is set up.** `release.yml` writes the version PR with the App's token when `RELEASE_APP_CLIENT_ID` and `RELEASE_APP_PRIVATE_KEY` exist, and falls back to `GITHUB_TOKEN` otherwise. Events from `GITHUB_TOKEN` start no workflows ([why](https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/trigger-a-workflow)): until the App exists, run **CI** manually on the version branch and require the result before merge.
+> **Version PRs trigger CI on their own: the release App `aurelienbbn-harness-release` writes them.** `release.yml` uses the App's token when `RELEASE_APP_CLIENT_ID` and `RELEASE_APP_PRIVATE_KEY` exist, and falls back to `GITHUB_TOKEN` otherwise. Events from `GITHUB_TOKEN` start no workflows ([why](https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/trigger-a-workflow)): if the secrets are ever removed, run **CI** manually on the version branch and require the result before merge.
 
 <details>
 <summary>One-time release App setup</summary>
@@ -93,27 +93,27 @@ The token is minted after `pnpm release:check`, scoped to contents and pull-requ
 
 ## Repository settings: verified vs not configured
 
-**Canonical repo `aurelienbobenrieth/harness`, npm scope `@aurelienbbn`**; metadata and changelog links must match. ✅ security reporting, alerts, Dependabot, secret scanning, **Validate**-protected main · ⚠️ 0 required PR approvals · ✅ `npm` environment needs your approval · ✅ npm trusted publishing proven on 9 packages · ⚠️ 12 never published through it yet · ❌ release App not configured yet.
+**Canonical repo `aurelienbobenrieth/harness`, npm scope `@aurelienbbn`**; metadata and changelog links must match. ✅ security reporting, alerts, Dependabot, secret scanning, **Validate**-protected main · ⚠️ 0 required PR approvals · ✅ `npm` environment needs your approval · ✅ npm trusted publishing proven on 9 packages · ⚠️ 12 never published through it yet · ✅ release App installed.
 
 <details>
 <summary>Settings evidence</summary>
 
-| Setting                                      | State             | Evidence                                                                  |
-| -------------------------------------------- | ----------------- | ------------------------------------------------------------------------- |
-| canonical repository                         | ✅                | GitHub, 2026-09-05                                                        |
-| private vulnerability reporting              | ✅ enabled        | GitHub API, 2026-09-30                                                    |
-| vulnerability alerts                         | ✅ enabled        | GitHub API, 2026-09-30                                                    |
-| Dependabot security updates                  | ✅ enabled        | GitHub API, 2026-09-30                                                    |
-| secret scanning + push protection            | ✅ enabled        | GitHub API, 2026-09-30                                                    |
-| main protection: fresh **Validate** required | ✅                | GitHub API, 2026-09-30                                                    |
-| main protection includes administrators      | ✅                | GitHub API, 2026-09-30                                                    |
-| required approvals                           | ⚠️ 0              | one collaborator, also the sole CODEOWNER                                 |
-| npm trusted publishing (OIDC)                | ✅ 9 of 21        | npm lists GitHub Actions as publisher of their latest version, 2026-09-30 |
-| trusted publisher on the other 12            | ⚠️ unverified     | every release predates OIDC; needs npmjs.com access                       |
-| npm token secrets (repo and `npm` env)       | ✅ none           | GitHub API, 2026-09-30                                                    |
-| release App secrets for version PRs          | ❌ not configured | GitHub API, 2026-09-30; needs the App, see above                          |
-| `npm` environment: required reviewer         | ✅ owner          | GitHub API, 2026-09-30                                                    |
-| `npm` environment: protected branches only   | ✅                | GitHub API, 2026-09-30                                                    |
+| Setting                                      | State         | Evidence                                                                  |
+| -------------------------------------------- | ------------- | ------------------------------------------------------------------------- |
+| canonical repository                         | ✅            | GitHub, 2026-09-05                                                        |
+| private vulnerability reporting              | ✅ enabled    | GitHub API, 2026-09-30                                                    |
+| vulnerability alerts                         | ✅ enabled    | GitHub API, 2026-09-30                                                    |
+| Dependabot security updates                  | ✅ enabled    | GitHub API, 2026-09-30                                                    |
+| secret scanning + push protection            | ✅ enabled    | GitHub API, 2026-09-30                                                    |
+| main protection: fresh **Validate** required | ✅            | GitHub API, 2026-09-30                                                    |
+| main protection includes administrators      | ✅            | GitHub API, 2026-09-30                                                    |
+| required approvals                           | ⚠️ 0          | one collaborator, also the sole CODEOWNER                                 |
+| npm trusted publishing (OIDC)                | ✅ 9 of 21    | npm lists GitHub Actions as publisher of their latest version, 2026-09-30 |
+| trusted publisher on the other 12            | ⚠️ unverified | every release predates OIDC; needs npmjs.com access                       |
+| npm token secrets (repo and `npm` env)       | ✅ none       | GitHub API, 2026-09-30                                                    |
+| release App secrets for version PRs          | ✅ configured | GitHub API, 2026-09-30; App installed on this repository only             |
+| `npm` environment: required reviewer         | ✅ owner      | GitHub API, 2026-09-30                                                    |
+| `npm` environment: protected branches only   | ✅            | GitHub API, 2026-09-30                                                    |
 
 - Zero PR approvals is deliberate: with one collaborator, a required independent approval blocks routine maintenance. The `npm` environment approval gates publishing instead. Revisit before adding maintainers.
 - CODEOWNERS records ownership; it adds no independent reviewer.
