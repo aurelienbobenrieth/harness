@@ -1,5 +1,11 @@
 # @aurelienbbn/oxlint-plugin-effect
 
+## 0.6.0
+
+### Minor Changes
+
+- [#43](https://github.com/aurelienbobenrieth/harness/pull/43) [`2c81ff6`](https://github.com/aurelienbobenrieth/harness/commit/2c81ff6acd1b2a4a3b2913924073415ff340eb9c) Thanks [@aurelienbobenrieth](https://github.com/aurelienbobenrieth)! - Adds two opt-in naming rules. `effect/schema-literal-case` keeps the string values of `Schema.Literals([...])` in one case (`case`: `"snake"` by default, or `"kebab"`, `"camel"`, `"pascal"`). `effect/telemetry-name-format` requires literal span names (`Effect.fn`, `withSpan` and the other span constructors) and `Rpc.make` tags in lowercase dotted snake_case with at least two segments (`orders.sync`), and log and span annotation keys in lowercase dotted snake_case (options `pattern`, `keyPattern`, `minSegments`). It conflicts with `effect/effect-fn-name-matches-binding`: enable one or the other. Neither rule autofixes.
+
 ## 0.5.0
 
 ### Minor Changes
