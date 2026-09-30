@@ -27,8 +27,10 @@ import { requireAllConcurrency } from "./rules/require-all-concurrency/rule.js";
 import { requireForEachConcurrency } from "./rules/require-for-each-concurrency/rule.js";
 import { requireNamedEffectFn } from "./rules/require-named-effect-fn/rule.js";
 import { requireTaggedEffectFail } from "./rules/require-tagged-effect-fail/rule.js";
+import { schemaLiteralCase } from "./rules/schema-literal-case/rule.js";
 import { schemaTypeAdjacent } from "./rules/schema-type-adjacent/rule.js";
 import { taggedErrorName } from "./rules/tagged-error-name/rule.js";
+import { telemetryNameFormat } from "./rules/telemetry-name-format/rule.js";
 import { boundedRetry } from "./rules/bounded-retry/rule.js";
 import { effectFnNameMatchesBinding } from "./rules/effect-fn-name-matches-binding/rule.js";
 import { noEffectPromise } from "./rules/no-effect-promise/rule.js";
@@ -73,8 +75,10 @@ export default eslintCompatPlugin({
     "require-for-each-concurrency": requireForEachConcurrency,
     "require-named-effect-fn": requireNamedEffectFn,
     "require-tagged-effect-fail": requireTaggedEffectFail,
+    "schema-literal-case": schemaLiteralCase,
     "schema-type-adjacent": schemaTypeAdjacent,
     "tagged-error-name": taggedErrorName,
+    "telemetry-name-format": telemetryNameFormat,
     "bounded-retry": boundedRetry,
     "effect-fn-name-matches-binding": effectFnNameMatchesBinding,
     "no-effect-promise": noEffectPromise,
