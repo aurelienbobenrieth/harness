@@ -1,5 +1,11 @@
 # @aurelienbbn/agentlint-plugin-core
 
+## 0.1.3
+
+### Patch Changes
+
+- [#45](https://github.com/aurelienbobenrieth/harness/pull/45) [`d88074c`](https://github.com/aurelienbobenrieth/harness/commit/d88074c85ff18543527be6d1fd7d798c4b26b7fb) Thanks [@aurelienbobenrieth](https://github.com/aurelienbobenrieth)! - docs: the README states the agentlint peer range the package declares, `>=0.3.0 <0.5.0`.
+
 ## 0.1.2
 
 ### Patch Changes
