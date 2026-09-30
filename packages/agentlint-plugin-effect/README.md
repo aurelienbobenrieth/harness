@@ -5,7 +5,7 @@
 **3 agentlint reviews for Effect: Schema-owned contracts, bounded retries, layers built once.**
 
 > [!WARNING]
-> Requires the engine `@aurelienbbn/agentlint` `>=0.3.0 <0.4.0` as a peer. [Evidence](../../docs/compatibility.md#agentlint-engine).
+> Requires the engine `@aurelienbbn/agentlint` `>=0.3.0 <0.5.0` as a peer. [Evidence](../../docs/compatibility.md#agentlint-engine).
 
 ## Quick start
 

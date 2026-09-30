@@ -54,7 +54,8 @@ Reports commit, dirty state, candidate versions, draft exclusions, blockers. **A
 ## Three workflows, one publishes
 
 ```text
-ci.yml       CI               PR · push to main · manual  ─▶ 8 legs ─▶ Validate
+ci.yml       CI               push to main · manual       ─▶ 8 legs ─▶ Validate
+                               PR                          ─▶ 2 legs, affected packages ─▶ Validate
 publish.yml  Prepare and      manual, main only           ─▶ reruns every gate on a reviewed SHA, prints plan,
              publish release                              ─▶ then, after npm-environment approval, publishes
 release.yml  Release          push to main                ─▶ release:check, then Changesets version PR
@@ -62,38 +63,57 @@ release.yml  Release          push to main                ─▶ release:check, 
 
 ```text
                  Linux  Windows
-Node 22            ●       ●     full suite: check, audit, test:package, both profiles
-Node 24            ●       ●     full suite
-Node 22.19.0       ●       ●     floor: build + both registry profiles
-Node 24.11.0       ●       ●     floor: build + both registry profiles
-                   └───────┴──▶  Validate: passes only if all 8 pass (existing branch-protection name)
+Node 22            ●       ●     full suite: check, audit, test:package, both profiles     push, manual
+Node 24            ●       ●     full suite                                                 every event
+Node 22.19.0       ●       ●     floor: build + both registry profiles                     push, manual
+Node 24.11.0       ●       ●     floor: build + both registry profiles                     push, manual
+                   └───────┴──▶  Validate: passes only if every leg the event runs passes (existing
+                                 branch-protection name); floors may be skipped only on a PR
 ```
+
+**Pull requests trade coverage for speed; main catches the rest.** A PR runs Node 24 on both systems, and `pnpm check` narrows typecheck and unit tests to the packages changed since the merge base, plus their dependents (`HARNESS_AFFECTED_BASE`). A change outside `packages/` and `internal/`, other than docs, skills, changesets or root Markdown, runs the full suite. Lint, format, catalog, policy checks, audit, `test:package` and both registry profiles always cover the whole repo. A Node 22-only or runtime-floor break, or an undeclared cross-package break, surfaces on the push to main: **check main's CI before running the publish workflow.**
 
 Local runs don't prove remote ones. **Both release jobs reject a SHA that differs from the workflow revision or checkout**; inputs via environment variables, time-bounded jobs, serialized runs.
 
 > [!IMPORTANT]
-> **Version PRs don't trigger CI on their own.** Opened with `GITHUB_TOKEN`, they get approval-required runs, and their pushes start no push workflows. Approve those runs or run **CI** manually on the version branch, and require the result before merge. See [triggering workflows with GITHUB_TOKEN](https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/trigger-a-workflow).
+> **Version PRs trigger CI on their own only once the release App is set up.** `release.yml` writes the version PR with the App's token when `RELEASE_APP_CLIENT_ID` and `RELEASE_APP_PRIVATE_KEY` exist, and falls back to `GITHUB_TOKEN` otherwise. Events from `GITHUB_TOKEN` start no workflows ([why](https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/trigger-a-workflow)): until the App exists, run **CI** manually on the version branch and require the result before merge.
+
+<details>
+<summary>One-time release App setup</summary>
+
+1. Create a GitHub App under your account (Settings → Developer settings → GitHub Apps → New). No webhook, no callback URL. Repository permissions: **Contents: read and write**, **Pull requests: read and write**; metadata read is implied. Installable only on this account.
+2. Install it on `aurelienbobenrieth/harness` only.
+3. Copy its **Client ID** and generate a **private key** (`.pem`).
+4. Add repository secrets `RELEASE_APP_CLIENT_ID` (the Client ID) and `RELEASE_APP_PRIVATE_KEY` (the whole `.pem`).
+5. Merge a change with a changeset: the version PR is authored by the App and its **Validate** check starts without approval.
+
+The token is minted after `pnpm release:check`, scoped to contents and pull-requests write, and revoked when the job ends. It never reaches npm; publishing still needs the `npm` environment approval.
+
+</details>
 
 ## Repository settings: verified vs not configured
 
-**Canonical repo `aurelienbobenrieth/harness`, npm scope `@aurelienbbn`**; metadata and changelog links must match. ✅ security reporting, alerts, Dependabot, secret scanning, **Validate**-protected main · ⚠️ 0 required PR approvals · ✅ `npm` environment needs your approval · ❌ npm trusted publishers not configured yet.
+**Canonical repo `aurelienbobenrieth/harness`, npm scope `@aurelienbbn`**; metadata and changelog links must match. ✅ security reporting, alerts, Dependabot, secret scanning, **Validate**-protected main · ⚠️ 0 required PR approvals · ✅ `npm` environment needs your approval · ✅ npm trusted publishing proven on 9 packages · ⚠️ 12 never published through it yet · ❌ release App not configured yet.
 
 <details>
 <summary>Settings evidence</summary>
 
-| Setting                                      | State             | Evidence                                  |
-| -------------------------------------------- | ----------------- | ----------------------------------------- |
-| canonical repository                         | ✅                | GitHub, 2026-09-05                        |
-| private vulnerability reporting              | ✅ enabled        | GitHub API, 2026-09-21                    |
-| vulnerability alerts                         | ✅ enabled        | GitHub API, 2026-09-21                    |
-| Dependabot security updates                  | ✅ enabled        | GitHub API, 2026-09-21                    |
-| secret scanning + push protection            | ✅ unchanged      | previously verified                       |
-| main protection: fresh **Validate** required | ✅                | GitHub API, 2026-09-21                    |
-| main protection includes administrators      | ✅                | GitHub API, 2026-09-21                    |
-| required approvals                           | ⚠️ 0              | one collaborator, also the sole CODEOWNER |
-| npm trusted publishers (21 candidates)       | ❌ not configured | needs npmjs.com access                    |
-| `npm` environment: required reviewer         | ✅ owner          | GitHub API, 2026-09-24                    |
-| `npm` environment: protected branches only   | ✅                | GitHub API, 2026-09-24                    |
+| Setting                                      | State             | Evidence                                                                  |
+| -------------------------------------------- | ----------------- | ------------------------------------------------------------------------- |
+| canonical repository                         | ✅                | GitHub, 2026-09-05                                                        |
+| private vulnerability reporting              | ✅ enabled        | GitHub API, 2026-09-30                                                    |
+| vulnerability alerts                         | ✅ enabled        | GitHub API, 2026-09-30                                                    |
+| Dependabot security updates                  | ✅ enabled        | GitHub API, 2026-09-30                                                    |
+| secret scanning + push protection            | ✅ enabled        | GitHub API, 2026-09-30                                                    |
+| main protection: fresh **Validate** required | ✅                | GitHub API, 2026-09-30                                                    |
+| main protection includes administrators      | ✅                | GitHub API, 2026-09-30                                                    |
+| required approvals                           | ⚠️ 0              | one collaborator, also the sole CODEOWNER                                 |
+| npm trusted publishing (OIDC)                | ✅ 9 of 21        | npm lists GitHub Actions as publisher of their latest version, 2026-09-30 |
+| trusted publisher on the other 12            | ⚠️ unverified     | every release predates OIDC; needs npmjs.com access                       |
+| npm token secrets (repo and `npm` env)       | ✅ none           | GitHub API, 2026-09-30                                                    |
+| release App secrets for version PRs          | ❌ not configured | GitHub API, 2026-09-30; needs the App, see above                          |
+| `npm` environment: required reviewer         | ✅ owner          | GitHub API, 2026-09-30                                                    |
+| `npm` environment: protected branches only   | ✅                | GitHub API, 2026-09-30                                                    |
 
 - Zero PR approvals is deliberate: with one collaborator, a required independent approval blocks routine maintenance. The `npm` environment approval gates publishing instead. Revisit before adding maintainers.
 - CODEOWNERS records ownership; it adds no independent reviewer.
@@ -101,10 +121,15 @@ Local runs don't prove remote ones. **Both release jobs reject a SHA that differ
 
 </details>
 
-## Before the first publish
+## Trusted publishing works; 12 packages haven't used it yet
 
-- [ ] On npmjs.com, add a trusted publisher to each candidate: repository `aurelienbobenrieth/harness`, workflow `publish.yml`, environment `npm`.
-- [ ] If npm won't attach a trusted publisher to a package that doesn't exist yet, publish once locally: `npm login`, merge the version PR, then `node scripts/publish.mjs` on a clean `main` (no provenance locally).
+**[Publish run 36713205571](https://github.com/aurelienbobenrieth/harness/actions/runs/36713205571) (2026-09-30) published 7 packages over OIDC with provenance, with no npm token in the repo or the `npm` environment.** `oxlint-config` and `oxfmt-config` were already publishing the same way.
+
+- Latest version published over OIDC: the 6 `agentlint-plugin-*`, `oxlint-plugin-effect`, `oxlint-config`, `oxfmt-config`.
+- Every release published locally, trusted publisher unverified: the 4 `conformance-*` and `oxlint-plugin-alchemy`, `-cloudflare`, `-core`, `-drizzle`, `-shopify-app`, `-tanstack-query`, `-type-evidence`, `-xstate`.
+
+- [ ] Before a release that includes one of the 12, confirm on npmjs.com that it has a trusted publisher: repository `aurelienbobenrieth/harness`, workflow `publish.yml`, environment `npm`. Without one, the workflow has no npm credential for it.
+- [ ] A new package that doesn't exist on npm yet: if npm won't attach a trusted publisher to it, publish it once locally (`npm login`, merge the version PR, then `node scripts/publish.mjs` on a clean `main`, no provenance locally), then add the trusted publisher.
 
 `scripts/publish.mjs` publishes only candidates, skips versions already on npm (safe to rerun), packs with pnpm, and publishes with `--access public` plus `--provenance` in CI. **No npm token is stored anywhere.**
 
@@ -115,16 +140,17 @@ Local runs don't prove remote ones. **Both release jobs reject a SHA that differ
 <details>
 <summary>Pins and rejected drift</summary>
 
-Resolved from each action's canonical repository on 2026-09-25, annotated tags peeled to commits:
+Resolved from each action's canonical repository on 2026-09-25 (create-github-app-token on 2026-09-30), annotated tags peeled to commits:
 
-| Action             | Release | Commit                                     |
-| ------------------ | ------- | ------------------------------------------ |
-| actions/checkout   | v7.0.1  | `3d3c42e5aac5ba805825da76410c181273ba90b1` |
-| actions/setup-node | v7.0.0  | `820762786026740c76f36085b0efc47a31fe5020` |
-| pnpm/action-setup  | v6.1.0  | `ea17c68df8912ef543352723c149a84f56e3d413` |
-| changesets/action  | v2.1.2  | `ae32849d5ba541f9ae29e40e22a623bc13562f51` |
+| Action                          | Release | Commit                                     |
+| ------------------------------- | ------- | ------------------------------------------ |
+| actions/checkout                | v7.0.1  | `3d3c42e5aac5ba805825da76410c181273ba90b1` |
+| actions/setup-node              | v7.0.0  | `820762786026740c76f36085b0efc47a31fe5020` |
+| pnpm/action-setup               | v6.1.0  | `ea17c68df8912ef543352723c149a84f56e3d413` |
+| changesets/action               | v2.1.2  | `ae32849d5ba541f9ae29e40e22a623bc13562f51` |
+| actions/create-github-app-token | v3.2.0  | `bcd2ba49218906704ab6c1aa796996da409d3eb1` |
 
-Rejected: mutable action references · unexpected token permissions (`id-token: write` only on the publish job) · a publish job without the `npm` environment, preparation, or SHA verification · publish commands outside `scripts/publish.mjs` · persisted checkout credentials outside the version writer · stored release secrets · skipped aggregate checks · ignored validation failures, including via expressions · excluded runtime matrix legs · runtime setup not using the matrix · a Changesets publishing input · the version PR writer invoking Changesets before its release-policy gate.
+Rejected: mutable action references · unexpected token permissions (`id-token: write` only on the publish job) · a publish job without the `npm` environment, preparation, or SHA verification · publish commands outside `scripts/publish.mjs` · persisted checkout credentials outside the version writer · stored secrets other than the release App credentials, which only its token step reads · an App token minted before the release-policy gate or beyond contents and pull-requests write · skipped aggregate checks · runtime floors skipped outside pull requests · affected-only validation outside pull requests or in release preparation · ignored validation failures, including via expressions · excluded runtime matrix legs · runtime setup not using the matrix · a Changesets publishing input · the version PR writer invoking Changesets before its release-policy gate.
 
 GitHub guidance: [immutable references and least privilege](https://docs.github.com/en/actions/reference/security/secure-use), [workflow failure controls](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#jobsjob_idstepscontinue-on-error).
 

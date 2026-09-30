@@ -448,10 +448,85 @@ for (const [name, mutate, expected] of [
     "version PR written before policy validation",
     (workflows) => {
       const steps = workflows["release.yml"].jobs.version.steps;
-      const index = steps.findIndex((step) => step.run === "pnpm release:check");
-      [steps[index], steps[index + 1]] = [steps[index + 1], steps[index]];
+      const check = steps.findIndex((step) => step.run === "pnpm release:check");
+      const writer = steps.findIndex((step) => step.uses?.startsWith("changesets/action@"));
+      [steps[check], steps[writer]] = [steps[writer], steps[check]];
     },
     /before updating the version PR/,
+  ],
+  [
+    "release App credentials outside the token step",
+    (workflows) => {
+      workflows["release.yml"].jobs.version.steps.find((step) => step.run === "pnpm install --frozen-lockfile").env = {
+        KEY: "${{ secrets.RELEASE_APP_PRIVATE_KEY }}",
+      };
+    },
+    /stored/,
+  ],
+  [
+    "release App token minted before release validation",
+    (workflows) => {
+      const steps = workflows["release.yml"].jobs.version.steps;
+      const check = steps.findIndex((step) => step.run === "pnpm release:check");
+      const token = steps.findIndex((step) => step.id === "app-token");
+      [steps[check], steps[token]] = [steps[token], steps[check]];
+    },
+    /Mint the release App token after release validation/,
+  ],
+  [
+    "release App token with broader permissions",
+    (workflows) => {
+      workflows["release.yml"].jobs.version.steps.find((step) => step.id === "app-token").with["permission-workflows"] =
+        "write";
+    },
+    /release App token: grant only/,
+  ],
+  [
+    "version PR that ignores the release App token",
+    (workflows) => {
+      workflows["release.yml"].jobs.version.steps.find((step) => step.uses?.startsWith("changesets/action@")).with[
+        "github-token"
+      ] = "${{ github.token }}";
+    },
+    /release App token when configured/,
+  ],
+  [
+    "Node 22 skipped outside pull requests",
+    (workflows) => {
+      workflows["ci.yml"].jobs.validate.strategy.matrix.node = [24];
+    },
+    /every advertised runtime/,
+  ],
+  [
+    "runtime floors skipped outside pull requests",
+    (workflows) => {
+      workflows["ci.yml"].jobs["runtime-floors"].if = "false";
+    },
+    /Skip runtime floors only on pull requests/,
+  ],
+  [
+    "a conditional validation matrix",
+    (workflows) => {
+      workflows["ci.yml"].jobs.validate.if = "github.event_name == 'push'";
+    },
+    /Run validation on every event/,
+  ],
+  [
+    "affected-only validation outside pull requests",
+    (workflows) => {
+      workflows["ci.yml"].jobs.validate.steps.find((step) => step.run === "pnpm run check").env.HARNESS_AFFECTED_BASE =
+        "origin/main";
+    },
+    /Narrow validation only on pull requests/,
+  ],
+  [
+    "affected-only release preparation",
+    (workflows) => {
+      workflows["publish.yml"].jobs.prepare.steps.find((step) => step.run === "pnpm check").env = {
+        HARNESS_AFFECTED_BASE: "origin/main",
+      };
+    },
+    /full validation suite/,
   ],
   [
     "version writer on contribution branches",

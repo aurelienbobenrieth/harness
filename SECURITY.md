@@ -15,4 +15,4 @@ confirm receipt ─▶ reproduce ─▶ agree disclosure window ─▶ advisory 
 
 **Covered:** latest source, [release policy](policy/release.json) candidates. **Not:** drafts, historical branches (no backports), a full audit of your app (checks cover only documented contracts).
 
-Private vulnerability reporting, alerts, Dependabot security updates: verified 2026-09-21 ([release readiness](docs/release-readiness.md)).
+Private vulnerability reporting, alerts, Dependabot security updates: verified 2026-09-30 ([release readiness](docs/release-readiness.md)).

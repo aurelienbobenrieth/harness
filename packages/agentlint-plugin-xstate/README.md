@@ -5,7 +5,7 @@
 **5 agentlint reviews for XState v5: every actor has an owner, every failure a path, every persisted snapshot a version.**
 
 > [!WARNING]
-> Requires the engine `@aurelienbbn/agentlint` `>=0.3.0 <0.4.0` as a peer. [Evidence](../../docs/compatibility.md#agentlint-engine).
+> Requires the engine `@aurelienbbn/agentlint` `>=0.3.0 <0.5.0` as a peer. [Evidence](../../docs/compatibility.md#agentlint-engine).
 
 ```text
 oxlint-plugin-xstate      mechanical, setup-aware checks

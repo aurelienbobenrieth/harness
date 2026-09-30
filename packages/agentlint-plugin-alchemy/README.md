@@ -5,7 +5,7 @@
 **6 agentlint reviews for Alchemy v2 stacks: no silent replacement, no silent data deletion, no silent takeover.**
 
 > [!WARNING]
-> Requires the engine `@aurelienbbn/agentlint` `>=0.3.0 <0.4.0` as a peer. [Evidence](../../docs/compatibility.md#agentlint-engine).
+> Requires the engine `@aurelienbbn/agentlint` `>=0.3.0 <0.5.0` as a peer. [Evidence](../../docs/compatibility.md#agentlint-engine).
 
 > [!NOTE]
 > Checked against `alchemy@2.0.0-beta.79`. Release candidate: no consumer has calibrated these rules yet. Alchemy is in beta; replace triggers and defaults can move between betas.
