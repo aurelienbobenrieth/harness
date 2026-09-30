@@ -12,6 +12,32 @@ function requiredRun(job, command, owner) {
   );
 }
 
+/** Pull requests validate Node 24 only; every other event validates both supported majors. */
+const pullRequestNodes = "${{ fromJSON(github.event_name == 'pull_request' && '[24]' || '[22, 24]') }}";
+/** Pull requests narrow typecheck and unit tests to changed packages; every other event runs the full suite. */
+const pullRequestAffectedBase =
+  "${{ github.event_name == 'pull_request' && format('origin/{0}', github.base_ref) || '' }}";
+const aggregate =
+  'test "$RESULT" = success && { test "$FLOORS" = success || { test "$EVENT" = pull_request && test "$FLOORS" = skipped; }; }';
+const releaseAppConfigured = "${{ secrets.RELEASE_APP_CLIENT_ID != '' && secrets.RELEASE_APP_PRIVATE_KEY != '' }}";
+const releaseAppCredentials = {
+  "client-id": "${{ secrets.RELEASE_APP_CLIENT_ID }}",
+  "private-key": "${{ secrets.RELEASE_APP_PRIVATE_KEY }}",
+};
+
+/** Removes the version PR writer's App credentials from a copy, only where expected and verbatim. */
+function withoutReleaseAppCredentials(file, workflow) {
+  if (file !== "release.yml") return workflow;
+  const copy = structuredClone(workflow);
+  const job = copy.jobs?.version;
+  if (job?.env?.RELEASE_APP_CONFIGURED === releaseAppConfigured) delete job.env.RELEASE_APP_CONFIGURED;
+  for (const step of job?.steps ?? [])
+    if (step.uses?.startsWith("actions/create-github-app-token@"))
+      for (const [input, value] of Object.entries(releaseAppCredentials))
+        if (step.with?.[input] === value) delete step.with[input];
+  return copy;
+}
+
 function requiredRuntimeMatrix(job, versions, owner) {
   assert.deepEqual(
     job.strategy.matrix,
@@ -182,9 +208,9 @@ export function validateWorkflowPolicy(workflows) {
       }
     }
     assert.doesNotMatch(
-      JSON.stringify(workflow),
+      JSON.stringify(withoutReleaseAppCredentials(file, workflow)),
       /secrets\.|NODE_AUTH_TOKEN|NPM_TOKEN/,
-      `${file}: preparation does not consume stored release credentials.`,
+      `${file}: no stored release credentials; only the version PR's App token step reads stored secrets.`,
     );
   }
   const prepare = workflows["publish.yml"];
@@ -198,6 +224,11 @@ export function validateWorkflowPolicy(workflows) {
   );
   assert.equal(prepare.concurrency["cancel-in-progress"], false, "Do not interrupt release preparation.");
   requiredRun(prepare.jobs.prepare, "node scripts/release.mjs --verify-ref", "release preparation");
+  assert.doesNotMatch(
+    JSON.stringify(prepare),
+    /HARNESS_AFFECTED_BASE/,
+    "Release preparation runs the full validation suite, never an affected subset.",
+  );
   const verifyIndex = prepare.jobs.prepare.steps.findIndex(
     (step) => step.run === "node scripts/release.mjs --verify-ref",
   );
@@ -247,18 +278,29 @@ export function validateWorkflowPolicy(workflows) {
     "Aggregate the runtime floor result.",
   );
   assert.equal(
-    ci.jobs.result.steps[0].run,
-    'test "$RESULT" = success && test "$FLOORS" = success',
-    "A failed or cancelled matrix must fail the aggregate.",
+    ci.jobs.result.steps[0].env.EVENT,
+    "${{ github.event_name }}",
+    "Aggregate against the triggering event.",
   );
-  requiredRun(ci.jobs.result, 'test "$RESULT" = success && test "$FLOORS" = success', "aggregate status");
+  assert.equal(
+    ci.jobs.result.steps[0].run,
+    aggregate,
+    "A failed or cancelled matrix must fail the aggregate; only pull requests may skip runtime floors.",
+  );
+  requiredRun(ci.jobs.result, aggregate, "aggregate status");
+  assert.equal(ci.jobs.validate.if, undefined, "Run validation on every event.");
   assert.deepEqual(
     ci.jobs.validate.strategy.matrix.os,
     ["ubuntu-latest", "windows-latest"],
     "Test both supported operating systems.",
   );
-  assert.deepEqual(ci.jobs.validate.strategy.matrix.node, [22, 24], "Test current supported Node majors.");
-  requiredRuntimeMatrix(ci.jobs.validate, [22, 24], "CI");
+  requiredRuntimeMatrix(ci.jobs.validate, pullRequestNodes, "CI");
+  assert.equal(
+    ci.jobs.validate.steps.find((step) => step.run?.replace("pnpm run ", "pnpm ") === "pnpm check")?.env
+      ?.HARNESS_AFFECTED_BASE,
+    pullRequestAffectedBase,
+    "Narrow validation only on pull requests; pushes and manual runs run the full suite.",
+  );
   const floors = ci.jobs["runtime-floors"];
   assert.deepEqual(
     floors.strategy.matrix.os,
@@ -267,6 +309,7 @@ export function validateWorkflowPolicy(workflows) {
   );
   assert.deepEqual(floors.strategy.matrix.node, ["22.19.0", "24.11.0"], "Test the exact advertised Node floors.");
   requiredRuntimeMatrix(floors, ["22.19.0", "24.11.0"], "runtime floors");
+  assert.equal(floors.if, "github.event_name != 'pull_request'", "Skip runtime floors only on pull requests.");
   for (const command of [
     "pnpm install --frozen-lockfile",
     "pnpm build",
@@ -305,9 +348,28 @@ export function validateWorkflowPolicy(workflows) {
     "bash scripts/version.sh",
     "Use the reviewed version-only command.",
   );
+  const checkIndex = versionJob.steps.findIndex((step) => step.run === "pnpm release:check");
+  const writerIndex = versionJob.steps.indexOf(versionStep);
+  assert.ok(checkIndex < writerIndex, "Validate release policy before updating the version PR.");
+  const tokenSteps = versionJob.steps.filter((step) => step.uses?.startsWith("actions/create-github-app-token@"));
+  assert.equal(tokenSteps.length, 1, "Mint one release App token for the version PR.");
+  const tokenIndex = versionJob.steps.indexOf(tokenSteps[0]);
   assert.ok(
-    versionJob.steps.findIndex((step) => step.run === "pnpm release:check") < versionJob.steps.indexOf(versionStep),
-    "Validate release policy before updating the version PR.",
+    checkIndex < tokenIndex && tokenIndex < writerIndex,
+    "Mint the release App token after release validation, just before the version PR writer.",
+  );
+  assert.equal(tokenSteps[0].id, "app-token", "Name the release App token step app-token.");
+  assert.equal(tokenSteps[0].if, "env.RELEASE_APP_CONFIGURED == 'true'", "Mint the token only once the App is set up.");
+  assert.equal(versionJob.env?.RELEASE_APP_CONFIGURED, releaseAppConfigured, "Expose only whether the App is set up.");
+  assert.deepEqual(
+    tokenSteps[0].with,
+    { ...releaseAppCredentials, "permission-contents": "write", "permission-pull-requests": "write" },
+    "release App token: grant only contents and pull-requests write.",
+  );
+  assert.equal(
+    versionStep.with?.["github-token"],
+    "${{ steps.app-token.outputs.token || github.token }}",
+    "Write the version PR with the release App token when configured, so its CI starts on its own.",
   );
 }
 

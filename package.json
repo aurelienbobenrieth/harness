@@ -10,7 +10,7 @@
   "type": "module",
   "scripts": {
     "build": "pnpm --recursive --if-present build",
-    "check": "pnpm build && pnpm quality:check && pnpm typecheck && pnpm lint && pnpm fmt:check && pnpm test:unit && pnpm catalog:check && pnpm compatibility:check && pnpm test:compatibility-policy && pnpm release:check && pnpm test:release && pnpm skills:check && pnpm test:skills && pnpm test:consumer-results && pnpm shopify:check && pnpm test:shopify-policy",
+    "check": "node scripts/check.mjs",
     "lint": "vp lint",
     "fmt": "vp fmt",
     "fmt:check": "vp fmt --check",
@@ -29,6 +29,7 @@
     "skills:check": "node scripts/check-skills.mjs",
     "test:skills": "node --test scripts/skills.test.mjs",
     "test:consumer-results": "node --test scripts/consumer-results.test.mjs",
+    "test:check-plan": "node --test scripts/check-plan.test.mjs",
     "shopify:check": "node scripts/check-shopify.mjs",
     "shopify:sources": "node scripts/check-shopify-sources.mjs",
     "shopify:plan": "node scripts/shopify-plan.mjs",
