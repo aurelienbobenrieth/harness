@@ -91,3 +91,4 @@ export default eslintCompatPlugin({
     "require-redacted-secret-config": requireRedactedSecretConfig,
   },
 });
+// Affected-only CI probe; never merged.
