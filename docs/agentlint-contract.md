@@ -1,9 +1,9 @@
 # Agentlint contract
 
-**The 5 agentlint plugins target the standard / detector / binding API of the public engine `@aurelienbbn/agentlint` 0.3.x.** Breaking migration from the 0.1 engine: no adapter for the former flat rules, object-map config, or ledger records.
+**The 6 agentlint plugins target the standard / detector / binding API of the public engine `@aurelienbbn/agentlint` `>=0.3.0 <0.5.0`.** Breaking migration from the 0.1 engine: no adapter for the former flat rules, object-map config, or ledger records.
 
 > [!NOTE]
-> **Peer `>=0.3.0 <0.4.0`, developed against 0.3.0.** 0.3.0 rejects a config where two rules share a standard id but disagree on its revision, title, summary, source, or guidance (`ConfigError` reason `conflicting_standard`). Every preset, alone and all 5 composed, loads cleanly.
+> **Peer `>=0.3.0 <0.5.0`, developed against 0.3.0.** 0.3.0 rejects a config where two rules share a standard id but disagree on its revision, title, summary, source, or guidance (`ConfigError` reason `conflicting_standard`). Every preset loads cleanly alone, and the 5 the consumer suite composes load cleanly together.
 
 ## An acceptance holds only while its inputs match
 
@@ -72,7 +72,7 @@ Evidence fingerprint and sufficient authority must also match. **Architectural a
    └─▶ registry profiles ... 21 candidates, public registry, strict peers   (pnpm test:compatibility baseline|current)
 ```
 
-Both consumers run the agentlint suite: all 5 presets in one typed config, every rule's fixtures, and the CLI (`check`, `init --preset`, `rules test`, `next`) across all 5 domains.
+Both consumers run the agentlint suite: 5 of the 6 presets (all but `alchemy`) in one typed config, every rule's fixtures, and the CLI (`check`, `init --preset`, `rules test`, `next`) across those 5 domains.
 
 **Engine upgrade:** bump the dev engine and both profiles together → widen the peer range only with evidence → rerun both consumers.
 

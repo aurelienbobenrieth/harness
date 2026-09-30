@@ -5,7 +5,7 @@
 **24 agentlint reviews for any TypeScript repo: a deterministic trigger finds the spot, an agent or a human settles it.**
 
 > [!WARNING]
-> Requires the engine `@aurelienbbn/agentlint` `>=0.3.0 <0.4.0` as a peer. [Evidence](../../docs/compatibility.md#agentlint-engine).
+> Requires the engine `@aurelienbbn/agentlint` `>=0.3.0 <0.5.0` as a peer. [Evidence](../../docs/compatibility.md#agentlint-engine).
 
 ```text
 strictPreset   ████████████             12  settled rules

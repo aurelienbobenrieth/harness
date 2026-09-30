@@ -15,30 +15,30 @@ flowchart LR
   U -- yes --> R
 ```
 
-**`pnpm catalog:check` enforces two-sided fixtures on all 177 rules and 28 checks.** A rule missing from its README's generated inventory can't ship.
+**`pnpm catalog:check` enforces two-sided fixtures on all 183 rules and 28 checks.** A rule missing from its README's generated inventory can't ship.
 
 ```text
- oxlint-plugin-effect            ████████████████████████████████████ 36
- oxlint-plugin-shopify-app       ███████████████████████████        27
- agentlint-plugin-core           ████████████████████████           24
- oxlint-plugin-core              ████████████████                   16
- agentlint-plugin-shopify-app    ███████████████                    15
- oxlint-plugin-xstate            ███████████                        11
- oxlint-plugin-type-evidence     ██████████                         10
- oxlint-plugin-tanstack-query    ████████                            8
- oxlint-plugin-cloudflare        ███████                             7
- agentlint-plugin-alchemy        ██████                              6
- agentlint-plugin-xstate         █████                               5
- agentlint-plugin-tanstack-query ████                                4
- oxlint-plugin-alchemy           ████                                4
- agentlint-plugin-effect         ███                                 3
- oxlint-plugin-drizzle           █                                   1
-                                                        rules  = 177
- conformance-shopify-app         █████████████                      13
- conformance-cloudflare          ██████                              6
- conformance-core                █████                               5
- conformance-alchemy             ████                                4
-                                                        checks =  28
+ oxlint-plugin-effect            ██████████████████████████████████████████ 42
+ oxlint-plugin-shopify-app       ███████████████████████████                27
+ agentlint-plugin-core           ████████████████████████                   24
+ oxlint-plugin-core              ████████████████                           16
+ agentlint-plugin-shopify-app    ███████████████                            15
+ oxlint-plugin-xstate            ███████████                                11
+ oxlint-plugin-type-evidence     ██████████                                 10
+ oxlint-plugin-tanstack-query    ████████                                    8
+ oxlint-plugin-cloudflare        ███████                                     7
+ agentlint-plugin-alchemy        ██████                                      6
+ agentlint-plugin-xstate         █████                                       5
+ agentlint-plugin-tanstack-query ████                                        4
+ oxlint-plugin-alchemy           ████                                        4
+ agentlint-plugin-effect         ███                                         3
+ oxlint-plugin-drizzle           █                                           1
+                                                                  rules  = 183
+ conformance-shopify-app         █████████████                              13
+ conformance-cloudflare          ██████                                      6
+ conformance-core                █████                                       5
+ conformance-alchemy             ████                                        4
+                                                                  checks =  28
 ```
 
 ## Upstream owns the engine, Harness owns the delta
@@ -57,7 +57,7 @@ flowchart LR
 | Wrangler (`types --check`, config validation, deploy), workerd, typed `no-floating-promises` | Runtime traps that compile and deploy: module-scope clients and state, detached `ctx` methods, Durable Object init, Workflow determinism, SQL binding, `mysql2` `disableEval`, timing-safe secret compare; config contracts for dates, logs, secrets, environments, Hyperdrive. **No schema, binding-existence, or `Env`-type checks.** |
 | Alchemy engine (`alchemy plan`, `drift`, provider diffs, state store)                        | Phase traps that deploy cleanly: `Config` read only at runtime, instance-scope finalizers on workerd, plaintext secrets in Worker `env`, Workflow I/O outside `task`; review gates for replacement, removal policy, state store and adoption; state, CI, preview and pin contracts. **No provider diff re-implementation.**             |
 | drizzle-kit, eslint-plugin-drizzle, Postgres                                                 | `fk-column-indexed` only (Postgres; InnoDB indexes foreign keys itself). **No WHERE-less update/delete rules.**                                                                                                                                                                                                                         |
-| Agentlint detector contract                                                                  | Review prompts; peer on the public engine 0.3.x.                                                                                                                                                                                                                                                                                        |
+| Agentlint detector contract                                                                  | Review prompts; peer on the public engine `>=0.3.0 <0.5.0`.                                                                                                                                                                                                                                                                             |
 
 <details>
 <summary>Delta details</summary>

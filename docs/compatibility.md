@@ -1,11 +1,11 @@
 # Consumer compatibility
 
-**18 release candidates pass as fresh registry consumers on two pinned tool profiles.** Evidence for the specified consumers, not certification of every downstream project.
+**21 release candidates pass as fresh registry consumers on two pinned tool profiles.** Evidence for the specified consumers, not certification of every downstream project.
 
 ```text
-candidate  ██████████████████  18  public release candidates, tested as registry consumers
-draft                           0
-parked     ███████              7  outside this repo: 4 Shopify theme pkgs, 2 Lit plugins, oio
+candidate  █████████████████████  21  public release candidates, tested as registry consumers
+draft                              0
+parked     ███████                 7  outside this repo: 4 Shopify theme pkgs, 2 Lit plugins, oio
 ```
 
 ## Every host has a floor and a tested ceiling
@@ -55,7 +55,7 @@ Each registry profile, then deletes its temporary consumer:
 
 ```mermaid
 flowchart LR
-  P["pack 18 candidates"] --> I["install outside workspace"]
+  P["pack 21 candidates"] --> I["install outside workspace"]
   I --> A["audit fresh graph"]
   A --> T["strict types"]
   T --> R["consumer tests"]
@@ -68,7 +68,7 @@ flowchart LR
 - ❌ no automatic peer install, lifecycle scripts, overrides, or local archives: the agentlint engine comes from npm like every other host
 - ⚠️ transitive deps follow upstream manifests: fresh-install test, not a locked replay
 
-**One profile:** 18 archives · every public export · licenses + READMEs · complete declarations with `skipLibCheck: false` · 0 skips. Every runner/check gets passing and failing input, across: all 5 agentlint presets composed in one typed config with every rule's own fixtures, the agentlint CLI (`check` on broken and clean input, `init --preset` with all 5 starter presets, `rules test`, `next`), all oxlint plugins in one policy, the Shopify App Home recipe, the formatter config, strict type-aware lint (real oxlint-tsgolint assignment diagnostic, clean after the fix), both conformance APIs, and the closed-design-system example (**API wiring only; Tailwind build not run**).
+**One profile:** 21 archives · every public export · licenses + READMEs · complete declarations with `skipLibCheck: false` · 0 skips. Every runner/check gets passing and failing input, across: 5 of the 6 agentlint presets (all but `alchemy`) composed in one typed config with every rule's own fixtures, the agentlint CLI (`check` on broken and clean input, `init --preset` with those 5 starter presets, `rules test`, `next`), all oxlint plugins in one policy, the Shopify App Home recipe, the formatter config, strict type-aware lint (real oxlint-tsgolint assignment diagnostic, clean after the fix), both conformance APIs, and the closed-design-system example (**API wiring only; Tailwind build not run**).
 
 **A green exit code isn't enough.** Commands parse Vitest's JSON report and fail on a missing test file, unexecuted passes, unfinished or unexpected skips, or any skip in a registry profile. The package consumer allows each of its 4 named core exclusions once, in the original acceptance suite. 6 regression cases guard this.
 
@@ -114,10 +114,10 @@ No advisory IDs ignored; no security override forces a dependency across a major
 
 ## Agentlint engine
 
-**The 5 agentlint plugins peer on `@aurelienbbn/agentlint` `>=0.3.0 <0.4.0` and develop against exactly 0.3.0 from npm.** No local engine archive is involved anywhere: the workspace, `pnpm test:package`, and both registry profiles install the same published engine.
+**The 6 agentlint plugins peer on `@aurelienbbn/agentlint` `>=0.3.0 <0.5.0` and develop against exactly 0.3.0 from npm.** No local engine archive is involved anywhere: the workspace, `pnpm test:package`, and both registry profiles install the same published engine.
 
 - `pnpm compatibility:check` requires every plugin's dev engine to equal the `baseline` profile and every profile engine to satisfy the peer range.
-- Both registry profiles run `runners.test.ts`: the 5 presets in one typed `defineConfig`, each rule's own fixtures through `@aurelienbbn/agentlint/testing`, and the CLI across all 5 domains. Details: [agentlint contract](agentlint-contract.md).
+- Both registry profiles run `runners.test.ts`: 5 of the 6 presets (all but `alchemy`) in one typed `defineConfig`, each rule's own fixtures through `@aurelienbbn/agentlint/testing`, and the CLI across those 5 domains. Details: [agentlint contract](agentlint-contract.md).
 
 <details>
 <summary>Historical pre-migration run</summary>

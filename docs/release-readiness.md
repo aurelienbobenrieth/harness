@@ -93,25 +93,27 @@ The token is minted after `pnpm release:check`, scoped to contents and pull-requ
 
 ## Repository settings: verified vs not configured
 
-**Canonical repo `aurelienbobenrieth/harness`, npm scope `@aurelienbbn`**; metadata and changelog links must match. ✅ security reporting, alerts, Dependabot, secret scanning, **Validate**-protected main · ⚠️ 0 required PR approvals · ✅ `npm` environment needs your approval · ❌ npm trusted publishers not configured yet · ❌ release App not configured yet.
+**Canonical repo `aurelienbobenrieth/harness`, npm scope `@aurelienbbn`**; metadata and changelog links must match. ✅ security reporting, alerts, Dependabot, secret scanning, **Validate**-protected main · ⚠️ 0 required PR approvals · ✅ `npm` environment needs your approval · ✅ npm trusted publishing proven on 9 packages · ⚠️ 12 never published through it yet · ❌ release App not configured yet.
 
 <details>
 <summary>Settings evidence</summary>
 
-| Setting                                      | State             | Evidence                                  |
-| -------------------------------------------- | ----------------- | ----------------------------------------- |
-| canonical repository                         | ✅                | GitHub, 2026-09-05                        |
-| private vulnerability reporting              | ✅ enabled        | GitHub API, 2026-09-21                    |
-| vulnerability alerts                         | ✅ enabled        | GitHub API, 2026-09-21                    |
-| Dependabot security updates                  | ✅ enabled        | GitHub API, 2026-09-21                    |
-| secret scanning + push protection            | ✅ unchanged      | previously verified                       |
-| main protection: fresh **Validate** required | ✅                | GitHub API, 2026-09-21                    |
-| main protection includes administrators      | ✅                | GitHub API, 2026-09-21                    |
-| required approvals                           | ⚠️ 0              | one collaborator, also the sole CODEOWNER |
-| npm trusted publishers (21 candidates)       | ❌ not configured | needs npmjs.com access                    |
-| release App secrets for version PRs          | ❌ not configured | needs the App; see above                  |
-| `npm` environment: required reviewer         | ✅ owner          | GitHub API, 2026-09-24                    |
-| `npm` environment: protected branches only   | ✅                | GitHub API, 2026-09-24                    |
+| Setting                                      | State             | Evidence                                                                  |
+| -------------------------------------------- | ----------------- | ------------------------------------------------------------------------- |
+| canonical repository                         | ✅                | GitHub, 2026-09-05                                                        |
+| private vulnerability reporting              | ✅ enabled        | GitHub API, 2026-09-30                                                    |
+| vulnerability alerts                         | ✅ enabled        | GitHub API, 2026-09-30                                                    |
+| Dependabot security updates                  | ✅ enabled        | GitHub API, 2026-09-30                                                    |
+| secret scanning + push protection            | ✅ enabled        | GitHub API, 2026-09-30                                                    |
+| main protection: fresh **Validate** required | ✅                | GitHub API, 2026-09-30                                                    |
+| main protection includes administrators      | ✅                | GitHub API, 2026-09-30                                                    |
+| required approvals                           | ⚠️ 0              | one collaborator, also the sole CODEOWNER                                 |
+| npm trusted publishing (OIDC)                | ✅ 9 of 21        | npm lists GitHub Actions as publisher of their latest version, 2026-09-30 |
+| trusted publisher on the other 12            | ⚠️ unverified     | every release predates OIDC; needs npmjs.com access                       |
+| npm token secrets (repo and `npm` env)       | ✅ none           | GitHub API, 2026-09-30                                                    |
+| release App secrets for version PRs          | ❌ not configured | GitHub API, 2026-09-30; needs the App, see above                          |
+| `npm` environment: required reviewer         | ✅ owner          | GitHub API, 2026-09-30                                                    |
+| `npm` environment: protected branches only   | ✅                | GitHub API, 2026-09-30                                                    |
 
 - Zero PR approvals is deliberate: with one collaborator, a required independent approval blocks routine maintenance. The `npm` environment approval gates publishing instead. Revisit before adding maintainers.
 - CODEOWNERS records ownership; it adds no independent reviewer.
@@ -119,10 +121,15 @@ The token is minted after `pnpm release:check`, scoped to contents and pull-requ
 
 </details>
 
-## Before the first publish
+## Trusted publishing works; 12 packages haven't used it yet
 
-- [ ] On npmjs.com, add a trusted publisher to each candidate: repository `aurelienbobenrieth/harness`, workflow `publish.yml`, environment `npm`.
-- [ ] If npm won't attach a trusted publisher to a package that doesn't exist yet, publish once locally: `npm login`, merge the version PR, then `node scripts/publish.mjs` on a clean `main` (no provenance locally).
+**[Publish run 36713205571](https://github.com/aurelienbobenrieth/harness/actions/runs/36713205571) (2026-09-30) published 7 packages over OIDC with provenance, with no npm token in the repo or the `npm` environment.** `oxlint-config` and `oxfmt-config` were already publishing the same way.
+
+- Latest version published over OIDC: the 6 `agentlint-plugin-*`, `oxlint-plugin-effect`, `oxlint-config`, `oxfmt-config`.
+- Every release published locally, trusted publisher unverified: the 4 `conformance-*` and `oxlint-plugin-alchemy`, `-cloudflare`, `-core`, `-drizzle`, `-shopify-app`, `-tanstack-query`, `-type-evidence`, `-xstate`.
+
+- [ ] Before a release that includes one of the 12, confirm on npmjs.com that it has a trusted publisher: repository `aurelienbobenrieth/harness`, workflow `publish.yml`, environment `npm`. Without one, the workflow has no npm credential for it.
+- [ ] A new package that doesn't exist on npm yet: if npm won't attach a trusted publisher to it, publish it once locally (`npm login`, merge the version PR, then `node scripts/publish.mjs` on a clean `main`, no provenance locally), then add the trusted publisher.
 
 `scripts/publish.mjs` publishes only candidates, skips versions already on npm (safe to rerun), packs with pnpm, and publishes with `--access public` plus `--provenance` in CI. **No npm token is stored anywhere.**
 
