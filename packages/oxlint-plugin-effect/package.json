@@ -1,6 +1,6 @@
 {
   "name": "@aurelienbbn/oxlint-plugin-effect",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Custom oxlint rules for Effect projects.",
   "keywords": [
     "effect",
