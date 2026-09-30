@@ -1,6 +1,6 @@
 {
   "name": "@aurelienbbn/agentlint-plugin-tanstack-query",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Custom agentlint rules for TanStack Query projects.",
   "keywords": [
     "agentlint",
