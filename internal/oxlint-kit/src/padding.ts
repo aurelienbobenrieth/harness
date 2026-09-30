@@ -20,6 +20,11 @@ export type PaddingGap =
   | { readonly padded: true }
   | { readonly padded: false; readonly range: SourceRange; readonly text: string };
 
+/** The gap between two statements: free of blank lines, or the one text replacement that removes them. */
+export type UnpaddingGap =
+  | { readonly padded: false }
+  | { readonly padded: true; readonly range: SourceRange; readonly text: string };
+
 export type PaddingInput = {
   /** Full source text of the file. */
   readonly source: string;
@@ -31,7 +36,17 @@ export type PaddingInput = {
   readonly comments: readonly (readonly [start: number, end: number])[];
 };
 
+/** The gap once its comments are split: where the previous statement and its trailing comments end, the comments that lead the next statement, and the whitespace around them. */
+type Layout = {
+  readonly anchor: number;
+  readonly leading: readonly (readonly [start: number, end: number])[];
+  /** Whitespace runs from the anchor to the next statement: one before each leading comment, one after the last. */
+  readonly whitespace: readonly string[];
+};
+
 const lineBreak = /\r\n|\r|\n/;
+/** A run holding a blank line: its first line with its line break, then whatever follows up to the last line's indentation. */
+const blankLines = /^([^\r\n]*(?:\r\n|\r|\n))\s*(?:\r\n|\r|\n)([^\r\n]*)$/;
 
 function hasLineBreak(text: string): boolean {
   return lineBreak.test(text);
@@ -47,8 +62,7 @@ function indentationAt(source: string, offset: number): string {
   return /^[ \t]*/.exec(source.slice(lineStart))?.[0] ?? "";
 }
 
-/** Measure the gap between two sibling statements and, when it lacks a blank line, the rewrite that adds one. */
-export function paddingBetween(input: PaddingInput): PaddingGap {
+function layout(input: PaddingInput): Layout {
   const { source, previousEnd, nextStart } = input;
   const comments = input.comments.filter(([start, end]) => start >= previousEnd && end <= nextStart);
 
@@ -60,10 +74,18 @@ export function paddingBetween(input: PaddingInput): PaddingGap {
     trailing += 1;
   }
 
-  const boundaries = [anchor, ...comments.slice(trailing).flat(), nextStart];
+  const leading = comments.slice(trailing);
+  const boundaries = [anchor, ...leading.flat(), nextStart];
   const whitespace: string[] = [];
   for (let index = 0; index < boundaries.length; index += 2)
     whitespace.push(source.slice(boundaries[index], boundaries[index + 1]));
+  return { anchor, leading, whitespace };
+}
+
+/** Measure the gap between two sibling statements and, when it lacks a blank line, the rewrite that adds one. */
+export function paddingBetween(input: PaddingInput): PaddingGap {
+  const { source } = input;
+  const { anchor, whitespace } = layout(input);
   if (whitespace.some(hasBlankLine)) return { padded: true };
 
   const first = whitespace[0] ?? "";
@@ -77,16 +99,47 @@ export function paddingBetween(input: PaddingInput): PaddingGap {
   };
 }
 
+/**
+ * Measure the gap between two sibling statements and, when it holds a blank line, the rewrite that removes every
+ * blank line outside comments. The comments, one line break per run, and the next line's indentation stay.
+ */
+export function unpaddingBetween(input: PaddingInput): UnpaddingGap {
+  const { anchor, leading, whitespace } = layout(input);
+  if (!whitespace.some(hasBlankLine)) return { padded: false };
+
+  const text = whitespace
+    .map((run, index) => {
+      const comment = leading[index];
+      const kept = run.replace(blankLines, "$1$2");
+      return comment === undefined ? kept : `${kept}${input.source.slice(comment[0], comment[1])}`;
+    })
+    .join("");
+  return { padded: true, range: [anchor, input.nextStart], text };
+}
+
+function gapOf(sourceCode: Context["sourceCode"], previous: ESTree.Node, next: ESTree.Node): PaddingInput {
+  return {
+    source: sourceCode.text,
+    previousEnd: previous.range[1],
+    nextStart: next.range[0],
+    comments: sourceCode.getCommentsBefore(next).map((comment) => comment.range),
+  };
+}
+
 /** {@link paddingBetween} for two sibling statements of the file a rule is linting. */
 export function statementPadding(
   sourceCode: Context["sourceCode"],
   previous: ESTree.Node,
   next: ESTree.Node,
 ): PaddingGap {
-  return paddingBetween({
-    source: sourceCode.text,
-    previousEnd: previous.range[1],
-    nextStart: next.range[0],
-    comments: sourceCode.getCommentsBefore(next).map((comment) => comment.range),
-  });
+  return paddingBetween(gapOf(sourceCode, previous, next));
+}
+
+/** {@link unpaddingBetween} for two sibling statements of the file a rule is linting. */
+export function statementUnpadding(
+  sourceCode: Context["sourceCode"],
+  previous: ESTree.Node,
+  next: ESTree.Node,
+): UnpaddingGap {
+  return unpaddingBetween(gapOf(sourceCode, previous, next));
 }

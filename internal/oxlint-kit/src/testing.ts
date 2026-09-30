@@ -30,6 +30,11 @@ export type LintCodeOptions = {
   readonly filename?: string;
   /** Rule options, or a function of the temporary project directory that returns them. */
   readonly ruleOptions?: unknown;
+  /**
+   * Several rule options, each its own entry after the severity (`["error", ...ruleOptionList]`), for rules whose
+   * options are a list, like ESLint's `padding-line-between-statements`. Takes precedence over `ruleOptions`.
+   */
+  readonly ruleOptionList?: readonly unknown[];
   /** Extra files written into the temporary project, keyed by relative path. */
   readonly files?: Readonly<Record<string, string>>;
   /** Diagnostic message the report must carry (matched against the JSON output). */
@@ -51,7 +56,7 @@ export type RuleHarness = {
   /** Run the rule with `--fix` and assert the file content after the fix is applied. */
   readonly assertRuleFixes: (ruleName: string, code: string, expected: string) => Promise<void>;
   /** Run the rule in a fix mode and return the rewritten source; oxlint's exit code is ignored. */
-  readonly fixCode: (ruleName: string, code: string, mode?: FixMode) => Promise<string>;
+  readonly fixCode: (ruleName: string, code: string, mode?: FixMode, options?: LintCodeOptions) => Promise<string>;
 };
 
 type Diagnostic = { code?: string; message: string; labels?: unknown[] };
@@ -111,7 +116,12 @@ export function createRuleHarness(packageRoot: string): RuleHarness {
       typeof options.ruleOptions === "function"
         ? (options.ruleOptions as (directory: string) => unknown)(directory)
         : options.ruleOptions;
-    const ruleConfig = ruleOptions === undefined ? "error" : ["error", ruleOptions];
+    const ruleConfig =
+      options.ruleOptionList !== undefined
+        ? ["error", ...options.ruleOptionList]
+        : ruleOptions === undefined
+          ? "error"
+          : ["error", ruleOptions];
     await writeFile(
       configPath,
       JSON.stringify(
@@ -179,8 +189,8 @@ export function createRuleHarness(packageRoot: string): RuleHarness {
       assert.equal(result.stderr, "", result.stderr);
       assert.equal(result.source, expected);
     },
-    async fixCode(ruleName, code, mode = "fix") {
-      const result = await runOxlint(ruleName, code, {}, [mode === "fix" ? "--fix" : "--fix-suggestions"]);
+    async fixCode(ruleName, code, mode = "fix", options = {}) {
+      const result = await runOxlint(ruleName, code, options, [mode === "fix" ? "--fix" : "--fix-suggestions"]);
       return result.source;
     },
   };

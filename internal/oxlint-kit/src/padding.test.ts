@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { paddingBetween } from "./padding.js";
+import { paddingBetween, unpaddingBetween } from "./padding.js";
 
 /**
  * Build a gap from a template: `«` marks the previous statement's end, `»` the
@@ -74,5 +74,35 @@ describe("paddingBetween", () => {
       range: [6, 7],
       text: "\n\n  ",
     });
+  });
+});
+
+describe("unpaddingBetween", () => {
+  it("accepts a gap without a blank line", () => {
+    expect(unpaddingBetween(gap("a();«\n  [// why]\n  »b();").input)).toEqual({ padded: false });
+  });
+
+  it("ignores blank lines inside a comment", () => {
+    expect(unpaddingBetween(gap("a();«\n[/* x\n\n y */]\n»b();").input)).toEqual({ padded: false });
+  });
+
+  it("removes a blank line and keeps the next line's indentation", () => {
+    expect(unpaddingBetween(gap("a();«\n\n  »b();").input)).toEqual({ padded: true, range: [4, 8], text: "\n  " });
+  });
+
+  it("removes the blank lines on both sides of a leading comment and keeps the comment", () => {
+    expect(unpaddingBetween(gap("a();«\n\n\n  [// lead]\n\n  »b();").input)).toEqual({
+      padded: true,
+      range: [4, 20],
+      text: "\n  // lead\n  ",
+    });
+  });
+
+  it("keeps a CRLF line break", () => {
+    expect(unpaddingBetween(gap("a();«\r\n\r\n»b();").input)).toEqual({ padded: true, range: [4, 8], text: "\r\n" });
+  });
+
+  it("starts after the comments that trail the previous statement", () => {
+    expect(unpaddingBetween(gap("a();« [// x]\n\n»b();").input)).toEqual({ padded: true, range: [9, 11], text: "\n" });
   });
 });
