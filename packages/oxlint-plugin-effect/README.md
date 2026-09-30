@@ -79,6 +79,7 @@ Effect.tryPromise({
 - **`tagged-error-name` clashes with tsgo `deterministic-keys` only when tsgo's `keyPatterns` gain an `error` target**: that target wants a package-qualified tag (`pkg/file/NotFoundError`). Keep errors out of `keyPatterns`, or turn this rule off.
 - **`schema-literal-case` keeps `Schema.Literals([...])` values in one case, snake_case by default:** they travel as data (URLs, SQL, logs, wire contracts), and snake_case is what Postgres, Shopify REST (`partially_refunded`) and Stripe (`requires_payment_method`) use. `Schema.Literal("...")`, `_tag`s and non-string literals are out of scope. No fix: renaming a wire value needs a coordinated change.
 - **`telemetry-name-format` wants indexed names as `<area>.<operation>` in lowercase dotted snake_case** (`mcp.auth.verify_api_key`): span names, `Rpc.make` tags, and the keys of `annotateLogs`, `annotateSpans`, `annotateCurrentSpan` and `withSpan`'s `attributes` (one segment allowed: `event`). String literals only; `no-dynamic-span-name` owns runtime names.
+- **`telemetry-name-format` with `logMessages: true` treats a log message as an event name:** the first argument of `Effect.log`, `logTrace`, `logDebug`, `logInfo`, `logWarning`, `logError` and `logFatal` (through `Effect`, an alias, or a named import from `effect/Effect`) must be a literal in the name format, like `Effect.logInfo("webhook.rejected", { attempt })`, so log backends can search and count by it. A variable, a template with values or a concatenation is reported too: values go in later arguments or `Effect.annotateLogs`.
 - **Enable `telemetry-name-format` or `effect-fn-name-matches-binding`, not both:** the binding rule ties the last span segment to the binding (`const syncAll = Effect.fn("orders.syncAll")`), which snake_case rejects.
 - 🎨 `dependencies-first`, `padding-after-dependencies`, `no-switch`, `prefer-match`, `prefer-effect-array-helpers`, `schema-type-adjacent`, `schema-literal-case`, `tagged-error-name`, `telemetry-name-format` are opinionated. **Suppress at the exceptional call site**, not in the shared config.
 
@@ -129,6 +130,7 @@ Effect.tryPromise({
 | `telemetry-name-format`            | `pattern`               | `^[a-z][a-z0-9_]*(\.[a-z][a-z0-9_]*)*$` (names)                                                             |
 |                                    | `minSegments`           | `2` (dot-separated segments a name needs)                                                                   |
 |                                    | `keyPattern`            | `^[a-z][a-z0-9_]*(\.[a-z][a-z0-9_]*)*$` (annotation and attribute keys)                                     |
+|                                    | `logMessages`           | `false`; `true` holds the first argument of `Effect.log*` to the name format                                |
 
 </details>
 
@@ -227,7 +229,7 @@ Generated from package exports by `pnpm catalog`. Rule-specific options and limi
 | `schema-literal-case`              | Require the string values of Schema.Literals([...]) to follow one case: snake_case by default, or kebab, camel, or pascal.                                                                                   |
 | `schema-type-adjacent`             | Keep a Schema's matching type alias adjacent, allowing whitespace and JSDoc.                                                                                                                                 |
 | `tagged-error-name`                | Require classes extending Schema.TaggedError, Schema.TaggedErrorClass, or Data.TaggedError to end with the error suffix and to use their class name as the literal _tag.                                     |
-| `telemetry-name-format`            | Require literal span names and Rpc.make tags in lowercase dotted snake_case with at least two segments, and log and span annotation keys in lowercase dotted snake_case.                                     |
+| `telemetry-name-format`            | Require literal span names, Rpc.make tags and (with logMessages) Effect log event names in lowercase dotted snake_case with at least two segments, and annotation keys in lowercase dotted snake_case.       |
 
 ### Credited concepts
 

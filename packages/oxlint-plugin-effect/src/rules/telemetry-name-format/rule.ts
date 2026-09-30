@@ -23,6 +23,17 @@ const annotationMethods: ReadonlySet<string> = new Set([
   "annotateCurrentSpan",
 ]);
 
+/** Effect's log functions: with `logMessages`, their first argument is the event name. */
+const logMethods: ReadonlySet<string> = new Set([
+  "log",
+  "logTrace",
+  "logDebug",
+  "logInfo",
+  "logWarning",
+  "logError",
+  "logFatal",
+]);
+
 const rpcPackages: ReadonlySet<string> = new Set(["effect/unstable/rpc", "@effect/rpc"]);
 const rpcModules: ReadonlySet<string> = new Set(["effect/unstable/rpc/Rpc", "@effect/rpc/Rpc"]);
 
@@ -30,6 +41,7 @@ type Options = {
   readonly pattern: RegExp;
   readonly keyPattern: RegExp;
   readonly minSegments: number;
+  readonly logMessages: boolean;
   readonly expected: string;
   readonly expectedKey: string;
 };
@@ -46,11 +58,13 @@ function readOptions(context: Context): Options {
     typeof options["minSegments"] === "number" && Number.isInteger(options["minSegments"])
       ? Math.max(1, options["minSegments"])
       : defaultMinSegments;
+  const logMessages = options["logMessages"] === true;
   const segments = `at least ${minSegments} dot-separated segment${minSegments === 1 ? "" : "s"}`;
   return {
     pattern: new RegExp(pattern ?? defaultPattern, "u"),
     keyPattern: new RegExp(keyPattern ?? defaultPattern, "u"),
     minSegments,
+    logMessages,
     expected:
       pattern === undefined
         ? `lowercase dotted snake_case with ${segments}, like "area.operation"`
@@ -85,6 +99,20 @@ type NamedCall = {
   readonly spanOptions: ESTree.Node | undefined;
   readonly kind: "span" | "RPC";
 };
+
+/**
+ * The Effect log function a callee denotes, through an `Effect` namespace (`Effect.logInfo`, `Fx.logInfo`) or a named
+ * import from `effect/Effect` (`import { logInfo as info } from "effect/Effect"`).
+ */
+function logMethod(context: Context, callee: ESTree.Node): string | undefined {
+  const method =
+    effectMethod(context, callee) ?? importedSpecifierName(context, callee, (source) => source === "effect/Effect");
+  return method !== undefined && logMethods.has(method) ? method : undefined;
+}
+
+function matchesName(name: string, options: Options): boolean {
+  return options.pattern.test(name) && name.split(".").length >= options.minSegments;
+}
 
 /** Locate the telemetry name argument (and span options, when any) of a span constructor or `Rpc.make`. */
 function namedCall(context: Context, node: ESTree.CallExpression): NamedCall | undefined {
@@ -148,7 +176,9 @@ function annotationKeys(node: ESTree.CallExpression): readonly ESTree.Node[] {
  * Keep the names that telemetry backends index in one searchable shape: span names (`Effect.fn`, `Effect.withSpan`
  * and the other span constructors) and RPC procedure tags (`Rpc.make`) as lowercase dotted snake_case with at least
  * `<area>.<operation>`, and log and span annotation keys as lowercase dotted snake_case. Only string literals are
- * checked; `no-dynamic-span-name` owns names built at runtime.
+ * checked; `no-dynamic-span-name` owns names built at runtime. With `logMessages`, the first argument of an Effect log
+ * call (`Effect.log`, `logInfo`, `logWarning`...) is an event name held to the span name format, and it must be a
+ * literal.
  *
  * @attribution executor by Rhys Sullivan, dotted snake_case span and attribute names such as `mcp.auth.verify_api_key` (MIT, naming-style inspiration)
  */
@@ -157,10 +187,14 @@ export const telemetryNameFormat: Rule = {
     type: "suggestion",
     docs: {
       description:
-        "Require literal span names and Rpc.make tags in lowercase dotted snake_case with at least two segments, and log and span annotation keys in lowercase dotted snake_case.",
+        "Require literal span names, Rpc.make tags and (with logMessages) Effect log event names in lowercase dotted snake_case with at least two segments, and annotation keys in lowercase dotted snake_case.",
     },
     messages: {
       name: 'Rename the {{kind}} name "{{name}}" to {{expected}}: tracing backends index it, and one shape keeps it searchable.',
+      logName:
+        'Rename the log event "{{name}}" to {{expected}}: log backends search and count by it, and one shape keeps it searchable.',
+      logLiteral:
+        'Start {{callee}} with a literal event name like "webhook.rejected": log backends search and count by it. Pass the values as later arguments or through Effect.annotateLogs.',
       key: 'Rename the {{kind}} key "{{key}}" to {{expected}}: telemetry backends index it, and one shape keeps it searchable.',
     },
     schema: [
@@ -170,11 +204,14 @@ export const telemetryNameFormat: Rule = {
           pattern: { type: "string" },
           keyPattern: { type: "string" },
           minSegments: { type: "integer", minimum: 1 },
+          logMessages: { type: "boolean" },
         },
         additionalProperties: false,
       },
     ],
-    defaultOptions: [{ pattern: defaultPattern, keyPattern: defaultPattern, minSegments: defaultMinSegments }],
+    defaultOptions: [
+      { pattern: defaultPattern, keyPattern: defaultPattern, minSegments: defaultMinSegments, logMessages: false },
+    ],
   },
   createOnce(context) {
     function checkKeys(keys: readonly ESTree.Node[], kind: string, options: Options): void {
@@ -183,6 +220,21 @@ export const telemetryNameFormat: Rule = {
         if (text === undefined || options.keyPattern.test(text)) continue;
         context.report({ node: key, messageId: "key", data: { kind, key: text, expected: options.expectedKey } });
       }
+    }
+
+    function checkLogEvent(node: ESTree.CallExpression, options: Options): void {
+      const [first] = node.arguments;
+      const name = first === undefined ? undefined : stringLiteralValue(unwrapExpression(first));
+      if (name === undefined) {
+        context.report({
+          node: first ?? node,
+          messageId: "logLiteral",
+          data: { callee: context.sourceCode.getText(node.callee) },
+        });
+        return;
+      }
+      if (!matchesName(name, options))
+        context.report({ node: first ?? node, messageId: "logName", data: { name, expected: options.expected } });
     }
 
     return {
@@ -194,15 +246,17 @@ export const telemetryNameFormat: Rule = {
           return;
         }
 
+        if (logMethod(context, node.callee) !== undefined) {
+          const options = readOptions(context);
+          if (options.logMessages) checkLogEvent(node, options);
+          return;
+        }
+
         const call = namedCall(context, node);
         if (call === undefined) return;
         const options = readOptions(context);
         const name = stringLiteralValue(call.name);
-        if (
-          call.name !== undefined &&
-          name !== undefined &&
-          !(options.pattern.test(name) && name.split(".").length >= options.minSegments)
-        )
+        if (call.name !== undefined && name !== undefined && !matchesName(name, options))
           context.report({
             node: call.name,
             messageId: "name",
