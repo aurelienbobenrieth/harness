@@ -1,4 +1,4 @@
-import { expect, it } from "vitest";
+import { describe, expect, it } from "vitest";
 import { assertRuleDoesNotReport, assertRuleReports, reportedMessages } from "../test-support.ts";
 
 const ruleName = "effect/telemetry-name-format";
@@ -157,4 +157,124 @@ it("honours pattern, keyPattern and minSegments", async () => {
   ).resolves.toEqual([
     'Rename the span name "orders" to match /^[a-z]+(\\.[a-z]+)*$/ with at least 2 dot-separated segments: tracing backends index it, and one shape keeps it searchable.',
   ]);
+});
+
+const logName = (name: string): string =>
+  `Rename the log event "${name}" to lowercase dotted snake_case with at least 2 dot-separated segments, like "area.operation": log backends search and count by it, and one shape keeps it searchable.`;
+const logLiteral = (callee: string): string =>
+  `Start ${callee} with a literal event name like "webhook.rejected": log backends search and count by it. Pass the values as later arguments or through Effect.annotateLogs.`;
+
+describe("logMessages", () => {
+  const logMessages = { ruleOptions: { logMessages: true } };
+
+  it("leaves log messages alone by default", async () => {
+    await expect(
+      assertRuleDoesNotReport(ruleName, 'Effect.logInfo("Webhook rejected");\nEffect.log(`webhook.${kind}`);\n'),
+    ).resolves.toBeUndefined();
+  });
+
+  it("reports literal log messages that are not event names", async () => {
+    await expect(
+      reportedMessages(
+        ruleName,
+        [
+          'Effect.logInfo("Webhook rejected");',
+          'Effect.log("webhook");',
+          'Effect.logError("webhook.Rejected");',
+          'Effect.logWarning("webhook..rejected");',
+          'Effect.logDebug("webhook-rejected.x");',
+          'const retry = Effect.gen(function* () {\n  yield* Effect.logWarning("retry", { attempt });\n});',
+          "",
+        ].join("\n"),
+        logMessages,
+      ),
+    ).resolves.toEqual([
+      logName("Webhook rejected"),
+      logName("webhook"),
+      logName("webhook.Rejected"),
+      logName("webhook..rejected"),
+      logName("webhook-rejected.x"),
+      logName("retry"),
+    ]);
+  });
+
+  it("reports a log call whose first argument is not a literal", async () => {
+    await expect(
+      reportedMessages(
+        ruleName,
+        [
+          "Effect.logFatal(42);",
+          "Effect.logTrace();",
+          "Effect.logInfo(`webhook.${kind}`);",
+          'Effect.logInfo(ok ? "webhook.accepted" : "webhook.rejected");',
+          "Effect.logInfo(eventName);",
+          'Effect.logInfo("webhook." + kind);',
+          "Effect.logInfo(...args);",
+          "Effect.logInfo(names.rejected);",
+          "",
+        ].join("\n"),
+        logMessages,
+      ),
+    ).resolves.toEqual([
+      logLiteral("Effect.logFatal"),
+      logLiteral("Effect.logTrace"),
+      ...Array.from({ length: 6 }, () => logLiteral("Effect.logInfo")),
+    ]);
+  });
+
+  it.each([
+    ['import { logInfo } from "effect/Effect";\nlogInfo("Started");\n', "logInfo"],
+    ['import { logInfo as info } from "effect/Effect";\ninfo("Started");\n', "info"],
+    ['import * as Fx from "effect/Effect";\nFx.logInfo("Started");\n', "Fx.logInfo"],
+    ['import { Effect as Fx } from "effect";\nFx.logInfo("Started");\n', "Fx.logInfo"],
+  ])("recognizes the log function through its import: %s", async (code) => {
+    await expect(reportedMessages(ruleName, code, logMessages)).resolves.toEqual([logName("Started")]);
+  });
+
+  it("names the log function as the call writes it", async () => {
+    await expect(
+      reportedMessages(ruleName, 'import { logInfo as info } from "effect/Effect";\ninfo(event);\n', logMessages),
+    ).resolves.toEqual([logLiteral("info")]);
+  });
+
+  it("allows event names, static templates, and calls that are not Effect log functions", async () => {
+    await expect(
+      assertRuleDoesNotReport(
+        ruleName,
+        [
+          'import { logInfo as local } from "./logger.ts";',
+          'import * as Local from "./effect.ts";',
+          'Effect.logInfo("webhook.rejected");',
+          'Effect.log("job.retry_scheduled", { attempt: 2 });',
+          'Effect.logError("shop.sync.failed_2", cause);',
+          "Effect.logInfo(`webhook.rejected`);",
+          'const logged = Effect.logInfo("webhook.rejected").pipe(Effect.annotateLogs({ shop }));',
+          'Effect.logSpan("Webhook rejected");',
+          'console.log("Webhook rejected");',
+          'Logger.logInfo("Webhook rejected");',
+          'Effect["logInfo"]("Webhook rejected");',
+          'logInfo("Webhook rejected");',
+          'local("Webhook rejected");',
+          'Local.logInfo("Webhook rejected");',
+          "",
+        ].join("\n"),
+        logMessages,
+      ),
+    ).resolves.toBeUndefined();
+  });
+
+  it("applies pattern and minSegments to log event names", async () => {
+    await expect(
+      assertRuleDoesNotReport(ruleName, 'Effect.logInfo("started");\n', {
+        ruleOptions: { logMessages: true, minSegments: 1 },
+      }),
+    ).resolves.toBeUndefined();
+    await expect(
+      reportedMessages(ruleName, 'Effect.logInfo("webhook.rejected");\n', {
+        ruleOptions: { logMessages: true, pattern: "^[A-Z][a-z]*(\\.[A-Z][a-z]*)+$" },
+      }),
+    ).resolves.toEqual([
+      'Rename the log event "webhook.rejected" to match /^[A-Z][a-z]*(\\.[A-Z][a-z]*)+$/ with at least 2 dot-separated segments: log backends search and count by it, and one shape keeps it searchable.',
+    ]);
+  });
 });

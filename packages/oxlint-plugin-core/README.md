@@ -2,7 +2,7 @@
 
 [![npm](https://img.shields.io/npm/v/@aurelienbbn/oxlint-plugin-core)](https://www.npmjs.com/package/@aurelienbbn/oxlint-plugin-core) [![downloads](https://img.shields.io/npm/dm/@aurelienbbn/oxlint-plugin-core)](https://www.npmjs.com/package/@aurelienbbn/oxlint-plugin-core) [![CI](https://github.com/aurelienbobenrieth/harness/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/aurelienbobenrieth/harness/actions/workflows/ci.yml) [![license](https://img.shields.io/npm/l/@aurelienbbn/oxlint-plugin-core)](https://github.com/aurelienbobenrieth/harness/blob/main/packages/oxlint-plugin-core/LICENSE) [![node](https://img.shields.io/node/v/@aurelienbbn/oxlint-plugin-core)](https://github.com/aurelienbobenrieth/harness/blob/main/packages/oxlint-plugin-core/package.json)
 
-**16 oxlint rules for any TypeScript codebase: swallowed errors, flaky or hollow tests, test code in production, anonymous public contracts, cramped exits.**
+**17 oxlint rules for any TypeScript codebase: swallowed errors, flaky or hollow tests, test code in production, anonymous public contracts, cramped statements.**
 
 ```sh
 pnpm add -D @aurelienbbn/oxlint-plugin-core oxlint   # oxlint >=1.82.0 <2.0.0
@@ -19,7 +19,7 @@ pnpm add -D @aurelienbbn/oxlint-plugin-core oxlint   # oxlint >=1.82.0 <2.0.0
 }
 ```
 
-**No preset, one autofix.** Enable each rule by name; every fix but `padding-before-exit`'s blank line needs a decision a tool can't make.
+**No preset, one kind of autofix.** Enable each rule by name; every fix but the padding rules' blank lines needs a decision a tool can't make.
 
 <details>
 <summary>Rules by job, options, and the decision each fix needs</summary>
@@ -30,7 +30,7 @@ pnpm add -D @aurelienbbn/oxlint-plugin-core oxlint   # oxlint >=1.82.0 <2.0.0
 | 🧪 tests     | `no-weak-test-assertions`, `no-test-sleeps`, `no-stubbed-subject`, `no-ambient-nondeterminism-in-tests`, `no-vitest-mocking`, `no-vitest-in-source`, `no-test-logic-in-production` |
 | 📜 contracts | `no-exported-anonymous-object-return`, `no-multi-positional-parameters`, `no-mutable-exported-state`, `no-reexport-only-modules`, `no-let`                                         |
 | 💬 comments  | `no-dead-comments`                                                                                                                                                                 |
-| ↕️ layout    | `padding-before-exit` (autofix)                                                                                                                                                    |
+| ↕️ layout    | `padding-line-between-statements` (autofix), `padding-before-exit` (autofix, deprecated)                                                                                           |
 
 | Rule                                 | Option                                       | Default                                 |
 | ------------------------------------ | -------------------------------------------- | --------------------------------------- |
@@ -42,6 +42,7 @@ pnpm add -D @aurelienbbn/oxlint-plugin-core oxlint   # oxlint >=1.82.0 <2.0.0
 | `no-vitest-mocking`                  | `forbidSpies`                                | `false` (`vi.fn`, `vi.spyOn` allowed)   |
 | `no-reexport-only-modules`           | `allow`                                      | `["index.ts"]`                          |
 | `no-multi-positional-parameters`     | `exemptFunctionNames`, `exemptFileBasenames` | `[]`, `[]`                              |
+| `padding-line-between-statements`    | ESLint's `{ blankLine, prev, next }` list    | the configuration shown under ↕️ below  |
 
 | Rule                                  | The decision its fix needs                                              |
 | ------------------------------------- | ----------------------------------------------------------------------- |
@@ -242,19 +243,51 @@ Also closing-brace labels and placeholder scaffolding; narration counts only whe
 
 </details>
 
-## ↕️ An exit stands apart from the work above it
+## ↕️ Blocks, declaration runs and exits stand apart
 
-`padding-before-exit`: a `return` or `throw` that follows another statement in the same block, switch case, or program body gets a blank line above it (and above its leading comments). **Autofix inserts it.** The first statement of a list is exempt. Concept: ESLint's `padding-line-between-statements`.
+`padding-line-between-statements` takes ESLint's options (a list of `{ blankLine, prev, next }`, the last match wins) and its statement types. **A comment block above a statement belongs to it:** the blank line goes above the comments, and a comment on the line a statement ends on stays with that statement. **Autofix inserts or removes the blank lines.**
 
 ```ts
-const sum = items.reduce(add, 0);
-return sum; // ❌
+function start(runtime) {
+  const config = load();
+  // Planning runs need no config.
+  if (runtime.planning) {
+    return;
+  }
+  runtime.apply(config); // ❌ twice: above the comment, and below the block
+}
 
-const sum = items.reduce(add, 0);
+function start(runtime) {
+  const config = load();
 
-return sum; // ✅
-if (!items.length) return 0; // ✅ first statement of its list
+  // Planning runs need no config.
+  if (runtime.planning) {
+    return;
+  }
+
+  runtime.apply(config); // ✅
+}
 ```
+
+**Enabled without options, it applies this configuration;** any options replace it whole:
+
+```json
+{
+  "core/padding-line-between-statements": [
+    "error",
+    { "blankLine": "always", "prev": "*", "next": ["block-like", "multiline-expression"] },
+    { "blankLine": "always", "prev": ["block-like", "multiline-expression"], "next": "*" },
+    { "blankLine": "always", "prev": ["const", "let"], "next": "*" },
+    { "blankLine": "any", "prev": ["const", "let"], "next": ["const", "let"] },
+    { "blankLine": "always", "prev": "*", "next": ["return", "throw"] }
+  ]
+}
+```
+
+| Overlap                             | Status                                                                                                                                                                                                            |
+| ----------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `padding-before-exit`               | ⚠️ deprecated: the default configuration covers it, and `{ "blankLine": "always", "prev": "*", "next": ["return", "throw"] }` alone reproduces it. Turn it off when you enable `padding-line-between-statements`. |
+| `effect/padding-after-dependencies` | ✅ complementary: it also separates `yield*` service dependencies from a `const` of logic below them, which a declaration run leaves free. Both rules insert the same single blank line.                          |
 
 ## ⚠️ Migration
 
@@ -303,6 +336,7 @@ Generated from package exports by `pnpm catalog`. Rule-specific options and limi
 | `no-vitest-mocking`                   | Disallow Vitest mocking APIs in favor of deterministic test doubles.                                                                                                                                                                       |
 | `no-weak-test-assertions`             | Disallow individual tests whose only assertions check existence, a bare call, a `typeof` or `Object` instance, wildcard-only matcher arguments, a value against itself or a literal against a literal, or a local mock's own return value. |
 | `padding-before-exit`                 | Require a blank line before a return or throw statement that follows another statement in the same block, switch case, or program body.                                                                                                    |
+| `padding-line-between-statements`     | Require or disallow blank lines between statements, with ESLint's options and a comment block counted as part of the statement below it; defaults to padding blocks, multiline expressions, declaration runs, and exits.                   |
 
 ### Credited concepts
 
@@ -311,5 +345,6 @@ Generated from package exports by `pnpm catalog`. Rule-specific options and limi
 - code-slop by asyrafhussin (MIT, concept re-implemented)
 - code-slop by asyrafhussin (MIT, concept re-implemented) — closing-brace labels and placeholder
 - https://eslint.org/docs/latest/rules/padding-line-between-statements (MIT; concept, independently implemented)
+- https://eslint.org/docs/latest/rules/padding-line-between-statements (MIT; option schema and statement types, independently implemented)
 
 <!-- harness-catalog:end -->

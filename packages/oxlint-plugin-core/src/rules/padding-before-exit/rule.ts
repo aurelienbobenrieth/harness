@@ -3,6 +3,9 @@
  * in the same statement list. The first statement of a list is exempt, and a
  * comment block directly above the exit belongs to it.
  *
+ * @deprecated `core/padding-line-between-statements` covers it: its default configuration pads before `return` and
+ * `throw`, and the option `{ blankLine: "always", prev: "*", next: ["return", "throw"] }` alone reproduces this rule.
+ *
  * @attribution https://eslint.org/docs/latest/rules/padding-line-between-statements (MIT; concept, independently implemented)
  */
 import { statementPadding } from "@aurelienbbn/oxlint-kit/padding";
@@ -35,6 +38,12 @@ export const paddingBeforeExit: Rule = {
       padding: "Separate this return/throw from the statements above it with a blank line.",
     },
     schema: [],
+    deprecated: {
+      message:
+        'Use core/padding-line-between-statements: its default configuration pads before return and throw, and { blankLine: "always", prev: "*", next: ["return", "throw"] } alone reproduces this rule.',
+      deprecatedSince: "0.3.0",
+      replacedBy: [{ rule: { name: "padding-line-between-statements" } }],
+    },
   },
   createOnce(context) {
     return {
