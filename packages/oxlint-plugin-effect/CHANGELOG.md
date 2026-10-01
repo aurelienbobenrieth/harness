@@ -1,5 +1,11 @@
 # @aurelienbbn/oxlint-plugin-effect
 
+## 0.7.0
+
+### Minor Changes
+
+- [#49](https://github.com/aurelienbobenrieth/harness/pull/49) [`4f758c5`](https://github.com/aurelienbobenrieth/harness/commit/4f758c5da4e618239a276ce7f0d2060eee5fa358) Thanks [@aurelienbobenrieth](https://github.com/aurelienbobenrieth)! - `effect/telemetry-name-format` gains an opt-in `logMessages` option. With `logMessages: true`, the first argument of `Effect.log`, `logTrace`, `logDebug`, `logInfo`, `logWarning`, `logError` and `logFatal` is an event name: a literal in the span name format (`pattern`, `minSegments`), like `Effect.logInfo("webhook.rejected", { attempt })`. Variables, templates with values and concatenations are reported too. Without the option the rule behaves as before.
+
 ## 0.6.0
 
 ### Minor Changes

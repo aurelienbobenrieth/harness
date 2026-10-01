@@ -1,5 +1,11 @@
 # @aurelienbbn/oxlint-plugin-core
 
+## 0.3.0
+
+### Minor Changes
+
+- [#49](https://github.com/aurelienbobenrieth/harness/pull/49) [`4f758c5`](https://github.com/aurelienbobenrieth/harness/commit/4f758c5da4e618239a276ce7f0d2060eee5fa358) Thanks [@aurelienbobenrieth](https://github.com/aurelienbobenrieth)! - Adds `core/padding-line-between-statements`: ESLint's rule of the same name (its `{ blankLine, prev, next }` options and statement types, autofixed), except that a comment block above a statement belongs to it, so the blank line goes above the comments. Enabled without options, it pads around blocks and multiline expressions, after a run of `const`/`let` declarations, and before `return` and `throw`. `core/padding-before-exit` is deprecated: that default covers it, and `{ blankLine: "always", prev: "*", next: ["return", "throw"] }` alone reproduces it. Turn it off when you enable the new rule; it still works until a later minor removes it.
+
 ## 0.2.0
 
 ### Minor Changes
