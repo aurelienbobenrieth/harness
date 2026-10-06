@@ -66,3 +66,23 @@ export function isAllowedFile(filename: string, patterns: readonly string[]): bo
   const normalized = normalizePath(filename);
   return patterns.some((pattern) => globToRegExp(pattern).test(normalized));
 }
+
+function stringArray(value: unknown): readonly string[] | undefined {
+  return Array.isArray(value) && value.every((entry) => typeof entry === "string") ? value : undefined;
+}
+
+/**
+ * Whether a rule scoped by a `files` option (the globs it checks) and an `allow` option (the globs it skips) checks
+ * the current file.
+ */
+export function isScopedFile(
+  context: RuleContextWithOptions,
+  defaults: Readonly<{ files: readonly string[]; allow: readonly string[] }>,
+): boolean {
+  const candidate = context.options?.[0];
+  const record = typeof candidate === "object" && candidate !== null ? (candidate as Record<string, unknown>) : {};
+  const filename = getFilename(context);
+  const files = stringArray(record.files) ?? defaults.files;
+  const allow = stringArray(record.allow) ?? defaults.allow;
+  return isAllowedFile(filename, files) && !isAllowedFile(filename, allow);
+}

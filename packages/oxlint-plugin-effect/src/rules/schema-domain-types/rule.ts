@@ -1,5 +1,5 @@
 import type { ESTree, Rule } from "@oxlint/plugins";
-import { defaultAllow, getFilename, isAllowedFile, type RuleContextWithOptions } from "../runtime-support.js";
+import { defaultAllow, isScopedFile, type RuleContextWithOptions } from "../runtime-support.js";
 
 const defaultFiles = ["**/domain/**"];
 
@@ -8,24 +8,6 @@ const runtimeNamespaces = new Set(["Context", "Effect", "Fiber", "Layer", "Queue
 
 // Wrappers that keep the shape they wrap: `Readonly<{ id: string }>` is still a hand-written object.
 const shapeWrappers = new Set(["Array", "NonNullable", "Partial", "Readonly", "ReadonlyArray", "Required"]);
-
-type Options = {
-  readonly allow: readonly string[];
-  readonly files: readonly string[];
-};
-
-function stringArray(value: unknown): readonly string[] | undefined {
-  return Array.isArray(value) && value.every((entry) => typeof entry === "string") ? value : undefined;
-}
-
-function optionsOf(context: RuleContextWithOptions): Options {
-  const candidate = context.options?.[0];
-  const record = typeof candidate === "object" && candidate !== null ? (candidate as Record<string, unknown>) : {};
-  return {
-    allow: stringArray(record.allow) ?? defaultAllow,
-    files: stringArray(record.files) ?? defaultFiles,
-  };
-}
 
 function leftmostName(name: ESTree.TSTypeName): string | undefined {
   if (name.type === "Identifier") return name.name;
@@ -126,11 +108,8 @@ export const schemaDomainTypes: Rule = {
     defaultOptions: [{ allow: defaultAllow, files: defaultFiles }],
   },
   createOnce(context) {
-    const inScope = (): boolean => {
-      const options = optionsOf(context as RuleContextWithOptions);
-      const filename = getFilename(context as RuleContextWithOptions);
-      return isAllowedFile(filename, options.files) && !isAllowedFile(filename, options.allow);
-    };
+    const inScope = (): boolean =>
+      isScopedFile(context as RuleContextWithOptions, { allow: defaultAllow, files: defaultFiles });
 
     return {
       TSInterfaceDeclaration(node) {
