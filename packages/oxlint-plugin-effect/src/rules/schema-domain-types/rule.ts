@@ -39,11 +39,16 @@ function rightName(name: ESTree.TSTypeName): string | undefined {
   return undefined;
 }
 
+// Schema's JSON value types (`Schema.Json`, `Schema.MutableJsonObject`) are data, not codecs.
+const schemaDataType = /^(?:Mutable)?Json/u;
+
 function isRuntimeHandle(type: ESTree.TSType): boolean {
   if (type.type === "TSFunctionType" || type.type === "TSConstructorType") return true;
   if (type.type === "TSTypeReference") {
+    if (type.typeName.type !== "TSQualifiedName") return false;
     const namespace = leftmostName(type.typeName);
-    return type.typeName.type === "TSQualifiedName" && namespace !== undefined && runtimeNamespaces.has(namespace);
+    if (namespace === "Schema" && schemaDataType.test(type.typeName.right.name)) return false;
+    return namespace !== undefined && runtimeNamespaces.has(namespace);
   }
   if (type.type === "TSUnionType" || type.type === "TSIntersectionType") return type.types.some(isRuntimeHandle);
   if (type.type === "TSTypeOperator") return isRuntimeHandle(type.typeAnnotation);

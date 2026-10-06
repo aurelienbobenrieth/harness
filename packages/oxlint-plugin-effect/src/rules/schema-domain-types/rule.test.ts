@@ -122,6 +122,16 @@ export type Port = { readonly name: string; run(): Effect.Effect<void> };
   ).resolves.toBeUndefined();
 });
 
+it("reports a declaration whose only Schema member is a JSON value, which is data", async () => {
+  await expect(
+    assertRuleReports(
+      ruleName,
+      "export interface Recorded {\n  readonly type: string;\n  readonly data: Schema.Json;\n}\n",
+      domainFile,
+    ),
+  ).resolves.toBeUndefined();
+});
+
 it("allows function types", async () => {
   await expect(
     assertRuleDoesNotReport(ruleName, "export type Decide = (order: Order) => boolean;\n", domainFile),
