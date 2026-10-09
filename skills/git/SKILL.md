@@ -35,3 +35,4 @@ Descriptions follow [communication](../communication/SKILL.md) and carry only wh
 - Include: line one problem → resulting behavior; why, and the choice over its alternative; what the reviewer must decide or check by hand; risks, limits, migration, checks CI doesn't run.
 - Omit: file-by-file lists, restated code, commit narration, CI results, routine test-plan checklists, recaps, empty template sections.
 - Before/after or a behavior `diff` over prose. Branch changed → rewrite, don't append.
+- The repo has a slow-layer surface script (`pr:surface` in package.json) → its output opens the description, pasted as is, never retyped or summarized from memory: the author's account of what changed is the one with the author's blind spots.
