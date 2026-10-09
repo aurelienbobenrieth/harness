@@ -5,7 +5,7 @@ import { access, copyFile, mkdir, mkdtemp, readFile, readdir, rm, writeFile } fr
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { promisify } from "node:util";
-import { validateConsumerResults } from "./consumer-results.mjs";
+import { consumerAuditArgs, validateConsumerResults } from "./consumer-results.mjs";
 
 const execute = promisify(execFile);
 const root = path.resolve(import.meta.dirname, "..");
@@ -99,7 +99,7 @@ try {
   );
   await run([packageManager, "install", "--ignore-scripts", "--no-frozen-lockfile"]);
   console.log("Auditing the fresh consumer dependency graph...");
-  await run([packageManager, "audit", "--audit-level=low"]);
+  await run([packageManager, ...consumerAuditArgs]);
   const fixtures = await readdir(path.join(root, "scripts/fixtures/consumer"));
   await copyFile(
     path.join(root, "examples/shopify/app-home.oxlintrc.json"),

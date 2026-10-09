@@ -5,7 +5,7 @@ import { access, copyFile, mkdir, mkdtemp, readFile, readdir, rm, writeFile } fr
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { promisify } from "node:util";
-import { validateConsumerResults } from "./consumer-results.mjs";
+import { consumerAuditArgs, validateConsumerResults } from "./consumer-results.mjs";
 
 const execute = promisify(execFile);
 const root = path.resolve(import.meta.dirname, "..");
@@ -73,7 +73,7 @@ try {
   console.log(`Installing ${packages.length} packed packages with public registry dependencies and no overrides...`);
   await run([packageManager, "install", "--ignore-scripts", "--no-frozen-lockfile"]);
   console.log("Auditing the fresh public-registry consumer dependency graph...");
-  await run([packageManager, "audit", "--audit-level=low"]);
+  await run([packageManager, ...consumerAuditArgs]);
   for (const [name, version] of Object.entries({
     ...policy.sharedDependencies,
     ...policy.profiles[profile],

@@ -1,6 +1,13 @@
 import assert from "node:assert/strict";
 import path from "node:path";
 
+/**
+ * Arguments for auditing a fresh consumer graph. Each ignored advisory has no patched release and
+ * reaches consumers only through a peer tool; remove it once upstream ships a fix.
+ * - GHSA-vfj7-8cjw-p6xm: braces <=3.0.3 stack exhaustion on nested patterns, via stylelint > micromatch.
+ */
+export const consumerAuditArgs = ["audit", "--audit-level=low", "--ignore", "GHSA-vfj7-8cjw-p6xm"];
+
 /** Validates executed consumer evidence, including each explicitly allowed unavailable check. */
 export function validateConsumerResults(report, { root, expectedFiles, allowedSkips = [] }) {
   assert.equal(report.success, true, "Consumer report must record a successful run");
