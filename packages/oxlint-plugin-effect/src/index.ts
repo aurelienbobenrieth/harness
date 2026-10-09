@@ -27,6 +27,8 @@ import { requireAllConcurrency } from "./rules/require-all-concurrency/rule.js";
 import { requireForEachConcurrency } from "./rules/require-for-each-concurrency/rule.js";
 import { requireNamedEffectFn } from "./rules/require-named-effect-fn/rule.js";
 import { requireTaggedEffectFail } from "./rules/require-tagged-effect-fail/rule.js";
+import { schemaCheckBranded } from "./rules/schema-check-branded/rule.js";
+import { schemaDomainTypes } from "./rules/schema-domain-types/rule.js";
 import { schemaLiteralCase } from "./rules/schema-literal-case/rule.js";
 import { schemaTypeAdjacent } from "./rules/schema-type-adjacent/rule.js";
 import { taggedErrorName } from "./rules/tagged-error-name/rule.js";
@@ -75,6 +77,8 @@ export default eslintCompatPlugin({
     "require-for-each-concurrency": requireForEachConcurrency,
     "require-named-effect-fn": requireNamedEffectFn,
     "require-tagged-effect-fail": requireTaggedEffectFail,
+    "schema-check-branded": schemaCheckBranded,
+    "schema-domain-types": schemaDomainTypes,
     "schema-literal-case": schemaLiteralCase,
     "schema-type-adjacent": schemaTypeAdjacent,
     "tagged-error-name": taggedErrorName,
