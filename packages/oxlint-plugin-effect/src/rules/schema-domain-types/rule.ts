@@ -1,31 +1,11 @@
 import type { ESTree, Rule } from "@oxlint/plugins";
-import { defaultAllow, getFilename, isAllowedFile, type RuleContextWithOptions } from "../runtime-support.js";
-
-const defaultFiles = ["**/domain/**"];
+import { domainScopedMeta, isDomainScopedFile, type RuleContextWithOptions } from "../runtime-support.js";
 
 // Namespaces whose types are runtime handles (a codec, an effect, a service), not data a Schema describes.
 const runtimeNamespaces = new Set(["Context", "Effect", "Fiber", "Layer", "Queue", "Ref", "Schema", "Scope", "Stream"]);
 
 // Wrappers that keep the shape they wrap: `Readonly<{ id: string }>` is still a hand-written object.
 const shapeWrappers = new Set(["Array", "NonNullable", "Partial", "Readonly", "ReadonlyArray", "Required"]);
-
-type Options = {
-  readonly allow: readonly string[];
-  readonly files: readonly string[];
-};
-
-function stringArray(value: unknown): readonly string[] | undefined {
-  return Array.isArray(value) && value.every((entry) => typeof entry === "string") ? value : undefined;
-}
-
-function optionsOf(context: RuleContextWithOptions): Options {
-  const candidate = context.options?.[0];
-  const record = typeof candidate === "object" && candidate !== null ? (candidate as Record<string, unknown>) : {};
-  return {
-    allow: stringArray(record.allow) ?? defaultAllow,
-    files: stringArray(record.files) ?? defaultFiles,
-  };
-}
 
 function leftmostName(name: ESTree.TSTypeName): string | undefined {
   if (name.type === "Identifier") return name.name;
@@ -113,30 +93,20 @@ export const schemaDomainTypes: Rule = {
       schemaDomainEnum:
         "Declare this domain enum as Schema.Literals([...]) and derive the type with `type {{name}} = typeof {{name}}.Type`.",
     },
-    schema: [
-      {
-        type: "object",
-        properties: {
-          allow: { type: "array", items: { type: "string" } },
-          files: { type: "array", items: { type: "string" } },
-        },
-        additionalProperties: false,
-      },
-    ],
-    defaultOptions: [{ allow: defaultAllow, files: defaultFiles }],
+    ...domainScopedMeta,
   },
   createOnce(context) {
-    const inScope = (): boolean => {
-      const options = optionsOf(context as RuleContextWithOptions);
-      const filename = getFilename(context as RuleContextWithOptions);
-      return isAllowedFile(filename, options.files) && !isAllowedFile(filename, options.allow);
-    };
+    const inScope = (): boolean => isDomainScopedFile(context as RuleContextWithOptions);
 
     return {
       TSInterfaceDeclaration(node) {
         if (node.typeParameters !== null || node.declare || isSchemaDerivedInterface(node)) return;
         if (holdsBehavior(node.body.body) || !inScope()) return;
-        context.report({ node: node.id, messageId: "schemaDomainObject", data: { name: node.id.name } });
+        context.report({
+          node: node.id,
+          messageId: "schemaDomainObject",
+          data: { name: node.id.name },
+        });
       },
       TSTypeAliasDeclaration(node) {
         if (node.typeParameters !== null || node.declare) return;
@@ -150,7 +120,11 @@ export const schemaDomainTypes: Rule = {
       },
       TSEnumDeclaration(node) {
         if (node.declare || !inScope()) return;
-        context.report({ node: node.id, messageId: "schemaDomainEnum", data: { name: node.id.name } });
+        context.report({
+          node: node.id,
+          messageId: "schemaDomainEnum",
+          data: { name: node.id.name },
+        });
       },
     };
   },
