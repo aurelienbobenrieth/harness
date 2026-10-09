@@ -1,5 +1,11 @@
 # @aurelienbbn/agentlint-plugin-core
 
+## 0.2.0
+
+### Minor Changes
+
+- [#58](https://github.com/aurelienbobenrieth/harness/pull/58) [`0a017b4`](https://github.com/aurelienbobenrieth/harness/commit/0a017b448b3d4405c0201e99278366b5727f3098) Thanks [@aurelienbobenrieth](https://github.com/aurelienbobenrieth)! - Adds `core/operations-stay-with-owner` to `strictPreset`: a file that calls 4 or more operations (lowercase value exports) of one other module through its public entry (`api.ts` by default, `entryPattern`; bare specifiers listed in `packages`) is reported for review, agent authority. Code that drives another module's model belongs to that module: move it there, or have the owner offer the one outcome the file needs. Types and PascalCase vocabulary never count; operations are counted per file and per owner. Options: `minOperations`, `entryPattern`, `packages`.
+
 ## 0.1.3
 
 ### Patch Changes
