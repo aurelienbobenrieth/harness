@@ -2,18 +2,18 @@
 
 [![npm](https://img.shields.io/npm/v/@aurelienbbn/agentlint-plugin-core)](https://www.npmjs.com/package/@aurelienbbn/agentlint-plugin-core) [![downloads](https://img.shields.io/npm/dm/@aurelienbbn/agentlint-plugin-core)](https://www.npmjs.com/package/@aurelienbbn/agentlint-plugin-core) [![CI](https://github.com/aurelienbobenrieth/harness/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/aurelienbobenrieth/harness/actions/workflows/ci.yml) [![license](https://img.shields.io/npm/l/@aurelienbbn/agentlint-plugin-core)](https://github.com/aurelienbobenrieth/harness/blob/main/packages/agentlint-plugin-core/LICENSE) [![node](https://img.shields.io/node/v/@aurelienbbn/agentlint-plugin-core)](https://github.com/aurelienbobenrieth/harness/blob/main/packages/agentlint-plugin-core/package.json)
 
-**24 agentlint reviews for any TypeScript repo: a deterministic trigger finds the spot, an agent or a human settles it.**
+**25 agentlint reviews for any TypeScript repo: a deterministic trigger finds the spot, an agent or a human settles it.**
 
 > [!WARNING]
 > Requires the engine `@aurelienbbn/agentlint` `>=0.3.0 <0.5.0` as a peer. [Evidence](../../docs/compatibility.md#agentlint-engine).
 
 ```text
-strictPreset   ████████████             12  settled rules
+strictPreset   █████████████            13  settled rules
 starterPreset  ██                        2  boundary-resilience, bounded-work
 opt-in         ████████████             12  exported, in no preset: calibrate first
 ```
 
-## Start with 2 rules, not 24
+## Start with 2 rules, not 25
 
 ```sh
 agentlint init --preset "@aurelienbbn/agentlint-plugin-core#starterPreset"
@@ -46,6 +46,7 @@ export default defineConfig({
 | `correlated-optional-state`          | strict           | agent     | state     | `discriminantNames`, `minOptionalSiblings` (2), `skipNamePattern`                           |
 | `expected-value-recomputed`          | strict           | agent     | state     | `matcherPattern`, `derivationCallees`, `maxFindingsPerFile` (3)                             |
 | `integration-test-owns-its-boundary` | strict           | agent     | state     | `integrationPattern`, `doublePattern`                                                       |
+| `operations-stay-with-owner`         | strict           | agent     | state     | `minOperations` (4), `entryPattern` (`api.*` files), `packages`                             |
 | `temporal-coupling`                  | strict           | agent     | state     | `guardMessagePattern`, `initMethodPattern`                                                  |
 | `test-behavior-coverage`             | strict           | agent     | state     | `mockPattern`, `outcomePattern`, `minInteractionShare` (0.5), `maxInlineSnapshotLines` (12) |
 | `test-exercises-project-code`        | strict           | agent     | state     | `projectImportPattern`, `workspacePackages`, `blackBoxModules`                              |
@@ -123,6 +124,20 @@ snapshot-only     ≥ 2 tests whose only oracle is a whole-value snapshot,
 **test-exercises-project-code.** Project-reaching specifiers: relative, `@/`, `~/`, `#...`, or a name in `workspacePackages`, through `import`, `export ... from`, `import()`, `require()` or `vi.importActual()`. Black-box drivers that keep it silent: `node:child_process`, `execa`, `node:fs`, `node:fs/promises`, `@playwright/test`, `supertest`, `undici`, or a bare `fetch(` call. A monorepo importing itself by package name lists those names in `workspacePackages`.
 
 </details>
+
+## Ownership: operations stay with their module
+
+**`operations-stay-with-owner` reports a file that calls `minOperations` (4) or more operations of one other module through its public entry.** A module's entry is a relative import resolving to `api.ts` (`entryPattern`), or a bare specifier listed in `packages` (`@acme/*` for a scope). Operations are the value names starting lowercase; schemas, classes, constants in PascalCase and every `type` import are vocabulary and never count. Counted per file and per owner, so a read model calling two operations of each of three modules stays silent.
+
+```ts
+// src/qa/story.ts: ❌ replays takedown's own state moves, so the seed belongs to takedown
+import { requestComposed, requestSent, requestBounced, requestReplied } from "../takedown/api.ts";
+
+// src/ops/act.ts: ✅ one outcome the owner offers, plus its vocabulary
+import { merchantsStart, type TakedownSource } from "../takedown/api.ts";
+```
+
+The fix is ownership, not a wider entry: move the code into the owner, or let the owner contribute it through a declaration the composition collects (a seed, a handler, a migration). Exclude the composition root (`registry/`, `workers/`) in the binding when it legitimately assembles every module. Calibrated on one modular monolith (515 files): 1 finding, the seed that replayed another feature's moves.
 
 ## 🔒 Test drift: the author doesn't accept it
 
@@ -252,32 +267,33 @@ Measure its volume on your code before enforcing. One finding per function at mo
 
 Generated from package exports by `pnpm catalog`. Rule-specific options and limitations are described above and in the source tests.
 
-| Rule/check                           | Trigger or review scope                                                                                                                                                              |
-| ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `abstraction-earns-keep`             | Flags interfaces that mirror their only implementer, classes and modules that forward verbatim to one collaborator, and exports that only delegate to a single call.                 |
-| `boundary-resilience`                | Flags outbound network calls that show no timeout or AbortSignal, and handlers around them that discard the failure.                                                                 |
-| `bounded-data-access`                | Flags repository-like list/search/query calls without obvious boundedness markers.                                                                                                   |
-| `bounded-work`                       | Flags execution paths with unbounded I/O, fan-out, or runtime budgets.                                                                                                               |
-| `change-scatter-review`              | Flags a decision token added across several production files so a reader checks whether the change is legitimately cross-cutting or duplicates ownership.                            |
-| `comment-signal`                     | Flags comments that narrate the next line or docblocks that restate the signature.                                                                                                   |
-| `correlated-optional-state`          | Flags object types that pair a literal-union status field with two or more optional fields, where a discriminated union would make illegal combinations unrepresentable.             |
-| `expected-value-recomputed`          | Flags assertions whose expected value is computed from the same inputs as the call under test instead of being stated.                                                               |
-| `fake-parity`                        | Flags hand-written stateful fakes of a port so a shared behaviour suite or contract test proves they still behave like the real implementation.                                      |
-| `fallback-masks-failure`             | Flags empty-literal fallbacks on required-looking values, fallback-dense functions, and error handlers that return an empty literal.                                                 |
-| `flag-forked-function`               | Flags functions whose boolean or literal-union parameters are used only to choose between code paths, to check whether they are two functions sharing a name.                        |
-| `hotspot-change-review`              | Flags changes to paths a repository has identified from real corrective history instead of treating generic complexity scores as defects.                                            |
-| `integration-test-owns-its-boundary` | Flags test files named or titled as integration tests that also construct test doubles, so the claimed boundary is checked to be real.                                               |
-| `isomorphic-mapping`                 | Flags functions that copy an object field by field into a same-shaped object, to check that a real boundary separates the two types.                                                 |
-| `pinned-suspect-output`              | Flags expected strings and inline snapshots that contain `undefined`, `NaN`, `[object Object]`, `Invalid Date` or an embedded `null`, which usually certify a bug the test recorded. |
-| `precision-boundary-review`          | Flags raw arithmetic across different unit-bearing identifiers so a reader checks units, tolerances, rounding and independent test evidence.                                         |
-| `property-test-opportunity`          | Flags test files that cover an encode/decode-style inverse pair or an idempotent normaliser with examples only, where one property would cover the open input domain.                |
-| `protected-invariant-change`         | Flags changes to repository-declared invariant surfaces and their supporting evidence so architectural guarantees cannot change silently.                                            |
-| `single-use-extraction-review`       | Flags substantial file-local helpers with one caller and several forwarded values so a reader decides whether the extraction names a real concept or fragments one operation.        |
-| `temporal-coupling`                  | Flags classes that can exist in an unusable state: 'not initialized' guards, definite-assignment fields set outside the constructor, and nullable fields filled by an init method.   |
-| `test-behavior-coverage`             | Flags mock-dense test files without an outcome assertion, tests that assert mock interactions only, and tests whose only oracle is a snapshot of a whole value.                      |
-| `test-exercises-project-code`        | Flags test files that import nothing from the project, so the code they exercise is a copy or a third-party library.                                                                 |
-| `test-expectation-drift`             | Flags test files whose existing expectations were deleted, loosened, skipped or re-valued in the same change, so the behaviour change is declared rather than absorbed.              |
-| `validation-discards-proof`          | Flags validate/check/ensure functions that return void or boolean without a type predicate, so what they proved is lost to the type system.                                          |
+| Rule/check                           | Trigger or review scope                                                                                                                                                                         |
+| ------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `abstraction-earns-keep`             | Flags interfaces that mirror their only implementer, classes and modules that forward verbatim to one collaborator, and exports that only delegate to a single call.                            |
+| `boundary-resilience`                | Flags outbound network calls that show no timeout or AbortSignal, and handlers around them that discard the failure.                                                                            |
+| `bounded-data-access`                | Flags repository-like list/search/query calls without obvious boundedness markers.                                                                                                              |
+| `bounded-work`                       | Flags execution paths with unbounded I/O, fan-out, or runtime budgets.                                                                                                                          |
+| `change-scatter-review`              | Flags a decision token added across several production files so a reader checks whether the change is legitimately cross-cutting or duplicates ownership.                                       |
+| `comment-signal`                     | Flags comments that narrate the next line or docblocks that restate the signature.                                                                                                              |
+| `correlated-optional-state`          | Flags object types that pair a literal-union status field with two or more optional fields, where a discriminated union would make illegal combinations unrepresentable.                        |
+| `expected-value-recomputed`          | Flags assertions whose expected value is computed from the same inputs as the call under test instead of being stated.                                                                          |
+| `fake-parity`                        | Flags hand-written stateful fakes of a port so a shared behaviour suite or contract test proves they still behave like the real implementation.                                                 |
+| `fallback-masks-failure`             | Flags empty-literal fallbacks on required-looking values, fallback-dense functions, and error handlers that return an empty literal.                                                            |
+| `flag-forked-function`               | Flags functions whose boolean or literal-union parameters are used only to choose between code paths, to check whether they are two functions sharing a name.                                   |
+| `hotspot-change-review`              | Flags changes to paths a repository has identified from real corrective history instead of treating generic complexity scores as defects.                                                       |
+| `integration-test-owns-its-boundary` | Flags test files named or titled as integration tests that also construct test doubles, so the claimed boundary is checked to be real.                                                          |
+| `isomorphic-mapping`                 | Flags functions that copy an object field by field into a same-shaped object, to check that a real boundary separates the two types.                                                            |
+| `operations-stay-with-owner`         | Flags a file that calls several operations of another module through its public entry, so a reviewer decides whether that code belongs to the owner or the owner's entry exposes its internals. |
+| `pinned-suspect-output`              | Flags expected strings and inline snapshots that contain `undefined`, `NaN`, `[object Object]`, `Invalid Date` or an embedded `null`, which usually certify a bug the test recorded.            |
+| `precision-boundary-review`          | Flags raw arithmetic across different unit-bearing identifiers so a reader checks units, tolerances, rounding and independent test evidence.                                                    |
+| `property-test-opportunity`          | Flags test files that cover an encode/decode-style inverse pair or an idempotent normaliser with examples only, where one property would cover the open input domain.                           |
+| `protected-invariant-change`         | Flags changes to repository-declared invariant surfaces and their supporting evidence so architectural guarantees cannot change silently.                                                       |
+| `single-use-extraction-review`       | Flags substantial file-local helpers with one caller and several forwarded values so a reader decides whether the extraction names a real concept or fragments one operation.                   |
+| `temporal-coupling`                  | Flags classes that can exist in an unusable state: 'not initialized' guards, definite-assignment fields set outside the constructor, and nullable fields filled by an init method.              |
+| `test-behavior-coverage`             | Flags mock-dense test files without an outcome assertion, tests that assert mock interactions only, and tests whose only oracle is a snapshot of a whole value.                                 |
+| `test-exercises-project-code`        | Flags test files that import nothing from the project, so the code they exercise is a copy or a third-party library.                                                                            |
+| `test-expectation-drift`             | Flags test files whose existing expectations were deleted, loosened, skipped or re-valued in the same change, so the behaviour change is declared rather than absorbed.                         |
+| `validation-discards-proof`          | Flags validate/check/ensure functions that return void or boolean without a type predicate, so what they proved is lost to the type system.                                                     |
 
 ### Credited concepts
 
@@ -287,6 +303,7 @@ Generated from package exports by `pnpm catalog`. Rule-specific options and limi
 - "Design Smell: Temporal Coupling" by Mark Seemann (concept)
 - "Designing with types: Making illegal states unrepresentable" by Scott Wlaschin (concept)
 - "Don't Put Logic in Tests" (Google Testing Blog) (concept)
+- "Feature Envy" from Martin Fowler's Refactoring (concept, lifted from classes to modules)
 - "FlagArgument" by Martin Fowler (concept)
 - "Getting Started with Contract Tests" by J. B. Rainsberger (concept)
 - "IntegrationTest" by Martin Fowler (concept: narrow integration tests double the remote, not the adapter)
@@ -319,6 +336,7 @@ Concepts only; every rule is independently implemented.
 | `integration-test-owns-its-boundary`                                                                                                        | "IntegrationTest", Martin Fowler: narrow integration tests double the remote, not the adapter                                                           |
 | `correlated-optional-state`                                                                                                                 | "Designing with types: Making illegal states unrepresentable", Scott Wlaschin                                                                           |
 | `abstraction-earns-keep`                                                                                                                    | "Interfaces are not abstractions", Mark Seemann: header interfaces with one implementer                                                                 |
+| `operations-stay-with-owner`                                                                                                                | "Feature Envy" and "Move Function", Martin Fowler (Refactoring), lifted from classes to modules                                                         |
 | `temporal-coupling`                                                                                                                         | "Design Smell: Temporal Coupling", Mark Seemann                                                                                                         |
 | `flag-forked-function`                                                                                                                      | "The Wrong Abstraction", Sandi Metz; "FlagArgument", Martin Fowler                                                                                      |
 | `property-test-opportunity`                                                                                                                 | "Choosing properties for property-based testing", Scott Wlaschin: inverse and idempotence families                                                      |

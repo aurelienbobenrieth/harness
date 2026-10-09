@@ -7,6 +7,7 @@ import { commentSignal } from "./rules/comment-signal/rule.js";
 import { correlatedOptionalState } from "./rules/correlated-optional-state/rule.js";
 import { expectedValueRecomputed } from "./rules/expected-value-recomputed/rule.js";
 import { integrationTestOwnsItsBoundary } from "./rules/integration-test-owns-its-boundary/rule.js";
+import { operationsStayWithOwner } from "./rules/operations-stay-with-owner/rule.js";
 import { temporalCoupling } from "./rules/temporal-coupling/rule.js";
 import { testBehaviorCoverage } from "./rules/test-behavior-coverage/rule.js";
 import { testExercisesProjectCode } from "./rules/test-exercises-project-code/rule.js";
@@ -117,6 +118,11 @@ export {
   type ProtectedInvariantChangeOptions,
 } from "./rules/protected-invariant-change/rule.js";
 export {
+  defineOperationsStayWithOwner,
+  operationsStayWithOwner,
+  type OperationsStayWithOwnerOptions,
+} from "./rules/operations-stay-with-owner/rule.js";
+export {
   defineSingleUseExtractionReview,
   singleUseExtractionReview,
   type SingleUseExtractionReviewOptions,
@@ -135,6 +141,7 @@ export const strictPreset = defineConfig({
     correlatedOptionalState,
     expectedValueRecomputed,
     integrationTestOwnsItsBoundary,
+    operationsStayWithOwner,
     temporalCoupling,
     testBehaviorCoverage,
     testExercisesProjectCode,
