@@ -1,7 +1,5 @@
 import type { ESTree, Rule } from "@oxlint/plugins";
-import { defaultAllow, isScopedFile, type RuleContextWithOptions } from "../runtime-support.js";
-
-const defaultFiles = ["**/domain/**"];
+import { domainScopedMeta, isDomainScopedFile, type RuleContextWithOptions } from "../runtime-support.js";
 
 // Namespaces whose types are runtime handles (a codec, an effect, a service), not data a Schema describes.
 const runtimeNamespaces = new Set(["Context", "Effect", "Fiber", "Layer", "Queue", "Ref", "Schema", "Scope", "Stream"]);
@@ -95,27 +93,20 @@ export const schemaDomainTypes: Rule = {
       schemaDomainEnum:
         "Declare this domain enum as Schema.Literals([...]) and derive the type with `type {{name}} = typeof {{name}}.Type`.",
     },
-    schema: [
-      {
-        type: "object",
-        properties: {
-          allow: { type: "array", items: { type: "string" } },
-          files: { type: "array", items: { type: "string" } },
-        },
-        additionalProperties: false,
-      },
-    ],
-    defaultOptions: [{ allow: defaultAllow, files: defaultFiles }],
+    ...domainScopedMeta,
   },
   createOnce(context) {
-    const inScope = (): boolean =>
-      isScopedFile(context as RuleContextWithOptions, { allow: defaultAllow, files: defaultFiles });
+    const inScope = (): boolean => isDomainScopedFile(context as RuleContextWithOptions);
 
     return {
       TSInterfaceDeclaration(node) {
         if (node.typeParameters !== null || node.declare || isSchemaDerivedInterface(node)) return;
         if (holdsBehavior(node.body.body) || !inScope()) return;
-        context.report({ node: node.id, messageId: "schemaDomainObject", data: { name: node.id.name } });
+        context.report({
+          node: node.id,
+          messageId: "schemaDomainObject",
+          data: { name: node.id.name },
+        });
       },
       TSTypeAliasDeclaration(node) {
         if (node.typeParameters !== null || node.declare) return;
@@ -129,7 +120,11 @@ export const schemaDomainTypes: Rule = {
       },
       TSEnumDeclaration(node) {
         if (node.declare || !inScope()) return;
-        context.report({ node: node.id, messageId: "schemaDomainEnum", data: { name: node.id.name } });
+        context.report({
+          node: node.id,
+          messageId: "schemaDomainEnum",
+          data: { name: node.id.name },
+        });
       },
     };
   },

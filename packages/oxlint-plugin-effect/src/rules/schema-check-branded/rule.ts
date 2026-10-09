@@ -1,8 +1,6 @@
 import type { Context, ESTree, Rule } from "@oxlint/plugins";
 import { moduleMethod } from "../binding-support.js";
-import { defaultAllow, isScopedFile, type RuleContextWithOptions } from "../runtime-support.js";
-
-const defaultFiles = ["**/domain/**"];
+import { domainScopedMeta, isDomainScopedFile, type RuleContextWithOptions } from "../runtime-support.js";
 
 // Calls a schema chain continues through: `X.pipe(...)`, `X.check(...)`, `X.annotate(...)`.
 const chainMethods = new Set(["annotate", "check", "pipe"]);
@@ -75,17 +73,7 @@ export const schemaCheckBranded: Rule = {
       schemaCheckBranded:
         'Brand this checked schema (`Schema.brand("...")`): without a brand its type is the unchecked one, so code can build a value the check refuses.',
     },
-    schema: [
-      {
-        type: "object",
-        properties: {
-          allow: { type: "array", items: { type: "string" } },
-          files: { type: "array", items: { type: "string" } },
-        },
-        additionalProperties: false,
-      },
-    ],
-    defaultOptions: [{ allow: defaultAllow, files: defaultFiles }],
+    ...domainScopedMeta,
   },
   createOnce(context) {
     return {
@@ -93,7 +81,7 @@ export const schemaCheckBranded: Rule = {
         if (!isCheck(context, node)) return;
         const top = chainTop(node);
         if (chainHasBrand(context, top)) return;
-        if (!isScopedFile(context as RuleContextWithOptions, { allow: defaultAllow, files: defaultFiles })) return;
+        if (!isDomainScopedFile(context as RuleContextWithOptions)) return;
         context.report({ node, messageId: "schemaCheckBranded" });
       },
     };
