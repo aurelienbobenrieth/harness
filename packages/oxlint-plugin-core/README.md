@@ -2,7 +2,7 @@
 
 [![npm](https://img.shields.io/npm/v/@aurelienbbn/oxlint-plugin-core)](https://www.npmjs.com/package/@aurelienbbn/oxlint-plugin-core) [![downloads](https://img.shields.io/npm/dm/@aurelienbbn/oxlint-plugin-core)](https://www.npmjs.com/package/@aurelienbbn/oxlint-plugin-core) [![CI](https://github.com/aurelienbobenrieth/harness/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/aurelienbobenrieth/harness/actions/workflows/ci.yml) [![license](https://img.shields.io/npm/l/@aurelienbbn/oxlint-plugin-core)](https://github.com/aurelienbobenrieth/harness/blob/main/packages/oxlint-plugin-core/LICENSE) [![node](https://img.shields.io/node/v/@aurelienbbn/oxlint-plugin-core)](https://github.com/aurelienbobenrieth/harness/blob/main/packages/oxlint-plugin-core/package.json)
 
-**17 oxlint rules for any TypeScript codebase: swallowed errors, flaky or hollow tests, test code in production, anonymous public contracts, cramped statements.**
+**18 oxlint rules for any TypeScript codebase: swallowed errors, flaky or hollow tests, test code in production, anonymous public contracts, workspace members that leak into each other, cramped statements.**
 
 ```sh
 pnpm add -D @aurelienbbn/oxlint-plugin-core oxlint   # oxlint >=1.82.0 <2.0.0
@@ -29,20 +29,23 @@ pnpm add -D @aurelienbbn/oxlint-plugin-core oxlint   # oxlint >=1.82.0 <2.0.0
 | 🧯 errors    | `no-discarded-caught-error`, `no-error-message-matching`                                                                                                                           |
 | 🧪 tests     | `no-weak-test-assertions`, `no-test-sleeps`, `no-stubbed-subject`, `no-ambient-nondeterminism-in-tests`, `no-vitest-mocking`, `no-vitest-in-source`, `no-test-logic-in-production` |
 | 📜 contracts | `no-exported-anonymous-object-return`, `no-multi-positional-parameters`, `no-mutable-exported-state`, `no-reexport-only-modules`, `no-let`                                         |
+| 🧱 workspace | `workspace-boundaries`                                                                                                                                                             |
 | 💬 comments  | `no-dead-comments`                                                                                                                                                                 |
 | ↕️ layout    | `padding-line-between-statements` (autofix), `padding-before-exit` (autofix, deprecated)                                                                                           |
 
-| Rule                                 | Option                                       | Default                                 |
-| ------------------------------------ | -------------------------------------------- | --------------------------------------- |
-| `no-discarded-caught-error`          | `logOnlyCallees`                             | `["console", "logger", "log"]`          |
-|                                      | `reasonMarker`                               | `"REASON"`                              |
-|                                      | `includeTestFiles`                           | `false` (test files exempt)             |
-| `no-ambient-nondeterminism-in-tests` | `allowClock`                                 | `false`; `true` waives clock reads only |
-| `no-weak-test-assertions`            | `assertionHelpers`                           | `[]`                                    |
-| `no-vitest-mocking`                  | `forbidSpies`                                | `false` (`vi.fn`, `vi.spyOn` allowed)   |
-| `no-reexport-only-modules`           | `allow`                                      | `["index.ts"]`                          |
-| `no-multi-positional-parameters`     | `exemptFunctionNames`, `exemptFileBasenames` | `[]`, `[]`                              |
-| `padding-line-between-statements`    | ESLint's `{ blankLine, prev, next }` list    | the configuration shown under ↕️ below  |
+| Rule                                 | Option                                                        | Default                                 |
+| ------------------------------------ | ------------------------------------------------------------- | --------------------------------------- |
+| `no-discarded-caught-error`          | `logOnlyCallees`                                              | `["console", "logger", "log"]`          |
+|                                      | `reasonMarker`                                                | `"REASON"`                              |
+|                                      | `includeTestFiles`                                            | `false` (test files exempt)             |
+| `no-ambient-nondeterminism-in-tests` | `allowClock`                                                  | `false`; `true` waives clock reads only |
+| `no-weak-test-assertions`            | `assertionHelpers`                                            | `[]`                                    |
+| `no-vitest-mocking`                  | `forbidSpies`                                                 | `false` (`vi.fn`, `vi.spyOn` allowed)   |
+| `no-reexport-only-modules`           | `allow`                                                       | `["index.ts"]`                          |
+| `no-multi-positional-parameters`     | `exemptFunctionNames`, `exemptFileBasenames`                  | `[]`, `[]`                              |
+| `padding-line-between-statements`    | ESLint's `{ blankLine, prev, next }` list                     | the configuration shown under ↕️ below  |
+| `workspace-boundaries`               | `apps` (member directories that are deployables)              | `["apps/**"]`                           |
+|                                      | `forbidden` (`{ from, to, message? }` member directory pairs) | `[]`                                    |
 
 | Rule                                  | The decision its fix needs                                              |
 | ------------------------------------- | ----------------------------------------------------------------------- |
@@ -61,6 +64,7 @@ pnpm add -D @aurelienbbn/oxlint-plugin-core oxlint   # oxlint >=1.82.0 <2.0.0
 | `no-vitest-in-source`                 | the right test utility or dependency seam                               |
 | `no-vitest-mocking`                   | the dependency boundary and the fake                                    |
 | `no-weak-test-assertions`             | which observable outcome each test asserts                              |
+| `workspace-boundaries`                | which member owns the shared code, and which subpath it exports         |
 
 </details>
 
@@ -220,6 +224,35 @@ export * from "./user.js"; // (whole file)                    // ❌ no-reexport
 let total = 0; // ❌ no-let (also `var`)
 ```
 
+## 🧱 Workspace members meet only through their exports
+
+`workspace-boundaries` reads the members of the nearest `pnpm-workspace.yaml` (or `package.json` `workspaces`) and judges every `import`, `export … from`, and `import()` between two members:
+
+```ts
+// packages/kernel/src/tick.ts
+import { boot } from "@game/client"; // ❌ packages never import apps (members under `apps`)
+import { arrow } from "../../ranger/src/arrow.ts"; // ❌ relative path into another member
+import { body } from "@game/physics/src/body.ts"; // ❌ not opened by @game/physics `exports`
+import { body } from "@game/physics"; // ✅ an exported subpath
+```
+
+```json
+{
+  "core/workspace-boundaries": [
+    "error",
+    {
+      "apps": ["apps/**", "infra/**"],
+      "forbidden": [
+        { "from": "packages/features/*", "to": "packages/features/*", "message": "features meet through the kernel" },
+        { "from": "packages/kernel", "to": "packages/adapters/**" }
+      ]
+    }
+  ]
+}
+```
+
+A manifest without subpath `exports` opens only its root; a subpath mapped to `null` stays closed. Files outside every member (root configs, scripts) are never judged. Directory patterns: `*` within one segment, `**` across segments. Members are read once per lint process: restart an editor's language server after adding one. Cycles stay with `import/no-cycle`, dead files with Knip.
+
 ## 💬 Comments describe code, not its history
 
 ```text
@@ -337,11 +370,13 @@ Generated from package exports by `pnpm catalog`. Rule-specific options and limi
 | `no-weak-test-assertions`             | Disallow individual tests whose only assertions check existence, a bare call, a `typeof` or `Object` instance, wildcard-only matcher arguments, a value against itself or a literal against a literal, or a local mock's own return value. |
 | `padding-before-exit`                 | Require a blank line before a return or throw statement that follows another statement in the same block, switch case, or program body.                                                                                                    |
 | `padding-line-between-statements`     | Require or disallow blank lines between statements, with ESLint's options and a comment block counted as part of the statement below it; defaults to padding blocks, multiline expressions, declaration runs, and exits.                   |
+| `workspace-boundaries`                | Keep workspace members apart: packages never import apps, members enter each other only through package.json exports and never by relative path, and configured member pairs never import each other.                                      |
 
 ### Credited concepts
 
 - "Eradicating Non-Determinism in Tests" by Martin Fowler (concept)
 - "Test Logic in Production" (G. Meszaros, xUnit Test Patterns) (concept)
+- KeepCart/app tools/workspace-boundaries (same author; generalised with configurable apps and a forbidden-import matrix)
 - code-slop by asyrafhussin (MIT, concept re-implemented)
 - code-slop by asyrafhussin (MIT, concept re-implemented) — closing-brace labels and placeholder
 - https://eslint.org/docs/latest/rules/padding-line-between-statements (MIT; concept, independently implemented)
