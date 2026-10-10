@@ -14,14 +14,14 @@ flowchart LR
 
 ## Every package is a candidate or a draft
 
-**[policy/release.json](../policy/release.json) classifies all 21 packages; an unlisted addition or removal fails `pnpm release:check`.**
+**[policy/release.json](../policy/release.json) classifies all 22 packages; an unlisted addition or removal fails `pnpm release:check`.**
 
 | Class        | Count | Meaning                                                           | Boundary                                                  |
 | ------------ | ----: | ----------------------------------------------------------------- | --------------------------------------------------------- |
 | ✅ Candidate |    21 | Documented contracts + consumer checks. **Not stable readiness.** | Published by the release workflow.                        |
-| 🧪 Draft     |     0 | Preview with a material adoption limitation.                      | `private: true` required; selecting it for release fails. |
+| 🧪 Draft     |     1 | Preview with a material adoption limitation.                      | `private: true` required; selecting it for release fails. |
 
-No drafts today. A future draft packs and tests locally; **candidates' runtime, optional, and peer dependencies cannot require one.** Parked outside the repo: 4 Shopify theme packages, both Lit plugins, `oio`.
+One draft: `worktree-hygiene`, new, and its process-ownership rules need field use on Linux and macOS before candidacy. A draft packs and tests locally; **candidates' runtime, optional, and peer dependencies cannot require one.** Parked outside the repo: 4 Shopify theme packages, both Lit plugins, `oio`.
 
 <details>
 <summary>How Changesets treats private drafts</summary>

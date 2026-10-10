@@ -24,6 +24,7 @@
     "@aurelienbbn/oxlint-plugin-shopify-app": "candidate",
     "@aurelienbbn/oxlint-plugin-tanstack-query": "candidate",
     "@aurelienbbn/oxlint-plugin-type-evidence": "candidate",
-    "@aurelienbbn/oxlint-plugin-xstate": "candidate"
+    "@aurelienbbn/oxlint-plugin-xstate": "candidate",
+    "@aurelienbbn/worktree-hygiene": "draft"
   }
 }
