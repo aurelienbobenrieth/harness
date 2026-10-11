@@ -176,3 +176,31 @@ describe("directory patterns", () => {
     expect(matchesDirectory(pattern, directory)).toBe(expected);
   });
 });
+
+describe("export patterns follow Node", () => {
+  it("never lets `*` match nothing", () => {
+    expect(
+      boundaryViolation({ members, importer: "apps/web/src/main.ts", specifier: "@fixture/ui/components/" }),
+    ).toMatch(/is not opened/u);
+  });
+
+  it("prefers the exact key over a pattern that also matches", () => {
+    const exact = [
+      ...members.filter((member) => member.name !== "@fixture/ui"),
+      {
+        dir: "packages/ui",
+        name: "@fixture/ui",
+        kind: "package" as const,
+        exports: [open("."), open("./components/*"), { key: "./components/button", open: false }],
+      },
+    ];
+
+    expect(
+      boundaryViolation({
+        members: exact,
+        importer: "apps/web/src/main.ts",
+        specifier: "@fixture/ui/components/button",
+      }),
+    ).toMatch(/is not opened/u);
+  });
+});

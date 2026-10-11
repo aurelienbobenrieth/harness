@@ -251,7 +251,7 @@ import { body } from "@game/physics"; // ✅ an exported subpath
 }
 ```
 
-A manifest without subpath `exports` opens only its root; a subpath mapped to `null` stays closed. Files outside every member (root configs, scripts) are never judged. Directory patterns: `*` within one segment, `**` across segments. Members are read once per lint process: restart an editor's language server after adding one. Cycles stay with `import/no-cycle`, dead files with Knip.
+A manifest without subpath `exports` opens only its root; a subpath mapped to `null` stays closed; `*` matches at least one character, as in Node. Type-only imports and re-exports are judged like value imports: a type dependency is still a dependency. `require()` and `import x = require()` are not read. Files outside every member (root configs, scripts) are never judged. Directory patterns: `*` within one segment, `**` across segments. Members are read once per lint process: restart an editor's language server after adding one. Cycles stay with `import/no-cycle`, dead files with Knip.
 
 ## 💬 Comments describe code, not its history
 

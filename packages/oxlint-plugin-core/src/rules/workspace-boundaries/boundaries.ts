@@ -81,7 +81,8 @@ function exportKeyFor(exports: readonly ExportKey[], subpath: string): ExportKey
       if (star === -1) return false;
       const prefix = entry.key.slice(0, star);
       const suffix = entry.key.slice(star + 1);
-      return subpath.length >= prefix.length + suffix.length && subpath.startsWith(prefix) && subpath.endsWith(suffix);
+      // Node matches `*` against at least one character: `./x/*` never opens `./x/`.
+      return subpath.length > prefix.length + suffix.length && subpath.startsWith(prefix) && subpath.endsWith(suffix);
     })
     .toSorted((left, right) => right.key.indexOf("*") - left.key.indexOf("*"))[0];
 }
