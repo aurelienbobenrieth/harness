@@ -55,7 +55,7 @@ describe("against the real process table", () => {
 
       const listed: string[] = [];
       const io = { cwd: root, pid: process.pid, stdout: (text: string) => listed.push(text), stderr: () => undefined };
-      expect(await runCli(["ps", "--json"], io)).toBe(0);
+      expect(await runCli(["ps", "--json", "--root", root], io)).toBe(0);
       expect(JSON.parse(listed.join("")).owned.map((entry: { pid: number }) => entry.pid)).toStrictEqual([mine]);
 
       // --all: on Linux an orphan may be adopted by a session subreaper, not init; orphan detection is unit-tested.

@@ -87,6 +87,10 @@ export const defaultProtectedNames: readonly string[] = [
   "emacs",
   "claude",
   "codex",
+  "gemini",
+  "opencode",
+  "t3 code",
+  "t3 code (nightly)",
 ];
 
 const initNames = new Set(["init", "systemd", "launchd"]);
@@ -108,10 +112,17 @@ function spellings(root: string, platform: NodeJS.Platform): readonly string[] {
 }
 
 const boundary = /^(?:$|[/\s"'`;:,)\]=])/u;
+/** What may precede a path: the start, an argument boundary, or a `file:` URL prefix. Never another path segment. */
+const opening = /(?:^|[\s"'`;:,([=<>|&]|file:\/{2,3})$/u;
 
 /** True when `text`, at `index`, continues with one of `roots` up to a path boundary. */
 function startsWithRoot(text: string, index: number, roots: readonly string[]): boolean {
   return roots.some((root) => text.startsWith(root, index) && boundary.test(text.slice(index + root.length)));
+}
+
+/** True when the path starting at `index` is not the tail of a longer path (`/mirror/wt/a` is not `/wt/a`). */
+function opensPath(text: string, index: number): boolean {
+  return opening.test(text.slice(0, index));
 }
 
 /** True when `text` mentions a path inside `root` that is not inside one of the nested worktrees. */
@@ -124,7 +135,10 @@ export function mentionsWorktree(text: string, scope: WorktreeScope): boolean {
   return roots.some((root) => {
     const occurrences = [...haystack.matchAll(new RegExp(root.replace(/[.*+?^${}()|[\]\\]/gu, "\\$&"), "gu"))];
     return occurrences.some(
-      (match) => startsWithRoot(haystack, match.index, [root]) && !startsWithRoot(haystack, match.index, nested),
+      (match) =>
+        opensPath(haystack, match.index) &&
+        startsWithRoot(haystack, match.index, [root]) &&
+        !startsWithRoot(haystack, match.index, nested),
     );
   });
 }
@@ -136,10 +150,16 @@ function directEvidence(process: ProcessInfo, scope: WorktreeScope): Evidence | 
   return undefined;
 }
 
-/** The parent of `process`, or `undefined` when the PID is gone or now names a process started later. */
+/**
+ * The parent of `process`, or `undefined` when the PID is gone or now names a process started later. An unknown start
+ * time (`0`, a process the table could not open) never breaks a chain: a broken chain would make its children look
+ * orphaned, and orphans are what a default `reap` stops.
+ */
 function parentOf(byPid: ReadonlyMap<number, ProcessInfo>, process: ProcessInfo): ProcessInfo | undefined {
   const parent = byPid.get(process.ppid);
-  return parent !== undefined && parent.pid !== process.pid && parent.started <= process.started ? parent : undefined;
+  if (parent === undefined || parent.pid === process.pid) return undefined;
+  const ordered = parent.started === 0 || process.started === 0 || parent.started <= process.started;
+  return ordered ? parent : undefined;
 }
 
 function ancestorsOf(byPid: ReadonlyMap<number, ProcessInfo>, process: ProcessInfo): readonly ProcessInfo[] {

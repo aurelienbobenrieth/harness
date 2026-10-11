@@ -15,7 +15,7 @@ import {
 import { worktreePorts } from "./ports.js";
 import { type Listener, readSnapshot, type Snapshot, SnapshotError } from "./process-table.js";
 import { stopProcesses, type StopOutcome } from "./stop.js";
-import { resolveWorktree, ScopeError, type Worktree } from "./worktree.js";
+import { type ResolveOptions, resolveWorktree, ScopeError, type Worktree } from "./worktree.js";
 
 /** 0 done and clean · 1 leftovers, survivors, or a port held outside the worktree · 2 usage · 3 inspection failed. */
 export const exitCodes = { ok: 0, violation: 1, usage: 2, unavailable: 3 } as const;
@@ -26,7 +26,7 @@ export type CliContext = {
   readonly stdout: (text: string) => void;
   readonly stderr: (text: string) => void;
   readonly readSnapshot?: () => Promise<Snapshot>;
-  readonly resolveWorktree?: (directory: string) => Promise<Worktree>;
+  readonly resolveWorktree?: (directory: string, options?: ResolveOptions) => Promise<Worktree>;
   readonly signal?: (pid: number, signal: NodeJS.Signals) => void;
   readonly graceMs?: number;
 };
@@ -147,6 +147,11 @@ function processJson(entry: OwnedProcess, listeners: readonly Listener[] | undef
 async function inspect(context: CliContext, worktree: Worktree, options: Options) {
   const read = context.readSnapshot ?? readSnapshot;
   const snapshot = await read();
+  // Without the caller's row, its ancestors (shell, agent host) are unknown and nothing shields them or their helpers.
+  if (!snapshot.processes.some((process) => process.pid === context.pid))
+    throw new SnapshotError(
+      `The process table does not contain the caller (pid ${context.pid}); refusing to act on it.`,
+    );
   const selection = selectWorktreeProcesses({
     table: snapshot.processes,
     root: worktree.root,
@@ -293,7 +298,9 @@ export async function runCli(argv: readonly string[], context: CliContext): Prom
       throw new UsageError(`${command} takes no arguments, got "${positionals.join(" ")}".`);
     if (command === "ports" && positionals.length === 0) throw new UsageError("ports needs at least one name.");
 
-    const worktree = await (context.resolveWorktree ?? resolveWorktree)(options.root ?? context.cwd);
+    const worktree = await (context.resolveWorktree ?? resolveWorktree)(options.root ?? context.cwd, {
+      explicit: options.root !== undefined,
+    });
     return command === "ports"
       ? await portsCommand(context, worktree, positionals, options)
       : await processCommand(context, command, worktree, options);

@@ -153,3 +153,34 @@ describe("failures", () => {
     expect(run.err()).toMatch(/powershell\.exe missing/u);
   });
 });
+
+describe("the caller's own row", () => {
+  it("exits 3 and signals nothing when the process table lacks the caller", async () => {
+    const run = harness([tableWithLeftover.filter((process) => process.pid !== 30)]);
+
+    expect(await runCli(["reap", "--all"], run.context)).toBe(exitCodes.unavailable);
+    expect(run.err()).toMatch(/does not contain the caller \(pid 30\)/u);
+    expect(run.signals).toStrictEqual([]);
+  });
+});
+
+describe("the root a command is scoped to", () => {
+  it("marks the root explicit only when --root names it", async () => {
+    const calls: { directory: string; explicit: boolean | undefined }[] = [];
+    const run = harness([tableWithLeftover]);
+    const context: CliContext = {
+      ...run.context,
+      resolveWorktree: async (directory, options) => {
+        calls.push({ directory, explicit: options?.explicit });
+        return { root: directory, worktrees: [directory], nested: [] };
+      },
+    };
+    await runCli(["ps"], context);
+    await runCli(["ps", "--root", inRoot("sub")], context);
+
+    expect(calls).toStrictEqual([
+      { directory: root, explicit: false },
+      { directory: inRoot("sub"), explicit: true },
+    ]);
+  });
+});

@@ -33,11 +33,11 @@ No runtime dependency. Node `^22.19.0 || ^24.11.0`; Windows reads processes thro
 | `done`                    | end-of-task check                                                           | 1 while a worktree process still runs    |
 | `done --reap`             | stops them first, then checks                                               | 1 if one survives                        |
 
-Every command takes `--root DIR` (default: the git worktree of the current directory), `--protect NAME` (repeatable), and `--json`. Exit 2 is a usage error or a refused scope (a filesystem root, the home directory); exit 3 means the process table could not be read, never a clean result.
+Every command takes `--root DIR` (default: the git worktree of the current directory), `--protect NAME` (repeatable), and `--json`. Exit 2 is a usage error or a refused scope (a filesystem root, the home directory or one of its ancestors, or a current directory outside git: name it with `--root` to scope a plain directory); exit 3 means the process table could not be read, or does not contain the caller, never a clean result.
 
 ## Ports: same path, same ports
 
-`base + range × stride + index`, with `range = fnv1a(worktree path) % ranges` (defaults 20000, 900, 10). Worktrees of one repository that hash to the same range get the next free one, in path order, so siblings never share a port. Unrelated repositories can still collide: start servers on a strict port so a collision fails instead of drifting to a neighbour, and use `--check` to see who holds it.
+`base + range × stride + index`, with `range = fnv1a(worktree path) % ranges` (defaults 20000, 900, 10). Worktrees of one repository that hash to the same range get the next free one, in path order, so siblings never share a port; adding a worktree that sorts before a sibling and hashes to its range moves that sibling to the next free range, so re-read `ports` after `git worktree add`. Unrelated repositories can still collide: start servers on a strict port so a collision fails instead of drifting to a neighbour, and use `--check` to see who holds it.
 
 ```ts
 import { worktreePorts } from "@aurelienbbn/worktree-hygiene";
@@ -48,17 +48,17 @@ const { ports } = worktreePorts({ root: process.cwd(), names: ["game", "worker"]
 
 ## What counts as a worktree process, and what never does
 
-A process belongs to the worktree when its working directory, executable, or command line points inside it (native, forward-slash, and Git Bash `/c/...` spellings; `/wt/a` never matches `/wt/ab`), or it descends from one that does. Worktrees nested inside the root (`git worktree list`) keep their own processes.
+A process belongs to the worktree when its working directory, executable, or command line points inside it (native, forward-slash, `file:` URL, and Git Bash `/c/...` spellings; `/wt/a` never matches `/wt/ab`, `/wt/a-sibling`, or `/mirror/wt/a`), or it descends from one that does. Worktrees nested inside the root (`git worktree list`) keep their own processes.
 
 Never stopped, whatever the evidence:
 
 - the caller, its ancestors, and its own helper processes;
 - the infrastructure of the caller's agent: a direct child of a protected process in the caller's chain (an MCP server) and everything below it, unless that child is a shell, which is how agents run task commands;
-- anything below a protected process outside the caller's chain: editors, terminal hosts, file managers, and other agents (`code`, `cursor`, `windowsterminal`, `tmux`, `claude`, `codex`, … `--protect` adds names); `ps` lists these as protected.
+- anything below a protected process outside the caller's chain: editors, terminal hosts, file managers, and agent hosts (`code`, `cursor`, `windowsterminal`, `tmux`, `claude`, `codex`, `gemini`, `opencode`, `t3 code`, … `--protect` adds names); `ps` lists these as protected.
 
 Before each signal the target is re-read: same PID, start time, and command line, or it is left alone. `SIGTERM` first, `SIGKILL` after a 3 s grace (Windows terminates on the first signal).
 
-**Limits.** Windows exposes no working directory, so a process started with only relative paths is found through its ancestry, not by itself. An orphan adopted by a session subreaper on Linux is not seen as orphaned: use `reap --all` or `done --reap`. An agent host whose executable name is not protected (for example a plain `node cli.js`) does not get its MCP servers shielded on Linux and macOS, where they inherit the worktree as working directory: add `--protect` for it.
+**Limits.** Windows exposes no working directory, so a process started with only relative paths is found through its ancestry, not by itself. An unquoted path with a space in a command line is read up to the space, so a worktree at `C:\work\panache` also claims a process started from `C:\work\panache 2` when that path is unquoted: keep worktree paths free of spaces. An orphan adopted by a session subreaper on Linux is not seen as orphaned: use `reap --all` or `done --reap`. An agent host whose executable name is not protected (for example a plain `node cli.js`) does not get its MCP servers shielded on Linux and macOS, where they inherit the worktree as working directory: add `--protect` for it.
 
 ## For agents
 

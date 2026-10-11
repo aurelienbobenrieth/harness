@@ -20,4 +20,4 @@ export {
 export { fnv1a, worktreeKey, worktreePorts, type PortLayout, type PortRequest, type WorktreePorts } from "./ports.js";
 export { readSnapshot, SnapshotError, type Listener, type Snapshot } from "./process-table.js";
 export { stopProcesses, type StopOutcome, type StopRequest } from "./stop.js";
-export { resolveWorktree, ScopeError, type Worktree } from "./worktree.js";
+export { resolveWorktree, ScopeError, type ResolveOptions, type Worktree } from "./worktree.js";

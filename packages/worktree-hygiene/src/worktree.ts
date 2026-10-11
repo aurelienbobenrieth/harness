@@ -57,13 +57,24 @@ function isInside(parent: string, child: string): boolean {
   return relative !== "" && !relative.startsWith("..") && !path.isAbsolute(relative);
 }
 
+export type ResolveOptions = {
+  /**
+   * `directory` was named by the caller (`--root`), so it is accepted as the worktree even outside git. A directory
+   * only inferred from the current working directory must be a git checkout: `~/projects` would otherwise claim every
+   * process of every project under it.
+   */
+  readonly explicit?: boolean;
+};
+
 /**
- * Resolve the worktree containing `directory` (git's top level, else `directory` itself). Refuses a filesystem root,
- * the home directory, or any of its ancestors: a scope that wide would claim unrelated processes.
+ * Resolve the worktree containing `directory` (git's top level, else `directory` itself when `explicit`). Refuses a
+ * filesystem root, the home directory, or any of its ancestors: a scope that wide would claim unrelated processes.
  */
-export async function resolveWorktree(directory: string): Promise<Worktree> {
+export async function resolveWorktree(directory: string, options: ResolveOptions = {}): Promise<Worktree> {
   const start = await real(directory);
   const topLevel = await git(start, ["rev-parse", "--show-toplevel"]);
+  if ((topLevel === undefined || topLevel === "") && options.explicit !== true)
+    throw new ScopeError(`"${start}" is not inside a git worktree; name the directory with --root to use it anyway.`);
   const root = topLevel === undefined || topLevel === "" ? start : await real(topLevel);
 
   const home = path.resolve(homedir());

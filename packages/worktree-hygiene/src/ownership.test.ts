@@ -20,7 +20,9 @@ describe("worktree mentions", () => {
     ['node "/work/a/x.js"', true],
     ["node /work/ab/x.js", false],
     ["node /work/a-b/x.js", false],
-    ["node /other/work/a/x.js", true],
+    ["node /other/work/a/x.js", false],
+    ["node file:///work/a/x.js", true],
+    ["node --root=/work/a", true],
   ])("POSIX: %s → %s", (text, expected) => {
     expect(mentionsWorktree(text, posix)).toBe(expected);
   });
@@ -30,6 +32,9 @@ describe("worktree mentions", () => {
     ["node c:/work/a/x.js", true],
     ["tail -f /c/work/a/log.txt", true],
     ["node C:\\Work\\AB\\x.js", false],
+    ["node C:\\Work\\A-sibling\\x.js", false],
+    ["node --import file:///C:/Work/A/x.js", true],
+    ["node D:\\Mirror\\C\\Work\\A\\x.js", false],
   ])("Windows, case-insensitive and Git Bash paths: %s → %s", (text, expected) => {
     expect(mentionsWorktree(text, windows)).toBe(expected);
   });
@@ -142,5 +147,75 @@ describe("worktree process selection", () => {
       owned: [],
       protected: [],
     });
+  });
+});
+
+describe("worktree mentions on UNC paths", () => {
+  const scope = { root: "\\\\server\\share\\wt", platform: "win32" as const };
+
+  it.each([
+    ["node \\\\server\\share\\wt\\vite.js", true],
+    ["node //server/share/wt/vite.js", true],
+    ["node \\\\server\\share\\wtx\\vite.js", false],
+    ["node \\\\server\\share-x\\wt\\vite.js", false],
+  ])("%s → %s", (text, expected) => {
+    expect(mentionsWorktree(text, scope)).toBe(expected);
+  });
+});
+
+describe("ancestry with unknown start times", () => {
+  it("does not orphan a worktree process whose parent row has no start time", () => {
+    const table = [
+      ...machine,
+      row(100, 10, "bash", "bash -c pnpm dev", { started: 0 }),
+      row(101, 100, "node", "node /wt/a/node_modules/vite/bin/vite.js"),
+    ];
+    const entry = select(table).owned.find((candidate) => candidate.process.pid === 101);
+
+    expect(entry?.orphaned).toBe(false);
+  });
+
+  it("keeps the caller's chain whole when an ancestor has no start time, so its agent stays unselected", () => {
+    const table = machine.map((process) => (process.pid === 20 ? { ...process, started: 0 } : process));
+    const selected = new Set(pids([...select(table).owned, ...select(table).protected]));
+
+    expect([1, 10, 20, 24].filter((pid) => selected.has(pid))).toStrictEqual([]);
+  });
+});
+
+describe("agent hosts", () => {
+  /**
+   * An agent desktop host (T3 Code) above the caller's Claude session runs a second agent as a plain `node` process
+   * whose task shell started a dev server in the worktree: that server belongs to the other agent.
+   */
+  const hosted = [
+    row(1, 0, "init"),
+    row(5, 1, "T3 Code (Nightly).exe", '"C:\\Programs\\T3 Code (Nightly).exe"'),
+    row(10, 5, "claude.exe", "claude.exe --output-format stream-json"),
+    row(20, 10, "cmd.exe", "cmd.exe /c worktree-hygiene done"),
+    row(30, 20, "node.exe", "node.exe C:\\wt\\a\\node_modules\\.bin\\worktree-hygiene done"),
+    row(50, 5, "node.exe", "node.exe acp-agent.js"),
+    row(51, 50, "bash.exe", "bash -c pnpm dev"),
+    row(52, 51, "node.exe", "node.exe C:\\wt\\a\\node_modules\\vite\\bin\\vite.js"),
+    row(60, 999, "node.exe", "node.exe C:\\wt\\a\\node_modules\\esbuild\\bin\\esbuild"),
+  ];
+
+  it("never selects the processes of another agent hosted by the same desktop host", () => {
+    const selection = selectWorktreeProcesses({ table: hosted, root: "C:\\wt\\a", platform: "win32", self: 30 });
+
+    expect(pids(selection.owned)).toStrictEqual([60]);
+    expect(pids(selection.protected)).toStrictEqual([]);
+  });
+
+  it("would select that agent's server if the desktop host were not a protected name", () => {
+    const selection = selectWorktreeProcesses({
+      table: hosted,
+      root: "C:\\wt\\a",
+      platform: "win32",
+      self: 30,
+      protectedNames: ["claude"],
+    });
+
+    expect(pids(selection.owned)).toStrictEqual([60, 52]);
   });
 });
