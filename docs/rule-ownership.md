@@ -15,13 +15,13 @@ flowchart LR
   U -- yes --> R
 ```
 
-**`pnpm catalog:check` enforces two-sided fixtures on all 184 rules and 28 checks.** A rule missing from its README's generated inventory can't ship.
+**`pnpm catalog:check` enforces two-sided fixtures on all 185 rules and 28 checks.** A rule missing from its README's generated inventory can't ship.
 
 ```text
  oxlint-plugin-effect            ██████████████████████████████████████████ 42
  oxlint-plugin-shopify-app       ███████████████████████████                27
  agentlint-plugin-core           ████████████████████████                   24
- oxlint-plugin-core              █████████████████                          17
+ oxlint-plugin-core              ██████████████████                         18
  agentlint-plugin-shopify-app    ███████████████                            15
  oxlint-plugin-xstate            ███████████                                11
  oxlint-plugin-type-evidence     ██████████                                 10
@@ -33,7 +33,7 @@ flowchart LR
  oxlint-plugin-alchemy           ████                                        4
  agentlint-plugin-effect         ███                                         3
  oxlint-plugin-drizzle           █                                           1
-                                                                  rules  = 184
+                                                                  rules  = 185
  conformance-shopify-app         █████████████                              13
  conformance-cloudflare          ██████                                      6
  conformance-core                █████                                       5
@@ -46,7 +46,7 @@ flowchart LR
 | Upstream owner                                                                               | Harness delta                                                                                                                                                                                                                                                                                                                           |
 | -------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Oxlint built-ins + TypeScript                                                                | Conventions the strict preset can't express; the preset itself.                                                                                                                                                                                                                                                                         |
-| Oxlint `import/no-cycle`, `import/no-self-import`, `eslint/no-restricted-imports`            | `withImportGraphLayer` (cycles), `layerDirectionOverride` (real direction). **No second graph engine.**                                                                                                                                                                                                                                 |
+| Oxlint `import/no-cycle`, `import/no-self-import`, `eslint/no-restricted-imports`            | `withImportGraphLayer` (cycles), `layerDirectionOverride` (real direction), `core/workspace-boundaries` (member identity: package names, `exports`, relative paths across members, a forbidden-member matrix). **No second graph engine:** dependency-cruiser and skott are not wrapped.                                                |
 | Knip                                                                                         | `dead-exports` runs it, validates the report. **No reachability analysis.**                                                                                                                                                                                                                                                             |
 | jscpd                                                                                        | `duplication-budget`: clone budget + evidence failure. **No clone detection.**                                                                                                                                                                                                                                                          |
 | TypeScript resolved config                                                                   | `tsconfig-strictness`: resolved flags, explicit waivers.                                                                                                                                                                                                                                                                                |

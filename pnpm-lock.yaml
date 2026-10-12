@@ -300,6 +300,8 @@ importers:
         specifier: workspace:*
         version: link:../../internal/oxlint-kit
 
+  packages/worktree-hygiene: {}
+
 packages:
 
   '@andrewbranch/untar.js@1.0.4':

@@ -9,6 +9,7 @@ Harness: source of truth for @aurelienbbn steering packages - lint rules, tool c
 *-plugin             define new rule implementations (oxlint, agentlint, stylelint)
 conformance-*        structural checks over manifests, layout, build output
                      (Vitest suite or programmatic)
+worktree-hygiene     CLI for agents in parallel worktrees: ports, leftover processes
 ```
 
 Rules live in the narrowest reusable domain: `effect` for Effect-specific, `core` for stack-agnostic. Core packages stay strictly project-agnostic.
