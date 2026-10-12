@@ -1,5 +1,11 @@
 # @aurelienbbn/oxlint-plugin-core
 
+## 0.4.0
+
+### Minor Changes
+
+- [#62](https://github.com/aurelienbobenrieth/harness/pull/62) [`cb0dcdc`](https://github.com/aurelienbobenrieth/harness/commit/cb0dcdc3f08e9926bacab796a14531dcf8bb05fa) Thanks [@aurelienbobenrieth](https://github.com/aurelienbobenrieth)! - Adds `core/workspace-boundaries`: reads the members of the nearest `pnpm-workspace.yaml` (or `package.json` `workspaces`) and reports an import, re-export, or `import()` between members when a package imports an app, a member reaches another by relative path, or the subpath is not opened by the target's `exports`. `apps` sets which member directories are deployables (default `["apps/**"]`); `forbidden` lists member directory pairs that never import each other, such as vertical packages or a kernel and its adapters. Off until enabled.
+
 ## 0.3.0
 
 ### Minor Changes

@@ -1,6 +1,6 @@
 {
   "name": "@aurelienbbn/worktree-hygiene",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": true,
   "description": "Stable dev-server ports per worktree, and finding or stopping the processes a worktree left running, for parallel coding agents.",
   "keywords": [
