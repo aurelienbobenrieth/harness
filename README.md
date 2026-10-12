@@ -14,15 +14,15 @@ flowchart LR
 ```
 
 > [!NOTE]
-> **All 21 packages are release candidates.** They publish through one manual, approval-gated workflow. See [release](docs/release-readiness.md).
+> **21 of the 22 packages are release candidates; `worktree-hygiene` is a private draft.** Candidates publish through one manual, approval-gated workflow. See [release](docs/release-readiness.md).
 
-## 21 packages, all on npm
+## 22 packages: 21 on npm, 1 draft
 
 | Package                                                                       | Kind                                         |   Size | npm                                                                                                                                                                    |
 | ----------------------------------------------------------------------------- | -------------------------------------------- | -----: | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [`oxlint-config`](packages/oxlint-config)                                     | preset                                       | config | [![npm](https://img.shields.io/npm/v/@aurelienbbn/oxlint-config?label=)](https://www.npmjs.com/package/@aurelienbbn/oxlint-config)                                     |
 | [`oxfmt-config`](packages/oxfmt-config)                                       | preset                                       | config | [![npm](https://img.shields.io/npm/v/@aurelienbbn/oxfmt-config?label=)](https://www.npmjs.com/package/@aurelienbbn/oxfmt-config)                                       |
-| [`oxlint-plugin-core`](packages/oxlint-plugin-core)                           | rules · TypeScript                           |     17 | [![npm](https://img.shields.io/npm/v/@aurelienbbn/oxlint-plugin-core?label=)](https://www.npmjs.com/package/@aurelienbbn/oxlint-plugin-core)                           |
+| [`oxlint-plugin-core`](packages/oxlint-plugin-core)                           | rules · TypeScript                           |     18 | [![npm](https://img.shields.io/npm/v/@aurelienbbn/oxlint-plugin-core?label=)](https://www.npmjs.com/package/@aurelienbbn/oxlint-plugin-core)                           |
 | [`oxlint-plugin-effect`](packages/oxlint-plugin-effect)                       | rules · Effect                               |     42 | [![npm](https://img.shields.io/npm/v/@aurelienbbn/oxlint-plugin-effect?label=)](https://www.npmjs.com/package/@aurelienbbn/oxlint-plugin-effect)                       |
 | [`oxlint-plugin-shopify-app`](packages/oxlint-plugin-shopify-app)             | rules · Shopify apps & extensions            |     27 | [![npm](https://img.shields.io/npm/v/@aurelienbbn/oxlint-plugin-shopify-app?label=)](https://www.npmjs.com/package/@aurelienbbn/oxlint-plugin-shopify-app)             |
 | [`oxlint-plugin-xstate`](packages/oxlint-plugin-xstate)                       | rules · XState                               |     11 | [![npm](https://img.shields.io/npm/v/@aurelienbbn/oxlint-plugin-xstate?label=)](https://www.npmjs.com/package/@aurelienbbn/oxlint-plugin-xstate)                       |
@@ -41,6 +41,7 @@ flowchart LR
 | [`conformance-shopify-app`](packages/conformance-shopify-app)                 | checks · Shopify app structure, Vitest suite |     13 | [![npm](https://img.shields.io/npm/v/@aurelienbbn/conformance-shopify-app?label=)](https://www.npmjs.com/package/@aurelienbbn/conformance-shopify-app)                 |
 | [`conformance-cloudflare`](packages/conformance-cloudflare)                   | checks · Wrangler config, Hyperdrive         |      6 | [![npm](https://img.shields.io/npm/v/@aurelienbbn/conformance-cloudflare?label=)](https://www.npmjs.com/package/@aurelienbbn/conformance-cloudflare)                   |
 | [`conformance-alchemy`](packages/conformance-alchemy)                         | checks · Alchemy state, CI, previews         |      4 | [![npm](https://img.shields.io/npm/v/@aurelienbbn/conformance-alchemy?label=)](https://www.npmjs.com/package/@aurelienbbn/conformance-alchemy)                         |
+| [`worktree-hygiene`](packages/worktree-hygiene)                               | CLI · ports per worktree, leftover processes |    CLI | draft, not published                                                                                                                                                   |
 
 All names are scoped `@aurelienbbn/…`. Parked outside this repo until a later release: 4 Shopify theme packages, 2 Lit plugins, `oio`. Each package README ends with its generated rule/check inventory. Tested hosts and ranges: [compatibility](docs/compatibility.md).
 
@@ -50,6 +51,7 @@ All names are scoped `@aurelienbbn/…`. Parked outside this repo until a later 
 *-config / *-preset   bundle existing rules
 *-plugin              new rule implementations
 conformance-*         structural checks: manifests, layout, build output
+worktree-hygiene      CLI agents run in their worktree: ports, leftover processes
 ```
 
 - **Narrowest domain wins:** `effect` for Effect-only rules, `core` for stack-agnostic ones.
@@ -66,7 +68,7 @@ conformance-*         structural checks: manifests, layout, build output
 | `pnpm test:mutation`                           | mutation-tests the conformance-core kernel                                            |
 | `pnpm security:check`                          | audits every dependency class; needs network, so separate in CI                       |
 | `pnpm test:compatibility baseline` / `current` | installs the 21 packed candidates outside the workspace against public-registry tools |
-| `pnpm test:package`                            | exercises all 21 packed packages with the registry agentlint engine                   |
+| `pnpm test:package`                            | exercises all 22 packed packages with the registry agentlint engine                   |
 | `pnpm release:plan`                            | versions, draft exclusions, blockers. Changes nothing; publishing is CI-only          |
 | `pnpm catalog`                                 | regenerates rule/check inventories and credits (after build)                          |
 

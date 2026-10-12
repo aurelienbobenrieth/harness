@@ -1,5 +1,13 @@
 # @aurelienbbn/oxlint-plugin-effect
 
+## 0.8.0
+
+### Minor Changes
+
+- [#57](https://github.com/aurelienbobenrieth/harness/pull/57) [`dd8356d`](https://github.com/aurelienbobenrieth/harness/commit/dd8356d4a0c09c333e36a4e082729eebf3709737) Thanks [@aurelienbobenrieth](https://github.com/aurelienbobenrieth)! - Adds `effect/schema-check-branded`: in a domain folder (`**/domain/**` by default, option `files`; tests and scripts skipped, option `allow`), a schema that adds a check (`Schema.check(...)` in a pipe, or a `.check(...)` call) with no `Schema.brand` in the same chain is reported. A check runs only on decode, encode and `make`, so without a brand its type is the unchecked one and code can build a value the check refuses. No autofix.
+
+- [#56](https://github.com/aurelienbobenrieth/harness/pull/56) [`8d2ed41`](https://github.com/aurelienbobenrieth/harness/commit/8d2ed41bf0f9ca01d4535c5f3620707f26f12b71) Thanks [@aurelienbobenrieth](https://github.com/aurelienbobenrieth)! - Adds `effect/schema-domain-types`: in a domain folder (`**/domain/**` by default, option `files`; tests and scripts skipped, option `allow`), an interface, an object type alias (bare, in `Readonly<>`, an array, a union or an intersection), a union of literal types or an enum is reported, so the domain is declared as Schemas (`Schema.Struct`, `Schema.TaggedStruct`, `Schema.Union`, `Schema.Literals`) with the type derived by `typeof X.Type`. Generic declarations, declarations holding behavior or runtime handles (`Schema.*`, `Effect.*` members), unions of named types and an empty interface extending a schema type stay silent. No autofix.
+
 ## 0.7.0
 
 ### Minor Changes

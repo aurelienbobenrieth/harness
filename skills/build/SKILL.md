@@ -35,7 +35,7 @@ Defect → reproduce the symptom at its boundary first, cheapest distinguishing 
 | Parse at the boundary into a type that carries the proof                                      | `validation-discards-proof`, `fallback-masks-failure` |
 | Decisions in pure functions; I/O in a thin shell; test the core with values                   | `no-vitest-mocking`, `no-test-logic-in-production`    |
 | Dependencies point inward: core never imports adapters, tests, or mutable shared state        | `no-mutable-exported-state`, `no-vitest-in-source`    |
-| One declared public surface per package (`exports`); consumers never deep-import              | packed consumer install                               |
+| One declared public surface per package (`exports`); consumers never deep-import              | `workspace-boundaries`, packed consumer install       |
 | Unit, test, and fixtures colocated; the folder deletes as a whole                             | —                                                     |
 | Group by domain: errors live beside their schemas and API, not a file each; folder once big   | —                                                     |
 | Duplicate until the third real use shows the shape; one adapter is hypothetical, two are real | `single-use-extraction-review`, `isomorphic-mapping`  |
@@ -48,6 +48,7 @@ Costly public interface → sketch two genuinely different shapes before committ
 - Runtime limits, retry identity, cancellation, partial failure: design them in when the workload needs them.
 - Stale generated code → run the generator (check whether it syncs externally). Never hand-write or widen substitute types.
 - Parallel workers: bounded scope, file ownership, a verification task each; trust their evidence, not their confidence. Serialize shared mutable state.
+- In a worktree, servers take their ports from `worktree-hygiene ports` with a strict port; before handoff `worktree-hygiene done` exits 0 (`--reap` stops what you started). Never stop a process by name or port alone.
 - Prove at the failure boundary: real filesystem for a writer, consumer install for exports, browser for focus. A fake, static render, or compile proves only itself.
 - Skipped, empty, stale, or unavailable ≠ pass. Rerun checks a later change invalidated; full gate on the final state.
 - Final diff: no debug output, temp files, formatter churn, or scope creep.
