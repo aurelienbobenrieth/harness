@@ -1,9 +1,9 @@
 # Agentlint contract
 
-**The 6 agentlint plugins target the standard / detector / binding API of the public engine `@aurelienbbn/agentlint` `>=0.3.0 <0.5.0`.** Breaking migration from the 0.1 engine: no adapter for the former flat rules, object-map config, or ledger records.
+**The 6 agentlint plugins target the standard / detector / binding API of the public engine `@aurelienbbn/agentlint` `>=0.3.0 <0.8.0`.** Breaking migration from the 0.1 engine: no adapter for the former flat rules, object-map config, or ledger records.
 
 > [!NOTE]
-> **Peer `>=0.3.0 <0.5.0`, developed against 0.3.0.** 0.3.0 rejects a config where two rules share a standard id but disagree on its revision, title, summary, source, or guidance (`ConfigError` reason `conflicting_standard`). Every preset loads cleanly alone, and the 5 the consumer suite composes load cleanly together.
+> **Peer `>=0.3.0 <0.8.0`, developed against 0.3.0.** 0.3.0 rejects a config where two rules share a standard id but disagree on its revision, title, summary, source, or guidance (`ConfigError` reason `conflicting_standard`). Every preset loads cleanly alone, and the 5 the consumer suite composes load cleanly together.
 
 ## An acceptance holds only while its inputs match
 

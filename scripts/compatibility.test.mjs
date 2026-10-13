@@ -36,6 +36,12 @@ test("accepts reviewed bounded hosts and the baseline agentlint engine", () => {
   assert.doesNotThrow(() => validateCompatibility(fixture()));
 });
 
+test("accepts the current consumer agentlint 0.7 engine", () => {
+  const input = fixture();
+  input.policy.profiles.current["@aurelienbbn/agentlint"] = "0.7.0";
+  assert.doesNotThrow(() => validateCompatibility(input));
+});
+
 test("rejects removal of a required host peer", () => {
   const input = fixture();
   delete input.packages[0].manifest.peerDependencies.oxlint;
@@ -139,6 +145,8 @@ test("rejects an agentlint plugin developed against an engine other than the bas
 
 test("rejects an agentlint engine profile outside the declared plugin peer range", () => {
   const input = fixture();
+  input.policy.peerRanges["@aurelienbbn/agentlint"] = ">=0.3.0 <0.5.0";
+  input.packages[1].manifest.peerDependencies["@aurelienbbn/agentlint"] = ">=0.3.0 <0.5.0";
   input.policy.profiles.current["@aurelienbbn/agentlint"] = "0.5.0";
   assert.throws(() => validateCompatibility(input), /tested version must satisfy its declared peer range/);
 });

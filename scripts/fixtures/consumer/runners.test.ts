@@ -1,5 +1,5 @@
 import { execFileSync } from "node:child_process";
-import { mkdir } from "node:fs/promises";
+import { mkdir, readFile } from "node:fs/promises";
 import path from "node:path";
 import { expect, it } from "vitest";
 import { defineConfig } from "@aurelienbbn/agentlint";
@@ -20,6 +20,15 @@ const presets: readonly [string, string][] = [
   ["xstate", "xstatePreset"],
 ];
 const executable = path.resolve("node_modules/@aurelienbbn/agentlint/dist/bin.mjs");
+const engineManifest = JSON.parse(
+  await readFile(path.resolve("node_modules/@aurelienbbn/agentlint/package.json"), "utf8"),
+) as { version: string };
+const fingerprintVersion = new Map([
+  ["0.3.0", 3],
+  ["0.4.0", 3],
+  ["0.7.0", 4],
+]).get(engineManifest.version);
+if (fingerprintVersion === undefined) throw new Error(`Unreviewed engine fingerprint: ${engineManifest.version}`);
 const brokenSource =
   'export interface IUser { id: string }\nexport type Order = { id: string };\nfetch("/unbounded"); useQuery({}); createActor(machine); const copy = "Hurry!";';
 
@@ -81,7 +90,8 @@ it("runs every packed agent preset through the actual agentlint parser", async (
   expect(findings.every((finding) => finding.location.line > 0)).toBe(true);
   expect(
     findings.every(
-      ({ identity }) => identity.fingerprint.scheme === "source-structure" && identity.fingerprint.version === 3,
+      ({ identity }) =>
+        identity.fingerprint.scheme === "source-structure" && identity.fingerprint.version === fingerprintVersion,
     ),
   ).toBe(true);
   expect(run(executable, ["check", "agent-clean.ts", "--base", "HEAD", "--format", "jsonl"], 0).trim()).toBe("");
