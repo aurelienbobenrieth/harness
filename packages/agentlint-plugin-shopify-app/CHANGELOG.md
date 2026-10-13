@@ -1,5 +1,11 @@
 # @aurelienbbn/agentlint-plugin-shopify-app
 
+## 0.1.4
+
+### Patch Changes
+
+- [#67](https://github.com/aurelienbobenrieth/harness/pull/67) [`b8a59d5`](https://github.com/aurelienbobenrieth/harness/commit/b8a59d5f28c0f63cbbf8afddd928977489a40613) Thanks [@aurelienbobenrieth](https://github.com/aurelienbobenrieth)! - Extend the declared agentlint peer range to >=0.3.0 <0.8.0 and exercise the published 0.7.0 engine in the current packed-consumer compatibility profile. Keep development and the baseline consumer on 0.3.0.
+
 ## 0.1.3
 
 ### Patch Changes
