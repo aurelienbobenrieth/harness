@@ -43,6 +43,9 @@
     "prepack": "pnpm build",
     "typecheck": "tsc --noEmit"
   },
+  "dependencies": {
+    "oxc-parser": "0.150.0"
+  },
   "devDependencies": {
     "@aurelienbbn/agentlint": "0.3.0"
   },

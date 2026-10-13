@@ -1,13 +1,13 @@
-import { testRuleOnSource } from "@aurelienbbn/agentlint/testing";
+import { testRuleOnSource, testRuleOnSources } from "@aurelienbbn/agentlint/testing";
 import { expect, it } from "vitest";
 import { abstractionEarnsKeep, defineAbstractionEarnsKeep } from "./rule.js";
 
 const namedInterfaceMessage =
   "Exported interface uses premature-abstraction naming; it earns its keep with a second implementation or a real seam.";
 const delegationMessage =
-  "Exported function only delegates to a single call; inline the wrapper or give it real logic.";
+  "Exported function forwards its parameters unchanged to one call; state the contract it owns or inline it.";
 const headerMessage = (name: string, implementer: string): string =>
-  `Interface \`${name}\` lists exactly the members of its only implementer \`${implementer}\` in this file; it earns its keep with a second implementer, a test double, or a consumer-owned seam.`;
+  `Interface \`${name}\` lists exactly the members of its only recognized implementer \`${implementer}\` in the captured sources; it earns its keep with a second implementer, a test double, or a consumer-owned seam.`;
 const affixMessage = (implementer: string, name: string): string =>
   `Class \`${implementer}\` is named as the implementation of \`${name}\` from a sibling module; the interface earns its keep with a second implementer, a test double, or a consumer-owned seam.`;
 const forwardingClassMessage = (name: string, forwarding: number, members: number, field: string): string =>
@@ -241,6 +241,7 @@ export function getTeam(id: string) {
     delegationMessage,
     delegationMessage,
     delegationMessage,
+    delegationMessage,
   ]);
 });
 
@@ -268,6 +269,210 @@ it("ignores exported functions with more than a delegation", async () => {
     await messages(
       "export function getUser(id: string) {\n  const normalized = id.trim();\n  return repo.getUser(normalized);\n}",
     ),
+  ).toEqual([]);
+});
+
+it.each([
+  "export function ticksOf(seconds: number) { return Math.max(0, Math.ceil(seconds * 30 - 1e-7)); }",
+  "export function selected(events: Event[], kind: string) { return events.filter(event => event.kind === kind); }",
+  "export function tally(events: Event[], kinds: string[]) { return Object.fromEntries(kinds.map(kind => [kind, events.filter(event => event.kind === kind).length])); }",
+  "export function getUser(id: string) { return repo.getUser(id.trim()); }",
+  "export function getUser(id: string = 'anonymous') { return repo.getUser(id); }",
+  "export function getUser(id: string, tenant: string) { return repo.getUser(tenant, id); }",
+  "export function getUser(id: string) { return repo.getUser({ id }); }",
+])("keeps argument transformations and defaults: %s", async (source) => {
+  expect(await messages(source)).toEqual([]);
+});
+
+it.each([
+  "export const getUser = (id: string) => repo.getUser(id);",
+  "export const getUser = async (id: string) => await repo.getUser(id);",
+  "export function getUser(id: string) { /* transparent */ return repo.getUser(id); }",
+])("reports transparent exports consistently across syntax: %s", async (source) => {
+  expect(await messages(source)).toEqual([delegationMessage]);
+});
+
+it("recognizes factories returning a derived interface", async () => {
+  expect(
+    await messages(`
+interface Scheduler { now(): number; schedule(task: () => void): void }
+const realScheduler: Scheduler = { now: () => Date.now(), schedule: task => setTimeout(task, 0) };
+interface ManualScheduler extends Scheduler { advance(): void }
+export function createManualScheduler(): ManualScheduler {
+  return { now: () => 0, schedule: task => task(), advance: () => {} };
+}`),
+  ).toEqual([]);
+});
+
+it("recognizes annotated arrow factories and type aliases", async () => {
+  expect(
+    await messages(`
+interface Clock { now(): number }
+const realClock: Clock = { now: () => Date.now() };
+type TestClock = Clock & { advance(): void };
+export const createClock = (): TestClock => ({ now: () => 0, advance: () => {} });
+`),
+  ).toEqual([]);
+});
+
+it("keeps the header finding when a factory merely returns the existing implementation", async () => {
+  expect(
+    await messages(`
+interface Clock { now(): number }
+const realClock: Clock = { now: () => Date.now() };
+export function clock(): Clock { return realClock; }
+`),
+  ).toEqual([headerMessage("Clock", "realClock")]);
+});
+
+it("recognizes an imported interface alias in a captured implementation file", async () => {
+  const rule = defineAbstractionEarnsKeep({ implementationFiles: ["src/manual.ts"] });
+  const findings = await testRuleOnSources({
+    rule,
+    sources: [
+      ["src/clock.ts", "export interface Clock { now(): number }\nexport const noopClock: Clock = { now: () => 0 };"],
+      [
+        "src/manual.ts",
+        "import type { Clock as TimeSource } from './clock.js';\nexport const createClock = (): TimeSource => ({ now: () => 42 });",
+      ],
+    ],
+  });
+  expect(findings.map((finding) => finding.message)).toEqual([]);
+});
+
+it("does not confuse unrelated same-named interfaces with additional implementations", async () => {
+  const rule = defineAbstractionEarnsKeep({ implementationFiles: ["src/other.ts"] });
+  const findings = await testRuleOnSources({
+    rule,
+    sources: [
+      ["src/clock.ts", "export interface Clock { now(): number }\nexport const noopClock: Clock = { now: () => 0 };"],
+      ["src/other.ts", "interface Clock { now(): number }\nconst other: Clock = { now: () => 42 };"],
+    ],
+  });
+  expect(findings.map((finding) => finding.message)).toEqual([
+    headerMessage("Clock", "noopClock"),
+    headerMessage("Clock", "other"),
+  ]);
+});
+
+it("keeps comments and strings from supplying fake implementers", async () => {
+  const rule = defineAbstractionEarnsKeep({ implementationFiles: ["src/other.ts"] });
+  const findings = await testRuleOnSources({
+    rule,
+    sources: [
+      ["src/clock.ts", "export interface Clock { now(): number }\nexport const noopClock: Clock = { now: () => 0 };"],
+      [
+        "src/other.ts",
+        "// import { Clock } from './clock.js'; const clock: Clock = { now: () => 42 };\nconst text = \"class Fake implements Clock { now() {} }\";",
+      ],
+    ],
+  });
+  expect(findings.map((finding) => finding.message)).toEqual([headerMessage("Clock", "noopClock")]);
+});
+
+it("resolves a namespace through a captured re-export and derived interface", async () => {
+  const rule = defineAbstractionEarnsKeep({ implementationFiles: ["src/barrel.ts", "src/manual.ts"] });
+  const findings = await testRuleOnSources({
+    rule,
+    sources: [
+      ["src/clock.ts", "export interface Clock { now(): number }\nexport const noopClock: Clock = { now: () => 0 };"],
+      ["src/barrel.ts", "export type { Clock as TimeSource } from './clock.js';"],
+      [
+        "src/manual.ts",
+        "import type * as Ports from './barrel.js';\ninterface Manual extends Ports.TimeSource { advance(): void }\nexport const manual: Manual = { now: () => 42, advance: () => {} };",
+      ],
+    ],
+  });
+  expect(findings.map((finding) => finding.message)).toEqual([]);
+});
+
+it("keeps one annotated-and-satisfied object from counting as two implementations", async () => {
+  expect(
+    await messages(`interface Clock { now(): number }
+const clock: Clock = { now: () => 0 } satisfies Clock;`),
+  ).toEqual([headerMessage("Clock", "clock")]);
+});
+
+it("keeps a copied object from proving a different implementation", async () => {
+  expect(
+    await messages(`interface Clock { now(): number }
+const clock: Clock = { now: () => 0 };
+const alias: Clock = { ...clock };`),
+  ).toEqual([headerMessage("Clock", "clock")]);
+});
+
+it("still reports after a captured alternative implementation is removed", async () => {
+  const rule = defineAbstractionEarnsKeep({ implementationFiles: ["src/manual.ts"] });
+  const clock = "export interface Clock { now(): number }\nexport const noopClock: Clock = { now: () => 0 };";
+  const before = await testRuleOnSources({
+    rule,
+    sources: [
+      ["src/clock.ts", clock],
+      ["src/manual.ts", "import type { Clock } from './clock.js';\nexport const manual: Clock = { now: () => 42 };"],
+    ],
+  });
+  const after = await testRuleOnSources({
+    rule,
+    sources: [
+      ["src/clock.ts", clock],
+      ["src/manual.ts", "export const unrelated = 42;"],
+    ],
+  });
+  expect(before.map((finding) => finding.message)).toEqual([]);
+  expect(after.map((finding) => finding.message)).toEqual([headerMessage("Clock", "noopClock")]);
+});
+
+it("resolves captured alternate implementers before applying implementation-name hints", async () => {
+  const rule = defineAbstractionEarnsKeep({ implementationFiles: ["src/clock.ts", "src/manual.ts", "src/real.ts"] });
+  const findings = await testRuleOnSources({
+    rule,
+    sources: [
+      ["src/clock.ts", "export interface Clock { now(): number }"],
+      [
+        "src/real.ts",
+        "import type { Clock } from './clock.js';\nexport class ClockImpl implements Clock { now() { return Date.now(); } }",
+      ],
+      ["src/manual.ts", "import type { Clock } from './clock.js';\nexport const manual: Clock = { now: () => 42 };"],
+    ],
+  });
+  expect(findings.map((finding) => finding.message)).toEqual([]);
+});
+
+it("keeps a shadowed local name from hiding a transparent imported delegate", async () => {
+  expect(
+    await messages(`import { client } from './client';
+function unrelated() { const client = createCache(); return client; }
+export function getUser(id: string) { return client.getUser(id); }`),
+  ).toEqual([delegationMessage]);
+});
+
+it("does not count abstract and ambient classes as concrete alternative implementations", async () => {
+  expect(
+    await messages(`interface Clock { now(): number }
+const clock: Clock = { now: () => 0 };
+abstract class AbstractClock implements Clock { abstract now(): number }
+declare class AmbientClock implements Clock { now(): number }`),
+  ).toEqual([headerMessage("Clock", "clock")]);
+});
+
+it("recognizes a factory that creates and returns a local object", async () => {
+  expect(
+    await messages(`interface Clock { now(): number }
+const realClock: Clock = { now: () => Date.now() };
+export function createClock(): Clock {
+  const clock: Clock = { now: () => 0 };
+  return clock;
+}`),
+  ).toEqual([]);
+});
+
+it("keeps a factory's own return contract from becoming a new header finding", async () => {
+  expect(
+    await messages(`interface Clock { now(): number }
+export function createClock(): Clock {
+  const clock: Clock = { now: () => Date.now() };
+  return clock;
+}`),
   ).toEqual([]);
 });
 

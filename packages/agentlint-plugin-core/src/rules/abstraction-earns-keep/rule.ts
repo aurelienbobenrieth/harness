@@ -6,6 +6,7 @@
  */
 import { type AgentlintNode, defineRule, type StateRule } from "@aurelienbbn/agentlint";
 import { isFunctionNode } from "../ast.js";
+import { implementationIndex } from "./implementations.js";
 import {
   isSameNode,
   literalText,
@@ -18,12 +19,6 @@ import {
 } from "../judgment-support-b.js";
 
 const exportedInterfacePattern = /^export\s+(?:declare\s+)?interface\s+([A-Za-z_$][\w$]*)/;
-const functionExportPattern =
-  /^export\s+(?:default\s+)?(?:async\s+)?function\s+[\w$]*\s*(?:<[^>]*>)?\s*\([^)]*\)(?:\s*:[^{]+)?\s*(\{[\s\S]*\})\s*$/;
-const arrowExportPattern =
-  /^export\s+const\s+[\w$]+(?:\s*:[^=]+)?\s*=\s*(?:async\s+)?(?:\([^)]*\)|[\w$]+)(?:\s*:[^=>]+)?\s*=>\s*(\{[\s\S]*\})\s*;?\s*$/;
-const delegationBodyPattern = /^\{?\s*return\s+\w+(?:\.\w+)*\(.*\);?\s*\}?$/s;
-const maxDelegationBodyLength = 160;
 
 const implementationAffixes = ["Impl", "Default", "Base", "Concrete", "Standard", "Real"];
 const relativeSpecifierPattern = /^\.\.?\//;
@@ -33,7 +28,7 @@ const defaultForwardingRatio = 0.8;
 const namedInterfaceMessage =
   "Exported interface uses premature-abstraction naming; it earns its keep with a second implementation or a real seam.";
 const delegationMessage =
-  "Exported function only delegates to a single call; inline the wrapper or give it real logic.";
+  "Exported function forwards its parameters unchanged to one call; state the contract it owns or inline it.";
 
 export type AbstractionEarnsKeepOptions = {
   /**
@@ -41,23 +36,13 @@ export type AbstractionEarnsKeepOptions = {
    * instead. `/^I[A-Z][a-z]|Interface$/` restores the naming trigger without matching `IPAddress` or `IOResult`.
    */
   readonly interfacePattern?: RegExp;
+  /** Exact repository-relative source paths captured as evidence for cross-file implementations. */
+  readonly implementationFiles?: readonly string[];
   /** Smallest class or module, in methods or exported functions, inspected for verbatim forwarding. Default: 3 */
   readonly minForwardingMembers?: number;
   /** Share of members that must forward verbatim to one collaborator, above 0 and at most 1. Default: 0.8 */
   readonly forwardingRatio?: number;
 };
-
-type Implementer = { readonly name: string; readonly members: readonly string[] };
-
-function extractFunctionBody(text: string): string | null {
-  const fn = functionExportPattern.exec(text);
-  if (fn) return fn[1] ?? null;
-
-  const arrow = arrowExportPattern.exec(text);
-  if (arrow) return arrow[1] ?? null;
-
-  return null;
-}
 
 function typeName(type: AgentlintNode | undefined): string {
   return (type?.text ?? "").replace(/<[\s\S]*$/, "").trim();
@@ -79,16 +64,6 @@ function behaviourMembers(body: AgentlintNode | null): readonly string[] | undef
   return names.length > 0 ? names : undefined;
 }
 
-function isHidden(member: AgentlintNode): boolean {
-  const modifier = member.childrenByType("accessibility_modifier")[0]?.text;
-  return (
-    modifier === "private" ||
-    modifier === "protected" ||
-    member.children.some((child) => child.type === "static") ||
-    member.childByFieldName("name")?.type === "private_property_identifier"
-  );
-}
-
 function classMethods(body: AgentlintNode | null): readonly AgentlintNode[] {
   return namedChildren(body).filter((member) => {
     if (member.childByFieldName("name")?.text === "constructor") return false;
@@ -96,46 +71,6 @@ function classMethods(body: AgentlintNode | null): readonly AgentlintNode[] {
     const value = member.type === "public_field_definition" ? member.childByFieldName("value") : null;
     return !!value && isFunctionNode(value);
   });
-}
-
-function objectMembers(object: AgentlintNode): readonly string[] {
-  return namedChildren(object).map((member) =>
-    member.type === "pair"
-      ? (member.childByFieldName("key")?.text ?? "")
-      : (member.childByFieldName("name") ?? member).text,
-  );
-}
-
-function implementersOf(root: AgentlintNode, target: string): readonly Implementer[] {
-  const found: Implementer[] = [];
-  for (const type of ["class_declaration", "class", "abstract_class_declaration"])
-    for (const declaration of root.descendantsOfType(type)) {
-      const clause = declaration.descendantsOfType("implements_clause")[0];
-      if (!clause || !namedChildren(clause).some((implemented) => typeName(implemented) === target)) continue;
-      found.push({
-        name: declaration.childByFieldName("name")?.text ?? "anonymous class",
-        members: classMethods(declaration.childByFieldName("body"))
-          .filter((member) => !isHidden(member))
-          .map((member) => member.childByFieldName("name")?.text ?? ""),
-      });
-    }
-  for (const expression of root.descendantsOfType("satisfies_expression")) {
-    const [value, type] = namedChildren(expression);
-    if (value?.type !== "object" || typeName(type) !== target) continue;
-    const declared =
-      expression.parent?.type === "variable_declarator" ? expression.parent.childByFieldName("name") : null;
-    found.push({ name: declared?.text ?? "object literal", members: objectMembers(value) });
-  }
-  for (const declarator of root.descendantsOfType("variable_declarator")) {
-    const value = declarator.childByFieldName("value");
-    const annotation = namedChildren(declarator.childByFieldName("type"))[0];
-    if (value?.type !== "object" || typeName(annotation) !== target) continue;
-    found.push({
-      name: declarator.childByFieldName("name")?.text ?? "object literal",
-      members: objectMembers(value),
-    });
-  }
-  return found;
 }
 
 function sameSet(left: readonly string[], right: readonly string[]): boolean {
@@ -242,9 +177,9 @@ export function defineAbstractionEarnsKeep(options: AbstractionEarnsKeepOptions 
         "Flags interfaces that mirror their only implementer, classes and modules that forward verbatim to one collaborator, and exports that only delegate to a single call.",
       guidance: {
         standard:
-          "An abstraction earns its keep. An interface that lists the members of its only implementer, a layer that forwards every call unchanged, or a single-delegation export adds indirection without buying clarity — inline it or delete it. A seam that a second implementer or a test double already uses is not speculative: effort that makes code easier to modify or to test is outside YAGNI. Well-named decomposition steps are NOT wrappers: a private helper that isolates a real sub-problem stays.",
+          "An abstraction earns its keep. An interface that lists the members of its only recognized implementer, a layer that forwards every call unchanged, or a single-delegation export adds indirection without buying clarity: inline it or delete it. A seam that a second implementer or a test double already uses is not speculative: effort that makes code easier to modify or to test is outside YAGNI. Well-named decomposition steps are NOT wrappers: a private helper that isolates a real sub-problem stays.",
         checks: [
-          "Name the second implementer that exists today, production or test double; search the repository, because the detector only sees this file. One exists: PASS. None is an answer: FAIL — use the concrete type and extract the interface when the second implementer arrives.",
+          "Name an existing production implementation or test double. Captured implementationFiles are checked automatically; search the repository for uncaptured implementations. An existing alternative passes. Without one, use the concrete type unless the interface owns a real consumer, package or plugin contract.",
           "An interface that lists every public member of its only class is a header, not an abstraction. It PASSES only as a role interface owned by the consumer's module and narrower than the implementer, as a documented plugin or extension point, or when it crosses a package or process boundary.",
           "Forwarding layer: state what this layer decides. Nothing yet: FAIL — callers take the collaborator directly; never keep the layer for future logic.",
           "A forwarding layer PASSES when it exposes strictly fewer operations than the collaborator, renames a foreign vocabulary, owns a public contract, or adds validation, instrumentation, authorization, caching or transactions in at least one member. Framework-mandated layers (DI providers, routers) PASS.",
@@ -281,10 +216,12 @@ export function defineAbstractionEarnsKeep(options: AbstractionEarnsKeepOptions 
       authority: "human",
       include: ["**/*.{ts,tsx,js,jsx,mts,cts,mjs,cjs}"],
       exclude: ["**/*.d.ts"],
+      ...(options.implementationFiles?.length ? { dependencies: [...options.implementationFiles] } : {}),
       options: {
         interfacePattern: serializePattern(options.interfacePattern),
         minForwardingMembers: options.minForwardingMembers ?? null,
         forwardingRatio: options.forwardingRatio ?? null,
+        ...(options.implementationFiles ? { implementationFiles: [...options.implementationFiles] } : {}),
       },
     },
     detector: {
@@ -307,9 +244,18 @@ export function defineAbstractionEarnsKeep(options: AbstractionEarnsKeepOptions 
         ],
       },
       id: "core/abstraction-earns-keep",
-      version: 2,
-      scan: "file",
+      version: 3,
+      scan: options.implementationFiles?.length ? "repository" : "file",
       createOnce({ context }) {
+        let index: ReturnType<typeof implementationIndex> | undefined;
+        let indexedPath: string | undefined;
+        const implementers = (name: string) => {
+          if (indexedPath !== context.path) {
+            index = implementationIndex(context.path, context.source, context.dependencies);
+            indexedPath = context.path;
+          }
+          return index?.(name) ?? [];
+        };
         function reportInterfaces(root: AgentlintNode): void {
           const declarations = [
             ...root.descendantsOfType("interface_declaration"),
@@ -318,7 +264,7 @@ export function defineAbstractionEarnsKeep(options: AbstractionEarnsKeepOptions 
           for (const declaration of declarations) {
             const name = declaration.childByFieldName("name");
             if (!name) continue;
-            const implementers = implementersOf(root, name.text);
+            const implementations = implementers(name.text);
             const exportStatement = declaration.parent?.type === "export_statement" ? declaration.parent : undefined;
 
             const value = declaration.childByFieldName("value");
@@ -329,21 +275,25 @@ export function defineAbstractionEarnsKeep(options: AbstractionEarnsKeepOptions 
                   ? value
                   : null;
             const members = behaviourMembers(shape);
-            const only = implementers.length === 1 ? implementers[0] : undefined;
-            if (members && only && sameSet(members, only.members)) {
+            const only = implementations.length === 1 ? implementations[0] : undefined;
+            if (members && only && only.kind !== "factory" && sameSet(members, only.members)) {
               context.report({
                 node: name,
-                message: `Interface \`${name.text}\` lists exactly the members of its only implementer \`${only.name}\` in this file; it earns its keep with a second implementer, a test double, or a consumer-owned seam.`,
+                message: `Interface \`${name.text}\` lists exactly the members of its only recognized implementer \`${only.name}\` in the captured sources; it earns its keep with a second implementer, a test double, or a consumer-owned seam.`,
+                relatedFiles: implementations
+                  .map((implementation) => implementation.file)
+                  .filter((file) => file !== context.path),
                 evidence: {
                   interface: name.text,
                   implementer: only.name,
                   members: members.toSorted(),
+                  scope: options.implementationFiles?.length ? "captured files" : "current file",
                 },
               });
               continue;
             }
 
-            if (!interfacePattern || !exportStatement || implementers.length >= 2) continue;
+            if (!interfacePattern || !exportStatement || implementations.length >= 2) continue;
             if (!exportedInterfacePattern.test(exportStatement.text) || !matches(interfacePattern, name.text)) continue;
             context.report({ node: exportStatement, message: namedInterfaceMessage });
           }
@@ -363,6 +313,7 @@ export function defineAbstractionEarnsKeep(options: AbstractionEarnsKeepOptions 
                   isAffixedNameOf(className, implemented),
               );
             if (mirrored === undefined) continue;
+            if (implementers(mirrored).length >= 2) continue;
             context.report({
               node: clause,
               message: `Class \`${className}\` is named as the implementation of \`${mirrored}\` from a sibling module; the interface earns its keep with a second implementer, a test double, or a consumer-owned seam.`,
@@ -437,12 +388,21 @@ export function defineAbstractionEarnsKeep(options: AbstractionEarnsKeepOptions 
             reportAffixedImplementations(root);
             reportForwardingClasses(root);
             const covered = reportForwardingModule(root);
+            const localNames = new Set(
+              root
+                .childrenByType("lexical_declaration")
+                .flatMap((declaration) =>
+                  declaration.childrenByType("variable_declarator").map((node) => node.childByFieldName("name")?.text),
+                ),
+            );
 
             for (const statement of root.descendantsOfType("export_statement")) {
               if (covered.some((node) => isSameNode(node, statement))) continue;
-              const body = extractFunctionBody(statement.text);
-              if (body === null || body.length > maxDelegationBodyLength) continue;
-              if (!delegationBodyPattern.test(body)) continue;
+              const fn = exportedFunction(statement);
+              const call = fn ? verbatimForward(fn) : undefined;
+              if (!call) continue;
+              const receiver = call.childByFieldName("function")?.childByFieldName("object");
+              if (receiver?.type === "identifier" && localNames.has(receiver.text)) continue;
               context.report({ node: statement, message: delegationMessage });
             }
           },
