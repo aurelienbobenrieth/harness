@@ -1,5 +1,13 @@
 # @aurelienbbn/agentlint-plugin-core
 
+## 0.2.1
+
+### Patch Changes
+
+- [#65](https://github.com/aurelienbobenrieth/harness/pull/65) [`0ab6264`](https://github.com/aurelienbobenrieth/harness/commit/0ab6264383c69821f91b72d9eb7fa2876589bfb5) Thanks [@aurelienbobenrieth](https://github.com/aurelienbobenrieth)! - Use structural forwarding checks for abstraction-earns-keep so calculations, argument transformations and private collaborator accessors do not become delegation findings. Detect transparent expression arrows consistently with function declarations.
+
+  Use object-creating annotated factories as additional implementation evidence without flagging their own return contracts. Recognize derived interfaces and direct/intersection aliases. Add implementationFiles for symbol-aware cross-file evidence from declared source snapshots, including relative import aliases, namespace imports and re-exports. Keep ambiguous architectural findings under human authority and increment the detector version to invalidate obsolete judgments.
+
 ## 0.2.0
 
 ### Minor Changes
