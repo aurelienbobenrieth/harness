@@ -72,7 +72,7 @@ worktree-hygiene      CLI agents run in their worktree: ports, leftover processe
 | `pnpm release:plan`                            | versions, draft exclusions, blockers. Changes nothing; publishing is CI-only          |
 | `pnpm catalog`                                 | regenerates rule/check inventories and credits (after build)                          |
 
-**No `skipLibCheck`, no error allowlist.** Every consumer profile needs complete TypeScript declarations. Agentlint plugins peer on the public engine `@aurelienbbn/agentlint` `>=0.3.0 <0.5.0`: see the [agentlint contract](docs/agentlint-contract.md).
+**No `skipLibCheck`, no error allowlist.** Every consumer profile needs complete TypeScript declarations. Agentlint plugins peer on the public engine `@aurelienbbn/agentlint` `>=0.3.0 <0.8.0`: see the [agentlint contract](docs/agentlint-contract.md).
 
 CI on `main` runs Linux + Windows on Node 22/24 plus the declared runtime floors; pull requests run Node 24 on both, with typecheck and unit tests narrowed to affected packages ([release](docs/release-readiness.md#three-workflows-one-publishes)). A configured matrix isn't a passed one: [local run evidence](docs/compatibility.md).
 
