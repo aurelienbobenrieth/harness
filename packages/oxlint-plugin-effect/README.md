@@ -187,11 +187,11 @@ Effect.gen(function* () {
 
 ## Contract
 
-| Topic          | Contract                                                                          |
-| -------------- | --------------------------------------------------------------------------------- |
-| Effect version | exercised on `4.0.0-rc.115`. ⚠️ Effect 3/4 spellings not promised interchangeable |
-| imports        | namespace and aliased imports recognized; local shadows ignored                   |
-| overlap        | `@effect/tsgo`'s type-aware diagnostics win; settled in `withEffectTsgoLayer`     |
+| Topic          | Contract                                                                                                                                                                                  |
+| -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Effect version | exercised on `4.0.0-rc.115`; matched names checked against `4.0.0`, which moves `effect/unstable/*` to `effect/*` (both recognized). ⚠️ Effect 3/4 spellings not promised interchangeable |
+| imports        | namespace and aliased imports recognized; local shadows ignored                                                                                                                           |
+| overlap        | `@effect/tsgo`'s type-aware diagnostics win; settled in `withEffectTsgoLayer`                                                                                                             |
 
 <!-- harness-catalog:start -->
 
