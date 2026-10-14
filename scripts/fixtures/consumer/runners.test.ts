@@ -27,6 +27,7 @@ const fingerprintVersion = new Map([
   ["0.3.0", 3],
   ["0.4.0", 3],
   ["0.7.0", 4],
+  ["0.8.0", 4],
 ]).get(engineManifest.version);
 if (fingerprintVersion === undefined) throw new Error(`Unreviewed engine fingerprint: ${engineManifest.version}`);
 const brokenSource =
