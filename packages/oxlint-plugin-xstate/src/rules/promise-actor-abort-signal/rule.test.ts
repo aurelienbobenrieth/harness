@@ -74,3 +74,49 @@ it("skips referenced logic functions", async () => {
     ),
   ).resolves.toBeUndefined();
 });
+
+it("reports fetch without the signal in an XState v6 createAsyncLogic run", async () => {
+  await expect(
+    assertRuleReports(
+      ruleName,
+      'import { createAsyncLogic } from "xstate";\nexport const load = createAsyncLogic({ run: async ({ input }: { input: { url: string } }) => { const res = await fetch(input.url); return res.json(); } });\n',
+      { message: /Async actor logic aborts its signal when the actor stops/ },
+    ),
+  ).resolves.toBeUndefined();
+});
+
+it("reports fetch without the signal in a createAsyncLogic run method", async () => {
+  await expect(
+    assertRuleReports(
+      ruleName,
+      'import { createAsyncLogic } from "xstate";\nexport const load = createAsyncLogic({ async run() { return (await fetch("/cart")).json(); } });\n',
+    ),
+  ).resolves.toBeUndefined();
+});
+
+it("reports fetch without the signal in an XState v6 createInvoke src", async () => {
+  await expect(
+    assertRuleReports(
+      ruleName,
+      'import { setup } from "xstate";\nconst s = setup({ actors: {} });\nexport const m = s.createMachine({ invoke: s.createInvoke({ src: async () => (await fetch("/cart")).json() }) });\n',
+    ),
+  ).resolves.toBeUndefined();
+});
+
+it("accepts XState v6 async logic forwarding the signal", async () => {
+  await expect(
+    assertRuleDoesNotReport(
+      ruleName,
+      'import { createAsyncLogic, setup } from "xstate";\nexport const load = createAsyncLogic({ run: async ({ input, signal }: { input: { url: string }; signal: AbortSignal }) => (await fetch(input.url, { signal })).json() });\nconst s = setup({ actors: {} });\nexport const m = s.createMachine({ invoke: s.createInvoke({ src: async ({ signal }) => (await fetch("/cart", { signal })).json() }) });\n',
+    ),
+  ).resolves.toBeUndefined();
+});
+
+it("ignores createInvoke on objects that are not setup results and referenced run functions", async () => {
+  await expect(
+    assertRuleDoesNotReport(
+      ruleName,
+      'import { createAsyncLogic } from "xstate";\nexport const load = createAsyncLogic({ run: loadCart });\nexport const job = queue.createInvoke({ src: async () => fetch("/cart") });\n',
+    ),
+  ).resolves.toBeUndefined();
+});

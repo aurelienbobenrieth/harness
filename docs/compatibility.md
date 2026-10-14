@@ -14,13 +14,13 @@ Source of truth: [policy/compatibility.json](../policy/compatibility.json). ESM 
 
 | Host            | Declared support    | `baseline` | `current` |
 | --------------- | ------------------- | ---------- | --------- |
-| agentlint       | `>=0.3.0 <0.8.0`    | 0.3.0      | 0.7.0     |
-| oxlint          | `>=1.82.0 <2.0.0`   | 1.82.0     | 1.83.0    |
-| oxlint-tsgolint | `^7.0.2001`         | 7.0.2001   | 7.0.2002  |
+| agentlint       | `>=0.3.0 <0.9.0`    | 0.3.0      | 0.8.0     |
+| oxlint          | `>=1.82.0 <2.0.0`   | 1.82.0     | 1.88.0    |
+| oxlint-tsgolint | `^7.0.2001`         | 7.0.2001   | 7.0.2004  |
 | oxfmt           | `>=0.67.0 <0.69.0`  | 0.67.0     | 0.68.0    |
 | vite-plus       | `^0.3.2`            | 0.3.2      | 0.3.2     |
-| Vitest          | `>=4.1.11 <6.0.0`   | 4.1.11     | 5.0.1     |
-| Stylelint       | `>=17.15.0 <18.0.0` | 17.15.0    | 17.15.0   |
+| Vitest          | `>=4.1.11 <6.0.0`   | 4.1.11     | 5.0.4     |
+| Stylelint       | `>=17.15.0 <18.0.0` | 17.15.0    | 17.16.0   |
 
 Both pin TypeScript 7.0.2 · Vite 8.3.0 · `@types/node` 22.20.3 · Lit 3.3.3 · XState 5.33.2 · jsdom 30.1.0.
 
@@ -31,10 +31,10 @@ Both pin TypeScript 7.0.2 · Vite 8.3.0 · `@types/node` 22.20.3 · Lit 3.3.3 ·
 <details>
 <summary>Registry sources, pending upgrades, host types</summary>
 
-- Checked against the public npm registry on 2026-09-24 (matches `registryCheckedAt`): [agentlint](https://registry.npmjs.org/@aurelienbbn%2Fagentlint/0.3.0), [oxlint](https://registry.npmjs.org/oxlint/1.83.0), [Vite Plus](https://registry.npmjs.org/vite-plus/0.3.2), [Vitest](https://registry.npmjs.org/vitest/5.0.1), [Stylelint](https://registry.npmjs.org/stylelint/17.15.0).
+- Checked against the public npm registry on 2026-10-14 (matches `registryCheckedAt`): [agentlint](https://registry.npmjs.org/@aurelienbbn%2Fagentlint/0.3.0), [oxlint](https://registry.npmjs.org/oxlint/1.88.0), [Vite Plus](https://registry.npmjs.org/vite-plus/0.3.2), [Vitest](https://registry.npmjs.org/vitest/5.0.4), [Stylelint](https://registry.npmjs.org/stylelint/17.16.0).
 - Adopted as `current` from the registry on 2026-09-29: [agentlint 0.4.0](https://registry.npmjs.org/@aurelienbbn%2Fagentlint/0.4.0), whose TSX grammar accepts `&` in JSX string attributes.
-- The current profile now uses [agentlint 0.7.0](https://registry.npmjs.org/@aurelienbbn%2Fagentlint/0.7.0), verified from the registry on 2026-10-13. Packed consumers install with strict peer checks and run the same positive/negative plugin fixtures; baseline and development remain on 0.3.0.
-- Newer, not adopted (2026-09-24): oxlint 1.85.0, oxfmt 0.70.0 (outside `<0.69.0`), Vite Plus 0.3.3 and 1.0.0-rc.0, jsdom 30.1.1.
+- The current profile now uses [agentlint 0.8.0](https://registry.npmjs.org/@aurelienbbn%2Fagentlint/0.8.0), verified from the registry on 2026-10-14. Packed consumers install with strict peer checks and run the same positive/negative plugin fixtures; baseline and development remain on 0.3.0.
+- Newer, not adopted (2026-10-14): oxfmt 0.73.0 (outside `<0.69.0`) and Vite Plus 1.1.0 (outside `^0.3.2`). These need a separate compatibility migration; the baseline remains the minimum supported toolchain.
 - Parked `conformance-shopify-theme` keeps TypeScript 6.0.3 at runtime: TypeScript 7 drops the compiler API it uses to resolve event names.
 - Config packages import host types from `oxlint` and `oxfmt`. Vite+ re-exports them, so the same objects work in its `lint` and `fmt` fields without Vite+ in either peer contract.
 
@@ -115,7 +115,7 @@ No advisory IDs ignored; no security override forces a dependency across a major
 
 ## Agentlint engine
 
-**The 6 agentlint plugins peer on `@aurelienbbn/agentlint` `>=0.3.0 <0.8.0` and develop against exactly 0.3.0 from npm.** No local engine archive is involved anywhere: the workspace, `pnpm test:package`, and both registry profiles install the same published engine.
+**The 6 agentlint plugins peer on `@aurelienbbn/agentlint` `>=0.3.0 <0.9.0` and develop against exactly 0.3.0 from npm.** No local engine archive is involved anywhere: the workspace, `pnpm test:package`, and both registry profiles install the same published engine.
 
 - `pnpm compatibility:check` requires every plugin's dev engine to equal the `baseline` profile and every profile engine to satisfy the peer range.
 - Both registry profiles run `runners.test.ts`: 5 of the 6 presets (all but `alchemy`) in one typed `defineConfig`, each rule's own fixtures through `@aurelienbbn/agentlint/testing`, and the CLI across those 5 domains. Details: [agentlint contract](agentlint-contract.md).

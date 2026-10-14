@@ -1,6 +1,7 @@
 import type { Context, ESTree } from "@oxlint/plugins";
 import { describe, expect, it } from "vitest";
 import {
+  type FunctionNode,
   binding,
   importedNameFrom,
   importedSpecifierName,
@@ -10,6 +11,7 @@ import {
   optionsObject,
   parentOf,
   propertyKeyName,
+  returnedExpressions,
   stringLiteralValue,
   unwrapExpression,
   unwrapExpressionKeepingChain,
@@ -266,5 +268,30 @@ describe("optionsObject", () => {
   it("falls back to an empty object", () => {
     expect(optionsObject({ options: ["string"] } as unknown as Context)).toEqual({});
     expect(optionsObject({} as unknown as Context)).toEqual({});
+  });
+});
+
+describe("returnedExpressions", () => {
+  const ret = (argument: ESTree.Node | null) => node({ type: "ReturnStatement", argument });
+  const block = (...body: ESTree.Node[]) => node({ type: "BlockStatement", body });
+  const fn = (type: string, body: ESTree.Node | null) => node({ type, body }) as unknown as FunctionNode;
+
+  it("returns an arrow's expression body", () => {
+    const body = identifier("value");
+    expect(returnedExpressions(fn("ArrowFunctionExpression", body))).toEqual([body]);
+  });
+
+  it("collects the function's own return arguments and skips nested functions and bare returns", () => {
+    const first = identifier("first");
+    const nested = fn("FunctionExpression", block(ret(identifier("inner"))));
+    const outer = fn(
+      "FunctionExpression",
+      block(ret(first), node({ type: "ExpressionStatement", expression: nested }), ret(null)),
+    );
+    expect(returnedExpressions(outer)).toEqual([first]);
+  });
+
+  it("returns nothing for a body-less declaration", () => {
+    expect(returnedExpressions(fn("TSDeclareFunction", null))).toEqual([]);
   });
 });

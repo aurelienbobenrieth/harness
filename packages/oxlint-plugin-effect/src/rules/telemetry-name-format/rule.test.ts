@@ -57,6 +57,24 @@ it("reports Rpc.make tags imported from effect/unstable/rpc", async () => {
   ).resolves.toBeUndefined();
 });
 
+it("reports Rpc.make tags imported from effect/rpc", async () => {
+  await expect(
+    assertRuleReports(
+      ruleName,
+      'import * as Rpc from "effect/rpc/Rpc";\nexport const GetUser = Rpc.make("GetUser", {});\n',
+    ),
+  ).resolves.toBeUndefined();
+  await expect(
+    assertRuleReports(ruleName, 'import { Rpc } from "effect/rpc";\nconst ListJobs = Rpc.make("jobs");\n'),
+  ).resolves.toBeUndefined();
+  await expect(
+    assertRuleDoesNotReport(
+      ruleName,
+      'import { Rpc } from "effect/rpc";\nconst ListJobs = Rpc.make("jobs.list", {});\n',
+    ),
+  ).resolves.toBeUndefined();
+});
+
 it("reports annotation keys in record and single-key forms, and withSpan attribute keys", async () => {
   await expect(
     reportedMessages(

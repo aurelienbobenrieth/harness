@@ -5,7 +5,7 @@
 **4 agentlint reviews for TanStack Query: every query and mutation shows its loading, error and stale states; data is fetched by key, not by command.**
 
 > [!WARNING]
-> Requires the engine `@aurelienbbn/agentlint` `>=0.3.0 <0.8.0` as a peer. [Evidence](../../docs/compatibility.md#agentlint-engine).
+> Requires the engine `@aurelienbbn/agentlint` `>=0.3.0 <0.9.0` as a peer. [Evidence](../../docs/compatibility.md#agentlint-engine).
 
 ## Quick start
 

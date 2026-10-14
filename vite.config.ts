@@ -51,6 +51,7 @@ export default defineConfig({
   test: {
     include: ["packages/*/src/**/*.test.ts", "internal/*/src/**/*.test.ts"],
     pool: "forks",
+    maxWorkers: 8,
     testTimeout: 15_000,
     coverage: {
       provider: "v8",

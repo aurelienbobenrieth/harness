@@ -175,3 +175,90 @@ it("ignores the snapshot slot of the tuple", async () => {
     ),
   ).resolves.toBeUndefined();
 });
+
+it("reports bare events passed to the XState v6 enq.raise, enq.sendTo and enq.emit", async () => {
+  await expect(
+    assertRuleReports(
+      ruleName,
+      'import { createMachine } from "xstate";\nexport const a = createMachine({ on: { next: (_, enq) => { enq.raise({ type: "done" }); } } });\n',
+    ),
+  ).resolves.toBeUndefined();
+  await expect(
+    assertRuleReports(
+      ruleName,
+      'import { createMachine } from "xstate";\nexport const a = createMachine({ on: { done: ({ parent }, enq) => { enq.sendTo(parent, { type: "done" }); } } });\n',
+    ),
+  ).resolves.toBeUndefined();
+  await expect(
+    assertRuleReports(
+      ruleName,
+      'import { setupEffect } from "@xstate/effect";\nexport const a = setupEffect({}).createMachine({ entry: (_, enq) => { enq.emit({ type: "started" }); } });\n',
+    ),
+  ).resolves.toBeUndefined();
+});
+
+it("reports bare events passed to enq.sendBack in an XState v6 createLogic run", async () => {
+  await expect(
+    assertRuleReports(
+      ruleName,
+      'import { createLogic } from "xstate";\nexport const logic = createLogic({ context: {}, run: (_, enq) => { enq.sendBack({ type: "done" }); } });\n',
+    ),
+  ).resolves.toBeUndefined();
+});
+
+it("reports bare events passed to @xstate/effect send in both forms", async () => {
+  await expect(
+    assertRuleReports(
+      ruleName,
+      'import { send } from "@xstate/effect";\nexport const program = (actor: any) => send(actor, { type: "next" });\n',
+    ),
+  ).resolves.toBeUndefined();
+  await expect(
+    assertRuleReports(
+      ruleName,
+      'import { send } from "@xstate/effect";\nexport const next = send({ type: "next" });\n',
+    ),
+  ).resolves.toBeUndefined();
+});
+
+it("reports send on a yielded createEffectActor and on a system.createActor ref", async () => {
+  await expect(
+    assertRuleReports(
+      ruleName,
+      'import { createEffectActor } from "@xstate/effect";\nimport { Effect } from "effect";\nexport const program = Effect.gen(function* () { const actor = yield* createEffectActor(machine); actor.send({ type: "next" }); });\n',
+    ),
+  ).resolves.toBeUndefined();
+  await expect(
+    assertRuleReports(
+      ruleName,
+      'import { createSystem } from "xstate";\nconst system = createSystem({ registry: {} });\nconst actor = system.createActor(machine);\nactor.send({ type: "next" });\n',
+    ),
+  ).resolves.toBeUndefined();
+});
+
+it("accepts satisfies-checked events on the XState v6 and @xstate/effect senders", async () => {
+  await expect(
+    assertRuleDoesNotReport(
+      ruleName,
+      'import { createMachine } from "xstate";\nimport { send } from "@xstate/effect";\ntype E = { type: "next" } | { type: "done" };\nexport const a = createMachine({ on: { next: ({ parent }, enq) => { enq.raise({ type: "done" } satisfies E); enq.sendTo(parent, { type: "done" } satisfies E); } } });\nexport const b = (actor: any) => send(actor, { type: "next" } satisfies E);\n',
+    ),
+  ).resolves.toBeUndefined();
+});
+
+it("ignores the actor argument of @xstate/effect send and enq.sendTo targets", async () => {
+  await expect(
+    assertRuleDoesNotReport(
+      ruleName,
+      'import { createMachine } from "xstate";\nimport { send } from "@xstate/effect";\ntype E = { type: "next" };\nexport const a = createMachine({ on: { next: (_, enq) => { enq.sendTo({ type: "actor" } as any, { type: "next" } satisfies E); } } });\nexport const b = send({ type: "actor" } as any, { type: "next" } satisfies E);\n',
+    ),
+  ).resolves.toBeUndefined();
+});
+
+it("ignores a second parameter of functions outside XState v6 handler hosts", async () => {
+  await expect(
+    assertRuleDoesNotReport(
+      ruleName,
+      'import { createMachine } from "xstate";\nexport function relay(_: unknown, bus: { raise(event: unknown): void }) { bus.raise({ type: "next" }); }\nexport const m = createMachine({ on: { next: () => { const relays = { forward: (_: unknown, bus: any) => bus.raise({ type: "next" }) }; console.log(relays); } } });\n',
+    ),
+  ).resolves.toBeUndefined();
+});

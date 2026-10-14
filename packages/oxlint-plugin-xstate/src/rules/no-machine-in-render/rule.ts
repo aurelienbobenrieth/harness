@@ -1,13 +1,13 @@
 /**
- * Forbid creating machines and actors directly in a React component or hook body.
+ * Forbid creating machines, actors and actor atoms directly in a React component or hook body.
  */
 import { type FunctionNode, memberPropertyName, nearestFunction, parentOf } from "@aurelienbbn/oxlint-kit/ast";
 import { importsFrom, isSetupResult } from "../ast.js";
-import { importedName } from "../binding-support.js";
+import { effectImportedName, importedName, isSystemResult } from "../binding-support.js";
 import type { Context, ESTree, Rule } from "@oxlint/plugins";
 
 const message =
-  "{{callee}}() runs on every render here: a new machine identity replaces the running actor and an unmanaged actor leaks. Define the machine at module scope (pass per-instance data through input) and create actors with useMachine/useActorRef.";
+  "{{callee}}() runs on every render here: each render rebuilds the machine or creates an actor nobody stops, and with XState v5 a new machine identity also replaces the running actor. Define machines and actor atoms at module scope (pass per-instance data through input) and create actors with useMachine/useActorRef.";
 
 const renderScopedCreators: ReadonlySet<string> = new Set(["createMachine", "createActor", "interpret"]);
 
@@ -29,8 +29,12 @@ function functionName(fn: FunctionNode): string | undefined {
 function creatorName(context: Context, callee: ESTree.Node): string | undefined {
   const imported = importedName(context, callee);
   if (imported !== undefined) return renderScopedCreators.has(imported) ? imported : undefined;
-  if (memberPropertyName(callee) !== "createMachine" || callee.type !== "MemberExpression") return undefined;
-  return isSetupResult(context, callee.object) ? "createMachine" : undefined;
+  if (effectImportedName(context, callee) === "createActorAtoms") return "createActorAtoms";
+  if (callee.type !== "MemberExpression") return undefined;
+  const method = memberPropertyName(callee);
+  if (method === "createMachine") return isSetupResult(context, callee.object) ? "createMachine" : undefined;
+  if (method === "createActor") return isSystemResult(context, callee.object) ? "createActor" : undefined;
+  return undefined;
 }
 
 export const noMachineInRender: Rule = {
@@ -38,7 +42,7 @@ export const noMachineInRender: Rule = {
     type: "problem",
     docs: {
       description:
-        "Forbid createMachine, setup().createMachine, createActor and interpret calls directly in a React component or hook body.",
+        "Forbid createMachine, setup().createMachine, createActor, system.createActor, interpret and createActorAtoms calls directly in a React component or hook body.",
     },
     messages: {
       noMachineInRender: message,

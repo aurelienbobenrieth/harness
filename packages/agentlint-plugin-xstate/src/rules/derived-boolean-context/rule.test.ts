@@ -1,7 +1,7 @@
 import { testRuleOnSource } from "@aurelienbbn/agentlint/testing";
 import { createVisitors } from "../test-support.js";
 import { expect, it } from "vitest";
-import { createContext, createNode } from "../test-support.js";
+import { createContext, createNode, guidanceChecks } from "../test-support.js";
 import { defineDerivedBooleanContext, derivedBooleanContext } from "./rule.js";
 
 const machineSource = "const machine = createMachine({ context: { canSubmit: false } });\n";
@@ -176,4 +176,85 @@ it("honours a configured stateMirrorPattern", async () => {
   const source = 'createMachine({ context: { stage: "one" } }); createMachine({ context: { status: "one" } });';
 
   await expect(testRuleOnSource({ rule: rule, source: source, file: "src/cart-machine.ts" })).resolves.toHaveLength(1);
+});
+
+const v6CheckoutMachine = `
+import { createMachine } from "xstate";
+import { z } from "zod";
+
+export const checkoutMachine = createMachine({
+  schemas: {
+    context: z.object({ items: z.array(z.string()), status: z.enum(["idle", "paying"]) }),
+  },
+  context: { items: [], status: "idle" },
+  initial: "idle",
+  states: {
+    idle: {
+      on: {
+        add: ({ context, event }) => ({
+          context: { ...context, items: [...context.items], canSubmit: true },
+        }),
+        pay: { target: "paying", context: { isPaying: true } },
+      },
+    },
+    paying: {
+      entry({ context }) {
+        return { context: { ...context, hasPaid: false } };
+      },
+      invoke: { src: "charge", input: ({ context }) => ({ context: { isRetry: true } }) },
+    },
+  },
+});
+`;
+
+it("reports v6 context patches returned from handlers, static transition context, and schemas.context once", async () => {
+  const findings = await testRuleOnSource({
+    rule: derivedBooleanContext,
+    source: v6CheckoutMachine,
+    file: "src/checkout-machine.ts",
+  });
+
+  // schemas.context (status enum) is folded into the initial context finding: one per declaration, not two.
+  expect(findings.map((finding) => finding.message)).toEqual([
+    "Context field mirrors the finite state: drop the string-enum copy and read snapshot.matches() or snapshot.hasTag() instead.",
+    "Context flag assignment: model availability as a guard and read snapshot.can() from the UI.",
+    "Context flag assignment: model availability as a guard and read snapshot.can() from the UI.",
+    "Context flag assignment: model availability as a guard and read snapshot.can() from the UI.",
+  ]);
+  expect(findings.map((finding) => finding.line)).toEqual([9, 15, 17, 22]);
+});
+
+it("reports a literal-schema state mirror in setupEffect schemas when the initial context is opaque", async () => {
+  const source = `
+import { Schema } from "effect";
+import { setupEffect } from "@xstate/effect";
+
+export const deployMachine = setupEffect({
+  schemas: { context: Schema.Struct({ phase: Schema.Literals(["build", "ship"]) }) },
+}).createMachine({ context: initialContext });
+`;
+  const findings = await testRuleOnSource({ rule: derivedBooleanContext, source: source, file: "src/deploy.ts" });
+
+  expect(findings).toHaveLength(1);
+  expect(findings[0]?.message).toContain("mirrors the finite state");
+});
+
+it("stays silent on v6 handlers that patch only domain data and on non-handler functions returning context", async () => {
+  const source = `
+const machine = createMachine({
+  context: { items: [] },
+  on: { add: ({ context, event }) => ({ context: { ...context, items: [...context.items, event.item] } }) },
+  invoke: { src: "load", input: ({ context }) => ({ context: { isLoading: true } }) },
+});
+const view = (props) => ({ context: { isOpen: true } });
+`;
+  await expect(
+    testRuleOnSource({ rule: derivedBooleanContext, source: source, file: "src/cart-machine.ts" }),
+  ).resolves.toEqual([]);
+});
+
+it("states that v6 snapshot.can() runs the transition function", () => {
+  expect(guidanceChecks(derivedBooleanContext).join("\n")).toContain(
+    "In v6 that includes the transition function body",
+  );
 });

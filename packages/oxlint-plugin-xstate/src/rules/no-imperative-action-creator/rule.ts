@@ -1,6 +1,9 @@
 /**
  * Forbid calling XState action creators imperatively inside a function body.
  *
+ * @deprecated XState v6 removes the action creators (`assign`, `raise`, `sendTo`, ...): handlers receive an enqueuer
+ * and return context patches, so the mistake this rule catches no longer exists. It keeps working on XState v5 code.
+ *
  * @attribution eslint-plugin-xstate no-imperative-action by Richard Laffers (concept)
  */
 import {
@@ -107,6 +110,11 @@ export const noImperativeActionCreator: Rule = {
       noImperativeActionCreator: message,
     },
     schema: [],
+    deprecated: {
+      message:
+        "XState v6 removes the action creators (assign, raise, sendTo, ...) this rule checks; it keeps working on XState v5 code and has no replacement.",
+      deprecatedSince: "0.2.0",
+    },
   },
   createOnce(context) {
     return {

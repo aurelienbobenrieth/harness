@@ -34,8 +34,8 @@ const logMethods: ReadonlySet<string> = new Set([
   "logFatal",
 ]);
 
-const rpcPackages: ReadonlySet<string> = new Set(["effect/unstable/rpc", "@effect/rpc"]);
-const rpcModules: ReadonlySet<string> = new Set(["effect/unstable/rpc/Rpc", "@effect/rpc/Rpc"]);
+const rpcPackages: ReadonlySet<string> = new Set(["effect/rpc", "effect/unstable/rpc", "@effect/rpc"]);
+const rpcModules: ReadonlySet<string> = new Set(["effect/rpc/Rpc", "effect/unstable/rpc/Rpc", "@effect/rpc/Rpc"]);
 
 type Options = {
   readonly pattern: RegExp;
@@ -73,7 +73,10 @@ function readOptions(context: Context): Options {
   };
 }
 
-/** `Rpc` imported from Effect's RPC module (`effect/unstable/rpc`, or `@effect/rpc` on Effect 3); an unbound `Rpc` counts too. */
+/**
+ * `Rpc` imported from Effect's RPC module (`effect/rpc`, `effect/unstable/rpc` on Effect 4 prereleases, or `@effect/rpc`
+ * on Effect 3); an unbound `Rpc` counts too.
+ */
 function isRpcNamespace(context: Context, node: ESTree.Node): boolean {
   if (node.type !== "Identifier") return false;
   const variable = binding(context, node, node.name);
