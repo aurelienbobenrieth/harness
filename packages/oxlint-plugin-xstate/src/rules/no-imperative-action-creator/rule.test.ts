@@ -1,5 +1,6 @@
 import { expect, it } from "vitest";
 import { assertRuleDoesNotReport, assertRuleReports } from "../test-support.js";
+import { noImperativeActionCreator } from "./rule.js";
 
 const ruleName = "xstate/no-imperative-action-creator";
 
@@ -122,6 +123,20 @@ it("ignores unrelated members named like creators", async () => {
     assertRuleDoesNotReport(
       ruleName,
       'import { assign, raise, sendTo, enqueueActions, setup, log } from "xstate";\nconst logger = { log(value: string) { return value; } };\nexport function run() { logger.log("x"); console.log(assign); }\n',
+    ),
+  ).resolves.toBeUndefined();
+});
+
+it("is deprecated since 0.2.0 without a replacement rule", () => {
+  expect(noImperativeActionCreator.meta?.deprecated).toMatchObject({ deprecatedSince: "0.2.0" });
+  expect(noImperativeActionCreator.meta?.deprecated).not.toHaveProperty("replacedBy");
+});
+
+it("stays silent on XState v6 enqueuer handlers", async () => {
+  await expect(
+    assertRuleDoesNotReport(
+      ruleName,
+      'import { createMachine } from "xstate";\nexport const m = createMachine({ on: { go: ({ context }, enq) => { enq.raise({ type: "done" }); enq.emit({ type: "went" }); return { context }; } } });\n',
     ),
   ).resolves.toBeUndefined();
 });

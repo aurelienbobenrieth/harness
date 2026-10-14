@@ -1,5 +1,11 @@
 /**
  * Forbid in-place mutation of machine context and of `snapshot.context`.
+ *
+ * Context parameters are tracked in functions written inside XState hosts: v5
+ * `setup`, `createMachine`, `assign`, `enqueueActions`, `.provide`, `.extend`;
+ * v6 machine config (including `createStateConfig(path, config)`),
+ * `createLogic`, `createAsyncLogic`, `<setup>.createInvoke`, and `setupEffect`
+ * from `@xstate/effect`.
  */
 import {
   binding,
@@ -10,11 +16,11 @@ import {
   unwrapExpressionKeepingChain,
 } from "@aurelienbbn/oxlint-kit/ast";
 import { importsFrom, isMachineConfigCallee } from "../ast.js";
-import { importedName } from "../binding-support.js";
+import { effectImportedName, importedName } from "../binding-support.js";
 import type { Context, ESTree, Rule } from "@oxlint/plugins";
 
 const message =
-  "Context is shared, immutable state: this mutates it in place, which leaks across actors and hides the change from selectors. Return a new value from assign() instead.";
+  "Context is shared, immutable state: this mutates it in place, which leaks across actors and hides the change from selectors. Return a new value instead: from assign() in XState v5, or as a { context } patch from the handler in XState v6.";
 
 type RuleOptions = { readonly allowCollectionMethods?: boolean };
 
@@ -32,9 +38,24 @@ const arrayMutators: ReadonlySet<string> = new Set([
 
 const collectionMutators: ReadonlySet<string> = new Set(["set", "add", "delete", "clear"]);
 
-const implementationHosts: ReadonlySet<string> = new Set(["setup", "createMachine", "assign", "enqueueActions"]);
+const implementationHosts: ReadonlySet<string> = new Set([
+  "setup",
+  "createMachine",
+  "createStateConfig",
+  "assign",
+  "enqueueActions",
+  "createLogic",
+  "createAsyncLogic",
+]);
 
-const implementationHostMethods: ReadonlySet<string> = new Set(["assign", "enqueueActions", "createAction"]);
+const implementationHostMethods: ReadonlySet<string> = new Set([
+  "assign",
+  "enqueueActions",
+  "createAction",
+  "createInvoke",
+  "provide",
+  "extend",
+]);
 
 function allowsCollectionMethods(context: Context): boolean {
   const first = context.options[0];
@@ -44,6 +65,7 @@ function allowsCollectionMethods(context: Context): boolean {
 function isImplementationHost(context: Context, callee: ESTree.Node): boolean {
   const imported = importedName(context, callee);
   if (imported !== undefined) return implementationHosts.has(imported);
+  if (effectImportedName(context, callee) === "setupEffect") return true;
   if (isMachineConfigCallee(context, callee)) return true;
   const member = memberPropertyName(callee);
   return member !== undefined && implementationHostMethods.has(member);

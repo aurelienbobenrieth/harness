@@ -66,3 +66,34 @@ it("excludes test files by default and honours configured callee patterns", asyn
 
   await expect(testRuleOnSource({ rule: rule, source: source, file: "src/m.ts" })).resolves.toHaveLength(1);
 });
+
+it("reports v6 persistence with embedChildren and a migrated restore through system.createActor", async () => {
+  const source = `
+import { createSystem, machineVersions } from "xstate";
+
+const persisted = actor.getPersistedSnapshot({ embedChildren: false });
+localStorage.setItem("checkout", JSON.stringify(persisted));
+
+const versions = machineVersions([checkoutV1, checkoutV2]);
+const snapshot = await versions.migrateSnapshot(JSON.parse(raw), { to: "2" });
+const system = createSystem({ registry: {} });
+const restored = system.createActor(checkoutV2, { snapshot, registryKey: "checkout" }).start();
+`;
+  const findings = await testRuleOnSource({ rule: persistedSnapshotCompat, source: source, file: "src/persist.ts" });
+
+  expect(findings.map((finding) => [finding.line, finding.message.split(":")[0]])).toEqual([
+    [4, "Snapshot persisted"],
+    [10, "Actor restored from a stored snapshot"],
+  ]);
+});
+
+it("states that a restore never throws and covers v6 migration, inline children and Effect actors", () => {
+  const guidance = persistedSnapshotCompat.standard.guidance;
+  const text = typeof guidance === "object" ? [guidance.standard, ...(guidance.checks ?? [])].join("\n") : guidance;
+
+  expect(text).toContain("does not throw at createActor(...)");
+  expect(text).not.toContain("throws at actor creation");
+  expect(text).toContain("machineVersions(...).migrateSnapshot(...)");
+  expect(text).toContain("An inline child actor cannot be persisted.");
+  expect(text).toContain("createEffectActor(...) cannot be restored");
+});
