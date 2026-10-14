@@ -1,9 +1,9 @@
 # Agentlint contract
 
-**The 6 agentlint plugins target the standard / detector / binding API of the public engine `@aurelienbbn/agentlint` `>=0.3.0 <0.8.0`.** Breaking migration from the 0.1 engine: no adapter for the former flat rules, object-map config, or ledger records.
+**The 6 agentlint plugins target the standard / detector / binding API of the public engine `@aurelienbbn/agentlint` `>=0.3.0 <0.9.0`.** Breaking migration from the 0.1 engine: no adapter for the former flat rules, object-map config, or ledger records.
 
 > [!NOTE]
-> **Peer `>=0.3.0 <0.8.0`, developed against 0.3.0.** 0.3.0 rejects a config where two rules share a standard id but disagree on its revision, title, summary, source, or guidance (`ConfigError` reason `conflicting_standard`). Every preset loads cleanly alone, and the 5 the consumer suite composes load cleanly together.
+> **Peer `>=0.3.0 <0.9.0`, developed against 0.3.0.** 0.3.0 rejects a config where two rules share a standard id but disagree on its revision, title, summary, source, or guidance (`ConfigError` reason `conflicting_standard`). Every preset loads cleanly alone, and the 5 the consumer suite composes load cleanly together.
 
 ## An acceptance holds only while its inputs match
 
@@ -55,7 +55,7 @@ Evidence fingerprint and sufficient authority must also match. **Architectural a
 | core `test-behavior-coverage` (tests)                                                                                           | File-level mock/assertion density, not coverage.                                       |
 | effect `prefer-schema-contracts`                                                                                                | Runtime trust, persistence, wire only; helper types stay compile-time.                 |
 | tanstack-query `query-state-coverage`, `mutation-state-coverage`                                                                | Boundaries can own query states. Mutations: pending, error, retry, duplicate, offline. |
-| xstate `actor-cleanup`, `derived-boolean-context`, `machine-failure-coverage`                                                   | Lexical: can't prove lifecycle, reachability, guards.                                  |
+| xstate `actor-cleanup`, `derived-boolean-context`, `machine-failure-coverage`, `spawn-id-collision`, `effect-actor-observed`    | Lexical: can't prove lifecycle, reachability, guards.                                  |
 | shopify-app `action-label-clarity`, `banner-usage`, `destructive-action-review`, `form-error-recovery`, `modal-workflow-review` | Configured App Home only; browser evidence proves interaction.                         |
 | shopify-app `no-pressure-copy`, `review-solicitation`                                                                           | Partial lexicons; neutral asks still need placement review.                            |
 | shopify-app `session-token-auth`, `settings-save-bar`, `checkout-network-discipline`                                            | Draft UI storage ≠ stored identity.                                                    |
