@@ -19,7 +19,12 @@ description: Add Harness lint, format, conformance packages, and skills to a con
 - Use the consumer's package manager. Keep existing ignores and rules. No whole-config replacement, overwriting initializers, or blanket-ignored agent directories.
 - Wire from documented exports; don't assume helpers, peers, or commands across tool versions.
 - Trial new policies on real source before making them blocking.
-- Skills requested → add to always-loaded instructions (`AGENTS.md`, `CLAUDE.md`, or equivalent) one line to read the installed communication skill before the first reply, plus a task → skill map for the installed skills (copy the shape of Harness's `AGENTS.md` Skills section). Skills stay discoverable; only the map and communication are bootstrapped.
+- Skills requested → in the always-loaded instructions (`AGENTS.md`, or the host's equivalent):
+  - copy the installed `communication/core.md` verbatim between `<!-- harness:communication:start -->` and `<!-- harness:communication:end -->`;
+  - add a task → skill map for the installed skills (copy the shape of Harness's `AGENTS.md` Skills section);
+  - wire conformance-core's `instruction-blocks` check at that `core.md` path, so a skill update that changes the rules fails until the block is recopied.
+
+  Skills stay discoverable; only the block and the map are bootstrapped.
 
 ## Verify
 

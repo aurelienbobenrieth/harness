@@ -1,10 +1,12 @@
 import { runCoreConformanceReport } from "../packages/conformance-core/dist/index.mjs";
 
-const enforcedChecks = new Set(["dead-exports", "duplication-budget"]);
+const enforcedChecks = new Set(["dead-exports", "duplication-budget", "instruction-blocks"]);
 const report = await runCoreConformanceReport({
   root: process.cwd(),
   skipChecks: ["dependency-overlap", "closed-design-system-probe", "tsconfig-strictness"],
   deadExports: { requireKnipConfig: true },
+  // The always-on communication rules are written once in the skill and carried by AGENTS.md.
+  instructionBlocks: { blocks: { communication: "skills/communication/core.md" } },
   duplication: {
     requireTool: true,
     // Shared oxlint AST and test helpers live once in internal/oxlint-kit (bundled into each plugin).
