@@ -14,19 +14,9 @@ description: Shapes long-form prose for a person (READMEs, ADRs and PDRs, PR des
 - Say it once: never a table plus a sentence restating it.
 - Rewriting a doc makes it shorter. Cut words, not facts.
 
-## Pick the visual by the idea
+## Pick the visual by the reader's question
 
-| Idea                       | Visual                                           |
-| -------------------------- | ------------------------------------------------ |
-| flow, pipeline, lifecycle  | `flowchart`, `stateDiagram-v2`, `text` arrows    |
-| who calls whom, in order   | `sequenceDiagram`                                |
-| options on the same fields | table                                            |
-| status across many items   | table with ✅ ❌ ⚠️                              |
-| quantities, shares         | unicode bars `████░░ 62%`, `pie`, `xychart-beta` |
-| structure, ownership       | tree in a `text` block                           |
-| a change                   | `diff` block, or the real command and its output |
-
-Mermaid renders on GitHub only: npm READMEs and terminals get tables, `text` diagrams, unicode bars. No visual when two sentences do the job.
+[visuals](references/visuals.md) maps each question to a visual and a snippet that renders on the target medium: user flow, sequence, states, event storming, data shape, system boundaries, flamegraph, volumes, two-axis trade-offs, timelines, plus the tables, trees, and diffs. Mermaid renders on GitHub only; npm READMEs, terminals, and chat get tables, `text` diagrams, unicode bars.
 
 ## Never let them accept blindly
 

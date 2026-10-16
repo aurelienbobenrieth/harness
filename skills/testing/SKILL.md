@@ -7,6 +7,9 @@ description: Choose and write tests that fail for the right reason, with oracles
 
 **A test earns its place by catching a named defect with an oracle the implementation didn't produce.**
 
+- Name the test after that defect (`rejects an expired session`), not the function it calls.
+- Test count is never a goal. A test whose failure another already catches gets deleted, not added.
+
 ## Oracles
 
 - Expected values come from the spec, a hand-worked example, a reference, or a law. Never from running the code, calling the subject's own helpers, or recomputing with its algorithm (`expected-value-recomputed`).
@@ -25,7 +28,7 @@ Start from the failure you fear and pick whatever catches it with an independent
 
 - Red must fail on the assertion, not on an import, fixture, or type error.
 - While making it green, tests are read-only. Spec and test disagree → stop and report; never edit either to force agreement (`test-expectation-drift` flags loosened, skipped, or re-valued expectations for a human).
-- Doubt a green test → break the code (revert the fix, flip a condition). Still green = tautology.
+- Doubt a green test → break the code (revert the fix, flip a condition). Still green = tautology. Risky new logic → scoped mutation run on the changed lines.
 - Deepened or replaced a module → delete the old tests that pinned its internals; don't layer new tests over them.
 
 ## Determinism and claims
