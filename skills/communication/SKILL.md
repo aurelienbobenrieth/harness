@@ -1,62 +1,30 @@
 ---
 name: communication
-description: Shapes all prose written for a person, in every conversation (chat replies, progress updates, reviews, commit and PR text, READMEs, ADRs, JSDoc), sizing it to the question so the reader finishes it and decides instead of accepting blindly. Always on. Never changes code structure or naming; code quality belongs to build.
+description: Shapes long-form prose for a person (READMEs, ADRs and PDRs, PR descriptions, reference docs, long reviews or updates) so the reader finishes it and decides instead of accepting blindly. Use when writing or rewriting a document longer than a screen. The always-on rules for every reply live in core.md, which AGENTS.md carries. Never changes code structure or naming; code quality belongs to build.
 ---
 
 # Communication
 
-The user's requested depth, format, and vocabulary override everything below. **Scope: prose only.** In code it governs doc comments (JSDoc on public interfaces: what the signature can't say, once), never structure, naming, or logic.
-
-## Size first
-
-| Reader needs             | Write                                               |
-| ------------------------ | --------------------------------------------------- |
-| a fact, yes/no, ack      | 1–3 lines. No headings, lists, or recap.            |
-| what happened            | outcome line + only what changes their next move.   |
-| to understand or approve | claim → evidence → the choice they own.             |
-| a reference (doc)        | shapes below; depth in `<details>` or linked pages. |
-
-**Pick the smallest row that fully answers.** Scale up only when shorter would leave them unable to decide, act, or catch a mistake.
+[core.md](core.md) is always on and already loaded through `AGENTS.md`; this skill adds what long documents need. The user's requested depth, format, and vocabulary still win.
 
 ## Longer than a screen
 
-- Line one is the answer: result, decision, or verdict.
-- Headings are claims (`## Locks are never stolen`); headings alone should tell the story.
-- 1–3 sentence blocks. Bold at most one must-see line per section.
+- Headings alone tell the story; depth goes in `<details>` or a linked page.
+- Bold at most one must-see line per section.
 - Say it once: never a table plus a sentence restating it.
-- Stop when done: no summary, no follow-up menu.
 - Rewriting a doc makes it shorter. Cut words, not facts.
 
-## Visuals only when they beat words
+## Pick the visual by the reader's question
 
-| Idea                       | Visual                                           |
-| -------------------------- | ------------------------------------------------ |
-| flow, pipeline, lifecycle  | `flowchart`, `stateDiagram-v2`, `text` arrows    |
-| who calls whom, in order   | `sequenceDiagram`                                |
-| options on the same fields | table                                            |
-| status across many items   | table with ✅ ❌ ⚠️                              |
-| quantities, shares         | unicode bars `████░░ 62%`, `pie`, `xychart-beta` |
-| structure, ownership       | tree in a `text` block                           |
-| a change                   | `diff` block, or the real command and its output |
-
-No visual when two sentences do the job. Mermaid renders on GitHub only: npm READMEs and terminals get tables, `text` diagrams, unicode bars.
+[visuals](references/visuals.md) maps each question to a visual and a snippet that renders on the target medium: user flow, sequence, states, event storming, data shape, system boundaries, flamegraph, volumes, two-axis trade-offs, timelines, plus the tables, trees, and diffs. Mermaid renders on GitHub only; npm READMEs, terminals, and chat get tables, `text` diagrams, unicode bars.
 
 ## Never let them accept blindly
 
-- Put choices they own, risks, and skipped checks where the eye lands, never mid-paragraph or behind a link.
-- Observed ≠ inferred: "passed locally" isn't "CI passed". Name what you didn't verify.
-- Never invent a number, run, example, setting, or approval. "All", "only", "never" need evidence for the whole scope.
+- Choices they own, risks, and skipped checks go where the eye lands, never mid-paragraph or behind a link.
 - A caveat that changes the decision sits beside the claim it limits.
+- "All", "only", "never" need evidence for the whole scope.
 
-## No ceremony
-
-These are defaults, not a template. Skip what doesn't serve this reader: headings on short answers, TL;DRs on short text, forced tables or diagrams, fixed section orders, glyphs outside tables.
-
-- Never use em dashes (U+2014) in authored prose. Use a comma, colon, parentheses, or a new sentence as the meaning requires. Don't substitute double hyphens or en dashes to imitate them.
-- Write like a person explaining the work to a colleague: concrete words, natural sentences, and details that matter to this reader. Cut stock transitions, inflated claims, and canned openings or closings.
-- Before sending, read the prose once for natural wording and remove any em dashes.
-
-## Shapes and recovery
+## Shapes
 
 ```text
 README     promise ─▶ what it looks like ─▶ install + first command ─▶ top uses ─▶ reference ─▶ links
@@ -64,6 +32,10 @@ ADR / PDR  decision (bold) ─▶ context ─▶ gain / cost ─▶ rejected opt
 Update     what happened ─▶ why it matters ─▶ certain vs uncertain ─▶ what's needed from you
 Review/PR  per finding: location ─▶ failure ─▶ fix · PR text stands alone
 ```
+
+Defaults, not a template: drop any step this reader doesn't need.
+
+## Recovery
 
 - Long task: state the first action and why, then update only on a finding, a choice, or a blocker.
 - Mid-task question: answer briefly, continue unless the goal changed.

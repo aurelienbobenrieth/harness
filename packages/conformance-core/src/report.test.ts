@@ -22,6 +22,7 @@ it("reports missing optional tools and an unconfigured probe as incomplete evide
     ["dead-exports", "unsupported"],
     ["closed-design-system-probe", "skipped"],
     ["tsconfig-strictness", "skipped"],
+    ["instruction-blocks", "skipped"],
   ]);
   expect(report.findings.filter((finding) => finding.severity === "error")).toEqual([]);
   expect(report.checks.find((check) => check.check === "closed-design-system-probe")).toEqual({
@@ -36,6 +37,9 @@ it("reports missing optional tools and an unconfigured probe as incomplete evide
     reason: "No tsconfigStrictness options configured; pass {} to enable the default baseline.",
     findings: [],
   });
+  expect(report.checks.find((check) => check.check === "instruction-blocks")?.reason).toBe(
+    "No instructionBlocks options configured.",
+  );
 });
 
 it("preserves unavailable evidence and gives execution failure priority", async () => {
@@ -148,7 +152,7 @@ it("does not turn a malformed tool report into evaluated clean evidence", async 
   expect(report.checks.find((check) => check.check === "dead-exports")?.status).toBe("failed");
 });
 
-it("passes only after all five checks evaluate successfully", async () => {
+it("passes only after all six checks evaluate successfully", async () => {
   const root = await createFixture({
     "package.json": "{}",
     "tsconfig.json": JSON.stringify({
@@ -161,6 +165,8 @@ it("passes only after all five checks evaluate successfully", async () => {
       },
     }),
     "knip.json": "{}",
+    "AGENTS.md": "<!-- harness:core:start -->\nRule.\n<!-- harness:core:end -->\n",
+    "core.md": "Rule.\n",
     "node_modules/knip/package.json": '{"name":"knip","bin":{"knip":"bin.cjs"}}',
     "node_modules/knip/bin.cjs": "console.log(JSON.stringify({ files: [], issues: [] }))",
     "node_modules/jscpd/package.json": '{"name":"jscpd","bin":{"jscpd":"bin.cjs"}}',
@@ -183,9 +189,11 @@ it("passes only after all five checks evaluate successfully", async () => {
       ],
     },
     tsconfigStrictness: {},
+    instructionBlocks: { blocks: { core: "core.md" } },
   });
   expect(report.status).toBe("passed");
   expect(report.checks.map((check) => check.status)).toEqual([
+    "evaluated",
     "evaluated",
     "evaluated",
     "evaluated",

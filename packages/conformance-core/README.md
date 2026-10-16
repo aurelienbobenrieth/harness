@@ -2,7 +2,7 @@
 
 [![npm](https://img.shields.io/npm/v/@aurelienbbn/conformance-core)](https://www.npmjs.com/package/@aurelienbbn/conformance-core) [![downloads](https://img.shields.io/npm/dm/@aurelienbbn/conformance-core)](https://www.npmjs.com/package/@aurelienbbn/conformance-core) [![CI](https://github.com/aurelienbobenrieth/harness/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/aurelienbobenrieth/harness/actions/workflows/ci.yml) [![license](https://img.shields.io/npm/l/@aurelienbbn/conformance-core)](https://github.com/aurelienbobenrieth/harness/blob/main/packages/conformance-core/LICENSE) [![node](https://img.shields.io/node/v/@aurelienbbn/conformance-core)](https://github.com/aurelienbobenrieth/harness/blob/main/packages/conformance-core/package.json)
 
-**5 repo-hygiene checks for any TypeScript repo. Plain functions or one Vitest file.**
+**6 repo-hygiene checks for any TypeScript repo. Plain functions or one Vitest file.**
 
 ```ts
 // conformance.test.ts
@@ -38,7 +38,10 @@ report.status   failed      any error finding or failed check
 ```ts
 import { runCoreConformance, runCoreConformanceReport } from "@aurelienbbn/conformance-core";
 
-const findings = await runCoreConformance({ root: process.cwd(), skipChecks: ["duplication-budget"] }); // legacy, same severities
+const findings = await runCoreConformance({
+  root: process.cwd(),
+  skipChecks: ["duplication-budget"],
+}); // legacy, same severities
 const report = await runCoreConformanceReport({ root: process.cwd() }); // { status, checks[], findings[] }
 ```
 
@@ -64,7 +67,9 @@ coreConformance({
     ],
   },
   tsconfigStrictness: {
-    waivers: { exactOptionalPropertyTypes: "Vendor SDK typings assign undefined to optional fields." },
+    waivers: {
+      exactOptionalPropertyTypes: "Vendor SDK typings assign undefined to optional fields.",
+    },
   },
 });
 ```
@@ -76,7 +81,12 @@ coreConformance({
   "status": "failed",
   "checks": [
     { "check": "dependency-overlap", "status": "evaluated", "findings": [] },
-    { "check": "duplication-budget", "status": "skipped", "reason": "Excluded by skipChecks.", "findings": [] },
+    {
+      "check": "duplication-budget",
+      "status": "skipped",
+      "reason": "Excluded by skipChecks.",
+      "findings": []
+    },
     {
       "check": "closed-design-system-probe",
       "status": "skipped",
@@ -100,7 +110,7 @@ coreConformance({
 }
 ```
 
-Also exported: `coreChecks`, `activeChecks`, and each check object (`dependencyOverlap`, `duplicationBudget`, `deadExports`, `closedDesignSystemProbe`, `tsconfigStrictness`).
+Also exported: `coreChecks`, `activeChecks`, and each check object (`dependencyOverlap`, `duplicationBudget`, `deadExports`, `closedDesignSystemProbe`, `tsconfigStrictness`, `instructionBlocks`).
 
 </details>
 
@@ -206,6 +216,26 @@ Requires `strict: true` **written down, never inherited**; `noUncheckedIndexedAc
 
 </details>
 
+### instruction-blocks
+
+**A rule the agent must follow on every reply belongs in the file it always loads, yet should be written once.** Each configured block in `AGENTS.md` (or `file`) must hold its source file's exact text between `<!-- harness:<name>:start -->` and `<!-- harness:<name>:end -->`. Line endings and surrounding blank lines are ignored; anything else is drift.
+
+```ts
+instructionBlocks: {
+  blocks: {
+    communication: ".agents/skills/communication/core.md";
+  }
+}
+```
+
+| Input                                                    | Result                        |
+| -------------------------------------------------------- | ----------------------------- |
+| block text differs from source                           | ❌ drifted, recopy the source |
+| no markers, unclosed, end before start, repeated markers | ❌ names the markers to add   |
+| instructions file missing                                | ❌                            |
+| source missing, empty `blocks`, non-kebab block name     | throws (failed evaluation)    |
+| markers for a block you didn't configure                 | ignored                       |
+
 ## Options
 
 | Option                                               | Default          | Notes                                                                                                         |
@@ -218,6 +248,7 @@ Requires `strict: true` **written down, never inherited**; `noUncheckedIndexedAc
 | `deadExports.requireKnipConfig`                      | `false`          | no config (`knip.json(c)`, `.knip.json(c)`, `knip(.config).ts/js`, `package.json#knip`), tool, or output → ❌ |
 | `closedDesignSystem`                                 | unset (skipped)  | `stylesheet`, `buildCommand` argv with `{stylesheet}` `{output}`, `requiredSelectors`, `forbiddenSelectors`   |
 | `tsconfigStrictness`                                 | unset (skipped)  | `{}` = defaults; `files`, `additionalRequiredFlags`, `waivers`                                                |
+| `instructionBlocks`                                  | unset (skipped)  | `blocks` (name → root-relative source), `file` (default `AGENTS.md`)                                          |
 
 ## Migration
 
@@ -237,6 +268,7 @@ Generated from package exports by `pnpm catalog`. Rule-specific options and limi
 | `dead-exports`               | No unused files or exports remain in the codebase (knip).                                          |
 | `dependency-overlap`         | Only one package per known-duplicate dependency family may be installed.                           |
 | `duplication-budget`         | Copy-pasted blocks stay within the configured clone budget (jscpd).                                |
+| `instruction-blocks`         | Marked blocks in the agent instructions file match their source files exactly.                     |
 | `tsconfig-strictness`        | Resolved tsconfig files keep the strict compiler baseline with no strict-family flag switched off. |
 
 ### Credited concepts

@@ -7,6 +7,8 @@ export function unconfiguredReason(check: ConformanceCheck, options: Conformance
     return "No CSS build/selector probe configured.";
   if (check.id === "tsconfig-strictness" && options.tsconfigStrictness === undefined)
     return "No tsconfigStrictness options configured; pass {} to enable the default baseline.";
+  if (check.id === "instruction-blocks" && options.instructionBlocks === undefined)
+    return "No instructionBlocks options configured.";
   return undefined;
 }
 

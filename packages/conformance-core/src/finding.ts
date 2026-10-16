@@ -79,6 +79,17 @@ export type TsconfigStrictnessOptions = {
   readonly waivers?: Readonly<Record<string, string>>;
 };
 
+export type InstructionBlocksOptions = {
+  /** Root-relative instructions file the agent always loads. Default: `AGENTS.md`. */
+  readonly file?: string;
+  /**
+   * Block name to root-relative source file, e.g. `{ communication: ".agents/skills/communication/core.md" }`.
+   * The instructions file must hold the source's exact text between `<!-- harness:<name>:start -->` and
+   * `<!-- harness:<name>:end -->`. Names are kebab-case; a missing source fails the evaluation.
+   */
+  readonly blocks: Readonly<Record<string, string>>;
+};
+
 export type ConformanceRunOptions = {
   readonly root: string;
   /** Check ids to skip, e.g. duplication-budget on repos that accept clones. */
@@ -93,4 +104,6 @@ export type ConformanceRunOptions = {
   readonly closedDesignSystem?: ClosedDesignSystemOptions;
   /** Compiler strictness gate over resolved tsconfig files. Unset: check skipped; `{}` enables the defaults. */
   readonly tsconfigStrictness?: TsconfigStrictnessOptions;
+  /** Instruction blocks copied into AGENTS.md (or another file). Unset: check skipped. */
+  readonly instructionBlocks?: InstructionBlocksOptions;
 };

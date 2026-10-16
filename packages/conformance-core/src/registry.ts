@@ -2,6 +2,7 @@ import { closedDesignSystemProbe } from "./checks/closed-design-system-probe.js"
 import { deadExports } from "./checks/dead-exports.js";
 import { dependencyOverlap } from "./checks/dependency-overlap.js";
 import { duplicationBudget } from "./checks/duplication-budget.js";
+import { instructionBlocks } from "./checks/instruction-blocks.js";
 import { tsconfigStrictness } from "./checks/tsconfig-strictness.js";
 import type { ConformanceCheck, ConformanceRunOptions } from "./finding.js";
 
@@ -11,6 +12,7 @@ export const coreChecks: readonly ConformanceCheck[] = [
   deadExports,
   closedDesignSystemProbe,
   tsconfigStrictness,
+  instructionBlocks,
 ];
 
 export function activeChecks(options: ConformanceRunOptions): readonly ConformanceCheck[] {

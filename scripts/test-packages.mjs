@@ -176,13 +176,17 @@ try {
     {
       root: consumer,
       expectedFiles: expectedTests,
-      allowedSkips: ["dead-exports", "duplication-budget", "closed-design-system-probe", "tsconfig-strictness"].map(
-        (check) => ({
-          file: "acceptance.test.ts",
-          ancestorTitles: ["core conformance"],
-          check,
-        }),
-      ),
+      allowedSkips: [
+        "dead-exports",
+        "duplication-budget",
+        "closed-design-system-probe",
+        "tsconfig-strictness",
+        "instruction-blocks",
+      ].map((check) => ({
+        file: "acceptance.test.ts",
+        ancestorTitles: ["core conformance"],
+        check,
+      })),
     },
   );
   console.log(

@@ -30,9 +30,8 @@ description: Stage, commit, resolve conflicts, rewrite history, push, and write 
 - Body → `gh ... --body-file <tmpfile>`; never interpolate user content into shell.
 - After mutating, verify actual state and report the revision or link; local validation ≠ remote checks.
 
-Descriptions follow [communication](../communication/SKILL.md) and carry only what diff and CI can't. **Max 100 lines**; a small fix needs two.
+Titles and descriptions follow [communication](../communication/SKILL.md) and carry only what diff and CI can't. **Max 100 lines**; a small fix needs two.
 
-- Write titles and descriptions in plain, natural language a colleague would use. Ban em dashes (U+2014); rewrite with ordinary punctuation or separate sentences, never double hyphens or substitute en dashes. Read the final text once to catch them and cut canned phrasing.
 - Include: line one problem → resulting behavior; why, and the choice over its alternative; what the reviewer must decide or check by hand; risks, limits, migration, checks CI doesn't run.
 - Omit: file-by-file lists, restated code, commit narration, CI results, routine test-plan checklists, recaps, empty template sections.
 - Before/after or a behavior `diff` over prose. Branch changed → rewrite, don't append.

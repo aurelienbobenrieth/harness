@@ -7,6 +7,9 @@ description: Choose and write tests that fail for the right reason, with oracles
 
 **A test earns its place by catching a named defect with an oracle the implementation didn't produce.**
 
+- Name the test after that defect (`rejects an expired session`), not the function it calls.
+- Test count is never a goal. A test whose failure another already catches gets deleted, not added.
+
 ## Oracles
 
 - Expected values come from the spec, a hand-worked example, a reference, or a law. Never from running the code, calling the subject's own helpers, or recomputing with its algorithm (`expected-value-recomputed`).
@@ -17,20 +20,7 @@ description: Choose and write tests that fail for the right reason, with oracles
 
 ## Strategies: a menu, not a checklist
 
-Start from the failure you fear and pick whatever catches it with an independent oracle: these rows are common fits, not the only ones. Several can apply at once; a lone smoke test only proves the code ran once, somewhere.
-
-| Failure you fear                         | Strategy                                         | Signals                                                |
-| ---------------------------------------- | ------------------------------------------------ | ------------------------------------------------------ |
-| wrong output for known cases             | hand-picked examples, boundary values            | `no-weak-test-assertions`                              |
-| a law broken on inputs nobody listed     | bounded property; keep seed and shrink path      | `property-test-opportunity`                            |
-| bad sequences: retry, cancel, duplicates | state model simpler than the code                | `temporal-coupling`                                    |
-| a fake drifting from the real boundary   | one contract suite run against fake and real     | `fake-parity`, `integration-test-owns-its-boundary`    |
-| silent wrong data, not a crash           | exact values and absences, never "doesn't throw" | `pinned-suspect-output`                                |
-| green tests that check nothing           | scoped mutation run, survivors classified        | `test-behavior-coverage`                               |
-| broken install or public import          | packed artifact in a clean consumer              | —                                                      |
-| flaky timing, ambient state              | controlled clock, randomness, IDs, ordering      | `no-ambient-nondeterminism-in-tests`, `no-test-sleeps` |
-
-Going deeper on properties, state models, contracts, or mutation: [strategies](references/strategies.md).
+Start from the failure you fear and pick whatever catches it with an independent oracle. Several can apply at once; a lone smoke test only proves the code ran once, somewhere. The failure → strategy table and the deep dives on properties, state models, contracts, and mutation: [strategies](references/strategies.md).
 
 **Pick the double by dependency:** in-process → use the real thing · local stand-in exists (SQLite, temp dir, in-memory broker) → use it · remote you own → contract test · true external → fake at your adapter plus a contract. Captured responses test parsing, never live auth, pagination, or timing.
 
@@ -38,7 +28,7 @@ Going deeper on properties, state models, contracts, or mutation: [strategies](r
 
 - Red must fail on the assertion, not on an import, fixture, or type error.
 - While making it green, tests are read-only. Spec and test disagree → stop and report; never edit either to force agreement (`test-expectation-drift` flags loosened, skipped, or re-valued expectations for a human).
-- Doubt a green test → break the code (revert the fix, flip a condition). Still green = tautology.
+- Doubt a green test → break the code (revert the fix, flip a condition). Still green = tautology. Risky new logic → scoped mutation run on the changed lines.
 - Deepened or replaced a module → delete the old tests that pinned its internals; don't layer new tests over them.
 
 ## Determinism and claims

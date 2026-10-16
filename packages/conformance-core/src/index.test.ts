@@ -29,16 +29,21 @@ it("honors skipChecks", async () => {
     root,
     skipChecks: ["dependency-overlap", "duplication-budget", "dead-exports"],
   };
-  expect(activeChecks(options).map((check) => check.id)).toEqual(["closed-design-system-probe", "tsconfig-strictness"]);
+  expect(activeChecks(options).map((check) => check.id)).toEqual([
+    "closed-design-system-probe",
+    "tsconfig-strictness",
+    "instruction-blocks",
+  ]);
   expect(await runCoreConformance(options)).toEqual([]);
 });
 
-it("exposes the five checks in order", () => {
+it("exposes the six checks in order", () => {
   expect(coreChecks.map((check) => check.id)).toEqual([
     "dependency-overlap",
     "duplication-budget",
     "dead-exports",
     "closed-design-system-probe",
     "tsconfig-strictness",
+    "instruction-blocks",
   ]);
 });
