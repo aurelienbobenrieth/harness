@@ -1,5 +1,11 @@
 # @aurelienbbn/conformance-core
 
+## 0.2.0
+
+### Minor Changes
+
+- [#78](https://github.com/aurelienbobenrieth/harness/pull/78) [`c18bf45`](https://github.com/aurelienbobenrieth/harness/commit/c18bf45bba83f79a7b2683cf5353ad689203d0fd) Thanks [@aurelienbobenrieth](https://github.com/aurelienbobenrieth)! - Add `instruction-blocks`: marked blocks in `AGENTS.md` (or another instructions file) must match their source file exactly, so always-on agent rules are loaded every turn and still written once. Opt in with `instructionBlocks: { blocks: { <name>: "<source path>" } }`; unset, the check is skipped.
+
 ## 0.1.2
 
 ### Patch Changes
