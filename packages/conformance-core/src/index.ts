@@ -11,12 +11,14 @@ export type {
   ConformanceSeverity,
   DeadExportsOptions,
   DuplicationOptions,
+  InstructionBlocksOptions,
   TsconfigStrictnessOptions,
 } from "./finding.js";
 export { closedDesignSystemProbe } from "./checks/closed-design-system-probe.js";
 export { deadExports } from "./checks/dead-exports.js";
 export { dependencyOverlap } from "./checks/dependency-overlap.js";
 export { duplicationBudget } from "./checks/duplication-budget.js";
+export { instructionBlocks } from "./checks/instruction-blocks.js";
 export { tsconfigStrictness } from "./checks/tsconfig-strictness.js";
 export { activeChecks, coreChecks } from "./registry.js";
 export { runCoreConformanceReport } from "./report.js";
