@@ -34,7 +34,7 @@ A module hides one decision, its interface stays much smaller than what it hides
 - Parallel workers: bounded scope, file ownership, a verification task each, a brief and budget per [economy](../economy/SKILL.md); trust their evidence, not their confidence. Serialize shared mutable state.
 - In a worktree, servers take their ports from `worktree-hygiene ports` with a strict port; before handoff `worktree-hygiene done` exits 0 (`--reap` stops what you started). Never stop a process by name or port alone.
 - Prove at the failure boundary: real filesystem for a writer, consumer install for exports, browser for focus. A fake, static render, or compile proves only itself.
-- Skipped, empty, stale, or unavailable ≠ pass. Rerun checks a later change invalidated. While iterating, run the checks the change can affect; the full gate runs once on the final state, before the PR.
+- Skipped, empty, stale, or unavailable ≠ pass. Rerun checks a later change invalidated. While iterating, run the checks the change can affect; the full gate runs at most once on the final state before the PR, or in CI when the project says so.
 - Final diff: no debug output, temp files, formatter churn, or scope creep.
 
 **Handoff:** resulting behavior, checks run and results, material limits; readable without earlier progress messages. Never "done" with a failing check.
