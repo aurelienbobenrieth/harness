@@ -5,8 +5,10 @@ const report = await runCoreConformanceReport({
   root: process.cwd(),
   skipChecks: ["dependency-overlap", "closed-design-system-probe", "tsconfig-strictness"],
   deadExports: { requireKnipConfig: true },
-  // The always-on communication rules are written once in the skill and carried by AGENTS.md.
-  instructionBlocks: { blocks: { communication: "skills/communication/core.md" } },
+  // The always-on communication and economy rules are written once in their skills and carried by AGENTS.md.
+  instructionBlocks: {
+    blocks: { communication: "skills/communication/core.md", economy: "skills/economy/core.md" },
+  },
   duplication: {
     requireTool: true,
     // Shared oxlint AST and test helpers live once in internal/oxlint-kit (bundled into each plugin).

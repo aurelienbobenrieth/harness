@@ -20,9 +20,9 @@ description: Add Harness lint, format, conformance packages, and skills to a con
 - Wire from documented exports; don't assume helpers, peers, or commands across tool versions.
 - Trial new policies on real source before making them blocking.
 - Skills requested → in the always-loaded instructions (`AGENTS.md`, or the host's equivalent):
-  - copy the installed `communication/core.md` verbatim between `<!-- harness:communication:start -->` and `<!-- harness:communication:end -->`;
+  - copy each installed always-on file verbatim between its markers: `communication/core.md` between `<!-- harness:communication:start -->` and `<!-- harness:communication:end -->`, `economy/core.md` between `<!-- harness:economy:start -->` and `<!-- harness:economy:end -->`;
   - add a task → skill map for the installed skills (copy the shape of Harness's `AGENTS.md` Skills section);
-  - wire conformance-core's `instruction-blocks` check at that `core.md` path, so a skill update that changes the rules fails until the block is recopied.
+  - wire conformance-core's `instruction-blocks` check at each `core.md` path, so a skill update that changes the rules fails until the block is recopied.
 
   Skills stay discoverable; only the block and the map are bootstrapped.
 

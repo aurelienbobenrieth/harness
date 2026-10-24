@@ -21,7 +21,7 @@ description: Implement an authorized feature, fix, or refactor test-first, with 
 4. **Refactor** on green; structure and behavior changes in separate commits.
 5. **Prove it:** doubt a green test → break the code, it must go red. Pick extra strategies (property, state model, contract, packed install) by the failure you fear, not by habit.
 
-Defect → reproduce the symptom at its boundary first, cheapest distinguishing observation first; no reproduction → name the missing condition and keep the cause provisional. Covered, low-impact, reversible edit → no new test, still the full gate.
+Defect → reproduce the symptom at its boundary first, cheapest distinguishing observation first; no reproduction → name the missing condition and keep the cause provisional. Covered, low-impact, reversible edit → no new test, still the checks for its scope.
 
 ## Design
 
@@ -31,10 +31,10 @@ A module hides one decision, its interface stays much smaller than what it hides
 
 - Runtime limits, retry identity, cancellation, partial failure: design them in when the workload needs them.
 - Stale generated code → run the generator (check whether it syncs externally). Never hand-write or widen substitute types.
-- Parallel workers: bounded scope, file ownership, a verification task each; trust their evidence, not their confidence. Serialize shared mutable state.
+- Parallel workers: bounded scope, file ownership, a verification task each, a brief and budget per [economy](../economy/SKILL.md); trust their evidence, not their confidence. Serialize shared mutable state.
 - In a worktree, servers take their ports from `worktree-hygiene ports` with a strict port; before handoff `worktree-hygiene done` exits 0 (`--reap` stops what you started). Never stop a process by name or port alone.
 - Prove at the failure boundary: real filesystem for a writer, consumer install for exports, browser for focus. A fake, static render, or compile proves only itself.
-- Skipped, empty, stale, or unavailable ≠ pass. Rerun checks a later change invalidated; full gate on the final state.
+- Skipped, empty, stale, or unavailable ≠ pass. Rerun checks a later change invalidated. While iterating, run the checks the change can affect; the full gate runs once on the final state, before the PR.
 - Final diff: no debug output, temp files, formatter churn, or scope creep.
 
-**Handoff:** resulting behavior, checks run and results, material limits; readable without earlier progress messages. Never "done" with a failing gate.
+**Handoff:** resulting behavior, checks run and results, material limits; readable without earlier progress messages. Never "done" with a failing check.
