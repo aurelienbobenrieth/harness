@@ -25,4 +25,3 @@ description: Shapes long-form prose for a person (READMEs, ADRs and PDRs, PR des
 ## Shapes
 
 README: promise -> looks -> install + first command -> top uses -> reference. ADR/PDR: decision (bold) -> context -> gain/cost -> rejected options. Update: happened -> why -> certain vs uncertain -> what's needed. Review/PR: location -> failure -> fix. Drop any step this reader doesn't need.
-
