@@ -1,6 +1,6 @@
 ---
 name: economy
-description: Delegates and runs long agent work on a token budget, with compact briefs, budgets, context hand-offs, cache-aware waits, milestone-only status. Use when spawning subagents or child tasks, fanning out builders or reviewers, or starting a long autonomous run. Reading and output rules live in core.md, carried by AGENTS.md. Not for what the work itself should be (see build, code-review).
+description: Delegates and runs long agent work on a token budget, with compact briefs, budgets, context hand-offs, cache-aware waits, milestone-only status. Use when spawning subagents or child tasks, fanning out builders or reviewers, or starting a long autonomous run. The always-on reading and output rules live in core.md, which AGENTS.md carries. Not for what the work itself should be (see build, code-review).
 ---
 
 # Economy

@@ -1,6 +1,6 @@
 ---
 name: retrospect
-description: Turn a recurring mistake or correction into the smallest durable fix, routed to the right owner (type, lint, agentlint, conformance, test, script, skill, doc). Use when a retrospective is requested, the user corrects the same thing twice, or friction demonstrably repeats. Not appended to every finished task.
+description: Turn a recurring mistake or correction into the smallest durable fix, and route it to the right owner (type, lint rule, agentlint rule, conformance check, test, script, skill, or doc). Use when a retrospective is requested, the user corrects the same thing twice, or friction demonstrably repeats. Not appended to every finished task.
 ---
 
 # Retrospect

@@ -1,6 +1,6 @@
 ---
 name: align
-description: Settle open requirements and domain language before building, resolving interdependent decisions in dependency order and recording shared terms. Use when several interdependent decisions are open, a term is ambiguous or conflicts with the glossary, stated behavior contradicts code, or the user asks to be questioned on a plan. Not for a single missing answer or clear tasks (see build).
+description: Settle open requirements and domain language before building, by resolving decisions in dependency order and recording shared terms. Use when a request leaves several interdependent decisions open, a domain term is ambiguous or conflicts with the glossary, stated behavior contradicts the code, or the user asks to be questioned on a plan. Not for a single missing answer (ask it inline) or clear tasks (see build).
 ---
 
 # Align

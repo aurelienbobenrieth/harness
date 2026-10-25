@@ -1,6 +1,6 @@
 ---
 name: communication
-description: Shapes long-form prose for a person (READMEs, ADRs and PDRs, PR descriptions, reference docs, long reviews or updates) so the reader finishes it and decides instead of accepting blindly. Use when writing or rewriting a document longer than a screen. Always-on reply rules live in core.md, carried by AGENTS.md. Never changes code; code quality belongs to build.
+description: Shapes long-form prose for a person (READMEs, ADRs and PDRs, PR descriptions, reference docs, long reviews or updates) so the reader finishes it and decides instead of accepting blindly. Use when writing or rewriting a document longer than a screen. The always-on rules for every reply live in core.md, which AGENTS.md carries. Never changes code structure or naming; code quality belongs to build.
 ---
 
 # Communication
