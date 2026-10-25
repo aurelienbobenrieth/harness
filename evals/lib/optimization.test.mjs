@@ -28,6 +28,17 @@ test("communication checks language and verdict rather than load", () => {
   );
 });
 test("testing rubric rejects empty and timing-only evidence", () => {
+  assert.equal(
+    testGrade(
+      {},
+      {
+        testSource: "import {discount} from './calc.mjs';assert.equal(1,1)",
+        independentTest: true,
+        independentRed: false,
+      },
+    ).pass,
+    false,
+  );
   assert.equal(testGrade({}, { testSource: "assert.ok(true)", independentTest: true }).pass, false);
   assert.equal(
     testGrade(

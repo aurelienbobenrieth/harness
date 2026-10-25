@@ -74,10 +74,22 @@ const testInspect = async (cwd, run, a) => {
   });
   a.independentTest = result.status === 0 && /# tests [1-9]/.test(result.stdout);
   a.finalSource = await read(cwd, "calc.mjs");
+  try {
+    await writeFile(path.join(cwd, "calc.mjs"), a.original);
+    const red = spawnSync(process.execPath, ["--test", "--test-reporter=tap", "calc.test.mjs"], {
+      cwd,
+      encoding: "utf8",
+      timeout: 5000,
+    });
+    a.independentRed = red.status !== 0 && /ERR_ASSERTION|AssertionError/.test(red.stdout);
+  } finally {
+    await writeFile(path.join(cwd, "calc.mjs"), a.finalSource);
+  }
 };
 export function testGrade(run, a) {
   return check({
     working: a.independentTest,
+    catchesDefect: a.independentRed === true,
     publicBoundary: /(?:import|require)[\s\S]*calc\.mjs/.test(a.testSource),
     meaningful: /assert\.(?:equal|deepEqual|strictEqual|throws|rejects)/.test(a.testSource),
     deterministic: !/setTimeout|sleep|Math\.random|Date\.now/.test(a.testSource),

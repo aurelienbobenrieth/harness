@@ -41,6 +41,14 @@ for (const r of rows.values()) {
     });
     r.artifacts.independentTest = result.status === 0 && /# tests [1-9]/.test(result.stdout);
     r.artifacts.independentOutput = result.stdout + result.stderr;
+    await writeFile(path.join(cwd, "calc.mjs"), r.artifacts.original);
+    const red = spawnSync(process.execPath, ["--test", "--test-reporter=tap", "calc.test.mjs"], {
+      cwd,
+      encoding: "utf8",
+      timeout: 5000,
+    });
+    r.artifacts.independentRed =
+      red.status !== 0 && /ERR_ASSERTION|AssertionError/.test(red.stdout);
     r.grade = tasks.find((t) => t.id === r.id).grade(r.run, r.artifacts);
     if (r.run.status !== "completed")
       r.grade = { ...r.grade, pass: false, incomplete: r.run.status };
