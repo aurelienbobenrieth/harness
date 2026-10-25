@@ -1,6 +1,6 @@
 ---
 name: testing
-description: Use before adding tests, fixing flaky tests, changing assertions, reviewing tests, choosing a test strategy, or judging a green suite. Write tests that catch a named defect with independent oracles. For implementation also load build.
+description: Choose and write tests that fail for the right reason, with oracles independent of the code under test. Use when adding, changing, or reviewing tests, picking a test strategy (example, property, state model, contract, mutation), or judging whether a green suite proves a claim. Not for choosing what to build (see build).
 ---
 
 # Testing
