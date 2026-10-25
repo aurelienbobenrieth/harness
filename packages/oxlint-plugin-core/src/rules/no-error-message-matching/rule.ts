@@ -35,7 +35,12 @@ function isErrorValue(context: Context, node: ESTree.Node): boolean {
 
 function isStringLiteral(node: ESTree.Node): boolean {
   const value = unwrapExpression(node);
-  return value.type === "TemplateLiteral" || (value.type === "Literal" && typeof value.value === "string");
+  return (
+    (value.type === "TemplateLiteral" &&
+      (value.expressions.length > 0 ||
+        value.quasis.some((quasi) => (quasi.value.cooked ?? quasi.value.raw).length > 0))) ||
+    (value.type === "Literal" && typeof value.value === "string" && value.value.length > 0)
+  );
 }
 
 /** Decides whether the error text flows into a comparison, a substring/regex test, or a switch. */

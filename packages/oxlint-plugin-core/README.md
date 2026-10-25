@@ -383,3 +383,5 @@ Generated from package exports by `pnpm catalog`. Rule-specific options and limi
 - https://eslint.org/docs/latest/rules/padding-line-between-statements (MIT; option schema and statement types, independently implemented)
 
 <!-- harness-catalog:end -->
+
+Empty error-message presence checks, such as `error.message !== ""`, remain allowed for display fallbacks.
