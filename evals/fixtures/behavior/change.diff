@@ -1,0 +1,20 @@
+# Contract: arithmetic inputs are finite JavaScript Numbers only (not strings or BigInt); arrays contain Numbers. User flags are booleans.
+--- a/proposed.mjs
++++ b/proposed.mjs
+@@ -1,8 +1,8 @@
+-export const total = (prices) => prices.reduce((a,b) => a+b, 0);
+-export const first = (items) => items[0];
+-export const isAdult = (age) => age >= 18;
+-export const cents = (dollars) => dollars * 100;
+-export const active = (user) => user.enabled && !user.deleted;
+-export const greeting = name => 'Hello, ' + name;
+-export const double = n => n + n;
+-export const square = n => n * n;
++export const total = (prices) => prices.reduce((a, b) => a + b, 1);
++export const first = (items) => items[1];
++export const isAdult = (age) => age > 18;
++export const cents = (dollars) => dollars / 100;
++export const active = (user) => user.enabled || !user.deleted;
++export const greeting = (name) => `Hello, ${name}`;
++export const double = (n) => n * 2;
++export const square = (n) => n ** 2;

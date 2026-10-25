@@ -1,59 +1,59 @@
-{"id":"align-1","prompt":"We need a billing feature but have not decided who pays or which events bill. Help define requirements.","expected":"align"}
-{"id":"align-2","prompt":"Our team disagrees on what active customer means. Resolve the requirements before implementation.","expected":"align"}
-{"id":"align-3","prompt":"Help choose the acceptance criteria for an undefined onboarding flow.","expected":"align"}
-{"id":"align-4","prompt":"I have three incompatible product goals for search. Clarify the scope first.","expected":"align"}
-{"id":"build-1","prompt":"Fix add so numeric strings are rejected. Implement that behavior.","expected":"build"}
-{"id":"build-2","prompt":"Add a new multiply export to src/add.mjs.","expected":"build"}
-{"id":"build-3","prompt":"Refactor the arithmetic module into a smaller public API.","expected":"build"}
-{"id":"build-4","prompt":"Implement a subtraction function in this repo.","expected":"build"}
-{"id":"testing-1","prompt":"Write a regression test for adding negative numbers.","expected":"testing"}
-{"id":"testing-2","prompt":"Review whether these tests actually catch an expired session bug.","expected":"testing"}
-{"id":"testing-3","prompt":"Choose property tests versus examples for arithmetic validation.","expected":"testing"}
-{"id":"testing-4","prompt":"Our suite is green but never asserts results. Improve its assertions.","expected":"testing"}
-{"id":"git-1","prompt":"Review my PR description and suggest a clearer title.","expected":"git"}
-{"id":"git-2","prompt":"Commit the arithmetic fix and push the branch.","expected":"git"}
-{"id":"git-3","prompt":"Resolve the merge conflict while preserving both features.","expected":"git"}
-{"id":"git-4","prompt":"Open a draft pull request for the current branch.","expected":"git"}
-{"id":"code-review-1","prompt":"Review this code diff for bugs, without changing it.","expected":"code-review"}
-{"id":"code-review-2","prompt":"Find correctness problems in the proposed arithmetic change.","expected":"code-review"}
-{"id":"code-review-3","prompt":"Perform a code review of the implementation in src/add.mjs.","expected":"code-review"}
-{"id":"code-review-4","prompt":"Check this patch for regressions and report findings.","expected":"code-review"}
-{"id":"communication-1","prompt":"Rewrite this long README so new users can decide how to adopt it.","expected":"communication"}
-{"id":"communication-2","prompt":"Draft an architecture decision record explaining our database choice.","expected":"communication"}
-{"id":"communication-3","prompt":"Shorten this reference document while retaining actionable constraints.","expected":"communication"}
-{"id":"communication-4","prompt":"Rewrite a two-page technical update so stakeholders understand the risks.","expected":"communication"}
-{"id":"economy-1","prompt":"Delegate an independent repository research task with a bounded budget.","expected":"economy"}
-{"id":"economy-2","prompt":"Plan parallel agent work across three independent modules.","expected":"economy"}
-{"id":"economy-3","prompt":"Reduce token usage during this long autonomous investigation.","expected":"economy"}
-{"id":"economy-4","prompt":"Split this broad audit into independent agent tasks.","expected":"economy"}
-{"id":"retrospect-1","prompt":"I have corrected the same agent mistake twice. Decide where the permanent fix belongs.","expected":"retrospect"}
-{"id":"retrospect-2","prompt":"We repeatedly forget release notes. Identify the policy or automation owner.","expected":"retrospect"}
-{"id":"retrospect-3","prompt":"A recurring workflow friction keeps returning after reminders. Find a durable mechanism.","expected":"retrospect"}
-{"id":"retrospect-4","prompt":"The agent keeps repeating the same mistake. Run a retrospective on instruction placement.","expected":"retrospect"}
-{"id":"toolsmith-1","prompt":"Build a reusable CLI to validate package names.","expected":"toolsmith"}
-{"id":"toolsmith-2","prompt":"Write a rerunnable scaffolding script that preserves existing files.","expected":"toolsmith"}
-{"id":"toolsmith-3","prompt":"Add an environment doctor command reporting missing prerequisites.","expected":"toolsmith"}
-{"id":"toolsmith-4","prompt":"Replace repeated manual JSON validation with a reusable script.","expected":"toolsmith"}
-{"id":"shopify-review-1","prompt":"Assess this Shopify app for production readiness.","expected":"shopify-review"}
-{"id":"shopify-review-2","prompt":"Review our Shopify app billing and webhook readiness before launch.","expected":"shopify-review"}
-{"id":"shopify-review-3","prompt":"Run a Shopify app readiness assessment of this repo.","expected":"shopify-review"}
-{"id":"shopify-review-4","prompt":"Check whether our Shopify app is ready for App Store review.","expected":"shopify-review"}
-{"id":"install-harness-1","prompt":"Install Harness skills and lint tooling in this project.","expected":"install-harness"}
-{"id":"install-harness-2","prompt":"Set up Harness in this consumer repository using pinned versions.","expected":"install-harness"}
-{"id":"install-harness-3","prompt":"Adopt the Harness packages that match this project's stack.","expected":"install-harness"}
-{"id":"install-harness-4","prompt":"Wire Harness lint and format configuration into this repo.","expected":"install-harness"}
-{"id":"none-1","prompt":"What is 2 + 2?","expected":null}
-{"id":"none-2","prompt":"Translate hello into French.","expected":null}
-{"id":"none-3","prompt":"Explain what git rebase does without running it.","expected":null}
-{"id":"none-4","prompt":"What does the add function do? Explain only.","expected":null}
-{"id":"none-5","prompt":"Explain what unit testing means; do not write tests.","expected":null}
-{"id":"none-6","prompt":"What is a Shopify theme?","expected":null}
-{"id":"none-7","prompt":"Define precision and recall.","expected":null}
-{"id":"none-8","prompt":"Say hello in Spanish.","expected":null}
-{"id":"none-9","prompt":"Summarize the concept of a command line interface in one sentence.","expected":null}
-{"id":"none-10","prompt":"What is the difference between JSON and JSONL?","expected":null}
-{"id":"none-11","prompt":"Explain caching TTL with a simple example.","expected":null}
-{"id":"none-12","prompt":"What does the word harness mean?","expected":null}
-{"id":"none-13","prompt":"Name the weekdays in French.","expected":null}
-{"id":"none-14","prompt":"Explain a pull request without reviewing or creating one.","expected":null}
-{"id":"none-15","prompt":"What is a JavaScript module?","expected":null}
+{"id": "align-1", "prompt": "We need a billing feature but have not decided who pays or which events bill. Help define requirements.", "expected": "align"}
+{"id": "align-2", "prompt": "Our team disagrees on what active customer means. Resolve the requirements before implementation.", "expected": "align"}
+{"id": "align-3", "prompt": "Help choose the acceptance criteria for an undefined onboarding flow.", "expected": "align"}
+{"id": "align-4", "prompt": "I have three incompatible product goals for search. Clarify the scope first.", "expected": "align"}
+{"id": "build-1", "prompt": "Fix add so numeric strings are rejected. Implement that behavior.", "expected": "build"}
+{"id": "build-2", "prompt": "Add a new multiply export to src/add.mjs.", "expected": "build"}
+{"id": "build-3", "prompt": "Refactor the arithmetic module into a smaller public API.", "expected": "build"}
+{"id": "build-4", "prompt": "Implement a subtraction function in this repo.", "expected": "build"}
+{"id": "testing-1", "prompt": "Write a regression test for adding negative numbers.", "expected": "testing"}
+{"id": "testing-2", "prompt": "Review whether these tests actually catch an expired session bug.", "expected": "testing"}
+{"id": "testing-3", "prompt": "Choose property tests versus examples for arithmetic validation.", "expected": "testing"}
+{"id": "testing-4", "prompt": "Our suite is green but never asserts results. Improve its assertions.", "expected": "testing"}
+{"id": "git-1", "prompt": "Review my PR description and suggest a clearer title.", "expected": "git"}
+{"id": "git-2", "prompt": "Commit the arithmetic fix and push the branch.", "expected": "git"}
+{"id": "git-3", "prompt": "Resolve the merge conflict while preserving both features.", "expected": "git"}
+{"id": "git-4", "prompt": "Open a draft pull request for the current branch.", "expected": "git"}
+{"id": "code-review-1", "prompt": "Review this code diff for bugs, without changing it.", "expected": "code-review"}
+{"id": "code-review-2", "prompt": "Find correctness problems in the proposed arithmetic change.", "expected": "code-review"}
+{"id": "code-review-3", "prompt": "Perform a code review of the implementation in src/add.mjs.", "expected": "code-review"}
+{"id": "code-review-4", "prompt": "Check this patch for regressions and report findings.", "expected": "code-review"}
+{"id": "communication-1", "prompt": "Rewrite this long README so new users can decide how to adopt it.", "expected": "communication", "mode": "always-on"}
+{"id": "communication-2", "prompt": "Draft an architecture decision record explaining our database choice.", "expected": "communication", "mode": "always-on"}
+{"id": "communication-3", "prompt": "Shorten this reference document while retaining actionable constraints.", "expected": "communication", "mode": "always-on"}
+{"id": "communication-4", "prompt": "Rewrite a two-page technical update so stakeholders understand the risks.", "expected": "communication", "mode": "always-on"}
+{"id": "economy-1", "prompt": "Delegate an independent repository research task with a bounded budget.", "expected": "economy", "mode": "always-on"}
+{"id": "economy-2", "prompt": "Plan parallel agent work across three independent modules.", "expected": "economy", "mode": "always-on"}
+{"id": "economy-3", "prompt": "Reduce token usage during this long autonomous investigation.", "expected": "economy", "mode": "always-on"}
+{"id": "economy-4", "prompt": "Split this broad audit into independent agent tasks.", "expected": "economy", "mode": "always-on"}
+{"id": "retrospect-1", "prompt": "I have corrected the same agent mistake twice. Decide where the permanent fix belongs.", "expected": "retrospect"}
+{"id": "retrospect-2", "prompt": "We repeatedly forget release notes. Identify the policy or automation owner.", "expected": "retrospect"}
+{"id": "retrospect-3", "prompt": "A recurring workflow friction keeps returning after reminders. Find a durable mechanism.", "expected": "retrospect"}
+{"id": "retrospect-4", "prompt": "The agent keeps repeating the same mistake. Run a retrospective on instruction placement.", "expected": "retrospect"}
+{"id": "toolsmith-1", "prompt": "Build a reusable CLI to validate package names.", "expected": "toolsmith"}
+{"id": "toolsmith-2", "prompt": "Write a rerunnable scaffolding script that preserves existing files.", "expected": "toolsmith"}
+{"id": "toolsmith-3", "prompt": "Add an environment doctor command reporting missing prerequisites.", "expected": "toolsmith"}
+{"id": "toolsmith-4", "prompt": "Replace repeated manual JSON validation with a reusable script.", "expected": "toolsmith"}
+{"id": "shopify-review-1", "prompt": "Assess this Shopify app for production readiness.", "expected": "shopify-review"}
+{"id": "shopify-review-2", "prompt": "Review our Shopify app billing and webhook readiness before launch.", "expected": "shopify-review"}
+{"id": "shopify-review-3", "prompt": "Run a Shopify app readiness assessment of this repo.", "expected": "shopify-review"}
+{"id": "shopify-review-4", "prompt": "Check whether our Shopify app is ready for App Store review.", "expected": "shopify-review"}
+{"id": "install-harness-1", "prompt": "Install Harness skills and lint tooling in this project.", "expected": "install-harness"}
+{"id": "install-harness-2", "prompt": "Set up Harness in this consumer repository using pinned versions.", "expected": "install-harness"}
+{"id": "install-harness-3", "prompt": "Adopt the Harness packages that match this project's stack.", "expected": "install-harness"}
+{"id": "install-harness-4", "prompt": "Wire Harness lint and format configuration into this repo.", "expected": "install-harness"}
+{"id": "none-1", "prompt": "What is 2 + 2?", "expected": null}
+{"id": "none-2", "prompt": "Translate hello into French.", "expected": null}
+{"id": "none-3", "prompt": "Explain what git rebase does without running it.", "expected": null}
+{"id": "none-4", "prompt": "What does the add function do? Explain only.", "expected": null}
+{"id": "none-5", "prompt": "Explain what unit testing means; do not write tests.", "expected": null}
+{"id": "none-6", "prompt": "What is a Shopify theme?", "expected": null}
+{"id": "none-7", "prompt": "Define precision and recall.", "expected": null}
+{"id": "none-8", "prompt": "Say hello in Spanish.", "expected": null}
+{"id": "none-9", "prompt": "Summarize the concept of a command line interface in one sentence.", "expected": null}
+{"id": "none-10", "prompt": "What is the difference between JSON and JSONL?", "expected": null}
+{"id": "none-11", "prompt": "Explain caching TTL with a simple example.", "expected": null}
+{"id": "none-12", "prompt": "What does the word harness mean?", "expected": null}
+{"id": "none-13", "prompt": "Name the weekdays in French.", "expected": null}
+{"id": "none-14", "prompt": "Explain a pull request without reviewing or creating one.", "expected": null}
+{"id": "none-15", "prompt": "What is a JavaScript module?", "expected": null}

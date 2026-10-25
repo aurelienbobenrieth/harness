@@ -24,7 +24,12 @@ export function normalize(events) {
       if (m.usage) {
         const id = m.id ?? event.uuid ?? event;
         if (usageByMessage.has(id))
-          usages[usageByMessage.get(id)] = { ...m.usage, model: m.model, timestamp, provider: "claude" };
+          usages[usageByMessage.get(id)] = {
+            ...m.usage,
+            model: m.model,
+            timestamp,
+            provider: "claude",
+          };
         else {
           usageByMessage.set(id, usages.length);
           usages.push({ ...m.usage, model: m.model, timestamp, provider: "claude" });

@@ -22,14 +22,23 @@ test("only actual skill calls and reads count as loads; command start and comple
       type,
       item: { id: "read", type: "command_execution", command: "cat .agents/skills/build/SKILL.md" },
     })),
-    { type: "turn.completed", usage: { input_tokens: 100, cached_input_tokens: 40, output_tokens: 5 } },
+    {
+      type: "turn.completed",
+      usage: { input_tokens: 100, cached_input_tokens: 40, output_tokens: 5 },
+    },
   ];
   const run = normalize(events);
   assert.deepEqual(
     run.skillLoads.map((s) => s.skill),
     ["git", "build"],
   );
-  assert.deepEqual(run.tokens, { input: 60, cached: 40, output: 5, cacheWrite5m: 0, cacheWrite1h: 0 });
+  assert.deepEqual(run.tokens, {
+    input: 60,
+    cached: 40,
+    output: 5,
+    cacheWrite5m: 0,
+    cacheWrite1h: 0,
+  });
   assert.equal(estimateCost(run.tokens, "gpt-6-luna"), 0.000235);
 });
 test("cost guard rejects an unaffordable next call before spawning", () => {
@@ -81,7 +90,14 @@ test("precision counts false positives and recall counts missing loads", () => {
     ],
     ["git"],
   );
-  assert.deepEqual(m.perSkill[0], { skill: "git", tp: 1, fp: 1, fn: 1, precision: 0.5, recall: 0.5 });
+  assert.deepEqual(m.perSkill[0], {
+    skill: "git",
+    tp: 1,
+    fp: 1,
+    fn: 1,
+    precision: 0.5,
+    recall: 0.5,
+  });
 });
 test("runner reports CLI failure and kills a timed-out child", async () => {
   const dir = await mkdtemp(path.join(tmpdir(), "eval-runner-test-"));
@@ -89,7 +105,12 @@ test("runner reports CLI failure and kills a timed-out child", async () => {
   process.env.EVALS_CODEX_BIN = process.execPath;
   try {
     // Node itself rejects the codex arguments, exercising the real process failure boundary.
-    const failed = await runAgent({ provider: "codex", cwd: dir, prompt: "test", guard: new CostGuard(1) });
+    const failed = await runAgent({
+      provider: "codex",
+      cwd: dir,
+      prompt: "test",
+      guard: new CostGuard(1),
+    });
     assert.equal(failed.status, "error");
     assert.notEqual(failed.exitCode, 0);
     await writeFile(path.join(dir, "exec"), "setInterval(() => {}, 1000)");
