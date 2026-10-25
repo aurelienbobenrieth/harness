@@ -125,3 +125,11 @@ export async function run(request) {
     ),
   ).resolves.toBeUndefined();
 });
+it.each(["constructor", "toString", "__proto__"])(
+  "ignores an inherited object owner named %s without crashing",
+  async (owner) => {
+    await expect(
+      assertRuleDoesNotReport(ruleName, `export const bounds = shape.${owner}.fromPoints(points);`),
+    ).resolves.toBeUndefined();
+  },
+);
