@@ -9,6 +9,11 @@
   ],
   "type": "module",
   "scripts": {
+    "evals:contradictions": "node evals/contradictions/run.mjs",
+    "evals:triggering": "node evals/triggering/run.mjs",
+    "evals:triggering:static": "node evals/triggering/run.mjs --static",
+    "evals:incidents": "node evals/incidents/run.mjs",
+    "test:evals": "node --test evals/lib/*.test.mjs evals/incidents/*.test.mjs",
     "build": "pnpm --recursive --if-present build",
     "check": "node scripts/check.mjs",
     "lint": "vp lint",
