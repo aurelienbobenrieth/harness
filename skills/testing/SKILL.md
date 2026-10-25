@@ -5,36 +5,26 @@ description: Choose and write tests that fail for the right reason, with oracles
 
 # Testing
 
-**A test earns its place by catching a named defect with an oracle the implementation didn't produce.**
-
-- Name the test after that defect (`rejects an expired session`), not the function it calls.
-- Test count is never a goal. A test whose failure another already catches gets deleted, not added.
+A test earns its place by catching a named defect with an oracle the implementation didn't produce. Name it after that defect (`rejects an expired session`), not the function called. Test count is never a goal; a test whose failure another already catches gets deleted.
 
 ## Oracles
 
-- Expected values come from the spec, a hand-worked example, a reference, or a law. Never from running the code, calling the subject's own helpers, or recomputing with its algorithm (`expected-value-recomputed`).
-- Write the expectation from the requirement before reading the implementation; reading buggy code first makes you assert the bug.
-- Never mock the subject (`no-stubbed-subject`). A test that imports nothing from the project tests nothing (`test-exercises-project-code`).
-- `toBeDefined`, `toBeTruthy`, bare `toHaveBeenCalled` prove almost nothing (`no-weak-test-assertions`). Exact values for closed data; targeted fields for extensible records and UI; assert absence (extra writes, events, fields) when that's the failure.
-- Observable results over call order, unless a boundary call's payload and count are the contract.
+- Expected values from spec, hand-worked example, reference, or law, written before reading the implementation. Never from running the code, the subject's own helpers, or its algorithm (`expected-value-recomputed`). Never mock the subject (`no-stubbed-subject`); a test importing nothing from the project tests nothing (`test-exercises-project-code`).
+- `toBeDefined`/`toBeTruthy`/bare `toHaveBeenCalled` prove almost nothing (`no-weak-test-assertions`). Exact values for closed data; targeted fields for extensible records/UI; assert absence (extra writes, events, fields) when that's the failure. Observable results over call order, unless a boundary call's payload/count is the contract.
 
-## Strategies: a menu, not a checklist
+## Strategies: menu, not checklist
 
-Start from the failure you fear and pick whatever catches it with an independent oracle. Several can apply at once; a lone smoke test only proves the code ran once, somewhere. The failure → strategy table and the deep dives on properties, state models, contracts, and mutation: [strategies](references/strategies.md).
+Start from the failure feared; pick whatever catches it with an independent oracle (a lone smoke test proves only that code ran once): [strategies](references/strategies.md).
 
-**Pick the double by dependency:** in-process → use the real thing · local stand-in exists (SQLite, temp dir, in-memory broker) → use it · remote you own → contract test · true external → fake at your adapter plus a contract. Captured responses test parsing, never live auth, pagination, or timing.
+**Double by dependency:** in-process: real thing. Local stand-in (SQLite, temp dir, in-memory broker): use it. Remote you own: contract test. True external: fake at your adapter + contract.
 
 ## Red, green, keep honest
 
-- Red must fail on the assertion, not on an import, fixture, or type error.
-- While making it green, tests are read-only. Spec and test disagree → stop and report; never edit either to force agreement (`test-expectation-drift` flags loosened, skipped, or re-valued expectations for a human).
-- Doubt a green test → break the code (revert the fix, flip a condition). Still green = tautology. Risky new logic → scoped mutation run on the changed lines.
-- Deepened or replaced a module → delete the old tests that pinned its internals; don't layer new tests over them.
+- Red fails on the assertion, not an import/fixture/type error. Green phase: tests read-only. Spec/test disagree: stop, report; never edit either to force agreement (`test-expectation-drift` flags loosened, skipped, re-valued expectations).
+- Doubt a green test: break the code (revert fix, flip condition); still green = tautology. Risky new logic: scoped mutation run on changed lines.
+- Module deepened/replaced: delete tests that pinned its internals; don't layer over them.
 
 ## Determinism and claims
 
-- Unit: control clocks, randomness, IDs, ordering; restore globals and dispose resources on failure; isolated temp dirs, no fixed ports.
-- Integration: explicit environment, finite timeouts, isolated data, cleanup, outside the fast loop. Real clocks and networks are fine there when they're what's verified.
-- Report zero selected tests, skips, and retries apart from passes. Retries don't fix flakes. Coverage finds gaps; it proves nothing.
-- Before deleting a test, name what still catches its failure. Don't rewrite a working suite for style.
-- Rule or validator: firing cases and nearby silent cases. Autofix: exact rewrite, ambiguous input untouched.
+- Unit: control clocks, randomness, IDs, ordering; restore globals, dispose on failure; isolated temp dirs, no fixed ports.
+- Report zero-selected, skips, retries apart from passes. Retries don't fix flakes. Rule/validator: firing cases + nearby silent cases. Autofix: exact rewrite, ambiguous input untouched.
