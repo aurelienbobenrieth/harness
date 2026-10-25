@@ -1,32 +1,26 @@
 ---
 name: install-harness
-description: Add Harness lint, format, conformance packages, and skills to a consumer project, matched to its actual stack and pinned to verified versions. Use when the user asks to install, set up, or adopt Harness tooling or skills in a repo. Not for reviews or explanations.
+description: Add Harness lint, format, conformance packages, and skills to a consumer project, matched to its actual stack and pinned to verified versions. Use when asked to install, set up, or adopt Harness tooling or skills in a repo. Not for reviews or explanations.
 ---
 
 # Install Harness
 
 ## Select
 
-- Domains from actual source and dependencies, never docs mentions: core for TypeScript; Effect, Lit, XState, Shopify app/theme only when used. Conformance also needs its project inputs.
-- Version: per package README, compatibility policy, release eligibility; must exist in the configured registry and support the consumer's Node and tools. Pin exact. Newest ≠ compatible.
-- No eligible version → report it, install the rest. Never publish or invent a release. Local tarballs only for requested preview adoption.
-- The six agentlint plugins peer on the published `@aurelienbbn/agentlint` engine in the range their README states; install it from npm like any peer. Never substitute the unscoped `agentlint` package, and never install these plugins into the agentlint repo's own gate: they would check the engine with an older release of itself.
-
-- **Official tooling first:** for Effect, Cloudflare, Shopify, PlanetScale, Alchemy, or Drizzle, wire what [official-tooling](references/official-tooling.md) lists before any Harness equivalent.
+- Domains from actual source/dependencies, never docs mentions: core for TypeScript; Effect, Lit, XState, Shopify app/theme only when used.
+- Version: per package README, compatibility policy, release eligibility; must exist in the configured registry, support the consumer's Node/tools. Pin exact. Newest is not compatible.
+- No eligible version: report it, install the rest. Never publish/invent a release. Local tarballs only for requested preview adoption. Report versions, config changes, results, omissions by reason.
+- The six agentlint plugins peer on the published `@aurelienbbn/agentlint` engine, range per their README; install from npm like any peer. Never substitute unscoped `agentlint`; never install these plugins into the agentlint repo's own gate.
+- **Official tooling first:** Effect, Cloudflare, Shopify, PlanetScale, Alchemy, Drizzle: wire [official-tooling](references/official-tooling.md) before any Harness equivalent.
 
 ## Merge
 
-- Use the consumer's package manager. Keep existing ignores and rules. No whole-config replacement, overwriting initializers, or blanket-ignored agent directories.
-- Wire from documented exports; don't assume helpers, peers, or commands across tool versions.
-- Trial new policies on real source before making them blocking.
-- Skills requested → in the always-loaded instructions (`AGENTS.md`, or the host's equivalent):
-  - copy each installed always-on file verbatim between its markers: `communication/core.md` between `<!-- harness:communication:start -->` and `<!-- harness:communication:end -->`, `economy/core.md` between `<!-- harness:economy:start -->` and `<!-- harness:economy:end -->`;
-  - add a task → skill map for the installed skills (copy the shape of Harness's `AGENTS.md` Skills section);
-  - wire conformance-core's `instruction-blocks` check at each `core.md` path, so a skill update that changes the rules fails until the block is recopied.
-
-  Skills stay discoverable; only the block and the map are bootstrapped.
+- Consumer's package manager. Keep existing ignores/rules. No whole-config replacement, overwriting initializers, or blanket-ignored agent directories.
+- Skills requested, in the always-loaded instructions (`AGENTS.md` or host equivalent):
+  - copy each always-on file verbatim between its markers: `communication/core.md` between `<!-- harness:communication:start -->` and `<!-- harness:communication:end -->`, `economy/core.md` between `<!-- harness:economy:start -->` and `<!-- harness:economy:end -->`;
+  - add a task to skill map for the installed skills (shape of Harness's `AGENTS.md` Skills section);
+  - wire conformance-core's `instruction-blocks` check at each `core.md` path, so a skill update fails until the block is recopied.
 
 ## Verify
 
-- Run the consumer's required checks. Config/dependency failure → fix. Existing-source finding → report; never suppress to go green.
-- Report versions, config changes, results, omissions by reason.
+Run the consumer's required checks. Config/dependency failure: fix. Existing-source finding: report; never suppress to go green. Report versions, config changes, results, omissions by reason.
