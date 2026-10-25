@@ -126,6 +126,18 @@ function pooled(lines: readonly string[]): Map<string, number> {
   return pool;
 }
 
+function snapshotSignals(signals: FileSignals, sourceTouched: boolean): void {
+  if (!sourceTouched || signals.file.status === "deleted") return;
+  for (const hunk of signals.file.hunks) {
+    const deleted = linesOf(hunk, "deletion").filter((line) => line !== "");
+    if (deleted.length === 0) continue;
+    signals.kinds.add("snapshot-rewritten");
+    signals.removed.push(...deleted);
+    signals.added.push(...linesOf(hunk, "addition").filter((line) => line !== ""));
+    signals.firstLine ??= hunk.newStart;
+  }
+}
+
 export function defineTestExpectationDrift(options: TestExpectationDriftOptions = {}): ChangeRule {
   options = structuredClone(options);
   const testFilePattern = options.testFilePattern ?? defaultTestFilePattern;
@@ -134,23 +146,8 @@ export function defineTestExpectationDrift(options: TestExpectationDriftOptions 
   if (!Number.isSafeInteger(maxEvidenceLines) || maxEvidenceLines < 1)
     throw new Error("test-expectation-drift: maxEvidenceLines must be a positive integer.");
 
-  const isSnapshot = (path: string): boolean => snapshotFilePattern.test(path);
   const isTest = (path: string): boolean => isSnapshot(path) || matches(testFilePattern, path);
   const isTracked = (line: string): boolean => matches(assertionPattern, line) || testLinePattern.test(line);
-  const linesOf = (hunk: ChangeHunk, kind: "addition" | "deletion"): string[] =>
-    hunk.lines.filter((line) => line.kind === kind).map((line) => normalize(line.content));
-
-  function snapshotSignals(signals: FileSignals, sourceTouched: boolean): void {
-    if (!sourceTouched || signals.file.status === "deleted") return;
-    for (const hunk of signals.file.hunks) {
-      const deleted = linesOf(hunk, "deletion").filter((line) => line !== "");
-      if (deleted.length === 0) continue;
-      signals.kinds.add("snapshot-rewritten");
-      signals.removed.push(...deleted);
-      signals.added.push(...linesOf(hunk, "addition").filter((line) => line !== ""));
-      signals.firstLine ??= hunk.newStart;
-    }
-  }
 
   function testSignals(signals: FileSignals, sourceTouched: boolean, moves: Moves): void {
     const { file } = signals;
@@ -399,3 +396,8 @@ export function defineTestExpectationDrift(options: TestExpectationDriftOptions 
 }
 
 export const testExpectationDrift = defineTestExpectationDrift();
+
+const isSnapshot = (path: string): boolean => snapshotFilePattern.test(path);
+
+const linesOf = (hunk: ChangeHunk, kind: "addition" | "deletion"): string[] =>
+  hunk.lines.filter((line) => line.kind === kind).map((line) => normalize(line.content));

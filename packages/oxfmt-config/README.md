@@ -5,7 +5,7 @@
 **One oxfmt config for every JS/TS repo: 100 columns, double quotes, trailing commas, multiline JSDoc, sorted `package.json`.**
 
 ```sh
-pnpm add -D @aurelienbbn/oxfmt-config oxfmt   # oxfmt >=0.67.0 <0.69.0 · Node ^22.19.0 || ^24.11.0
+pnpm add -D @aurelienbbn/oxfmt-config oxfmt   # oxfmt ">=0.67.0 <0.69.0 || ^0.74.0" · Node ^22.19.0 || ^24.11.0
 ```
 
 ```ts

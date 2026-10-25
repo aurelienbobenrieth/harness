@@ -63,6 +63,12 @@ export function definePinnedSuspectOutput(options: PinnedSuspectOutputOptions = 
     return firstMatch(bareSnapshotTokenPattern, trimmed.replaceAll(quotedSegmentPattern, '""'));
   }
 
+  function suspectToken(matcher: string, argument: AgentlintNode): string | undefined {
+    const text = literalText(argument);
+    if (text === undefined) return undefined;
+    return inlineSnapshotMatchers.has(matcher) ? suspectInSnapshot(text) : suspectIn(text);
+  }
+
   return defineRule({
     lifecycle: "state",
     standard: {
@@ -124,12 +130,6 @@ export function definePinnedSuspectOutput(options: PinnedSuspectOutputOptions = 
       scan: "file",
       createOnce({ context }) {
         let reported = 0;
-
-        function suspectToken(matcher: string, argument: AgentlintNode): string | undefined {
-          const text = literalText(argument);
-          if (text === undefined) return undefined;
-          return inlineSnapshotMatchers.has(matcher) ? suspectInSnapshot(text) : suspectIn(text);
-        }
 
         return {
           before() {

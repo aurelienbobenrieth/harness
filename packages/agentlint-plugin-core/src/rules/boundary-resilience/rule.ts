@@ -24,6 +24,17 @@ export function defineBoundaryResilience(options: BoundaryResilienceOptions = {}
   options = structuredClone(options);
   const networkCallPattern = options.networkCallPattern ?? defaultNetworkCallPattern;
 
+  const isNetworkCall = (node: AgentlintNode): boolean => {
+    networkCallPattern.lastIndex = 0;
+    if (!networkCallPattern.test(node.text)) return false;
+    const callee = node.childByFieldName("function");
+
+    return !(callee?.descendantsOfType("call_expression") ?? []).some((inner) => {
+      networkCallPattern.lastIndex = 0;
+      return networkCallPattern.test(inner.text);
+    });
+  };
+
   return defineRule({
     lifecycle: "state",
     standard: {
@@ -75,17 +86,6 @@ export function defineBoundaryResilience(options: BoundaryResilienceOptions = {}
       version: 2,
       scan: "file",
       createOnce({ context }) {
-        const isNetworkCall = (node: AgentlintNode): boolean => {
-          networkCallPattern.lastIndex = 0;
-          if (!networkCallPattern.test(node.text)) return false;
-          const callee = node.childByFieldName("function");
-
-          return !(callee?.descendantsOfType("call_expression") ?? []).some((inner) => {
-            networkCallPattern.lastIndex = 0;
-            return networkCallPattern.test(inner.text);
-          });
-        };
-
         return {
           call_expression(node) {
             if (isNetworkCall(node)) {

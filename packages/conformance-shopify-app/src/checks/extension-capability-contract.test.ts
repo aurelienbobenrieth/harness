@@ -64,14 +64,6 @@ it("ignores comments, strings, methods, local bindings, tests, and sources outsi
 });
 
 it("warns when block_progress is declared at or after the deprecating API version", async () => {
-  const files = (version: string) => ({
-    "extensions/gate/shopify.extension.toml": manifest(
-      "purchase.checkout.block.render",
-      "block_progress = true",
-      version,
-    ),
-    "extensions/gate/src/index.tsx": "useBuyerJourneyIntercept(() => ({ behavior: 'allow' }));",
-  });
   expect(await extensionCapabilityContract.run({ root: await createFixture(files("2026-07")) })).toEqual([
     expect.objectContaining({
       severity: "warning",
@@ -93,4 +85,13 @@ it("supports legacy root extension tables with root capabilities", async () => {
     "extensions/legacy/shopify.extension.toml": legacy(""),
   });
   expect(await extensionCapabilityContract.run({ root: missing })).toHaveLength(1);
+});
+
+const files = (version: string) => ({
+  "extensions/gate/shopify.extension.toml": manifest(
+    "purchase.checkout.block.render",
+    "block_progress = true",
+    version,
+  ),
+  "extensions/gate/src/index.tsx": "useBuyerJourneyIntercept(() => ({ behavior: 'allow' }));",
 });
