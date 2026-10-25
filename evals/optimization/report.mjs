@@ -19,11 +19,20 @@ for (const file of (await readdir(folder)).filter((f) => f.endsWith(".jsonl")).t
   }
 }
 const groups = Map.groupBy([...rows.values()], (r) => `${r.skillsRevision}/${r.run.provider}`);
+const totals = (rs) => ({
+  passed: rs.filter((r) => r.grade.pass).length,
+  total: rs.length,
+  calls: rs.reduce((n, r) => n + r.run.toolCalls.length, 0),
+  tokens: rs.reduce((n, r) => n + Object.values(r.run.tokens).reduce((a, b) => a + b, 0), 0),
+  usd: rs.reduce((n, r) => n + r.run.costEstimateUsd + (r.judgment?.costEstimateUsd ?? 0), 0),
+});
 const conditions = [...groups].map(([condition, rs]) => ({
   condition,
   ref: rs[0].skillsRef,
   runs: rs.length,
   censored: rs.filter((r) => r.run.status === "budget").length,
+  economy: totals(rs.filter((r) => r.phase === "behavior" && r.skill === "economy")),
+  quality: totals(rs.filter((r) => r.phase === "behavior" && r.skill !== "economy")),
   skills: ["git", "communication", "build", "testing", "economy"].map((skill) => {
     const behavior = rs.filter((r) => r.skill === skill && r.phase === "behavior"),
       load = rs.filter((r) => r.skill === skill && r.phase === "trigger" && r.mode !== "always-on");
