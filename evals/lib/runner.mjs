@@ -56,6 +56,9 @@ export async function runAgent({
   maxTurns = 8,
   timeoutMs = 120000,
   stopOnSkill = false,
+  writable = false,
+  observe,
+  mcpServer,
   maxUsd = 0.25,
   guard = budget,
 }) {
@@ -79,6 +82,16 @@ export async function runAgent({
           String(maxUsd),
           "--permission-mode",
           "dontAsk",
+          "--allowedTools",
+          writable ? "Read,Glob,Grep,Skill,Bash,Write,Edit,mcp__eval__delegate_task" : "Read,Glob,Grep,Skill",
+          ...(mcpServer
+            ? [
+                "--mcp-config",
+                JSON.stringify({
+                  mcpServers: { eval: { command: process.execPath, args: [mcpServer] } },
+                }),
+              ]
+            : []),
           "--strict-mcp-config",
           "--setting-sources",
           "project",
@@ -86,6 +99,14 @@ export async function runAgent({
         ]
       : [
           "exec",
+          ...(mcpServer
+            ? [
+                "-c",
+                `mcp_servers.eval.command=${JSON.stringify(process.execPath)}`,
+                "-c",
+                `mcp_servers.eval.args=[${JSON.stringify(mcpServer)}]`,
+              ]
+            : []),
           "--json",
           "-m",
           model,
@@ -93,7 +114,7 @@ export async function runAgent({
           "--ignore-user-config",
           "--skip-git-repo-check",
           "-s",
-          "read-only",
+          writable ? "danger-full-access" : "read-only",
           "-c",
           'model_reasoning_effort="low"',
           "-",
@@ -148,6 +169,7 @@ export async function runAgent({
         } catch {
           continue;
         }
+        if (observe) e.observation = observe(e);
         events.push(e);
         const transcript = normalize(events);
         if (stopOnSkill && transcript.skillLoads.length) stop("skill");

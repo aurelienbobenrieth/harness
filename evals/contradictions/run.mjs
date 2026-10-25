@@ -1,13 +1,22 @@
 import { readFile, stat } from "node:fs/promises";
 import path from "node:path";
-import { files, root, results, options, fixture } from "../lib/io.mjs";
+import { files, root, results, options, fixture, skillFiles } from "../lib/io.mjs";
 import { judge, budget } from "../lib/runner.mjs";
 
 const opts = options(),
   output = await results("contradictions");
-const corpus = [...(await files(path.join(root, "skills"))), path.join(root, "AGENTS.md")];
+const sources = await skillFiles(opts["skills-ref"]);
+const corpus = [path.join(root, "AGENTS.md")];
 for (const extra of opts.include) corpus.push(...((await stat(extra)).isDirectory() ? await files(extra) : [extra]));
-const documents = [];
+const documents = sources
+  .filter((s) => /\.(md|txt|ya?ml)$/.test(s.file))
+  .map((s) => ({
+    file: s.file,
+    text: s.text
+      .split(/\r?\n/)
+      .map((line, i) => `${i + 1}: ${line}`)
+      .join("\n"),
+  }));
 for (const file of [...new Set(corpus)].filter((p) => /\.(md|txt|ya?ml)$/.test(p))) {
   const text = await readFile(file, "utf8");
   documents.push({
@@ -20,7 +29,7 @@ for (const file of [...new Set(corpus)].filter((p) => /\.(md|txt|ya?ml)$/.test(p
 }
 // Every document appears in both calls: partitioned chunks would miss cross-chunk conflicts.
 const rubric = `Audit all steering statements, including quoted examples in their proper context. Distinguish hard conflicts (same situation requires incompatible actions) from soft tensions and intentional duplicates such as installed core blocks. Return {"findings":[{"kind":"hard|soft|duplicate","a":{"file":"exact input path","line":1},"b":{"file":"exact input path","line":1},"conflict":"explanation","resolution":"suggested resolution"}]}. Report every pair you find. Do not treat specialization or examples as hard conflicts.`;
-const workspace = await fixture();
+const workspace = await fixture(undefined, opts["skills-ref"]);
 try {
   const findings = [];
   for (const focus of [

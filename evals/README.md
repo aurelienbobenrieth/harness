@@ -39,7 +39,7 @@ Fixtures are copied into fresh temp directories and removed after each case.
 Current tree skills are copied to `.agents/skills` and `.claude/skills`; `AGENTS.md` receives
 verbatim core blocks and a task map, and `CLAUDE.md` imports it, per install-harness.
 Reuse `runAgent({provider,model,cwd,prompt,maxTurns,timeoutMs})`, `judge`, and `fixture` for part B.
-Live triggering stops at the first Skill call/read, otherwise after two CLI turns.
+Live triggering stops at the first Skill call/read, otherwise after four CLI turns; always-on cases continue for behavioral evidence.
 
 Incidents default to `~/.claude/projects` and `~/.codex/sessions`; `--include` overrides roots.
 The interval is `[from,to)`, UTC; weeks start Monday. Rows count session files per week.
@@ -53,3 +53,44 @@ Gate counts are invocations per session, not proof a gate succeeded. Partial wee
 CI always runs these via `pnpm check`. Model evals remain local: this repo has no judge
 credentials configured in CI. With credentials, run only contradictions and static triggering
 in a trusted CI job; do not run live fixtures or replay private home transcripts in CI.
+
+## Compare skill sets with behavior and value evals
+
+`--skills-ref <git ref>` reads the complete skills tree from that commit (without
+switching the checkout); `--skills-ref none` omits Harness bodies, routing and core.
+Default: working tree. Model/system instructions outside Harness remain in all conditions.
+Each behavioral row records the selected ref, resolved commit, trial, normalized/raw
+transcript, artifacts and deterministic rubric. Results are local and gitignored.
+
+| Eval | Command                                                                 | Observable criterion                                                                                                                                                   |
+| ---- | ----------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 3    | `pnpm evals:economy --skills-ref origin/skills/terse --provider claude` | Five fixed tasks: blocking 12s command, inline tiny edit, broad delegation, scoped checks then one final gate, reversible owner default                                |
+| 4    | `pnpm evals:ab --tasks tiny,git --seeds 3`                              | Same tasks under current, terse and none; pass rate, tool calls, total context/output tokens, USD                                                                      |
+| 5    | `pnpm evals:quality --skills-ref origin/skills/terse --provider codex`  | Five review bugs + three harmless edits (line-level recall/precision); commit/PR format; observed assertion failure before production fix and unchanged tests on green |
+
+A/B defaults to all economy/quality tasks, three independent trials per condition;
+`--tasks` limits it. Trials are repetitions tagged with seeds, not API RNG control.
+Choose models with `--provider claude|codex --model <id>`. No Opus defaults.
+`--case-usd` defaults to $0.15; `EVALS_MAX_USD` caps the whole command including judges.
+For a matrix, allocate disjoint command caps whose sum fits the total budget; keep
+probe/retry costs in the ledger. Partial runs retain completed rows and exit 2.
+Behavior failures exit 1. Never treat truncation or missing evidence as success.
+
+Writable behavioral fixtures allow CLI file/command tools (Codex full access on
+Windows, where workspace-write can report read-only). They are trusted fixed local
+prompts, not a sandbox for hostile inputs. No live repositories or network tasks.
+Broad delegation uses a local MCP deterministic worker, not a paid child agent;
+this measures the delegation decision and standalone brief, not child-model quality.
+Only brief quality uses a judge. All other graders are fixed rules.
+Review matching uses seeded line locations; it cannot assess finding prose quality.
+Testing records command results/source/test snapshots (including direct node:test output) and independently exercises
+two expected outputs; a red claim alone cannot pass. Scoped-gate evidence comes
+from the fixture check command. Git checks cover Conventional Commits, result-first
+PR opening, length, attribution and checklist/filler rules, not all editorial nuance.
+
+Triggering now supports `--turns 4` (default), recording first-two versus four-step
+load recall from the same transcript. Claude turns are assistant events; Codex uses
+completed message/tool steps, as in the runner. Communication/economy cases have
+`mode: always-on`: exclude them from load recall; report bounded/plain output and
+budget/no-sleep behavior proxies separately. These proxies are weaker than the
+concrete economy/quality tasks; a load is never their pass criterion.

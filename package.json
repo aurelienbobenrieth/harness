@@ -45,7 +45,10 @@
     "test:mutation": "stryker run",
     "catalog": "node scripts/check-catalog.mjs --write",
     "catalog:check": "node scripts/check-catalog.mjs",
-    "test:package": "node scripts/test-packages.mjs"
+    "test:package": "node scripts/test-packages.mjs",
+    "evals:economy": "node evals/economy/run.mjs",
+    "evals:quality": "node evals/quality/run.mjs",
+    "evals:ab": "node evals/ab/run.mjs"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "0.18.5",
