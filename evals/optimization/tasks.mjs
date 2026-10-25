@@ -103,7 +103,12 @@ export const tasks = [
     "git",
     "git",
     "Write commit.txt and pr.txt for the staged discount fix and regression in this fixture. This is a multi-file change. Describe the user-visible result; no publishing or committing.",
-    { grade: gitGrade },
+    {
+      prepare: async (cwd) => {
+        git(cwd, "add", "--", "calc.mjs", "calc.test.mjs");
+      },
+      grade: gitGrade,
+    },
   ),
   alias(
     "git-split",
