@@ -58,7 +58,7 @@ export function communicationGrade(id, run) {
     });
   return check({
     french:
-      /\b(?:reste|restent|encore|tests?|échec|échou|réussi|passent)\b/i.test(first) &&
+      /(?:reste|encore|vérification|tests?|échec|échou|réussi|passent)/i.test(first) &&
       !/\b(?:the|passed|remaining|failed|tests pass)\b/i.test(text),
     bounded: text.length <= 450,
     answerFirst: /2|deux/i.test(first),
