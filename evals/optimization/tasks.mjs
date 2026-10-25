@@ -67,7 +67,7 @@ export function communicationGrade(id, run) {
 }
 const testInspect = async (cwd, run, a) => {
   a.testSource = await read(cwd, "calc.test.mjs").catch(() => "");
-  const result = spawnSync(process.execPath, ["--test", "calc.test.mjs"], {
+  const result = spawnSync(process.execPath, ["--test", "--test-reporter=tap", "calc.test.mjs"], {
     cwd,
     encoding: "utf8",
     timeout: 5000,
