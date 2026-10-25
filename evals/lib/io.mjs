@@ -3,6 +3,7 @@ import { readdir, readFile, mkdir, appendFile, writeFile, cp, mkdtemp, rm } from
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { parse } from "yaml";
+import { randomUUID } from "node:crypto";
 export const root = path.resolve(import.meta.dirname, "../..");
 export async function files(dir) {
   const entries = await readdir(dir, { withFileTypes: true });
@@ -89,7 +90,8 @@ export async function fixture(name = "tiny", ref) {
     }
     if (ref !== "none")
       instructions +=
-        "\nLoad the matching skill before acting:\n" + inventory.map((s) => `- ${s.name}: ${s.description}`).join("\n");
+        "\nLoad the matching skill before acting:\n" +
+        inventory.map((s) => `- ${s.name}: ${s.description}`).join("\n");
     await writeFile(path.join(cwd, "AGENTS.md"), instructions);
     await writeFile(path.join(cwd, "CLAUDE.md"), "@AGENTS.md\n");
     return {
@@ -104,7 +106,7 @@ export async function fixture(name = "tiny", ref) {
 export async function results(name) {
   const dir = path.join(root, "evals/results", name);
   await mkdir(dir, { recursive: true });
-  const base = path.join(dir, new Date().toISOString().replaceAll(":", "-"));
+  const base = path.join(dir, `${new Date().toISOString().replaceAll(":", "-")}-${randomUUID()}`);
   return {
     base,
     record: (row) => appendFile(base + ".jsonl", JSON.stringify(row) + "\n"),
