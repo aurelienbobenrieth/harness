@@ -14,14 +14,22 @@ for (const file of (await readdir(folder))
     .filter(Boolean)) {
     const r = JSON.parse(line);
     if (
-      ["test-boundary", "test-empty", "test-flaky"].includes(r.id) &&
-      r.artifacts.finalSource &&
-      r.artifacts.testSource
+      r.id === "comm-fr" ||
+      (["test-boundary", "test-empty", "test-flaky"].includes(r.id) &&
+        r.artifacts.finalSource &&
+        r.artifacts.testSource)
     )
       rows.set([r.skillsRevision, r.run.provider, r.seed, r.id].join("/"), r);
   }
 const output = [];
 for (const r of rows.values()) {
+  if (r.id === "comm-fr") {
+    r.grade = tasks.find((t) => t.id === r.id).grade(r.run, r.artifacts);
+    if (r.run.status !== "completed")
+      r.grade = { ...r.grade, pass: false, incomplete: r.run.status };
+    output.push(r);
+    continue;
+  }
   const cwd = await mkdtemp(path.join(tmpdir(), "harness-regrade-"));
   try {
     await writeFile(path.join(cwd, "calc.mjs"), r.artifacts.finalSource);

@@ -61,7 +61,7 @@ export function communicationGrade(id, run) {
       /(?:reste|encore|vérification|tests?|échec|échou|réussi|passent)/i.test(first) &&
       !/\b(?:the|passed|remaining|failed|tests pass)\b/i.test(text),
     bounded: text.length <= 450,
-    answerFirst: /2|deux/i.test(first),
+    answerFirst: /[28]|deux|huit/i.test(first),
     plain,
   });
 }
