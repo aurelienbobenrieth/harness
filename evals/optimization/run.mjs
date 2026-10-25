@@ -43,8 +43,8 @@ try {
         row.run.provider !== (opts.provider ?? "claude")
       )
         throw new Error("Resume source/provider mismatch");
-      rows.push(row);
       budget.spent += row.run.costEstimateUsd + (row.judgment?.costEstimateUsd ?? 0);
+      if (!opts.recheck?.split(",").includes(row.id)) rows.push(row);
       await output.record(row);
     }
   }
