@@ -117,7 +117,7 @@ export const tasks = [
         a.commits = git(cwd, "log", "-2", "--format=", "--name-only")
           .split(/\r?\n/)
           .filter(Boolean);
-        a.groups = git(cwd, "log", "-2", "--format=COMMIT", "--name-only")
+        a.groups = git(cwd, "log", "-2", "--format=format:COMMIT", "--name-only")
           .split("COMMIT")
           .map((s) => s.trim())
           .filter(Boolean);
