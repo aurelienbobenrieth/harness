@@ -94,3 +94,20 @@ completed message/tool steps, as in the runner. Communication/economy cases have
 `mode: always-on`: exclude them from load recall; report bounded/plain output and
 budget/no-sleep behavior proxies separately. These proxies are weaker than the
 concrete economy/quality tasks; a load is never their pass criterion.
+
+## Optimize five skills within a fixed budget
+
+`EVALS_MAX_USD=2 node evals/optimization/run.mjs --skills-ref <ref> --provider claude|codex --seeds 2`
+runs 23 routing cases and 20 behavioral tasks for git, communication, build, testing,
+and economy. Communication and economy are graded by behavior, outside load recall.
+Use `--phase trigger|behavior`, `--cases <ids>`, or `--tasks <ids>` for focused trials.
+Use `--resume <jsonl>` to retain completed trials and their spend; `--recheck <ids>`
+repeats corrected fixtures without refunding old calls. Allocate command caps across
+the whole experiment. Budget-censored behavior is a failure, never a pass.
+
+`node evals/optimization/regrade.mjs` checks unchanged saved tests against their final
+and original production snapshots with an explicit TAP reporter. It also applies the
+French status rubric to saved replies; no model calls are made. Raw transcripts stay
+unchanged. `node evals/optimization/report.mjs` groups scores by immutable revision,
+deduplicates resumed run costs, and counts bytes in each complete skills tree.
+Add reservations for interrupted calls that produced no recorded row separately.
