@@ -4,7 +4,7 @@ import { execFileSync } from "node:child_process";
 const folder = new URL("../results/optimization/", import.meta.url);
 const rows = new Map(),
   costs = new Map();
-for (const file of (await readdir(folder)).filter((f) => f.endsWith(".jsonl")).sort()) {
+for (const file of (await readdir(folder)).filter((f) => f.endsWith(".jsonl")).toSorted()) {
   for (const line of (await readFile(new URL(file, folder), "utf8"))
     .trim()
     .split("\n")

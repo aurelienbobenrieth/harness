@@ -51,6 +51,7 @@ try {
   for (let seed = 1; seed <= Number(opts.seeds ?? 2); seed++) {
     if (opts.phase !== "behavior")
       for (const c of cases) {
+        if (opts.cases && !opts.cases.split(",").includes(c.id)) continue;
         if (rows.some((r) => r.id === c.id && r.seed === seed && r.phase === "trigger")) continue;
         const f = await fixture("tiny", opts["skills-ref"]);
         try {
