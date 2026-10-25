@@ -43,6 +43,7 @@ try {
             prompt: c.prompt,
             maxTurns: 4,
             stopOnSkill: c.mode !== "always-on",
+            writable: process.platform === "win32",
             maxUsd: Number(opts["trigger-usd"] ?? 0.05),
             timeoutMs: 90000,
           });
