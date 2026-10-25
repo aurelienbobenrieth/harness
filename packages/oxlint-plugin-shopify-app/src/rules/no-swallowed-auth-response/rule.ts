@@ -25,7 +25,7 @@ function throwingCall(context: Context, node: ESTree.CallExpression): string | u
   const matches =
     (owner === "authenticate" && authenticateMembers.has(method)) ||
     (path.length >= 3 && path.at(-3) === "authenticate" && owner === "public") ||
-    contextMethods[owner]?.has(method) === true;
+    (Object.hasOwn(contextMethods, owner) && contextMethods[owner]?.has(method) === true);
   return matches ? path.slice(path.at(-3) === "authenticate" ? -3 : -2).join(".") : undefined;
 }
 
