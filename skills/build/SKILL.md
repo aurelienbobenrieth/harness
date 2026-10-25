@@ -1,6 +1,6 @@
 ---
 name: build
-description: Implement an authorized feature, fix, or refactor test-first; designs stay deep, isolated, small at the public surface. Use when changing code behavior, adding modules/exports, reshaping boundaries. Not for explanations or unresolved requirements (see align).
+description: Implement an authorized feature, fix, or refactor test-first, with designs that stay deep, isolated, and small at their public surface. Use when changing code behavior, adding modules or exports, or reshaping boundaries. Not for explanation-only requests or unresolved requirements (see align). Use for requests to implement a function, fix input validation or other code behavior, add a new public export, or refactor a module into a smaller API, even when the requested change is small.
 ---
 
 # Build

@@ -1,6 +1,6 @@
 ---
 name: code-review
-description: Review a diff, branch, or PR for defects that change outcomes and drift from what was asked, beyond what lint, agentlint, and tests enforce. Use when asked to review or before marking a non-trivial PR ready. Not for style preferences, or for fixing unless the task includes it.
+description: Review a diff, branch, or PR for defects that change outcomes and for drift from what was asked, beyond what lint, agentlint, and tests already enforce. Use when asked to review, before marking a non-trivial PR ready, or when assessing someone else's change. Not for style preferences, or for fixing unless the task includes it.
 ---
 
 # Code Review

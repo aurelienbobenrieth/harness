@@ -1,6 +1,6 @@
 ---
 name: install-harness
-description: Add Harness lint, format, conformance packages, and skills to a consumer project, matched to its actual stack and pinned to verified versions. Use when asked to install, set up, or adopt Harness tooling or skills in a repo. Not for reviews or explanations.
+description: Add Harness lint, format, conformance packages, and skills to a consumer project, matched to its actual stack and pinned to verified versions. Use when the user asks to install, set up, or adopt Harness tooling or skills in a repo. Not for reviews or explanations.
 ---
 
 # Install Harness
