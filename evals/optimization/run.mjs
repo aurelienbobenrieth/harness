@@ -31,9 +31,27 @@ cases.push(
 );
 let failure;
 try {
+  if (opts.resume) {
+    const prior = (await readFile(opts.resume, "utf8"))
+      .trim()
+      .split("\n")
+      .map(JSON.parse)
+      .filter((r) => r.id && r.run);
+    for (const row of prior) {
+      if (
+        row.skillsRevision !== skillsRevision(opts["skills-ref"]) ||
+        row.run.provider !== (opts.provider ?? "claude")
+      )
+        throw new Error("Resume source/provider mismatch");
+      rows.push(row);
+      budget.spent += row.run.costEstimateUsd + (row.judgment?.costEstimateUsd ?? 0);
+      await output.record(row);
+    }
+  }
   for (let seed = 1; seed <= Number(opts.seeds ?? 2); seed++) {
     if (opts.phase !== "behavior")
       for (const c of cases) {
+        if (rows.some((r) => r.id === c.id && r.seed === seed && r.phase === "trigger")) continue;
         const f = await fixture("tiny", opts["skills-ref"]);
         try {
           const run = await runAgent({
@@ -69,6 +87,8 @@ try {
       }
     if (opts.phase !== "trigger")
       for (const task of tasks.filter((t) => !opts.tasks || opts.tasks.split(",").includes(t.id))) {
+        if (rows.some((r) => r.id === task.id && r.seed === seed && r.phase === "behavior"))
+          continue;
         const row = {
           ...(await runTask(task, { ...opts, seed })),
           skill: task.skill,
