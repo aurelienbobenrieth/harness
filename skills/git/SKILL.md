@@ -1,6 +1,6 @@
 ---
 name: git
-description: Stage, commit, resolve conflicts, rewrite history, push, and write pull requests while preserving existing work. Use when the task includes a git or PR operation; a code change alone never implies committing or opening a PR.
+description: Use before writing commit messages, PR titles or descriptions (including drafts), staging, committing, resolving conflicts, rewriting history, or pushing. Preserve existing work; a code change alone never authorizes a commit or PR.
 ---
 
 # Git
