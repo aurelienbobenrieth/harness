@@ -79,7 +79,7 @@ try {
           rows.push(row);
           await output.record(row);
           console.log(`${seed} trigger ${c.id} ${row.pass} $${budget.spent.toFixed(4)}`);
-          if (["error", "timeout", "budget"].includes(run.status))
+          if (["error", "timeout"].includes(run.status))
             throw new Error(`${c.id}: ${run.status}: ${run.stderr}`);
         } finally {
           await f.cleanup();
@@ -99,7 +99,7 @@ try {
         console.log(
           `${seed} behavior ${task.id} ${row.grade.pass} (${row.run.status}) $${budget.spent.toFixed(4)}`,
         );
-        if (["error", "timeout", "budget"].includes(row.run.status))
+        if (["error", "timeout"].includes(row.run.status))
           throw new Error(`${task.id}: ${row.run.status}: ${row.run.stderr}`);
       }
   }
