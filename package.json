@@ -48,7 +48,9 @@
     "test:package": "node scripts/test-packages.mjs",
     "evals:economy": "node evals/economy/run.mjs",
     "evals:quality": "node evals/quality/run.mjs",
-    "evals:ab": "node evals/ab/run.mjs"
+    "evals:ab": "node evals/ab/run.mjs",
+    "evals:deterministic": "node evals/deterministic/run.mjs",
+    "test:evals:deterministic": "node --test evals/deterministic/*.test.mjs"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "0.18.5",

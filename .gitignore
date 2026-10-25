@@ -6,4 +6,5 @@ coverage/
 *.log
 .tmp/
 .stryker-tmp/
+
 evals/results/

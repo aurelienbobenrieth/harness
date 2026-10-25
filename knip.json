@@ -1,6 +1,23 @@
 {
   "$schema": "https://unpkg.com/knip@6/schema.json",
-  "ignore": [".stryker-tmp/**", "examples/conformance-core/closed-design-system-probe.example.ts", "evals/fixtures/**"],
-  "ignoreBinaries": ["where.exe", "taskkill.exe"],
-  "ignoreDependencies": ["@arethetypeswrong/cli", "@voidzero-dev/vite-plus-core", "jscpd", "oxfmt", "oxlint"]
+  "ignore": [
+    ".stryker-tmp/**",
+    "examples/conformance-core/closed-design-system-probe.example.ts",
+    "evals/fixtures/**"
+  ],
+  "ignoreBinaries": [
+    "where.exe",
+    "taskkill.exe"
+  ],
+  "ignoreDependencies": [
+    "@arethetypeswrong/cli",
+    "@voidzero-dev/vite-plus-core",
+    "jscpd",
+    "oxfmt",
+    "oxlint"
+  ],
+  "entry": [
+    "evals/deterministic/*.mjs",
+    "evals/lib/runner.mjs"
+  ]
 }
