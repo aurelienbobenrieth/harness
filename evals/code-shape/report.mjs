@@ -1,7 +1,7 @@
+const mean = (values) =>
+  values.length ? values.reduce((sum, value) => sum + value, 0) / values.length : null;
 export function summarize(rows) {
   const groups = Map.groupBy(rows, (row) => `${row.suite}/${row.provider}/${row.condition}`);
-  const mean = (values) =>
-    values.length ? values.reduce((sum, value) => sum + value, 0) / values.length : null;
   return {
     conditions: [...groups].map(([condition, group]) => {
       const measured = group.map((row) => row.grade.measured).filter(Boolean);

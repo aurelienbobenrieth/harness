@@ -28,25 +28,26 @@ const trials = Number(opts.seeds ?? 2);
 if (!Number.isInteger(trials) || trials < 1) throw Error("Invalid repetitions");
 const plan = [];
 // Interleave conditions and reverse them on the second repetition to reduce time/order confounding.
-for (let seed = 1; seed <= trials; seed++) {
-  for (const provider of ["claude", "codex"]) {
-    for (const task of tasks)
+for (const task of [...tasks, ...economy, ...quality]) {
+  for (let seed = 1; seed <= trials; seed++) {
+    for (const provider of ["claude", "codex"]) {
       for (const condition of seed % 2
-        ? ["none", "prose", "scripted"]
-        : ["scripted", "prose", "none"])
-        plan.push({ suite: "shape", provider, task, condition, seed });
-    for (const task of [...economy, ...quality])
-      for (const condition of seed % 2 ? ["prose", "scripted"] : ["scripted", "prose"])
-        plan.push({ suite: task.suite, provider, task, condition, seed });
+        ? task.suite
+          ? ["prose", "scripted"]
+          : ["none", "prose", "scripted"]
+        : task.suite
+          ? ["scripted", "prose"]
+          : ["scripted", "prose", "none"])
+        plan.push({ suite: task.suite ?? "shape", provider, task, condition, seed });
+    }
   }
 }
 const key = (row) =>
   `${row.suite}/${row.provider}/${row.id ?? row.task.id}/${row.condition}/${row.seed}`;
 const done = new Set(rows.map(key));
 let failure;
-for (const trial of plan) {
-  if (done.has(key(trial))) continue;
-  if (opts.limit && rows.length >= Number(opts.limit)) break;
+let recording = Promise.resolve();
+async function executeTrial(trial) {
   const { task, provider, condition, seed, suite } = trial;
   const ref = refs[condition];
   const model = provider === "claude" ? "claude-haiku-5-5" : "gpt-6-luna";
@@ -55,7 +56,10 @@ for (const trial of plan) {
     // Reserve enough for a full case before starting it. Judge calls also use the same guard.
     const allowance =
       suite === "shape" ? Number(opts["shape-usd"] ?? 0.32) : Number(opts["case-usd"] ?? 0.12);
-    if (budget.spent + allowance + (suite === "shape" ? 0.055 : 0.08) > budget.limit)
+    if (
+      budget.spent + budget.reserved + allowance + (suite === "shape" ? 0.055 : 0.08) >
+      budget.limit
+    )
       throw Error("Insufficient remaining shared budget for the next case");
     if (suite !== "shape") {
       const result = await runTask(task, {
@@ -132,7 +136,8 @@ for (const trial of plan) {
       }
     }
     rows.push(row);
-    await output.record(row);
+    recording = recording.then(() => output.record(row));
+    await recording;
     console.log(
       `${key(row)} ${row.grade.pass ? "PASS" : "FAIL"} ${row.run.status} $${budget.spent.toFixed(4)}`,
     );
@@ -142,8 +147,17 @@ for (const trial of plan) {
       );
   } catch (error) {
     failure = error.message;
-    break;
   }
+}
+const pending = plan
+  .filter((trial) => !done.has(key(trial)))
+  .slice(0, opts.limit ? Math.max(0, Number(opts.limit) - rows.length) : undefined);
+const concurrency = Number(opts.concurrency ?? 3);
+if (!Number.isInteger(concurrency) || concurrency < 1 || concurrency > 4)
+  throw Error("Concurrency must be 1-4");
+for (let index = 0; index < pending.length; index += concurrency) {
+  if (failure) break;
+  await Promise.all(pending.slice(index, index + concurrency).map(executeTrial));
 }
 const summary = summarize(rows);
 summary.expected = plan.length;
@@ -155,6 +169,33 @@ await mkdir(path.join(root, "evals/code-shape"), { recursive: true });
 await writeFile(
   path.join(root, "evals/code-shape/measurements.json"),
   JSON.stringify(summary, null, 2) + "\n",
+);
+await writeFile(
+  path.join(root, "evals/code-shape/evidence.json"),
+  JSON.stringify(
+    rows.map((row) => ({
+      suite: row.suite,
+      provider: row.provider,
+      condition: row.condition,
+      seed: row.seed,
+      task: row.id,
+      status: row.run.status,
+      pass: row.grade.pass,
+      usd: row.usd,
+      tokens: row.run.tokens,
+      calls: row.run.toolCalls.length,
+      helperCalls: row.run.toolCalls.filter((call) =>
+        /scripts[\\/]+(?:draft|affected|check)\.mjs/u.test(JSON.stringify(call.arguments)),
+      ),
+      metrics: row.grade.measured ? { ...row.grade.measured, raw: undefined } : undefined,
+      judgment: row.judgeError ? null : row.judgment?.value,
+      judgeError: row.judgeError,
+      diff: row.grade.diff,
+      final: row.grade.final,
+    })),
+    null,
+    2,
+  ) + "\n",
 );
 await output.summary(JSON.stringify(summary, null, 2));
 console.log(

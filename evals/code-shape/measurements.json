@@ -1,0 +1,92 @@
+{
+  "conditions": [
+    {
+      "condition": "shape/claude/none",
+      "runs": 1,
+      "passed": 1,
+      "passRate": 1,
+      "completed": 1,
+      "judged": 1,
+      "scores": {
+        "temporalCoupling": 3,
+        "abstractionEarnsKeep": 2,
+        "boundaries": 3,
+        "naming": 3,
+        "testing": 3
+      },
+      "metrics": {
+        "findings": 146,
+        "harnessFindings": 0,
+        "duplicatedLines": 4,
+        "duplicationPercent": 3.007518796992481,
+        "cyclomaticTotal": 31,
+        "cyclomaticMax": 6,
+        "deadExports": 1,
+        "testCount": 8,
+        "added": 72,
+        "deleted": 0
+      },
+      "calls": 12,
+      "tokens": 289118,
+      "cacheTokens": 289014,
+      "usd": 0.03545935
+    }
+  ],
+  "citations": [
+    {
+      "provider": "claude",
+      "condition": "none",
+      "seed": 1,
+      "task": "boundary",
+      "status": "completed",
+      "pass": true,
+      "judgeError": null,
+      "rules": [
+        {
+          "rule": "temporalCoupling",
+          "score": 3,
+          "file": "src/api.ts",
+          "line": 15,
+          "reason": "Summary derives from the order returned by the existing find boundary, with no call-order dependency."
+        },
+        {
+          "rule": "abstractionEarnsKeep",
+          "score": 2,
+          "file": "src/summary.ts",
+          "line": 10,
+          "reason": "A small pure mapper defines the summary shape and reuses subtotal calculation."
+        },
+        {
+          "rule": "boundaries",
+          "score": 3,
+          "file": "src/api.ts",
+          "line": 15,
+          "reason": "The API maps the existing order-service result; missing-order failure behavior is preserved."
+        },
+        {
+          "rule": "naming",
+          "score": 3,
+          "file": "src/summary.ts",
+          "line": 5,
+          "reason": "subtotalCents states the unit, and itemCount names the quantity sum."
+        },
+        {
+          "rule": "testing",
+          "score": 3,
+          "file": "tests/summary.test.ts",
+          "line": 8,
+          "reason": "Literal expected summaries cover multiple quantities, empty lines, shipped status, and missing IDs."
+        }
+      ]
+    }
+  ],
+  "expected": 112,
+  "completed": 1,
+  "spent": 0.047940819999999995,
+  "incomplete": null,
+  "revisions": {
+    "none": "none",
+    "prose": "9bd621ecf7958bd6fd94d97040a2934053212d08",
+    "scripted": "e482cac06955f6de5f8c9faba744381f2a1e376f"
+  }
+}

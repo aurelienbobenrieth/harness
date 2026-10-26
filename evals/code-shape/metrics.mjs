@@ -104,7 +104,7 @@ export async function metrics(cwd, base = "HEAD") {
   const tests = command(cwd, process.execPath, ["check.mjs", "full"]);
   return {
     findings: findings.length,
-    harnessFindings: findings.filter((finding) => /^(core|effect)\//u.test(finding.code ?? ""))
+    harnessFindings: findings.filter((finding) => /^(core|effect)\(/u.test(finding.code ?? ""))
       .length,
     duplicatedLines: duplicates.duplicatedLines,
     duplicationPercent: duplicates.percentage,

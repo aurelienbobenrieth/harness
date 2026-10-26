@@ -10,7 +10,7 @@ export function draft(cwd = process.cwd(), base) {
   if (!names.length) throw new Error("No staged changes; stage explicit task paths first.");
   const groups = { code: [], tests: [], docs: [] };
   for (const name of names)
-    groups[/\.(test|spec)\./u.test(name) ? "tests" : /\.md$/u.test(name) ? "docs" : "code"].push(
+    groups[/\.(test|spec)\./u.test(name) ? "tests" : name.endsWith(".md") ? "docs" : "code"].push(
       name,
     );
   const history = base
