@@ -58,18 +58,21 @@ export function verificationPlan(sources, changed, extraTests = []) {
       if (dependencies.some((dependency) => affected.has(dependency))) affected.add(file);
     if (before === affected.size) break;
   }
+  const production = [...touched].filter((file) => !isTest(file) && !/\/testing[./]|\.config\./.test(file));
+  const owners = new Set(production.map((file) => path.posix.dirname(file)));
+  for (const [file, dependencies] of imports)
+    if (!isTest(file) && dependencies.some((dependency) => production.includes(dependency))) owners.add(path.posix.dirname(file));
+  const ownsSuite = (file) => [...owners].some((directory) => file.startsWith(directory + "/"));
   return {
     lint: [...affected].sort(),
     tests: [
       ...new Set(
         [...affected]
-          .filter(isTest)
+          .filter((file) => isTest(file) && (touched.has(file) || ownsSuite(file)))
           .concat(extraTests.filter((file) => file in sources && isTest(file))),
       ),
     ].sort(),
-    production: [...touched]
-      .filter((file) => !isTest(file) && !/\/testing[./]|\.config\./.test(file))
-      .sort(),
+    production: production.sort(),
   };
 }
 

@@ -247,7 +247,7 @@ async function runCell(cell) {
       limit: Number(opts.mutants ?? 9),
       codec: task.pbt && condition === "delta" ? task.scope[0] : undefined,
     });
-    row.lint = await check(trial.cwd, "lint", plan.lint);
+    row.lint = await check(trial.cwd, condition === "delta" ? "types" : "lint", plan.lint);
 
     row.acceptance = await overlay(trial.cwd, refData.hidden, () =>
       check(

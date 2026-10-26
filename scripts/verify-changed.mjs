@@ -9,8 +9,7 @@ const base = opts.base ?? "HEAD";
 const changed = await contents(cwd, base);
 const sources = await loadSources(cwd);
 const plan = verificationPlan(sources, Object.keys(changed), opts.tests?.split(","));
-const lint = await check(cwd, "lint", plan.lint);
-// Full workspace type-aware lint checks all touched producers and reverse consumers.
+const lint = await check(cwd, "types", plan.lint);
 const diff = await git(cwd, "diff", "--unified=0", base);
 const lines = new Map();
 let file;

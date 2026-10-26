@@ -229,9 +229,14 @@ export async function workspace({
   const cwd = path.join(root, `${task.id}-${randomUUID()}`);
   const base = await git(repository, "rev-parse", `${task.commit}^`);
 
-  await git(repository, "worktree", "add", "--detach", cwd, base);
-
   try {
+    const created = await command(
+      "git",
+      ["-c", "core.hooksPath=", "worktree", "add", "--detach", cwd, base],
+      repository,
+      480000,
+    );
+    if (created.status !== 0) throw new Error(created.output);
     await dependencies(cwd, donor);
     const exposed = await exposure(cwd, condition, ref);
     const cleanup = async () => {
@@ -306,8 +311,9 @@ export async function check(cwd, mode, paths, timeout = 180000) {
     process.execPath,
     [
       path.join(cwd, "node_modules/vite-plus/bin/vp"),
-      mode,
+      mode === "types" ? "lint" : mode,
       ...paths,
+      ...(mode === "types" ? ["--type-aware", "--type-check"] : []),
       ...(mode === "test" ? ["--run", "--reporter=dot"] : []),
     ],
     cwd,

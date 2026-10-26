@@ -1,4 +1,5 @@
 import test from "node:test";
+import ts from "typescript-legacy";
 import assert from "node:assert/strict";
 import { mkdtemp, writeFile, readFile, rm } from "node:fs/promises";
 import path from "node:path";
@@ -72,4 +73,40 @@ test("moved behavior mutation is killed by an unchanged consumer suite and resto
   } finally {
     await rm(cwd, { recursive: true, force: true });
   }
+});
+
+test("union migration checks reproduce TS2322 in an untouched consumer and accept the tagged reply", () => {
+  const producer = 'export type Result = { kind: "forwarded" } | { kind: "reply" };';
+  const diagnose = (reply) => {
+    const sources = {
+      "result.ts": producer,
+      "handler.ts": `import { type Result } from "./result"; export const neutralReply: Result = ${reply};`,
+    };
+    const plan = verificationPlan(sources, ["result.ts"]);
+    const host = ts.createCompilerHost({ noLib: true });
+    host.getSourceFile = (file) =>
+      file in sources
+        ? ts.createSourceFile(file, sources[file], ts.ScriptTarget.Latest, true)
+        : undefined;
+    host.resolveModuleNames = () => [{ resolvedFileName: "result.ts", extension: ts.Extension.Ts }];
+    return ts
+      .createProgram(plan.lint, { noLib: true, strict: true }, host)
+      .getSemanticDiagnostics();
+  };
+  assert.ok(diagnose("{}").some((diagnostic) => diagnostic.code === 2322));
+  assert.equal(diagnose('{ kind: "reply" }').length, 0);
+});
+
+
+test("composition roots remain in type checking without pulling unrelated suites into mutation", () => {
+ const sources = {
+  "feature/authority.ts": "export function authority() { return true; }",
+  "feature/write.ts": 'import "./authority";',
+  "feature/write.test.ts": 'import "./write";',
+  "app/layer.ts": 'import "../feature/write";',
+  "unrelated/handler.test.ts": 'import "../app/layer";',
+ };
+ const plan = verificationPlan(sources, ["feature/authority.ts"]);
+ assert.deepEqual(plan.tests, ["feature/write.test.ts"]);
+ assert.ok(plan.lint.includes("unrelated/handler.test.ts"));
 });
