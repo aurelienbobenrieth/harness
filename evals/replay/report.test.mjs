@@ -17,6 +17,9 @@ test("missing mutation/judge stays missing; incomplete runs remain in denominato
   assert.equal(group.planned, 10);
   assert.equal(group.pass, 0);
   assert.equal(group.mutation, null);
+  assert.equal(group.exports, null);
+  assert.equal(group.added, null);
+  assert.equal(group.sourceMeasured, 0);
   assert.equal(group.judge.tests, null);
   assert.equal(group.usd, 0.3);
 });

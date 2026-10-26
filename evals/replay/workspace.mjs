@@ -28,7 +28,12 @@ export async function command(file, args, cwd, timeout = 120000) {
 
       if (process.platform === "win32")
         termination = new Promise((done) =>
-          execFile("taskkill.exe", ["/PID", String(child.pid), "/T", "/F"], { windowsHide: true }, () => done()),
+          execFile(
+            "taskkill.exe",
+            ["/PID", String(child.pid), "/T", "/F"],
+            { windowsHide: true },
+            () => done(),
+          ),
         );
       else {
         try {
@@ -69,7 +74,14 @@ export async function contents(cwd, base = "HEAD") {
   ];
   const sources = {};
 
-  for (const file of new Set(names.filter((name) => /\.[cm]?[jt]sx?$/.test(name) && !name.startsWith(".agents/")))) {
+  for (const file of new Set(
+    names.filter(
+      (name) =>
+        /\.[cm]?[jt]sx?$/.test(name) &&
+        !name.startsWith(".agents/") &&
+        !name.split("/").includes(".browser-profile"),
+    ),
+  )) {
     try {
       sources[file] = await readFile(path.join(cwd, file), "utf8");
     } catch (error) {
@@ -171,7 +183,8 @@ async function exposure(cwd, condition, ref) {
 
   return {
     files: sources.map((s) => s.file),
-    missingReferences: condition === "build" ? ["../testing/SKILL.md (intentionally absent ablation)"] : [],
+    missingReferences:
+      condition === "build" ? ["../testing/SKILL.md (intentionally absent ablation)"] : [],
   };
 }
 
@@ -245,7 +258,9 @@ export async function hiddenTests(repository, task) {
   const result = {};
 
   for (const name of task.tests) {
-    const files = lines(await git(repository, "ls-tree", "-r", "--name-only", task.commit, "--", name));
+    const files = lines(
+      await git(repository, "ls-tree", "-r", "--name-only", task.commit, "--", name),
+    );
 
     for (const file of files.filter((f) => /\.test\.[jt]sx?$|\/testing\.tsx$/.test(f))) {
       const value = await command("git", ["show", `${task.commit}:${file}`], repository);
@@ -303,7 +318,8 @@ export async function check(cwd, mode, paths, timeout = 180000) {
     cwd,
     timeout,
   );
-  const selected = mode !== "test" || /Tests\s+\d+ passed|Test Files\s+\d+ passed/.test(result.output);
+  const selected =
+    mode !== "test" || /Tests\s+\d+ passed|Test Files\s+\d+ passed/.test(result.output);
 
   return { ...result, pass: result.status === 0 && selected, selected };
 }

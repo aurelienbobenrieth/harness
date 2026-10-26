@@ -14,7 +14,11 @@ test("cleanup rejects the root and outside paths; junction target survives", asy
 
     await mkdir(trial);
     await writeFile(path.join(donor, "keep.txt"), "unchanged");
-    await symlink(donor, path.join(trial, "node_modules"), process.platform === "win32" ? "junction" : "dir");
+    await symlink(
+      donor,
+      path.join(trial, "node_modules"),
+      process.platform === "win32" ? "junction" : "dir",
+    );
     await assert.rejects(removeOwnedTree(root, root), /Unsafe/);
     await assert.rejects(removeOwnedTree(donor, root), /Unsafe/);
     await removeOwnedTree(trial, root);
@@ -75,9 +79,15 @@ test("trial changes are measured from the pinned parent even after an agent comm
     await writeFile(path.join(root, "subject.ts"), "export const answer = 2;");
     await git(root, "add", "--", "subject.ts");
     await git(root, "commit", "-qm", "agent change");
+    await mkdir(path.join(root, ".browser-profile"));
+    await writeFile(
+      path.join(root, ".browser-profile", "extension.js"),
+      "export const generated = 1;",
+    );
     const sources = await contents(root, base);
 
     assert.equal(sources["subject.ts"], "export const answer = 2;");
+    assert.equal(Object.keys(sources).length, 1);
     assert.deepEqual(await contents(root), {});
   } finally {
     await rm(root, { recursive: true, force: true });
