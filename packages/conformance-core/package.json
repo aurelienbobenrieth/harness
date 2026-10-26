@@ -48,7 +48,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "postcss": "8.5.30"
+    "postcss": "8.5.31"
   },
   "devDependencies": {
     "vitest": "4.1.11"
