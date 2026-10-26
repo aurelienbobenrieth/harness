@@ -1,11 +1,11 @@
 import { expect, it } from "vitest";
-import { assertRuleDoesNotReport, assertRuleReports } from "../test-support.ts";
+import { assertRuleDoesNotReport, assertRuleReportsInEffect as assertRuleReports } from "../test-support.ts";
 
 const ruleName = "effect/no-array-for-each";
 
 it("reports Array#forEach", async () => {
   await expect(
-    assertRuleReports(ruleName, "export const log = (rows: string[]) => rows.forEach((row) => console.log(row));\n"),
+    assertRuleReports(ruleName, "const rows: string[] = []; rows.forEach((row) => console.log(row));\n"),
   ).resolves.toBeUndefined();
 });
 

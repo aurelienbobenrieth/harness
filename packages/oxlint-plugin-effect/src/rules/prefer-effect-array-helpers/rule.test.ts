@@ -1,5 +1,5 @@
 import { expect, it } from "vitest";
-import { assertRuleDoesNotReport, assertRuleReports } from "../test-support.ts";
+import { assertRuleDoesNotReport, assertRuleReportsInEffect as assertRuleReports } from "../test-support.ts";
 
 const ruleName = "effect/prefer-effect-array-helpers";
 
@@ -41,19 +41,27 @@ it("allows ignored object helpers", async () => {
 
 it("allows configured escape-hatch files", async () => {
   await expect(
-    assertRuleDoesNotReport(ruleName, "const users: User[] = []; const names = users.map((user) => user.name);\n", {
-      filename: "packages/core/src/legacy/users.ts",
-      ruleOptions: { allow: ["**/legacy/**"] },
-    }),
+    assertRuleDoesNotReport(
+      ruleName,
+      'import { Effect } from "effect"; Effect.sync(() => { const users: User[] = []; users.map((user) => user.name); });',
+      {
+        filename: "packages/core/src/legacy/users.ts",
+        ruleOptions: { allow: ["**/legacy/**"] },
+      },
+    ),
   ).resolves.toBeUndefined();
 });
 
 it("allows configured ignored objects", async () => {
   await expect(
-    assertRuleDoesNotReport(ruleName, "const users: User[] = []; const names = users.map((user) => user.name);\n", {
-      filename: "packages/core/src/users.ts",
-      ruleOptions: { ignoredObjects: ["users"] },
-    }),
+    assertRuleDoesNotReport(
+      ruleName,
+      'import { Effect } from "effect"; Effect.sync(() => { const users: User[] = []; users.map((user) => user.name); });',
+      {
+        filename: "packages/core/src/users.ts",
+        ruleOptions: { ignoredObjects: ["users"] },
+      },
+    ),
   ).resolves.toBeUndefined();
 });
 

@@ -35,3 +35,5 @@ Design: module hides one decision; interface much smaller than what it hides; de
 - `type-evidence/no-known-value-widening`: preserve the inferred concrete type instead of annotating known values as broad types.
 - `type-evidence/no-runtime-typeof`: decode boundary values with a schema instead of branching on runtime `typeof`.
 - `type-evidence/require-safety-comment-for-type-assertion`: precede the owning statement with a `// SAFETY: <invariant>` comment for each necessary assertion.
+
+- `effect/prefer-effect-array-helpers`: use Effect array helpers for known arrays inside imported Effect runtime callbacks.

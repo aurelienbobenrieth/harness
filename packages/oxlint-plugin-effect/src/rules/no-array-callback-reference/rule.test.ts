@@ -1,5 +1,5 @@
 import { expect, it } from "vitest";
-import { assertRuleDoesNotReport, assertRuleReports } from "../test-support.ts";
+import { assertRuleDoesNotReport, assertRuleReportsInEffect as assertRuleReports } from "../test-support.ts";
 
 const ruleName = "effect/no-array-callback-reference";
 
@@ -11,7 +11,7 @@ it("reports a function reference passed to a native array method", async () => {
 
 it("reports a member reference passed to a native array method", async () => {
   await expect(
-    assertRuleReports(ruleName, "export const kept = (rows: string[]) => rows.filter(guards.isValid);\n"),
+    assertRuleReports(ruleName, "const rows: string[] = []; rows.filter(guards.isValid);\n"),
   ).resolves.toBeUndefined();
 });
 

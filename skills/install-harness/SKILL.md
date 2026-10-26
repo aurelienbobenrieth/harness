@@ -26,4 +26,4 @@ description: Add Harness lint, format, conformance packages, and skills to a con
 Run the consumer's required checks. Config/dependency failure: fix. Existing-source finding: report; never suppress to go green. Report versions, config changes, results, omissions by reason.
 
 - Install the core package hooks with `harness-install-hooks` from the consumer prepare script; an existing commit-msg hook must chain `harness-check-commit "$1"` explicitly (Windows supported).
-- For core, drizzle and effect, merge exported `advisoryRules` into consumer rules: new triage rules and `effect/prefer-effect-array-helpers` stay `warn`; statement padding runs only after oxfmt.
+- For core, drizzle and effect, merge exported `advisoryRules` into consumer rules: new triage rules stay `warn`; `effect/prefer-effect-array-helpers` stays `error`; statement padding runs only after oxfmt.

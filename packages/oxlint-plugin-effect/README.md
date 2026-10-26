@@ -230,7 +230,7 @@ Generated from package exports by `pnpm catalog`. Rule-specific options and limi
 | `no-unscoped-runtime-launch`       | Disallow Effect.runFork, runSync, runSyncExit, runCallback, their run*With variants, and Layer.launch outside configured runtime boundaries.                                                                 |
 | `no-untyped-try-promise-catch`     | Require Effect.try and Effect.tryPromise to map thrown or rejected values with a catch handler.                                                                                                              |
 | `padding-after-dependencies`       | Require a blank line after the leading service dependencies of an Effect.gen, Effect.fn, or Effect.fnUntraced generator body when logic follows them.                                                        |
-| `prefer-effect-array-helpers`      | Prefer Effect array helpers over native array helper methods.                                                                                                                                                |
+| `prefer-effect-array-helpers`      | Prefer Effect array helpers for known arrays inside imported Effect runtime callbacks.                                                                                                                       |
 | `prefer-it-effect`                 | Prefer it.effect from @effect/vitest over Effect.runPromise or Effect.runSync inside plain it/test callbacks in test files (opt-in; requires @effect/vitest).                                                |
 | `prefer-match`                     | Prefer Match from effect over chained literal ternaries.                                                                                                                                                     |
 | `prefer-run-main`                  | Prefer NodeRuntime.runMain or BunRuntime.runMain over a module top-level Effect.runPromise or Effect.runFork statement.                                                                                      |
@@ -268,9 +268,13 @@ Generated from package exports by `pnpm catalog`. Rule-specific options and limi
 
 ## Advisory rules
 
-Merge the exported `advisoryRules` into your oxlint rules (or enable these names as `warn`): `effect/calendar-date-round-trip`, `effect/destructive-reason-required`, `effect/prefer-effect-array-helpers`. No autofix: each needs a domain decision.
+Merge the exported `advisoryRules` into your oxlint rules (or enable these names as `warn`): `effect/calendar-date-round-trip`, `effect/destructive-reason-required`. No autofix: each needs a domain decision.
 
-`prefer-effect-array-helpers` is advisory (`warn`): the ten consumer samples had no true positives in applicable Effect code. Its named advisory default replaces an error-level consumer setting; this plugin has no implicit severity.
+`prefer-effect-array-helpers` is enabled as `error` by consumers. It is excluded from `advisoryRules` after restricting it to imported Effect runtime callbacks: all ten scoped consumer samples were true positives. The plugin itself has no implicit severity.
 
 - `calendar-date-round-trip` (`warn`) flags an imported Effect Schema YYYY-MM-DD regex without a filter/check in the same fluent expression. Add a date round-trip predicate and tests for impossible dates and leap days. A refinement is a review boundary, not proof it validates calendars; alternate regexes and external helpers require review.
 - `destructive-reason-required` (`warn`) checks direct Schema.Struct declarations named Delete/Destroy/Purge/Drop/Remove followed by a capital letter or underscore. A reason must exist, be nonoptional and use an inline trimmed-length check (>= 10) or a referenced schema. Verify referenced/refined schemas reject trimmed reasons shorter than ten characters; the rule cannot prove a predicate or a remote delete validates input. Spread fields and arbitrary command names require review.
+
+### Array rule scope
+
+`prefer-effect-array-helpers`, `no-array-for-each` and `no-array-callback-reference` require a value import from `effect`, `effect/*` or `@effect/*`, and the nearest enclosing function resolved to an imported `effect/Effect` constructor or combinator. This includes `gen`, `fn`, `sync`, `suspend`, `promise`, `try`, `tryPromise`, `async`, `map`, `flatMap`, `tap`, `forEach`, `catchAll`, `catchTag`, `match` and `matchEffect`. Import aliases and generators passed by reference are recognized; shadowed names and unrelated utilities in the same file and deferred functions nested inside runtime bodies are excluded. Pure helpers called indirectly by an Effect program are outside this syntactic scope.

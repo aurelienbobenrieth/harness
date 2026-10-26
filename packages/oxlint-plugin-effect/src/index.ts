@@ -50,7 +50,6 @@ import { requireRedactedSecretConfig } from "./rules/require-redacted-secret-con
 export const advisoryRules = {
   "effect/calendar-date-round-trip": "warn",
   "effect/destructive-reason-required": "warn",
-  "effect/prefer-effect-array-helpers": "warn",
 } as const;
 
 export default eslintCompatPlugin({
