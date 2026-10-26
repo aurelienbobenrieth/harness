@@ -1,16 +1,22 @@
-import { defineRule } from "@aurelienbbn/agentlint";
+import { type AgentlintNode, defineRule } from "@aurelienbbn/agentlint";
 
 const dataAccessContextPattern = /(?:^|[^\w])\w*(?:repo|repository|store|dao|client|model|collection)s?(?:[^\w]|$)/i;
-const unboundedMethodPattern = /\.(?:findMany|findAll|getMany|list|search|query|select)\s*\(/;
+const unboundedMethodPattern = /\.(?:findMany|findAll|getMany|list|search|select)$/;
 const boundednessMarkerPattern =
   /\b(?:first|take|limit|pageSize|perPage|maxResults)\s*:\s*(?!0\b|undefined\b|null\b)\S|\.(?:limit|take)\s*\(\s*(?!0\b|undefined\b|null\b)\S/i;
 
-function shouldReportCall(text: string, filename: string): boolean {
-  const hasDataAccessContext = dataAccessContextPattern.test(text) || dataAccessContextPattern.test(filename);
+function shouldReportCall(node: AgentlintNode, filename: string): boolean {
+  const callee = node.childByFieldName("function");
+  const name = callee?.text ?? node.text.slice(0, node.text.indexOf("("));
+  const hasDataAccessContext = dataAccessContextPattern.test(name) || dataAccessContextPattern.test(filename);
   if (!hasDataAccessContext) return false;
-  if (!unboundedMethodPattern.test(text)) return false;
+  if (!unboundedMethodPattern.test(name)) return false;
 
-  return !boundednessMarkerPattern.test(text);
+  let chain = node;
+  while (chain.parent?.type === "member_expression" && chain.parent.parent?.type === "call_expression")
+    chain = chain.parent.parent;
+
+  return !boundednessMarkerPattern.test(chain.text);
 }
 
 export const boundedDataAccess = defineRule({
@@ -42,12 +48,12 @@ export const boundedDataAccess = defineRule({
       mustStaySilent: [{ file: "src/module.ts", source: "client.users.findMany({take:10})" }],
     },
     id: "core/bounded-data-access",
-    version: 1,
+    version: 2,
     scan: "file",
     createOnce({ context }) {
       return {
         call_expression(node) {
-          if (!shouldReportCall(node.text, context.path)) return;
+          if (!shouldReportCall(node, context.path)) return;
 
           context.report({
             node,

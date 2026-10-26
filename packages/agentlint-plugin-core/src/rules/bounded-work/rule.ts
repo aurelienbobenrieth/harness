@@ -1,70 +1,39 @@
 import { type AgentlintNode, defineRule } from "@aurelienbbn/agentlint";
+import { isFunctionNode } from "../ast.js";
 
-const ioPattern = /\b(?:await\b|fetch\s*\(|axios\.|client\.|api\.|repo\.|repository\.|queue\.|enqueue\s*\()/i;
-const loopPattern = /\b(?:for|while)\s*\(|\bfor\s+await\b|\.(?:forEach|map|flatMap|reduce)\s*\(/i;
-const sequentialAwaitPattern = /\bawait\b[\s\S]{0,600}\bawait\b[\s\S]{0,600}\bawait\b/;
-const fanOutPattern = /Promise\.all\s*\([\s\S]{0,240}\.(?:map|flatMap)\s*\(/;
-const longBudgetPattern = /\b(?:timeoutMS|timeoutMs|durationMs|cpuMs)\s*:\s*([0-9_]+)/g;
-const defaultLongBudgetMs = 60_000;
+const networkCallee = /^(?:fetch|enqueue)$|^(?:axios|client|api|repo|repository|queue)\./;
 
-function hasLongBudget(source: string): boolean {
-  for (const match of source.matchAll(longBudgetPattern)) {
-    const value = Number((match[1] ?? "").replaceAll("_", ""));
-    if (Number.isFinite(value) && value > defaultLongBudgetMs) return true;
-  }
-
-  return false;
+function named(node: AgentlintNode | null): readonly AgentlintNode[] {
+  return (node?.children ?? []).filter((child) => child.isNamed && child.type !== "comment");
 }
 
-function shouldReport(source: string): boolean {
-  if (hasLongBudget(source)) return true;
-  if (sequentialAwaitPattern.test(source) && ioPattern.test(source)) return true;
-  if (fanOutPattern.test(source) && ioPattern.test(source)) return true;
-
-  return loopPattern.test(source) && ioPattern.test(source);
+/** Nested routines execute separately; only a fan-out callback belongs to the reviewed operation. */
+function hasIo(node: AgentlintNode, callback = false): boolean {
+  if (["string", "template_string", "comment", "regex"].includes(node.type)) return false;
+  if (isFunctionNode(node) && !callback) return false;
+  if (node.type === "await_expression") return true;
+  if (node.type === "call_expression" && networkCallee.test(node.childByFieldName("function")?.text ?? "")) return true;
+  return node.children.some((child) => hasIo(child));
 }
 
-function executionSource(node: AgentlintNode, root = true): string {
-  if (["comment", "string", "template_string", "regex"].includes(node.type)) return " ";
-  if (
-    !root &&
-    [
-      "function_declaration",
-      "function_expression",
-      "arrow_function",
-      "generator_function",
-      "method_definition",
-      "class_declaration",
-    ].includes(node.type) &&
-    node.parent?.type !== "arguments"
-  )
-    return " ";
-  if (node.children.length === 0) return node.text;
-  let cursor = 0;
-  let source = "";
-  for (const child of node.children) {
-    const start = node.text.indexOf(child.text, cursor);
-    if (start < 0) continue;
-    source += node.text.slice(cursor, start) + executionSource(child, false);
-    cursor = start + child.text.length;
-  }
-  return source + node.text.slice(cursor);
+function fixedCollection(node: AgentlintNode | null): boolean {
+  return node?.type === "array" && !node.children.some((child) => child.type === "spread_element");
 }
 
 export const boundedWork = defineRule({
   lifecycle: "state",
   standard: {
     id: "core/bounded-work",
-    revision: 1,
+    revision: 2,
     title: "Bounded Work",
-    summary: "Flags execution paths with unbounded I/O, fan-out, or runtime budgets.",
+    summary: "Flags dynamic I/O loops and Promise.all collection fan-out that need a cardinality or concurrency bound.",
     guidance: {
       standard:
-        "Long-running or I/O-heavy execution paths must show an explicit runtime boundary, bound, or backpressure strategy.",
+        "Dynamic I/O iteration must show a cardinality bound, backpressure, or a deliberate concurrency policy.",
       checks: [
-        "Sequential I/O stays within the request, job, or provider budget.",
-        "Looped I/O and fan-out use explicit concurrency, rate, retry, and provider-limit controls.",
-        "Long budgets belong to approved workflow, queue, cron, or service boundaries with persisted progress or idempotency.",
+        "Trace the collection's cardinality and the provider's concurrency and rate limits.",
+        "Use bounded concurrency or chunked processing when the collection can grow without a fixed maximum.",
+        "Fixed sequences, literal batches, and a long but explicit timeout do not establish unbounded work.",
       ],
     },
   },
@@ -72,37 +41,56 @@ export const boundedWork = defineRule({
     id: "core/bounded-work",
     authority: "agent",
     include: ["**/*.{ts,tsx,js,jsx,mts,cts,mjs,cjs}"],
-    exclude: ["**/*.d.ts"],
+    exclude: ["**/*.d.ts", "**/*.{test,spec}.*", "**/__tests__/**"],
   },
   detector: {
+    id: "core/bounded-work",
+    version: 2,
+    scan: "file",
     fixtures: {
       mustReport: [
-        {
-          file: "src/module.ts",
-          source: "await Promise.all(items.map(item => client.send(item)))",
-        },
+        "await Promise.all(items.map(item => client.send(item)))",
+        "for (const item of items) { await save(item); }",
       ],
-      mustStaySilent: [{ file: "src/module.ts", source: "const values = items.map(item => item.id);" }],
+      mustStaySilent: [
+        "const values = items.map(item => item.id);",
+        "await first(); await second(); await third();",
+        "await Promise.all([first, second].map(item => client.send(item)))",
+      ],
     },
-    id: "core/bounded-work",
-    version: 1,
-    scan: "file",
     createOnce({ context }) {
-      const check = (node: AgentlintNode): void => {
-        const source = executionSource(node);
-        if (!shouldReport(source)) return;
+      const loop = (node: AgentlintNode): void => {
+        const body = node.childByFieldName("body");
+        if (!body || !hasIo(body)) return;
+        if (fixedCollection(node.childByFieldName("right"))) return;
+        if (
+          /^for\s*\(\s*(?:let|var)\s+(\w+)\s*=\s*\d+\s*;\s*\1\s*<\s*\d+\s*;\s*(?:\1\+\+|\+\+\1)\s*\)/u.test(node.text)
+        )
+          return;
         context.report({
           node,
-          message:
-            "Execution path needs an explicit bound for sequential I/O, looped I/O, fan-out, or a long runtime budget.",
+          message: "Dynamic I/O loop needs a cardinality bound or backpressure policy.",
         });
       };
       return {
-        program: check,
-        function_declaration: check,
-        function_expression: check,
-        arrow_function: check,
-        generator_function: check,
+        for_statement: loop,
+        for_in_statement: loop,
+        while_statement: loop,
+        do_statement: loop,
+        call_expression(node) {
+          if (node.childByFieldName("function")?.text !== "Promise.all") return;
+          const collection = named(node.childByFieldName("arguments"))[0];
+          if (collection?.type !== "call_expression") return;
+          const mapper = collection.childByFieldName("function");
+          if (!/^(?:map|flatMap)$/u.test(mapper?.childByFieldName("property")?.text ?? "")) return;
+          if (fixedCollection(mapper?.childByFieldName("object") ?? null)) return;
+          const callback = named(collection.childByFieldName("arguments")).find(isFunctionNode);
+          if (!callback || !hasIo(callback, true)) return;
+          context.report({
+            node,
+            message: "Dynamic Promise.all I/O fan-out needs a cardinality or concurrency bound.",
+          });
+        },
       };
     },
   },
