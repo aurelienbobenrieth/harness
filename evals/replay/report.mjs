@@ -13,6 +13,9 @@ export function summarize(rows) {
     complete: group.filter((r) => r.run?.status === "completed").length,
     pass: group.filter((r) => r.pass).length,
     acceptance: group.filter((r) => r.acceptance?.pass).length,
+    acceptanceInvalid: group.filter((r) => !r.acceptance || r.acceptance.killed || r.acceptance.status === "skipped")
+      .length,
+    verificationRetries: group.filter((r) => r.verificationRetry).length,
     lint: group.filter((r) => r.lint?.pass).length,
     mutation: mean(
       group.filter((r) => r.mutation?.score !== null && r.mutation?.score !== undefined).map((r) => r.mutation.score),

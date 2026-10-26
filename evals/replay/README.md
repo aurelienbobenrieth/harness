@@ -11,6 +11,10 @@ $env:EVALS_MAX_USD = '25'
 node evals/replay/run.mjs --mode preflight --id keepcart-v1 --skills-ref origin/steering/economy
 node evals/replay/probe.mjs
 node evals/replay/run.mjs --id keepcart-v1 --skills-ref origin/steering/economy --priority contrasts
+node evals/replay/verify.mjs evals/results/replay/keepcart-v1
+node evals/replay/codec-mutation.mjs evals/results/replay/keepcart-v1
+node evals/replay/regrade.mjs evals/results/replay/keepcart-v1
+node evals/replay/report.mjs evals/results/replay/keepcart-v1
 node --test evals/replay/*.test.mjs
 ```
 
@@ -36,6 +40,9 @@ as distinguishing regressions. An incomplete cell is a failed attempt, never a p
 
 - Hidden tests are overlaid only after capturing agent tests and completing mutation.
   Diffs are always measured from the pinned parent, including changes committed inside a trial.
+  The uninstall acceptance also preserves WriteRevision's existing, distinct uninstall behavior.
+- `verify.mjs` serializes one retry of outer process deadlines after agent work stops; original
+  outcomes remain attached. It also runs that preservation suite for every uninstall trial.
 - AST mutations cover changed production lines, stratified by file and operator/boundary/return;
   `--mutants` defaults to nine per trial. Report available, sampled, invalid and timed-out counts.
   Failures inside selected tests kill; import/type/setup crashes do not. Baseline must be green and nonempty.

@@ -19,6 +19,7 @@
     "evals:replay:regrade": "node evals/replay/regrade.mjs",
     "evals:replay:report": "node evals/replay/report.mjs",
     "evals:replay:codec-mutation": "node evals/replay/codec-mutation.mjs",
+    "evals:replay:verify": "node evals/replay/verify.mjs",
     "build": "pnpm --recursive --if-present build",
     "check": "node scripts/check.mjs",
     "lint": "vp lint",

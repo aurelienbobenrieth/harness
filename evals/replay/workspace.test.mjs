@@ -31,10 +31,12 @@ test("hidden overlay restores existing tests and removes new ones after a failur
 
   try {
     await writeFile(path.join(root, "test.ts"), "agent test");
+    await writeFile(path.join(root, "deleted.ts"), "restore after deletion");
 
     await assert.rejects(
-      overlay(root, { "test.ts": "hidden", "new.ts": "new" }, async () => {
+      overlay(root, { "test.ts": "hidden", "new.ts": "new", "deleted.ts": null }, async () => {
         assert.equal(await readFile(path.join(root, "test.ts"), "utf8"), "hidden");
+        await assert.rejects(readFile(path.join(root, "deleted.ts")), { code: "ENOENT" });
 
         throw Error("test failure");
       }),
@@ -42,6 +44,7 @@ test("hidden overlay restores existing tests and removes new ones after a failur
     );
 
     assert.equal(await readFile(path.join(root, "test.ts"), "utf8"), "agent test");
+    assert.equal(await readFile(path.join(root, "deleted.ts"), "utf8"), "restore after deletion");
     await assert.rejects(readFile(path.join(root, "new.ts")), { code: "ENOENT" });
   } finally {
     await rm(root, { recursive: true, force: true });

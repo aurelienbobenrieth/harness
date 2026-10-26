@@ -277,7 +277,8 @@ export async function overlay(cwd, sources, action) {
       );
 
       await mkdir(path.dirname(target), { recursive: true });
-      await writeFile(target, value);
+      if (value === null) await rm(target, { force: true });
+      else await writeFile(target, value);
     }
 
     return await action();

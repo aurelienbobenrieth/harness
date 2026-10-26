@@ -41,6 +41,7 @@ export const tasks = [
     tests: [
       "apps/backend/src/features/protection/on-revision-staged/handler.integration.test.ts",
       "apps/backend/src/features/protection/pause-protection/handler.integration.test.ts",
+      "apps/backend/src/features/protection/on-deliverable-objects-ensured/handler.integration.test.ts",
     ],
     prompt:
       "Fix protection so PauseProtection and PublishStagedRevision refuse an uninstalled merchant before any platform object is ensured, claimed, paused or published. Recorded authority alone does not establish a current installation. Keep WriteRevision's distinct semantics: an obsolete installation's staged revision can be superseded without a platform write. Preserve outage handling. Add regressions that observe results and absence of writes.",
