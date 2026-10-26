@@ -218,7 +218,7 @@ export async function removeOwnedTree(target, root) {
     };
 
     await stripLinks(resolved);
-    await rm(resolved, { recursive: true, force: true, maxRetries: 3 });
+    await rm(resolved, { recursive: true, force: true, maxRetries: 10, retryDelay: 200 });
   } else await unlink(resolved);
 }
 
