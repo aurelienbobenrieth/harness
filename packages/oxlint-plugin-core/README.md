@@ -243,7 +243,11 @@ import { body } from "@game/physics"; // ✅ an exported subpath
     {
       "apps": ["apps/**", "infra/**"],
       "forbidden": [
-        { "from": "packages/features/*", "to": "packages/features/*", "message": "features meet through the kernel" },
+        {
+          "from": "packages/features/*",
+          "to": "packages/features/*",
+          "message": "features meet through the kernel"
+        },
         { "from": "packages/kernel", "to": "packages/adapters/**" }
       ]
     }
@@ -355,6 +359,7 @@ Generated from package exports by `pnpm catalog`. Rule-specific options and limi
 
 | Rule/check                            | Trigger or review scope                                                                                                                                                                                                                    |
 | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `fenced-doc-examples`                 | Fence every nonempty JSDoc @example so documentation tools render executable code correctly.                                                                                                                                               |
 | `no-ambient-nondeterminism-in-tests`  | Disallow test files from depending on the host locale, the real clock, or `Math.random()`: locale-sensitive formatting without a locale, `new Date()` / `Date.now()` / `performance.now()` without fake timers, and unseeded randomness.   |
 | `no-dead-comments`                    | Disallow dead comments: closing-brace labels, placeholder scaffolding, untracked TODOs, and comments narrating a change instead of the code.                                                                                               |
 | `no-discarded-caught-error`           | Require a catch clause or inline promise rejection handler that never rethrows and ignores or only logs the error to carry a reasoned marker comment.                                                                                      |
@@ -387,3 +392,13 @@ Generated from package exports by `pnpm catalog`. Rule-specific options and limi
 <!-- harness-catalog:end -->
 
 Empty error-message presence checks, such as `error.message !== ""`, remain allowed for display fallbacks.
+
+## Advisory rules
+
+Merge the exported `advisoryRules` into your oxlint rules (or enable these names as `warn`): `core/fenced-doc-examples`. No autofix: each needs a domain decision.
+
+## Commit messages
+
+Add `harness-install-hooks` to the consumer `prepare` script after installing this package. It writes an executable Git `commit-msg` hook using Node and Git for Windows; no Unix-only checker is needed. Human coauthors and technical model names in subjects remain allowed. Model `Co-Authored-By` trailers and generated/assisted tool-credit lines fail with exit 1; unreadable/missing input fails with exit 2. An existing hook is preserved: chain `harness-check-commit "$1"` in it. Reinstall after moving the checkout or upgrading Node.
+
+`core/fenced-doc-examples` warns on nonempty JSDoc `@example` blocks without fenced code. Enable as `warn`; rendering prose and inline documentation outside `@example` are outside its scope.

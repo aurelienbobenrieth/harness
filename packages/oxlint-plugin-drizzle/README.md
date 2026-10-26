@@ -2,7 +2,7 @@
 
 [![npm](https://img.shields.io/npm/v/@aurelienbbn/oxlint-plugin-drizzle)](https://www.npmjs.com/package/@aurelienbbn/oxlint-plugin-drizzle) [![downloads](https://img.shields.io/npm/dm/@aurelienbbn/oxlint-plugin-drizzle)](https://www.npmjs.com/package/@aurelienbbn/oxlint-plugin-drizzle) [![CI](https://github.com/aurelienbobenrieth/harness/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/aurelienbobenrieth/harness/actions/workflows/ci.yml) [![license](https://img.shields.io/npm/l/@aurelienbbn/oxlint-plugin-drizzle)](https://github.com/aurelienbobenrieth/harness/blob/main/packages/oxlint-plugin-drizzle/LICENSE) [![node](https://img.shields.io/node/v/@aurelienbbn/oxlint-plugin-drizzle)](https://github.com/aurelienbobenrieth/harness/blob/main/packages/oxlint-plugin-drizzle/package.json)
 
-**1 oxlint rule for Drizzle Postgres schemas: every foreign-key column leads an index, before production traffic finds the sequential scan.**
+**4 oxlint rules for Drizzle Postgres schemas: every foreign-key column leads an index, before production traffic finds the sequential scan.**
 
 > [!NOTE]
 > **Release candidate.** No consumer has calibrated it yet.
@@ -53,9 +53,12 @@ export const indexedPosts = pgTable(
 
 Generated from package exports by `pnpm catalog`. Rule-specific options and limitations are described above and in the source tests.
 
-| Rule/check          | Trigger or review scope                                                                                                                                     |
-| ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `fk-column-indexed` | Require each foreign-key column of a Drizzle pgTable (.references() or foreignKey()) to be the first column of an index, unique constraint, or primary key. |
+| Rule/check                  | Trigger or review scope                                                                                                                                     |
+| --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `constraint-not-valid`      | Add PostgreSQL foreign-key and CHECK constraints as NOT VALID before validating existing rows separately.                                                   |
+| `fk-column-indexed`         | Require each foreign-key column of a Drizzle pgTable (.references() or foreignKey()) to be the first column of an index, unique constraint, or primary key. |
+| `require-retention-comment` | Document each pgTable retention policy in adjacent @retention JSDoc.                                                                                        |
+| `role-membership-guard`     | Use PostgreSQL role membership rather than current_user equality in SQL policy guards.                                                                      |
 
 ### Credited concepts
 
@@ -63,3 +66,13 @@ Generated from package exports by `pnpm catalog`. Rule-specific options and limi
 - planetscale/database-skills skills/postgres/references/schema-design.md by PlanetScale (MIT, concept)
 
 <!-- harness-catalog:end -->
+
+## Advisory rules
+
+Merge the exported `advisoryRules` into your oxlint rules (or enable these names as `warn`): `drizzle/constraint-not-valid`, `drizzle/require-retention-comment`, `drizzle/role-membership-guard`. No autofix: each needs a domain decision.
+
+| New rule (`warn`)           | Trigger and limits                                                                                                                                                                             |
+| --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `constraint-not-valid`      | Complete static Drizzle `sql` templates adding a foreign-key or CHECK constraint without NOT VALID; no UNIQUE/PK rewrite, interpolated SQL and standalone .sql files require migration review. |
+| `require-retention-comment` | Imported `pgTable` declarations without adjacent JSDoc `@retention` text; records the decision, does not enforce deletion jobs.                                                                |
+| `role-membership-guard`     | A policy USING/WITH CHECK clause consisting solely of current_user equality; asks for inherited-role membership. Identity-specific policies may intentionally keep equality.                   |

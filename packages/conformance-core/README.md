@@ -17,7 +17,7 @@ coreConformance({ root: process.cwd(), tsconfigStrictness: {} });
 
 ```text
 skipped      excluded by skipChecks · CSS probe or tsconfig gate unconfigured
-unsupported  tool absent (jscpd, knip) · no tsconfig found
+unsupported  tool absent (jscpd) · no tsconfig found
 failed       timeout · bad report · throw · bad options   (tools cap at 120 s, Vitest tests at 125 s)
 evaluated    ran to completion, can still hold violations
 
@@ -26,12 +26,12 @@ report.status   failed      any error finding or failed check
                 passed      otherwise  (configured static checks, not whole-project compliance)
 ```
 
-| Evaluation                                                                        | Vitest test                          |
-| --------------------------------------------------------------------------------- | ------------------------------------ |
-| skipped · unsupported warning                                                     | ⏭️ skipped, warning printed          |
-| unsupported error (`requireTool`, `requireKnipConfig`, explicit tsconfig `files`) | ❌ fails                             |
-| failed                                                                            | ❌ fails, even with warning severity |
-| evaluated: errors · warnings only                                                 | ❌ fails · ✅ passes                 |
+| Evaluation                                                   | Vitest test                          |
+| ------------------------------------------------------------ | ------------------------------------ |
+| skipped · unsupported warning                                | ⏭️ skipped, warning printed          |
+| unsupported error (`requireTool`, explicit tsconfig `files`) | ❌ fails                             |
+| failed                                                       | ❌ fails, even with warning severity |
+| evaluated: errors · warnings only                            | ❌ fails · ✅ passes                 |
 
 ## Three entry points
 
@@ -54,7 +54,6 @@ const report = await runCoreConformanceReport({ root: process.cwd() }); // { sta
 coreConformance({
   root: process.cwd(),
   duplication: { maxClones: 0 },
-  deadExports: { requireKnipConfig: true },
   closedDesignSystem: {
     stylesheet: "theme.css",
     requiredSelectors: [".token"],
@@ -110,7 +109,7 @@ coreConformance({
 }
 ```
 
-Also exported: `coreChecks`, `activeChecks`, and each check object (`dependencyOverlap`, `duplicationBudget`, `deadExports`, `closedDesignSystemProbe`, `tsconfigStrictness`, `instructionBlocks`).
+Also exported: `coreChecks`, `activeChecks`, and each check object (`dependencyOverlap`, `duplicationBudget`, `closedDesignSystemProbe`, `tsconfigStrictness`, `instructionBlocks`).
 
 </details>
 
@@ -164,9 +163,9 @@ query-string qs
 
 [jscpd](https://github.com/kucherenko/jscpd), ignoring `node_modules`, `dist`, `coverage`, `.git`. Over budget: ❌ with the top 3 clones. **Malformed clone rows fail under any budget.**
 
-### dead-exports
+### Unused code and dependencies
 
-[knip](https://knip.dev) `--reporter json`: unused files, exports, types, namespace, enum, and class members (10 listed). Report shapes checked first. Default: no knip config still runs; absent knip warns; timeout or bad output fails.
+Run [Knip](https://knip.dev) directly once in your CI gate: `knip --include files,exports,dependencies`. Harness no longer runs a second copy or truncates its report. Remove `deadExports` and `dead-exports` entries from conformance options and skip lists.
 
 ### closed-design-system-probe
 
@@ -238,17 +237,16 @@ instructionBlocks: {
 
 ## Options
 
-| Option                                               | Default          | Notes                                                                                                         |
-| ---------------------------------------------------- | ---------------- | ------------------------------------------------------------------------------------------------------------- |
-| `skipChecks`                                         | `[]`             | unknown IDs throw                                                                                             |
-| `dependencyOverlapGroups`                            | 30 families      | yours replace them                                                                                            |
-| `duplication.maxClones` · `.minLines` · `.minTokens` | `0` · `8` · `60` | safe integers; `maxClones` ≥ 0, others > 0                                                                    |
-| `duplication.ignorePatterns`                         | `[]`             | generated/vendor globs                                                                                        |
-| `duplication.requireTool`                            | `false`          | absent jscpd or bad run → ❌                                                                                  |
-| `deadExports.requireKnipConfig`                      | `false`          | no config (`knip.json(c)`, `.knip.json(c)`, `knip(.config).ts/js`, `package.json#knip`), tool, or output → ❌ |
-| `closedDesignSystem`                                 | unset (skipped)  | `stylesheet`, `buildCommand` argv with `{stylesheet}` `{output}`, `requiredSelectors`, `forbiddenSelectors`   |
-| `tsconfigStrictness`                                 | unset (skipped)  | `{}` = defaults; `files`, `additionalRequiredFlags`, `waivers`                                                |
-| `instructionBlocks`                                  | unset (skipped)  | `blocks` (name → root-relative source), `file` (default `AGENTS.md`)                                          |
+| Option                                               | Default          | Notes                                                                                                       |
+| ---------------------------------------------------- | ---------------- | ----------------------------------------------------------------------------------------------------------- |
+| `skipChecks`                                         | `[]`             | unknown IDs throw                                                                                           |
+| `dependencyOverlapGroups`                            | 30 families      | yours replace them                                                                                          |
+| `duplication.maxClones` · `.minLines` · `.minTokens` | `0` · `8` · `60` | safe integers; `maxClones` ≥ 0, others > 0                                                                  |
+| `duplication.ignorePatterns`                         | `[]`             | generated/vendor globs                                                                                      |
+| `duplication.requireTool`                            | `false`          | absent jscpd or bad run → ❌                                                                                |
+| `closedDesignSystem`                                 | unset (skipped)  | `stylesheet`, `buildCommand` argv with `{stylesheet}` `{output}`, `requiredSelectors`, `forbiddenSelectors` |
+| `tsconfigStrictness`                                 | unset (skipped)  | `{}` = defaults; `files`, `additionalRequiredFlags`, `waivers`                                              |
+| `instructionBlocks`                                  | unset (skipped)  | `blocks` (name → root-relative source), `file` (default `AGENTS.md`)                                        |
 
 ## Migration
 
@@ -262,14 +260,14 @@ instructionBlocks: {
 
 Generated from package exports by `pnpm catalog`. Rule-specific options and limitations are described above and in the source tests.
 
-| Rule/check                   | Trigger or review scope                                                                            |
-| ---------------------------- | -------------------------------------------------------------------------------------------------- |
-| `closed-design-system-probe` | The built CSS contains every owned token utility and excludes configured forbidden selectors.      |
-| `dead-exports`               | No unused files or exports remain in the codebase (knip).                                          |
-| `dependency-overlap`         | Only one package per known-duplicate dependency family may be installed.                           |
-| `duplication-budget`         | Copy-pasted blocks stay within the configured clone budget (jscpd).                                |
-| `instruction-blocks`         | Marked blocks in the agent instructions file match their source files exactly.                     |
-| `tsconfig-strictness`        | Resolved tsconfig files keep the strict compiler baseline with no strict-family flag switched off. |
+| Rule/check                    | Trigger or review scope                                                                            |
+| ----------------------------- | -------------------------------------------------------------------------------------------------- |
+| `closed-design-system-probe`  | The built CSS contains every owned token utility and excludes configured forbidden selectors.      |
+| `dependency-overlap`          | Only one package per known-duplicate dependency family may be installed.                           |
+| `duplication-budget`          | Copy-pasted blocks stay within the configured clone budget (jscpd).                                |
+| `instruction-blocks`          | Marked blocks in the agent instructions file match their source files exactly.                     |
+| `migration-snapshot-ancestry` | Drizzle migration snapshots form one linear id/prevId chain in filename order.                     |
+| `tsconfig-strictness`         | Resolved tsconfig files keep the strict compiler baseline with no strict-family flag switched off. |
 
 ### Credited concepts
 
@@ -278,3 +276,7 @@ Generated from package exports by `pnpm catalog`. Rule-specific options and limi
 - desloppify by Peter O'Malley (concept only, no code reuse)
 
 <!-- harness-catalog:end -->
+
+### migration-snapshot-ancestry
+
+Opt in with `migrationSnapshots: { directory: "packages/persistence/drizzle/meta" }`. Warns when numbered `*_snapshot.json` files repeat an id or do not descend from the preceding filename. Missing/empty directories and malformed JSON fail evaluation. This checks ancestry, not the migration SQL or database state.

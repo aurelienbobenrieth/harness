@@ -25,7 +25,9 @@
     "directory": "packages/oxlint-plugin-core"
   },
   "bin": {
-    "harness-format-padding": "bin/format-padding.mjs"
+    "harness-check-commit": "bin/check-commit.mjs",
+    "harness-format-padding": "bin/format-padding.mjs",
+    "harness-install-hooks": "bin/install-hooks.mjs"
   },
   "files": [
     "dist",

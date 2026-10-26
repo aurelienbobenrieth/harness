@@ -2,7 +2,7 @@
 
 [![npm](https://img.shields.io/npm/v/@aurelienbbn/oxlint-plugin-effect)](https://www.npmjs.com/package/@aurelienbbn/oxlint-plugin-effect) [![downloads](https://img.shields.io/npm/dm/@aurelienbbn/oxlint-plugin-effect)](https://www.npmjs.com/package/@aurelienbbn/oxlint-plugin-effect) [![CI](https://github.com/aurelienbobenrieth/harness/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/aurelienbobenrieth/harness/actions/workflows/ci.yml) [![license](https://img.shields.io/npm/l/@aurelienbbn/oxlint-plugin-effect)](https://github.com/aurelienbobenrieth/harness/blob/main/packages/oxlint-plugin-effect/LICENSE) [![node](https://img.shields.io/node/v/@aurelienbbn/oxlint-plugin-effect)](https://github.com/aurelienbobenrieth/harness/blob/main/packages/oxlint-plugin-effect/package.json)
 
-**42 oxlint rules for Effect code: runtime boundaries, failure channels, concurrency, services, Schema. Only what `@effect/tsgo` doesn't own.**
+**44 oxlint rules for Effect code: runtime boundaries, failure channels, concurrency, services, Schema. Only what `@effect/tsgo` doesn't own.**
 
 ```sh
 pnpm add -D @aurelienbbn/oxlint-plugin-effect oxlint   # oxlint >=1.82.0 <2.0.0
@@ -202,7 +202,9 @@ Generated from package exports by `pnpm catalog`. Rule-specific options and limi
 | Rule/check                         | Trigger or review scope                                                                                                                                                                                      |
 | ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `bounded-retry`                    | Require Effect.retry policies visible in the same file to carry a bound such as Schedule.recurs, Schedule.upTo, Schedule.during, times, while, or until.                                                     |
+| `calendar-date-round-trip`         | Pair a YYYY-MM-DD Effect Schema pattern with an explicit calendar-date refinement.                                                                                                                           |
 | `dependencies-first`               | Yield service dependencies before runtime logic in Effect bodies.                                                                                                                                            |
+| `destructive-reason-required`      | Require a nonoptional refined reason in Delete, Destroy, Purge, Drop and Remove command Schema.Struct declarations.                                                                                          |
 | `effect-fn-name-matches-binding`   | Require the last dot-segment of an Effect.fn span name to equal the variable or property the function is bound to.                                                                                           |
 | `no-array-callback-reference`      | Disallow passing a function reference to an array method's callback, skipping calls on Effect modules that are not arrays.                                                                                   |
 | `no-array-for-each`                | Disallow Array#forEach in favor of for…of, skipping Effect's forEach helpers (`Effect.forEach`).                                                                                                             |
@@ -263,3 +265,12 @@ Generated from package exports by `pnpm catalog`. Rule-specific options and limi
 - executor by Rhys Sullivan, dotted snake_case span and attribute names such as `mcp.auth.verify_api_key` (MIT, naming-style inspiration)
 
 <!-- harness-catalog:end -->
+
+## Advisory rules
+
+Merge the exported `advisoryRules` into your oxlint rules (or enable these names as `warn`): `effect/calendar-date-round-trip`, `effect/destructive-reason-required`, `effect/prefer-effect-array-helpers`. No autofix: each needs a domain decision.
+
+`prefer-effect-array-helpers` is advisory (`warn`): the ten consumer samples had no true positives in applicable Effect code. Its named advisory default replaces an error-level consumer setting; this plugin has no implicit severity.
+
+- `calendar-date-round-trip` (`warn`) flags an imported Effect Schema YYYY-MM-DD regex without a filter/check in the same fluent expression. Add a date round-trip predicate and tests for impossible dates and leap days. A refinement is a review boundary, not proof it validates calendars; alternate regexes and external helpers require review.
+- `destructive-reason-required` (`warn`) checks direct Schema.Struct declarations named Delete/Destroy/Purge/Drop/Remove followed by a capital letter or underscore. A reason must exist, be nonoptional and use an inline trimmed-length check (>= 10) or a referenced schema. Verify referenced/refined schemas reject trimmed reasons shorter than ten characters; the rule cannot prove a predicate or a remote delete validates input. Spread fields and arbitrary command names require review.

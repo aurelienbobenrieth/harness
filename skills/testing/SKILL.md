@@ -28,3 +28,5 @@ Start from the failure feared; pick whatever catches it with an independent orac
 
 - Unit: control clocks, randomness, IDs, ordering; restore globals, dispose on failure; isolated temp dirs, no fixed ports.
 - Report zero-selected, skips, retries apart from passes. Retries don't fix flakes. Rule/validator: firing cases + nearby silent cases. Autofix: exact rewrite, ambiguous input untouched.
+
+- `effect/prefer-it-effect`: run Effect test programs with `it.effect` from `@effect/vitest` instead of calling a runtime in plain `it`.

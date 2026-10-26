@@ -14,7 +14,6 @@ it("runs every check and aggregates findings", async () => {
   const checkIds = findings.map((finding) => finding.check);
   expect(checkIds).toContain("dependency-overlap");
   expect(checkIds).toContain("duplication-budget");
-  expect(checkIds).toContain("dead-exports");
   // closed-design-system-probe is config-gated and silent without the closedDesignSystem option.
   expect(checkIds).not.toContain("closed-design-system-probe");
   expect(findings.filter((finding) => finding.severity === "error")).toHaveLength(1);
@@ -27,12 +26,13 @@ it("honors skipChecks", async () => {
 
   const options = {
     root,
-    skipChecks: ["dependency-overlap", "duplication-budget", "dead-exports"],
+    skipChecks: ["dependency-overlap", "duplication-budget"],
   };
   expect(activeChecks(options).map((check) => check.id)).toEqual([
     "closed-design-system-probe",
     "tsconfig-strictness",
     "instruction-blocks",
+    "migration-snapshot-ancestry",
   ]);
   expect(await runCoreConformance(options)).toEqual([]);
 });
@@ -41,9 +41,9 @@ it("exposes the six checks in order", () => {
   expect(coreChecks.map((check) => check.id)).toEqual([
     "dependency-overlap",
     "duplication-budget",
-    "dead-exports",
     "closed-design-system-probe",
     "tsconfig-strictness",
     "instruction-blocks",
+    "migration-snapshot-ancestry",
   ]);
 });

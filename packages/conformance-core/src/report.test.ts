@@ -19,10 +19,10 @@ it("reports missing optional tools and an unconfigured probe as incomplete evide
   expect(report.checks.map((check) => [check.check, check.status])).toEqual([
     ["dependency-overlap", "evaluated"],
     ["duplication-budget", "unsupported"],
-    ["dead-exports", "unsupported"],
     ["closed-design-system-probe", "skipped"],
     ["tsconfig-strictness", "skipped"],
     ["instruction-blocks", "skipped"],
+    ["migration-snapshot-ancestry", "skipped"],
   ]);
   expect(report.findings.filter((finding) => finding.severity === "error")).toEqual([]);
   expect(report.checks.find((check) => check.check === "closed-design-system-probe")).toEqual({
@@ -48,7 +48,12 @@ it("preserves unavailable evidence and gives execution failure priority", async 
     description: "probe",
     docs: "https://example.com/probe",
     run: async () => [
-      { check: "probe", severity: "warning", message: "ordinary", docs: "https://example.com/probe" },
+      {
+        check: "probe",
+        severity: "warning",
+        message: "ordinary",
+        docs: "https://example.com/probe",
+      },
       {
         check: "probe",
         severity: "warning",
@@ -76,7 +81,12 @@ it("preserves unavailable evidence and gives execution failure priority", async 
       {
         ...check,
         run: async () => [
-          { check: "probe", severity: "warning", message: "ordinary", docs: "https://example.com/probe" },
+          {
+            check: "probe",
+            severity: "warning",
+            message: "ordinary",
+            docs: "https://example.com/probe",
+          },
           {
             check: "probe",
             severity: "warning",
@@ -113,8 +123,8 @@ it("turns thrown Error and non-Error values into failed evidence", async () => {
 
 it("keeps explicit skips visible and rejects misspelled check IDs", async () => {
   const root = await createFixture({});
-  const report = await runCoreConformanceReport({ root, skipChecks: ["dead-exports"] });
-  expect(report.checks.find((check) => check.check === "dead-exports")).toMatchObject({
+  const report = await runCoreConformanceReport({ root, skipChecks: ["duplication-budget"] });
+  expect(report.checks.find((check) => check.check === "duplication-budget")).toMatchObject({
     status: "skipped",
     reason: "Excluded by skipChecks.",
     findings: [],
@@ -142,18 +152,9 @@ it("distinguishes an evaluated violation from missing required evidence", async 
   });
 });
 
-it("does not turn a malformed tool report into evaluated clean evidence", async () => {
-  const root = await createFixture({
-    "node_modules/knip/package.json": '{"name":"knip","bin":{"knip":"bin.cjs"}}',
-    "node_modules/knip/bin.cjs": "console.log(JSON.stringify({files: [null], issues: []}))",
-  });
-  const report = await runCoreConformanceReport({ root });
-  expect(report.status).toBe("failed");
-  expect(report.checks.find((check) => check.check === "dead-exports")?.status).toBe("failed");
-});
-
 it("passes only after all six checks evaluate successfully", async () => {
   const root = await createFixture({
+    "meta/0000_snapshot.json": JSON.stringify({ id: "a", prevId: "root" }),
     "package.json": "{}",
     "tsconfig.json": JSON.stringify({
       compilerOptions: {
@@ -164,11 +165,8 @@ it("passes only after all six checks evaluate successfully", async () => {
         erasableSyntaxOnly: true,
       },
     }),
-    "knip.json": "{}",
     "AGENTS.md": "<!-- harness:core:start -->\nRule.\n<!-- harness:core:end -->\n",
     "core.md": "Rule.\n",
-    "node_modules/knip/package.json": '{"name":"knip","bin":{"knip":"bin.cjs"}}',
-    "node_modules/knip/bin.cjs": "console.log(JSON.stringify({ files: [], issues: [] }))",
     "node_modules/jscpd/package.json": '{"name":"jscpd","bin":{"jscpd":"bin.cjs"}}',
     "node_modules/jscpd/bin.cjs":
       'const output = process.argv[process.argv.indexOf("--output") + 1]; require("node:fs").writeFileSync(require("node:path").join(output, "jscpd-report.json"), JSON.stringify({ duplicates: [] }));',
@@ -176,7 +174,6 @@ it("passes only after all six checks evaluate successfully", async () => {
   const report = await runCoreConformanceReport({
     root,
     duplication: { requireTool: true },
-    deadExports: { requireKnipConfig: true },
     closedDesignSystem: {
       stylesheet: "theme.css",
       requiredSelectors: [".token"],
@@ -190,6 +187,7 @@ it("passes only after all six checks evaluate successfully", async () => {
     },
     tsconfigStrictness: {},
     instructionBlocks: { blocks: { core: "core.md" } },
+    migrationSnapshots: { directory: "meta" },
   });
   expect(report.status).toBe("passed");
   expect(report.checks.map((check) => check.status)).toEqual([

@@ -8,7 +8,7 @@ import { runCoreConformanceReport } from "@aurelienbbn/conformance-core";
 coreConformance({
   root: process.cwd(),
   dependencyOverlapGroups: [],
-  skipChecks: ["dead-exports", "duplication-budget"],
+  skipChecks: ["duplication-budget"],
 });
 shopifyAppConformance({ root: process.cwd(), appManifest: "shopify.app.production.toml" });
 it("uses packed configuration builders without sharing mutable state", () => {
@@ -22,7 +22,10 @@ it("uses packed configuration builders without sharing mutable state", () => {
 });
 
 it("exposes incomplete core evidence to consumers", async () => {
-  const report = await runCoreConformanceReport({ root: process.cwd(), dependencyOverlapGroups: [] });
+  const report = await runCoreConformanceReport({
+    root: process.cwd(),
+    dependencyOverlapGroups: [],
+  });
   expect(report.status).toBe("incomplete");
   expect(report.checks.find((check) => check.check === "closed-design-system-probe")?.status).toBe("skipped");
 });

@@ -9,13 +9,11 @@ export type {
   ConformanceReport,
   ConformanceRunOptions,
   ConformanceSeverity,
-  DeadExportsOptions,
   DuplicationOptions,
   InstructionBlocksOptions,
   TsconfigStrictnessOptions,
 } from "./finding.js";
 export { closedDesignSystemProbe } from "./checks/closed-design-system-probe.js";
-export { deadExports } from "./checks/dead-exports.js";
 export { dependencyOverlap } from "./checks/dependency-overlap.js";
 export { duplicationBudget } from "./checks/duplication-budget.js";
 export { instructionBlocks } from "./checks/instruction-blocks.js";
@@ -30,3 +28,5 @@ export async function runCoreConformance(options: ConformanceRunOptions): Promis
   }
   return findings;
 }
+
+export { migrationSnapshotAncestry } from "./checks/migration-snapshot-ancestry.js";

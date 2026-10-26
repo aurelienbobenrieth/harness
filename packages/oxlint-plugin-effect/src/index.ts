@@ -1,3 +1,5 @@
+import { calendarDateRoundTrip } from "./rules/calendar-date-round-trip/rule.js";
+import { destructiveReasonRequired } from "./rules/destructive-reason-required/rule.js";
 import { eslintCompatPlugin } from "@oxlint/plugins";
 import { dependenciesFirst } from "./rules/dependencies-first/rule.js";
 import { noArrayCallbackReference } from "./rules/no-array-callback-reference/rule.js";
@@ -44,11 +46,21 @@ import { preserveThrownCause } from "./rules/preserve-thrown-cause/rule.js";
 import { requireAbortSignal } from "./rules/require-abort-signal/rule.js";
 import { requireRedactedSecretConfig } from "./rules/require-redacted-secret-config/rule.js";
 
+/** Advisory defaults for newly introduced or low-precision rules; merge into consumer rules. */
+export const advisoryRules = {
+  "effect/calendar-date-round-trip": "warn",
+  "effect/destructive-reason-required": "warn",
+  "effect/prefer-effect-array-helpers": "warn",
+} as const;
+
 export default eslintCompatPlugin({
   meta: {
     name: "effect",
   },
   rules: {
+    "calendar-date-round-trip": calendarDateRoundTrip,
+    "destructive-reason-required": destructiveReasonRequired,
+
     "dependencies-first": dependenciesFirst,
     "no-array-callback-reference": noArrayCallbackReference,
     "no-array-for-each": noArrayForEach,

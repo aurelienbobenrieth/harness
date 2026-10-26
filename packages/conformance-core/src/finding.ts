@@ -45,11 +45,6 @@ export type DuplicationOptions = {
   readonly maxClones?: number;
 };
 
-export type DeadExportsOptions = {
-  /** When true, a missing knip config is reported even if knip itself is not installed. Default: false */
-  readonly requireKnipConfig?: boolean;
-};
-
 export type ClosedDesignSystemOptions = {
   /** Entry stylesheet passed to the build, relative to root. */
   readonly stylesheet: string;
@@ -92,14 +87,14 @@ export type InstructionBlocksOptions = {
 
 export type ConformanceRunOptions = {
   readonly root: string;
+  /** Opt-in Drizzle metadata directory, relative to root; warns on non-linear snapshot ancestry. */
+  readonly migrationSnapshots?: { readonly directory: string };
   /** Check ids to skip, e.g. duplication-budget on repos that accept clones. */
   readonly skipChecks?: readonly string[];
   /** Known-duplicate dependency families. Providing this REPLACES the built-in defaults. */
   readonly dependencyOverlapGroups?: readonly (readonly string[])[];
   /** Duplication budget knobs passed to jscpd. */
   readonly duplication?: DuplicationOptions;
-  /** Dead-export (knip) knobs. */
-  readonly deadExports?: DeadExportsOptions;
   /** Explicit CSS build/selector probe. Unset: check skipped. */
   readonly closedDesignSystem?: ClosedDesignSystemOptions;
   /** Compiler strictness gate over resolved tsconfig files. Unset: check skipped; `{}` enables the defaults. */

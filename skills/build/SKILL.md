@@ -27,3 +27,11 @@ Design: module hides one decision; interface much smaller than what it hides; de
 - Skipped/empty/stale/unavailable is not a pass. Rerun invalidated checks. Scoped checks while iterating, then one full gate on the final state before handoff (PR or no PR), or CI per project; never parallel checks.
 
 **Handoff:** behavior, checks + results, material limits. Never "done" with a failing check.
+
+- `core/no-let`: use `const` and expression-based accumulation instead of mutable bindings.
+- `core/no-multi-positional-parameters`: pass one named options object when a function needs multiple inputs.
+- `effect/no-array-callback-reference`: pass an inline callback so array index arguments cannot reach another function.
+- `effect/no-array-for-each`: use `for...of` for synchronous work and `Effect.forEach` for effects.
+- `type-evidence/no-known-value-widening`: preserve the inferred concrete type instead of annotating known values as broad types.
+- `type-evidence/no-runtime-typeof`: decode boundary values with a schema instead of branching on runtime `typeof`.
+- `type-evidence/require-safety-comment-for-type-assertion`: precede the owning statement with a `// SAFETY: <invariant>` comment for each necessary assertion.
