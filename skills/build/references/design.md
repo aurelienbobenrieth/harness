@@ -4,15 +4,12 @@ Load before shaping a module, export, stored shape, or package boundary. Backing
 
 | Rule                                                                                       | Backed by                                                              |
 | ------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------- |
-| Module hides one decision; change touches one module                                       | `change-scatter-review`, `hotspot-change-review`                       |
-| Interface << what it hides; no pass-through wrappers                                       | `abstraction-earns-keep`, `no-reexport-only-modules`                   |
 | Two behaviors: two functions, not a flag                                                   | `flag-forked-function`                                                 |
 | States as a discriminated union, not correlated optionals                                  | `correlated-optional-state`                                            |
 | Parse at boundary into a type carrying the proof                                           | `validation-discards-proof`, `fallback-masks-failure`                  |
 | Decisions pure; I/O in a thin shell; test core with values                                 | `no-vitest-mocking`, `no-test-logic-in-production`                     |
 | Dependencies inward: core never imports adapters, tests, mutable shared state              | `no-mutable-exported-state`, `no-vitest-in-source`                     |
 | One public surface per package (`exports`); no deep imports                                | `workspace-boundaries`, packed consumer install                        |
-| Duplicate until third real use; one adapter hypothetical, two real                         | `single-use-extraction-review`, `isomorphic-mapping`                   |
 | Expected failures: typed values in the contract; defects throw, never caught to keep going | `no-discarded-caught-error`, `no-swallowed-failure` (effect)           |
 | One source of truth: never store derivable state; compute where read                       | `derived-boolean-context` (xstate)                                     |
 | Retry-replayable write: idempotency key; second call changes nothing                       | `require-idempotent-mutations` (shopify-app), `bounded-retry` (effect) |

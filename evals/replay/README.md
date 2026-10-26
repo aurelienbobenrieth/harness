@@ -64,3 +64,16 @@ only the named skill and its own references; build's link to testing is intentio
 None removes restored harness skills. All conditions share concise repo conventions and commands,
 not KeepCart's embedded harness prose. Prompts forbid history inspection and other checkouts;
 this is instruction-level isolation, not an adversarial security sandbox.
+
+## Delta verification
+
+`node scripts/verify-changed.mjs --cwd <consumer> --base <ref> [--tests a.test.ts,b.test.ts] [--codec codec.ts]`
+checks type-aware scoped lint over changed sources and their reverse local-import consumers,
+then green nonempty consumer suites against bounded changed-line mutations. It reports kills,
+survivors, invalids and timeouts separately and exits nonzero unless every sampled mutant dies.
+Unresolved aliases require explicit preservation suites with `--tests`; local imports and reexports
+are followed transitively. Runtime browser/cache/report output is excluded before lint arguments.
+No universal mutation score is inferred from this small sample.
+
+The replay condition `delta` exposes the revised full skill bundle and this verification tool.
+Select it explicitly with `--conditions delta`; the default matrix remains unchanged.

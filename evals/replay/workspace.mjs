@@ -3,6 +3,7 @@ import { mkdir, readFile, writeFile, readdir, symlink, lstat, rm, unlink } from 
 import path from "node:path";
 import { tmpdir } from "node:os";
 import { randomUUID } from "node:crypto";
+import { isSource } from "./gates.mjs";
 import { skillFiles } from "../lib/io.mjs";
 
 export async function command(file, args, cwd, timeout = 120000) {
@@ -74,14 +75,7 @@ export async function contents(cwd, base = "HEAD") {
   ];
   const sources = {};
 
-  for (const file of new Set(
-    names.filter(
-      (name) =>
-        /\.[cm]?[jt]sx?$/.test(name) &&
-        !name.startsWith(".agents/") &&
-        !name.split("/").includes(".browser-profile"),
-    ),
-  )) {
+  for (const file of new Set(names.filter(isSource))) {
     try {
       sources[file] = await readFile(path.join(cwd, file), "utf8");
     } catch (error) {
@@ -155,7 +149,8 @@ async function exposure(cwd, condition, ref) {
     condition === "none"
       ? []
       : (await skillFiles(ref)).filter(
-          (entry) => condition === "full" || entry.file.startsWith(`skills/${condition}/`),
+          (entry) =>
+            ["full", "delta"].includes(condition) || entry.file.startsWith(`skills/${condition}/`),
         );
 
   for (const { file, text } of sources) {
@@ -176,7 +171,7 @@ async function exposure(cwd, condition, ref) {
 
   await writeFile(
     path.join(cwd, "AGENTS.md"),
-    `# Replay instructions\nFollow docs/conventions.md and existing local API conventions.\nRun scoped tests with node node_modules/vite-plus/bin/vp test <paths> --run.\nRun scoped lint with node node_modules/vite-plus/bin/vp lint <paths>.\nNo push, deploy, external writes, paid agents, installs, or history inspection. Work only inside this detached trial.\n${cores}\n${inventory ? "Load matching available skills before acting:\n" + inventory : ""}\n`,
+    `# Replay instructions\nFollow docs/conventions.md and existing local API conventions.\nRun scoped tests with node node_modules/vite-plus/bin/vp test <paths> --run.\nRun scoped lint with node node_modules/vite-plus/bin/vp lint <paths>.\nNo push, deploy, external writes, paid agents, installs, or history inspection. Work only inside this detached trial.\n${condition === "delta" ? `Changed-source verification tool (authorized outside this trial): node "${path.resolve(import.meta.dirname, "../../scripts/verify-changed.mjs")}" --cwd . --base HEAD. Run it before handoff; it checks type-aware lint on producers/consumers and mutations against existing consumer suites. Use --codec <file> for the archive codec.\n` : ""}${cores}\n${inventory ? "Load matching available skills before acting:\n" + inventory : ""}\n`,
   );
 
   await writeFile(path.join(cwd, "CLAUDE.md"), "@AGENTS.md\n");
