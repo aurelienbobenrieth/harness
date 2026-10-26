@@ -27,4 +27,4 @@ description: Stage, commit, resolve conflicts, rewrite history, push, and write 
 Titles/descriptions follow [communication](../communication/SKILL.md), only what diff/CI can't show. **Max 100 lines**; a small fix needs two.
 
 - Include: line one problem to resulting behavior; why + choice over alternative; what reviewer must decide/check by hand; risks, limits, migration, checks CI doesn't run. Before/after or behavior `diff` over prose. Branch changed: rewrite, don't append.
-- `pr:surface` script exists (package.json): its output opens the description, pasted as-is, never retyped/summarized from memory.
+- `pr:surface` script exists (package.json): its output follows the result-first opening in a `<details>` block, pasted as-is, never retyped/summarized from memory.
