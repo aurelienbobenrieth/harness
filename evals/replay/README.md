@@ -35,6 +35,7 @@ as distinguishing regressions. An incomplete cell is a failed attempt, never a p
 ## Measurements preserve uncertainty
 
 - Hidden tests are overlaid only after capturing agent tests and completing mutation.
+  Diffs are always measured from the pinned parent, including changes committed inside a trial.
 - AST mutations cover changed production lines, stratified by file and operator/boundary/return;
   `--mutants` defaults to nine per trial. Report available, sampled, invalid and timed-out counts.
   Failures inside selected tests kill; import/type/setup crashes do not. Baseline must be green and nonempty.

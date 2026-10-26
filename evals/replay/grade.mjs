@@ -188,3 +188,32 @@ export function mutantStatus({ pass, killed, output = "" }) {
 
   return /Tests\s+\d+ failed|AssertionError/.test(output) ? "killed" : "invalid";
 }
+
+/** A valid multi-frame stream can satisfy a decompression smoke test but violate the single-frame contract. */
+export function codecFrameMutant(file, source) {
+  const tree = parsed(file, source);
+  let result = null;
+
+  visit(tree, (node) => {
+    if (
+      !ts.isVariableDeclaration(node) ||
+      node.name.getText(tree) !== "joinedParts" ||
+      !node.initializer ||
+      !ts.isArrowFunction(node.initializer)
+    )
+      return;
+    const fn = node.initializer,
+      parameter = fn.parameters[0]?.name;
+
+    if (!parameter || !ts.isIdentifier(parameter)) return;
+    const name = parameter.text,
+      body = fn.body;
+    const replacement = ts.isBlock(body)
+      ? `{ if (${name}.length > 1) return Buffer.concat(${name}); ${source.slice(body.getStart(tree) + 1, body.end)}`
+      : `(${name}.length > 1 ? Buffer.concat(${name}) : (${body.getText(tree)}))`;
+
+    result = source.slice(0, body.getStart(tree)) + replacement + source.slice(body.end);
+  });
+
+  return result;
+}

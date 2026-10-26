@@ -62,9 +62,9 @@ export async function git(cwd, ...args) {
 
 const lines = (value) => value.split(/\r?\n/).filter(Boolean);
 
-export async function contents(cwd) {
+export async function contents(cwd, base = "HEAD") {
   const names = [
-    ...lines(await git(cwd, "diff", "--name-only", "HEAD")),
+    ...lines(await git(cwd, "diff", "--name-only", base)),
     ...lines(await git(cwd, "ls-files", "--others", "--exclude-standard")),
   ];
   const sources = {};

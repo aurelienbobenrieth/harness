@@ -1,7 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { matrix, tasks } from "./tasks.mjs";
-import { mutants, sourceSignals, validateJudgment, shellBoundary, mutantStatus } from "./grade.mjs";
+import { mutants, sourceSignals, validateJudgment, shellBoundary, mutantStatus, codecFrameMutant } from "./grade.mjs";
+import ts from "typescript-legacy";
 
 test("60 balanced cells, two repeats; luna has no ablations", () => {
   const cells = matrix();
@@ -72,4 +73,18 @@ test("runtime TypeError inside a test kills a mutant, import/empty-suite errors 
   assert.equal(mutantStatus({ pass: false, output: "Failed Suites 1\nSyntaxError\n Tests no tests" }), "invalid");
   assert.equal(mutantStatus({ pass: true }), "survived");
   assert.equal(mutantStatus({ killed: true }), "timeout");
+});
+
+test("semantic codec mutant preserves empty/single-page behavior and emits concatenated frames for multiple pages", () => {
+  for (const body of ["new Uint8Array([9])", "{ return new Uint8Array([9]); }"]) {
+    const source = `export const joinedParts = (pages: readonly Uint8Array[]) => ${body};`;
+    const changed = codecFrameMutant("codec.ts", source);
+    const compiled = ts.transpileModule(changed, { compilerOptions: { module: ts.ModuleKind.CommonJS } }).outputText;
+    const exports = {};
+
+    new Function("exports", compiled)(exports);
+    assert.deepEqual([...exports.joinedParts([])], [9]);
+    assert.deepEqual([...exports.joinedParts([new Uint8Array([1])])], [9]);
+    assert.deepEqual([...exports.joinedParts([new Uint8Array([1]), new Uint8Array([2])])], [1, 2]);
+  }
 });

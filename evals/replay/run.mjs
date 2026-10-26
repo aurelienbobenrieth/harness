@@ -225,13 +225,13 @@ async function runCell(cell) {
     });
 
     await recordSpend();
-    row.sources = await contents(trial.cwd);
-    row.diff = await git(trial.cwd, "diff", "--no-ext-diff", "--unified=0", "HEAD", "--", ...task.scope);
+    row.sources = await contents(trial.cwd, trial.base);
+    row.diff = await git(trial.cwd, "diff", "--no-ext-diff", "--unified=0", trial.base, "--", ...task.scope);
     row.referenceDiff = refData.diff;
     const beforeSources = {};
 
     for (const file of Object.keys(row.sources)) {
-      const before = await command("git", ["show", `HEAD:${file}`], trial.cwd);
+      const before = await command("git", ["show", `${trial.base}:${file}`], trial.cwd);
 
       if (before.status === 0) beforeSources[file] = before.output;
     }
@@ -251,7 +251,7 @@ async function runCell(cell) {
       added: row.diff.split("\n").filter((l) => /^\+[^+]/.test(l)).length,
       removed: row.diff.split("\n").filter((l) => /^-[^-]/.test(l)).length,
       newFileLines: Object.keys(row.sources)
-        .filter((file) => !(file in beforeSources))
+        .filter((file) => !(file in beforeSources) && !row.diff.includes(`+++ b/${file}\n`))
         .reduce((n, file) => n + row.sources[file].split("\n").length, 0),
       referenceAdded: refData.diff.split("\n").filter((l) => /^\+[^+]/.test(l)).length,
     };

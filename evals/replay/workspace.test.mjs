@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { mkdtemp, mkdir, writeFile, readFile, symlink, rm } from "node:fs/promises";
 import path from "node:path";
 import { tmpdir } from "node:os";
-import { removeOwnedTree, command, overlay } from "./workspace.mjs";
+import { removeOwnedTree, command, overlay, git, contents } from "./workspace.mjs";
 
 test("cleanup rejects the root and outside paths; junction target survives", async () => {
   const root = await mkdtemp(path.join(tmpdir(), "replay-cleanup-"));
@@ -55,4 +55,28 @@ test("process boundary keeps nonzero and timeout distinct from success", async (
   const timed = await command(process.execPath, ["-e", "setInterval(()=>{},1000)"], tmpdir(), 100);
 
   assert.equal(timed.killed, true);
+});
+
+test("trial changes are measured from the pinned parent even after an agent commit", async () => {
+  const root = await mkdtemp(path.join(tmpdir(), "replay-base-"));
+
+  try {
+    await git(root, "init", "-q");
+    await git(root, "config", "user.name", "Replay Fixture");
+    await git(root, "config", "user.email", "replay@example.invalid");
+    await writeFile(path.join(root, "subject.ts"), "export const answer = 1;");
+    await git(root, "add", "--", "subject.ts");
+    await git(root, "commit", "-qm", "initial");
+    const base = await git(root, "rev-parse", "HEAD");
+
+    await writeFile(path.join(root, "subject.ts"), "export const answer = 2;");
+    await git(root, "add", "--", "subject.ts");
+    await git(root, "commit", "-qm", "agent change");
+    const sources = await contents(root, base);
+
+    assert.equal(sources["subject.ts"], "export const answer = 2;");
+    assert.deepEqual(await contents(root), {});
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
 });
