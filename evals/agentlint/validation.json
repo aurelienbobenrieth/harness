@@ -1,0 +1,29 @@
+{
+  "install": "pnpm install --frozen-lockfile passed",
+  "scopedTests": {
+    "command": "pnpm exec vitest run packages/agentlint-plugin-core",
+    "filesPassed": 29,
+    "testsPassed": 279
+  },
+  "fullCheck": {
+    "command": "pnpm check",
+    "completedRuns": 1,
+    "stepsPassedInitially": 19,
+    "stepsFailedInitially": ["quality:check"],
+    "unitFilesPassed": 264,
+    "unitTestsPassed": 2933,
+    "skippedSteps": 0
+  },
+  "resolution": "Knip could not reach the three new standalone commands. Added judge/backlog/report dispatch through the configured run.mjs entry point.",
+  "targetedRechecks": {
+    "quality:check": "passed",
+    "lint": "passed",
+    "format": "passed",
+    "reportCommandSmoke": "passed"
+  },
+  "limits": [
+    "Two KeepCart TSX files remain unavailable to engine 0.3.0 parsing.",
+    "bounded-work still has 0% defect precision in the final judged sample; volume reduction is not precision improvement.",
+    "Backlog projection retires source acceptance obligations; deterministic replacements and future consolidation logic are not evaluated."
+  ]
+}

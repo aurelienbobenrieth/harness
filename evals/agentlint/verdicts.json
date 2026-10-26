@@ -1,0 +1,381 @@
+{
+  "alchemy/adopt-review": {
+    "verdict": "keep",
+    "why": "Resource takeover needs an explicit migration decision.",
+    "risk": "An agent can silently adopt and overwrite somebody else's infrastructure.",
+    "deterministic": "none; a takeover may be intentional"
+  },
+  "alchemy/init-config-exposure": {
+    "verdict": "keep",
+    "why": "Deploy-time values can become deployed secrets.",
+    "risk": "An agent can upload local deploy credentials into runtime bindings.",
+    "deterministic": "partial: alchemy/config-in-init enforces placement, not which secrets runtime needs"
+  },
+  "alchemy/removal-policy-change": {
+    "verdict": "keep",
+    "why": "Human review belongs on weakened retention.",
+    "risk": "An agent can turn a harmless refactor into permanent data deletion.",
+    "deterministic": "none; destruction authorization is a human decision"
+  },
+  "alchemy/removal-policy-review": {
+    "verdict": "keep",
+    "why": "Stateful resources need deliberate retention.",
+    "risk": "An agent can accept the provider's destructive default without noticing.",
+    "deterministic": "none for resource disposability; invalid Stage-effect shape could become deterministic"
+  },
+  "alchemy/resource-replacement-review": {
+    "verdict": "keep",
+    "why": "Resource identity changes can replace live data.",
+    "risk": "An agent can rename logical resources without a migration path.",
+    "deterministic": "none; safe replacement depends on deployment intent"
+  },
+  "alchemy/state-store-change": {
+    "verdict": "keep",
+    "why": "State-store changes require a migration plan.",
+    "risk": "An agent can point planning at empty state and duplicate infrastructure.",
+    "deterministic": "none; the migration cannot be proved from a local call"
+  },
+  "core/abstraction-earns-keep": {
+    "verdict": "keep",
+    "why": "One human question for abstraction ownership.",
+    "risk": "An agent can add forwarding interfaces and layers that hide rather than own decisions.",
+    "deterministic": "partial: core/no-reexport-only-modules and effect/no-static-service-forwarders catch narrow shapes"
+  },
+  "core/boundary-resilience": {
+    "verdict": "replace",
+    "why": "Move timeout and discarded-error syntax to oxlint.",
+    "risk": "An agent can leave requests hanging or hide their failures.",
+    "deterministic": "partial: shopify-app/require-fetch-abort-signal, effect/require-abort-signal and core/no-discarded-caught-error; generic non-Shopify fetch/client timeout coverage still needs a deterministic rule"
+  },
+  "core/bounded-data-access": {
+    "verdict": "fix",
+    "why": "Inspect the callee and full fluent chain; skip raw SQL.",
+    "risk": "An agent can read an unlimited dataset, but raw SQL commands are not necessarily reads.",
+    "deterministic": "none for cardinality; a configured ORM-limit oxlint rule is a future alternative",
+    "diagnosis": "heuristic: regex searched nested arguments and multiplied one query into every wrapper; missing exemption: arbitrary SQL commands; fluent limits were invisible"
+  },
+  "core/bounded-work": {
+    "verdict": "fix",
+    "why": "Cuts fixed-work noise; sampled precision remains 0%.",
+    "risk": "An agent can create unbounded provider load through collection fan-out.",
+    "deterministic": "partial: effect/require-all-concurrency, effect/require-for-each-concurrency and effect/bounded-retry cover Effect shapes, not general cardinality",
+    "diagnosis": "scope: tests; heuristic: any await plus any map, fixed three-call sequences, explicit finite timeouts and enclosing routines all triggered Re-measurement still has 0 true positives, 5 false positives and 3 uncertain samples; keep advisory pending narrower bindings or retirement."
+  },
+  "core/change-scatter-review": {
+    "verdict": "merge",
+    "target": "core/protected-invariant-change",
+    "why": "Prefer named invariant surfaces to repeated tokens.",
+    "risk": "An agent can duplicate one policy across files instead of centralizing its ownership.",
+    "deterministic": "none; repeated words do not prove duplicate policy"
+  },
+  "core/comment-signal": {
+    "verdict": "replace",
+    "why": "Keep deterministic dead-comment checks; drop prose nits.",
+    "risk": "An agent can add comments that obscure constraints with narration.",
+    "deterministic": "partial: core/no-dead-comments; signature/narration quality remains deliberately unautomated"
+  },
+  "core/correlated-optional-state": {
+    "verdict": "keep",
+    "why": "Review illegal state combinations in domain types.",
+    "risk": "An agent can encode impossible status/payload combinations as optional fields.",
+    "deterministic": "none; independent optional fields may be valid"
+  },
+  "core/expected-value-recomputed": {
+    "verdict": "merge",
+    "target": "core/test-behavior-coverage",
+    "why": "One independent-oracle review; arithmetic alone is weak.",
+    "risk": "An agent can repeat a production bug in its expected-value calculation.",
+    "deterministic": "none; inverse and reference algorithms are valid independent oracles"
+  },
+  "core/fake-parity": {
+    "verdict": "keep",
+    "why": "Stateful fakes need real contract evidence.",
+    "risk": "An agent can test a fake that agrees with itself but differs from production.",
+    "deterministic": "partial: core/no-stubbed-subject catches mocking the subject, not fake/real parity"
+  },
+  "core/fallback-masks-failure": {
+    "verdict": "replace",
+    "why": "Gate swallowed errors; use schemas for required inputs.",
+    "risk": "An agent can turn failed reads or required missing data into successful empty results.",
+    "deterministic": "partial: core/no-discarded-caught-error, effect/no-swallowed-failure and tanstack-query/no-swallowed-query-fn-error; legitimate domain defaults cannot be rejected by names/counts"
+  },
+  "core/flag-forked-function": {
+    "verdict": "merge",
+    "target": "core/abstraction-earns-keep",
+    "why": "Intent and decomposition are one architectural review.",
+    "risk": "An agent can combine unrelated operations behind boolean switches.",
+    "deterministic": "none; a runtime flag may describe real domain data"
+  },
+  "core/hotspot-change-review": {
+    "verdict": "merge",
+    "target": "core/protected-invariant-change",
+    "why": "One configured history/invariant change gate.",
+    "risk": "An agent can repeat defects on historically sensitive surfaces.",
+    "deterministic": "none; repository evidence determines which paths matter"
+  },
+  "core/integration-test-owns-its-boundary": {
+    "verdict": "keep",
+    "why": "Check the claimed integration boundary, not all doubles.",
+    "risk": "An agent can call a mock-heavy unit test an integration test.",
+    "deterministic": "partial: core/no-vitest-mocking; an external-boundary fake can be appropriate"
+  },
+  "core/isomorphic-mapping": {
+    "verdict": "merge",
+    "target": "core/abstraction-earns-keep",
+    "why": "Copies need the same boundary-ownership decision.",
+    "risk": "An agent can introduce mapping layers without a semantic boundary.",
+    "deterministic": "none; identical shapes can still represent distinct trust boundaries"
+  },
+  "core/operations-stay-with-owner": {
+    "verdict": "keep",
+    "why": "Keep orchestration with the model that owns it.",
+    "risk": "An agent can spread domain procedures through unrelated entry points.",
+    "deterministic": "partial: core/workspace-boundaries checks imports, not operation ownership"
+  },
+  "core/pinned-suspect-output": {
+    "verdict": "keep",
+    "why": "Suspicious recorded output needs an independent oracle.",
+    "risk": "An agent can bless NaN or missing-value rendering in a snapshot.",
+    "deterministic": "none; printing these tokens can itself be the contract"
+  },
+  "core/precision-boundary-review": {
+    "verdict": "keep",
+    "why": "Unit conversions need domain tolerances and test evidence.",
+    "risk": "An agent can mix units or round at the wrong boundary.",
+    "deterministic": "none; identifier suffixes do not establish units or tolerance"
+  },
+  "core/property-test-opportunity": {
+    "verdict": "merge",
+    "target": "core/test-behavior-coverage",
+    "why": "Review oracle strength and properties together.",
+    "risk": "An agent can cover open transform domains with a few handpicked examples.",
+    "deterministic": "none; lossy transforms do not necessarily obey a round-trip law"
+  },
+  "core/protected-invariant-change": {
+    "verdict": "keep",
+    "why": "Explicit repository invariants justify human interruption.",
+    "risk": "An agent can change architecture while leaving its governing assumptions stale.",
+    "deterministic": "partial: core/workspace-boundaries enforces declared imports, not general invariants"
+  },
+  "core/single-use-extraction-review": {
+    "verdict": "merge",
+    "target": "core/abstraction-earns-keep",
+    "why": "Call count alone cannot price a useful abstraction.",
+    "risk": "An agent can fragment a procedure into helpers that only add navigation.",
+    "deterministic": "none; single use and parameter count cannot determine value"
+  },
+  "core/temporal-coupling": {
+    "verdict": "keep",
+    "why": "Ready-instance construction is a semantic guarantee.",
+    "risk": "An agent can expose objects that fail until a separate init call runs.",
+    "deterministic": "none; lifecycle state can intentionally be explicit"
+  },
+  "core/test-behavior-coverage": {
+    "verdict": "keep",
+    "why": "One outcome/oracle review beyond assertion syntax.",
+    "risk": "An agent can assert interactions or opaque snapshots without proving behavior.",
+    "deterministic": "partial: core/no-weak-test-assertions and core/no-stubbed-subject; no exact behavioral-oracle coverage"
+  },
+  "core/test-exercises-project-code": {
+    "verdict": "keep",
+    "why": "A test must reach the real project implementation.",
+    "risk": "An agent can test copied logic or a dependency while claiming project coverage.",
+    "deterministic": "none; black-box executables and workspace aliases need context"
+  },
+  "core/test-expectation-drift": {
+    "verdict": "keep",
+    "why": "Changed expectations need an explicit behavior decision.",
+    "risk": "An agent can make tests green by weakening the oracle alongside a regression.",
+    "deterministic": "none; legitimate behavior changes must change expectations"
+  },
+  "core/validation-discards-proof": {
+    "verdict": "remove",
+    "why": "A boolean/void validator is not inherently defective.",
+    "risk": "An agent can discard useful refinement, but ordinary predicates are valid APIs.",
+    "deterministic": "none; enforcing a type predicate everywhere is an API preference"
+  },
+  "effect/layer-identity": {
+    "verdict": "keep",
+    "why": "Fresh Layer identity can duplicate live resources.",
+    "risk": "An agent can rebuild supposedly shared pools and services per call.",
+    "deterministic": "partial: effect/no-managed-runtime-per-call; Layer construction has wider identity semantics"
+  },
+  "effect/prefer-schema-contracts": {
+    "verdict": "replace",
+    "why": "Use domain-scoped schema-domain-types; exports prove no boundary.",
+    "risk": "An agent can trust wire or persisted data through manual types, but helper and capability types need no runtime codec.",
+    "deterministic": "partial: effect/schema-domain-types already enforces domain schema declarations with configurable domain scope and behavior/generic exemptions"
+  },
+  "effect/resilience-policy": {
+    "verdict": "replace",
+    "why": "Retry/timeout syntax belongs in deterministic checks.",
+    "risk": "An agent can retry forever or repeat non-idempotent mutations.",
+    "deterministic": "partial: effect/bounded-retry and effect/require-abort-signal; idempotency still requires boundary review"
+  },
+  "shopify-app/action-label-clarity": {
+    "verdict": "merge",
+    "target": "shopify-app/app-ux-review",
+    "why": "Review labels in the same merchant workflow.",
+    "risk": "An agent can ship technically labeled buttons whose outcome is unclear.",
+    "deterministic": "partial: shopify-app/s-button-accessible-name and s-clickable-accessible-name check presence, not meaning"
+  },
+  "shopify-app/admin-api-loop-review": {
+    "verdict": "keep",
+    "why": "GraphQL cost and bulk-operation tradeoffs are domain-specific.",
+    "risk": "An agent can exceed Shopify cost budgets through per-item calls.",
+    "deterministic": "none; a bounded and rate-controlled loop can be correct"
+  },
+  "shopify-app/app-ux-review": {
+    "verdict": "keep",
+    "why": "Use explicitly configured routes and browser evidence.",
+    "risk": "An agent can pass component lint while leaving a broken merchant workflow.",
+    "deterministic": "partial: Shopify component rules cover syntax and accessibility contracts, not interaction fit"
+  },
+  "shopify-app/banner-usage": {
+    "verdict": "merge",
+    "target": "shopify-app/app-ux-review",
+    "why": "Review banners once with workflow and dismissal evidence.",
+    "risk": "An agent can stack irrelevant or nonpersistent operational warnings.",
+    "deterministic": "none for contextual usefulness or persistence"
+  },
+  "shopify-app/checkout-network-discipline": {
+    "verdict": "keep",
+    "why": "Checkout latency has a separate user-facing budget.",
+    "risk": "An agent can block checkout on an unnecessary remote round trip.",
+    "deterministic": "partial: shopify-app/require-fetch-abort-signal checks cancellation, not latency necessity"
+  },
+  "shopify-app/destructive-action-review": {
+    "verdict": "keep",
+    "why": "Destructive outcomes justify a dedicated review.",
+    "risk": "An agent can expose irreversible actions without consequences or recovery.",
+    "deterministic": "partial: shopify-app/require-idempotent-mutations does not prove confirmation or recovery"
+  },
+  "shopify-app/flow-action-handler-review": {
+    "verdict": "keep",
+    "why": "Flow delivery and response semantics need handler evidence.",
+    "risk": "An agent can process duplicate or unverified deliveries as new work.",
+    "deterministic": "partial: shopify-app/require-idempotent-mutations; Flow signatures/status contracts remain"
+  },
+  "shopify-app/form-error-recovery": {
+    "verdict": "merge",
+    "target": "shopify-app/app-ux-review",
+    "why": "Recovery feedback is part of the same task flow.",
+    "risk": "An agent can wire an error prop without a usable correction path.",
+    "deterministic": "partial: shopify-app/s-form-control-label-required checks labeling, not error recovery"
+  },
+  "shopify-app/modal-workflow-review": {
+    "verdict": "merge",
+    "target": "shopify-app/app-ux-review",
+    "why": "Review modal initiation and dismissal in one workflow.",
+    "risk": "An agent can implement a modal that traps or interrupts merchants.",
+    "deterministic": "partial: shopify-app/s-modal-heading-required and s-modal-actions-use-slots check structural contracts"
+  },
+  "shopify-app/no-pressure-copy": {
+    "verdict": "merge",
+    "target": "shopify-app/app-ux-review",
+    "why": "Copy intent cannot be decided by a small lexicon.",
+    "risk": "An agent can add coercive urgency or unsupported guarantees.",
+    "deterministic": "none; quotation, translation and context determine meaning"
+  },
+  "shopify-app/review-solicitation": {
+    "verdict": "merge",
+    "target": "shopify-app/app-ux-review",
+    "why": "Review actual app promotion, not theme/product reviews.",
+    "risk": "An agent can add incentivized or badly placed app-rating requests.",
+    "deterministic": "none; voluntary wording and placement need merchant context"
+  },
+  "shopify-app/scope-change-review": {
+    "verdict": "keep",
+    "why": "New access needs a necessity decision.",
+    "risk": "An agent can request broader merchant permissions than a feature needs.",
+    "deterministic": "partial: conformance-shopify-app/extension-capability-contract validates declarations, not permission necessity"
+  },
+  "shopify-app/session-token-auth": {
+    "verdict": "keep",
+    "why": "Bind only embedded identity code; drafts are valid storage.",
+    "risk": "An agent can confuse browser-persisted identity with authenticated session tokens.",
+    "deterministic": "partial: shopify-app/no-session-or-token-logging covers exposure, not authentication ownership"
+  },
+  "shopify-app/settings-save-bar": {
+    "verdict": "merge",
+    "target": "shopify-app/app-ux-review",
+    "why": "A form-level marker cannot prove shared save-bar ownership.",
+    "risk": "An agent can leave unsaved changes without contextual save/discard recovery.",
+    "deterministic": "none; save bars may be owned by a surrounding shell"
+  },
+  "shopify-app/webhook-handler-review": {
+    "verdict": "keep",
+    "why": "Delivery, uninstall and compliance behavior need evidence.",
+    "risk": "An agent can acknowledge webhooks without safely processing them.",
+    "deterministic": "partial: shopify-app/webhook-hmac-verification-shape and require-idempotent-mutations check only some obligations"
+  },
+  "tanstack-query/imperative-query-fetching": {
+    "verdict": "merge",
+    "target": "tanstack-query/query-freshness-intent",
+    "why": "Disabled queries and refetch effects share lifecycle intent.",
+    "risk": "An agent can bypass query lifecycle through imperative triggers.",
+    "deterministic": "partial: tanstack-query/no-query-data-sync-effect targets state synchronization, not every imperative refetch"
+  },
+  "tanstack-query/mutation-state-coverage": {
+    "verdict": "merge",
+    "target": "tanstack-query/query-state-coverage",
+    "why": "One visible-state review can carry query and mutation modes.",
+    "risk": "An agent can omit pending, failure, retry or duplicate-submit behavior.",
+    "deterministic": "partial: tanstack-query/require-optimistic-update-guards; no exact user-state coverage"
+  },
+  "tanstack-query/query-freshness-intent": {
+    "verdict": "keep",
+    "why": "Overrides need an explicit freshness policy.",
+    "risk": "An agent can disable refetch and retry defaults without considering stale data.",
+    "deterministic": "none; immutable data and manual refresh can justify overrides"
+  },
+  "tanstack-query/query-state-coverage": {
+    "verdict": "keep",
+    "why": "User-visible states require component/boundary evidence.",
+    "risk": "An agent can render cached data while losing pending, empty or failure states.",
+    "deterministic": "partial: tanstack-query/query-fn-returns-value and require-fetch-status-check-in-query-fn do not inspect UI behavior"
+  },
+  "xstate/actor-cleanup": {
+    "verdict": "keep",
+    "why": "Actor lifetime needs an owner and disposal path.",
+    "risk": "An agent can leak subscriptions, workers or actors after a component leaves.",
+    "deterministic": "partial: xstate/no-machine-in-render prevents one lifecycle mistake, not general cleanup"
+  },
+  "xstate/derived-boolean-context": {
+    "verdict": "keep",
+    "why": "Review duplicated state and context truth.",
+    "risk": "An agent can let availability booleans diverge from machine state.",
+    "deterministic": "none; a boolean may represent independent domain data"
+  },
+  "xstate/effect-actor-observed": {
+    "verdict": "keep",
+    "why": "An Effect actor's outcome must reach its owner.",
+    "risk": "An agent can launch an actor whose failure is never observed.",
+    "deterministic": "partial: xstate/no-discarded-effect covers discarded Effects in callbacks, not actor joins"
+  },
+  "xstate/machine-failure-coverage": {
+    "verdict": "keep",
+    "why": "Failure transitions need recovery semantics.",
+    "risk": "An agent can invoke or spawn actors without a usable failure path.",
+    "deterministic": "partial: xstate/no-unreachable-transition does not establish recovery behavior"
+  },
+  "xstate/persisted-snapshot-compat": {
+    "verdict": "keep",
+    "why": "Bind app persistence; exclude vendored library internals.",
+    "risk": "An agent can restore an old machine snapshot into incompatible state definitions.",
+    "deterministic": "partial: xstate/no-persist-live-snapshot enforces snapshot kind, not migrations or fallback"
+  },
+  "xstate/spawn-id-collision": {
+    "verdict": "keep",
+    "why": "Repeated events need deliberate child identity.",
+    "risk": "An agent can reuse a child id on the next occurrence of an event.",
+    "deterministic": "none; guards or explicit stopping can justify a fixed id"
+  },
+  "xstate/spawned-actor-release": {
+    "verdict": "merge",
+    "target": "xstate/actor-cleanup",
+    "why": "One lifecycle review covers creation, stop and ref release.",
+    "risk": "An agent can stop an actor without releasing its retained reference.",
+    "deterministic": "none for complete stop/ref-release behavior"
+  }
+}

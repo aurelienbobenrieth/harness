@@ -4,6 +4,10 @@
 
 **25 agentlint reviews for any TypeScript repo: a deterministic trigger finds the spot, an agent or a human settles it.**
 
+The [60-rule review proposal](../../evals/agentlint/review.md) preserves every export and preset while the owner decides which gates to consolidate or retire. Only `bounded-data-access` and `bounded-work` change detection here; their detector versions advance, so surviving findings require fresh acceptances.
+
+`bounded-data-access` inspects the immediate list/select callee and its complete fluent chain. It no longer treats arbitrary raw SQL commands as collection reads or reports the same nested query on each wrapping call. `bounded-work` reviews dynamic I/O loops and collection fan-out once at the operation; fixed call sequences, explicit finite timeouts and test files no longer trigger it. Neither detector proves cardinality through aliases, imported helpers or data flow.
+
 > [!WARNING]
 > Requires the engine `@aurelienbbn/agentlint` `>=0.3.0 <0.9.0` as a peer. [Evidence](../../docs/compatibility.md#agentlint-engine).
 
@@ -89,8 +93,8 @@ const email = form.get("email") || "";                               // ❌ fall
 | --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `boundary-resilience` | `fetch(` / `axios` / `got` / `ky` call whose **argument list** has no `signal`, `timeout`, `timeoutMs`, `deadline` or `AbortSignal`                        | chained `fetch(url).then(...)` reports once, on the call owning the args; strings and comments are blanked (`fetch("/api/signal?timeout=1")` fires) |
 |                       | `catch` of a `try` around an outbound call, or `.catch(cb)` on one, that discards the failure (handing it only to `console.*` / `logger.*` still discards) | rethrow, branching on the error, passing it to another function, a `REASON:` comment of ≥ 3 words; catches around anything else                     |
-| `bounded-work`        | ≥ 3 sequential `await`s with I/O, looped I/O, `Promise.all(...map(...))` fan-out, `timeoutMs`/`durationMs`/`cpuMs` > 60 000                                | a pure `items.map(item => item.id)`                                                                                                                 |
-| `bounded-data-access` | `findMany`/`findAll`/`getMany`/`list`/`search`/`query`/`select` on a repo/store/dao/client/model/collection                                                | a non-zero `first`/`take`/`limit`/`pageSize`/`perPage`/`maxResults` or `.limit(n)`/`.take(n)`                                                       |
+| `bounded-work`        | dynamic I/O loops and `Promise.all(...map(...))` fan-out                                                                                                   | pure maps, fixed call sequences, literal batches, explicit finite budgets and test files                                                            |
+| `bounded-data-access` | immediate `findMany`/`findAll`/`getMany`/`list`/`search`/`select` calls on a repo/store/dao/client/model/collection                                        | a non-zero `first`/`take`/`limit`/`pageSize`/`perPage`/`maxResults` or `.limit(n)`/`.take(n)`                                                       |
 
 Limits: `bounded-work` separates enclosing operations; a cursor alone is not a cardinality bound; cancellation is not a deadline.
 
@@ -276,7 +280,7 @@ Generated from package exports by `pnpm catalog`. Rule-specific options and limi
 | `abstraction-earns-keep`             | Flags interfaces that mirror their only implementer, classes and modules that forward verbatim to one collaborator, and exports that only delegate to a single call.                            |
 | `boundary-resilience`                | Flags outbound network calls that show no timeout or AbortSignal, and handlers around them that discard the failure.                                                                            |
 | `bounded-data-access`                | Flags repository-like list/search/query calls without obvious boundedness markers.                                                                                                              |
-| `bounded-work`                       | Flags execution paths with unbounded I/O, fan-out, or runtime budgets.                                                                                                                          |
+| `bounded-work`                       | Flags dynamic I/O loops and Promise.all collection fan-out that need a cardinality or concurrency bound.                                                                                        |
 | `change-scatter-review`              | Flags a decision token added across several production files so a reader checks whether the change is legitimately cross-cutting or duplicates ownership.                                       |
 | `comment-signal`                     | Flags comments that narrate the next line or docblocks that restate the signature.                                                                                                              |
 | `correlated-optional-state`          | Flags object types that pair a literal-union status field with two or more optional fields, where a discriminated union would make illegal combinations unrepresentable.                        |
