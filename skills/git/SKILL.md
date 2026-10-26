@@ -20,6 +20,8 @@ description: Stage, commit, resolve conflicts, rewrite history, push, and write 
 
 ## Pull requests
 
+For commit/PR drafts, stage explicit task paths, then run `node <this-skill>/scripts/draft.mjs [base-ref]`. Replace its result placeholders using the staged diff; keep only actual validation evidence.
+
 - Inspection, reversible prep, conflict resolution: no extra permission. Authorization per operation: commit, push, PR, merge, release separate. No-publish/no-deploy binds.
 - Read the PR template; discover remote/base, don't assume `origin`/`main`. Body via `gh ... --body-file <tmpfile>`.
 - After mutating: verify actual state, report revision/link.
