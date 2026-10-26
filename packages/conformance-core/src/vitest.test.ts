@@ -12,8 +12,8 @@ it("reports unavailable evidence as skipped, failed evaluation as failed, and ev
   const missing = await createFixture({ "package.json": '{"name":"missing-tools"}' });
   const invalid = await createFixture({
     "package.json": '{"name":"invalid-tool-report"}',
-    "node_modules/knip/package.json": '{"name":"knip","bin":"cli.cjs"}',
-    "node_modules/knip/cli.cjs": 'console.log("invalid report");',
+    "node_modules/jscpd/package.json": '{"name":"jscpd","bin":"cli.cjs"}',
+    "node_modules/jscpd/cli.cjs": 'console.log("invalid report");',
   });
   const advisory = await createFixture({
     "package.json": '{"name":"advice","dependencies":{"dayjs":"1.0.0","moment":"2.0.0"}}',
@@ -26,9 +26,9 @@ it("reports unavailable evidence as skipped, failed evaluation as failed, and ev
 import { describe } from ${JSON.stringify(pathToFileURL(path.resolve(import.meta.dirname, "../../../node_modules/vitest/dist/index.js")).href)};
 import { coreConformance } from ${JSON.stringify(adapter)};
 describe("unavailable", () => coreConformance({root:${JSON.stringify(missing)}}));
-describe("invalid", () => coreConformance({root:${JSON.stringify(invalid)},skipChecks:["duplication-budget"]}));
-describe("advisory", () => coreConformance({root:${JSON.stringify(advisory)},skipChecks:["duplication-budget","dead-exports"]}));
-describe("required", () => coreConformance({root:${JSON.stringify(missing)},skipChecks:["duplication-budget"],deadExports:{requireKnipConfig:true}}));
+describe("invalid", () => coreConformance({root:${JSON.stringify(invalid)}}));
+describe("advisory", () => coreConformance({root:${JSON.stringify(advisory)},skipChecks:["duplication-budget"]}));
+describe("required", () => coreConformance({root:${JSON.stringify(missing)},duplication:{requireTool:true}}));
 `,
   });
   const report = path.join(root, "results.json");
@@ -49,9 +49,8 @@ describe("required", () => coreConformance({root:${JSON.stringify(missing)},skip
   const assertions = result.testResults.flatMap((file) => file.assertionResults);
   const status = (suite: string, check: string) =>
     assertions.find((entry) => entry.fullName.startsWith(`${suite} `) && entry.fullName.includes(`${check}:`))?.status;
-  expect(status("unavailable", "dead-exports")).toBe("skipped");
   expect(status("unavailable", "duplication-budget")).toBe("skipped");
-  expect(status("invalid", "dead-exports")).toBe("failed");
+  expect(status("invalid", "duplication-budget")).toBe("failed");
   expect(status("advisory", "dependency-overlap")).toBe("passed");
-  expect(status("required", "dead-exports")).toBe("failed");
+  expect(status("required", "duplication-budget")).toBe("failed");
 }, 30_000);

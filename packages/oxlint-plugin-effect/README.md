@@ -2,7 +2,7 @@
 
 [![npm](https://img.shields.io/npm/v/@aurelienbbn/oxlint-plugin-effect)](https://www.npmjs.com/package/@aurelienbbn/oxlint-plugin-effect) [![downloads](https://img.shields.io/npm/dm/@aurelienbbn/oxlint-plugin-effect)](https://www.npmjs.com/package/@aurelienbbn/oxlint-plugin-effect) [![CI](https://github.com/aurelienbobenrieth/harness/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/aurelienbobenrieth/harness/actions/workflows/ci.yml) [![license](https://img.shields.io/npm/l/@aurelienbbn/oxlint-plugin-effect)](https://github.com/aurelienbobenrieth/harness/blob/main/packages/oxlint-plugin-effect/LICENSE) [![node](https://img.shields.io/node/v/@aurelienbbn/oxlint-plugin-effect)](https://github.com/aurelienbobenrieth/harness/blob/main/packages/oxlint-plugin-effect/package.json)
 
-**42 oxlint rules for Effect code: runtime boundaries, failure channels, concurrency, services, Schema. Only what `@effect/tsgo` doesn't own.**
+**44 oxlint rules for Effect code: runtime boundaries, failure channels, concurrency, services, Schema. Only what `@effect/tsgo` doesn't own.**
 
 ```sh
 pnpm add -D @aurelienbbn/oxlint-plugin-effect oxlint   # oxlint >=1.82.0 <2.0.0
@@ -202,7 +202,9 @@ Generated from package exports by `pnpm catalog`. Rule-specific options and limi
 | Rule/check                         | Trigger or review scope                                                                                                                                                                                      |
 | ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `bounded-retry`                    | Require Effect.retry policies visible in the same file to carry a bound such as Schedule.recurs, Schedule.upTo, Schedule.during, times, while, or until.                                                     |
+| `calendar-date-round-trip`         | Pair a YYYY-MM-DD Effect Schema pattern with an explicit calendar-date refinement.                                                                                                                           |
 | `dependencies-first`               | Yield service dependencies before runtime logic in Effect bodies.                                                                                                                                            |
+| `destructive-reason-required`      | Require a nonoptional refined reason in Delete, Destroy, Purge, Drop and Remove command Schema.Struct declarations.                                                                                          |
 | `effect-fn-name-matches-binding`   | Require the last dot-segment of an Effect.fn span name to equal the variable or property the function is bound to.                                                                                           |
 | `no-array-callback-reference`      | Disallow passing a function reference to an array method's callback, skipping calls on Effect modules that are not arrays.                                                                                   |
 | `no-array-for-each`                | Disallow Array#forEach in favor of for…of, skipping Effect's forEach helpers (`Effect.forEach`).                                                                                                             |
@@ -212,7 +214,7 @@ Generated from package exports by `pnpm catalog`. Rule-specific options and limi
 | `no-dynamic-span-name`             | Disallow template literals with runtime values and string concatenation as span names in Effect.fn, Effect.withSpan, withSpanScoped, useSpan, makeSpan, makeSpanScoped, Layer.withSpan, and Stream.withSpan. |
 | `no-effect-ordie`                  | Disallow Effect.orDie, Effect.orDieWith, Layer.orDie, and Effect.catch handlers that only die outside configured escape hatches.                                                                             |
 | `no-effect-promise`                | Disallow Effect.promise outside configured files unless the thunk is a syntactically total promise such as Promise.resolve or a resolve-only timer.                                                          |
-| `no-fake-timers-in-effect-tests`   | Disallow vi.useFakeTimers, vi.advanceTimers*, vi.run*Timers, and vi.setSystemTime in files importing @effect/vitest; use TestClock.                                                                          |
+| `no-fake-timers-in-effect-tests`   | Disallow vi.useFakeTimers, vi.advanceTimers*, vi.run*Timers, and vi.setSystemTime, including imported aliases and namespace members, in files importing @effect/vitest; use TestClock.                       |
 | `no-fork-detach`                   | Disallow Effect.forkDetach outside configured files and Effect.forkChild directly inside Layer constructors, where Effect.forkScoped ties the fiber to the layer scope.                                      |
 | `no-managed-runtime-per-call`      | Disallow ManagedRuntime.make inside function bodies outside configured files; build the runtime once at module scope.                                                                                        |
 | `no-run-promise-in-runtime`        | Disallow Effect.runPromise, runPromiseExit, and their run*With variants outside configured runtime boundaries.                                                                                               |
@@ -228,7 +230,7 @@ Generated from package exports by `pnpm catalog`. Rule-specific options and limi
 | `no-unscoped-runtime-launch`       | Disallow Effect.runFork, runSync, runSyncExit, runCallback, their run*With variants, and Layer.launch outside configured runtime boundaries.                                                                 |
 | `no-untyped-try-promise-catch`     | Require Effect.try and Effect.tryPromise to map thrown or rejected values with a catch handler.                                                                                                              |
 | `padding-after-dependencies`       | Require a blank line after the leading service dependencies of an Effect.gen, Effect.fn, or Effect.fnUntraced generator body when logic follows them.                                                        |
-| `prefer-effect-array-helpers`      | Prefer Effect array helpers over native array helper methods.                                                                                                                                                |
+| `prefer-effect-array-helpers`      | Prefer Effect array helpers for known arrays inside imported Effect runtime callbacks.                                                                                                                       |
 | `prefer-it-effect`                 | Prefer it.effect from @effect/vitest over Effect.runPromise or Effect.runSync inside plain it/test callbacks in test files (opt-in; requires @effect/vitest).                                                |
 | `prefer-match`                     | Prefer Match from effect over chained literal ternaries.                                                                                                                                                     |
 | `prefer-run-main`                  | Prefer NodeRuntime.runMain or BunRuntime.runMain over a module top-level Effect.runPromise or Effect.runFork statement.                                                                                      |
@@ -263,3 +265,16 @@ Generated from package exports by `pnpm catalog`. Rule-specific options and limi
 - executor by Rhys Sullivan, dotted snake_case span and attribute names such as `mcp.auth.verify_api_key` (MIT, naming-style inspiration)
 
 <!-- harness-catalog:end -->
+
+## Advisory rules
+
+Merge the exported `advisoryRules` into your oxlint rules (or enable these names as `warn`): `effect/calendar-date-round-trip`, `effect/destructive-reason-required`. No autofix: each needs a domain decision.
+
+`prefer-effect-array-helpers` is enabled as `error` by consumers. It is excluded from `advisoryRules` after restricting it to imported Effect runtime callbacks: all ten scoped consumer samples were true positives. The plugin itself has no implicit severity.
+
+- `calendar-date-round-trip` (`warn`) flags an imported Effect Schema YYYY-MM-DD regex without a filter/check in the same fluent expression. Add a date round-trip predicate and tests for impossible dates and leap days. A refinement is a review boundary, not proof it validates calendars; alternate regexes and external helpers require review.
+- `destructive-reason-required` (`warn`) checks direct Schema.Struct declarations named Delete/Destroy/Purge/Drop/Remove followed by a capital letter or underscore. A reason must exist, be nonoptional and use an inline trimmed-length check (>= 10) or a referenced schema. Verify referenced/refined schemas reject trimmed reasons shorter than ten characters; the rule cannot prove a predicate or a remote delete validates input. Spread fields and arbitrary command names require review.
+
+### Array rule scope
+
+`prefer-effect-array-helpers`, `no-array-for-each` and `no-array-callback-reference` require a value import from `effect`, `effect/*` or `@effect/*`, and the nearest enclosing function resolved to an imported `effect/Effect` constructor or combinator. This includes `gen`, `fn`, `sync`, `suspend`, `promise`, `try`, `tryPromise`, `async`, `map`, `flatMap`, `tap`, `forEach`, `catchAll`, `catchTag`, `match` and `matchEffect`. Import aliases and generators passed by reference are recognized; shadowed names and unrelated utilities in the same file and deferred functions nested inside runtime bodies are excluded. Pure helpers called indirectly by an Effect program are outside this syntactic scope.

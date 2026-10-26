@@ -8,13 +8,17 @@ import type { Context, ESTree, Variable } from "@oxlint/plugins";
 export function isModuleNamespace(context: Context, node: ESTree.Node, moduleName: string): boolean {
   if (node.type !== "Identifier") return false;
   const variable = binding(context, node, node.name);
+
   if (variable === undefined) return node.name === moduleName;
+
   return variable.defs.some((definition) => {
     if (definition.parent?.type !== "ImportDeclaration") return false;
     const source = definition.parent.source.value;
+
     if (definition.node.type === "ImportNamespaceSpecifier") return source === `effect/${moduleName}`;
     if (definition.node.type !== "ImportSpecifier" || source !== "effect") return false;
     const name = definition.node.imported;
+
     return name.type === "Identifier" && name.name === moduleName;
   });
 }
@@ -34,8 +38,10 @@ export function effectModuleOf(context: Context, node: ESTree.Node): string | un
   const definition = binding(context, node, node.name)?.defs.find(
     (candidate) => candidate.parent?.type === "ImportDeclaration",
   );
+
   if (definition?.parent?.type !== "ImportDeclaration") return undefined;
   const source = definition.parent.source.value;
+
   if (!isEffectModuleSource(source)) return undefined;
   if (
     source === "effect" &&
@@ -43,7 +49,61 @@ export function effectModuleOf(context: Context, node: ESTree.Node): string | un
     definition.node.imported.type === "Identifier"
   )
     return `effect/${definition.node.imported.name}`;
+
   return source;
+}
+
+/** Runtime callbacks whose bodies execute as part of an Effect program. */
+const runtimeCallbackMethods: ReadonlySet<string> = new Set([
+  "sync",
+  "suspend",
+  "promise",
+  "try",
+  "tryPromise",
+  "async",
+  "map",
+  "flatMap",
+  "tap",
+  "forEach",
+  "catchAll",
+  "catchTag",
+  "match",
+  "matchEffect",
+]);
+
+/** Require an Effect value import and an enclosing runtime body, leaving mixed-file utilities alone. */
+export function isInEffectRuntime(context: Context, node: ESTree.Node): boolean {
+  if (
+    !context.sourceCode.ast.body.some(
+      (statement) =>
+        statement.type === "ImportDeclaration" &&
+        statement.importKind !== "type" &&
+        isEffectModuleSource(statement.source.value),
+    )
+  )
+    return false;
+
+  for (let parent = node.parent; parent !== null && parent !== undefined; parent = parent.parent) {
+    if (
+      parent.type !== "FunctionExpression" &&
+      parent.type !== "FunctionDeclaration" &&
+      parent.type !== "ArrowFunctionExpression"
+    )
+      continue;
+    if (effectBodyMethod(context, parent, true) !== undefined) return true;
+    const call = parent.parent;
+
+    if (call?.type !== "CallExpression" || !call.arguments.includes(parent)) return false;
+    const method = effectCallee(
+      context,
+      call.callee.type === "CallExpression" ? call.callee.callee : call.callee,
+      true,
+    );
+
+    return method !== undefined && runtimeCallbackMethods.has(method);
+  }
+
+  return false;
 }
 
 /** Recognize Effect imports and aliases without matching local shadows. */
@@ -55,6 +115,7 @@ function isEffectNamespace(context: Context, node: ESTree.Node): boolean {
 export function moduleMethod(context: Context, node: ESTree.Node, moduleName: string): string | undefined {
   if (node.type !== "MemberExpression" || !isModuleNamespace(context, node.object, moduleName)) return undefined;
   if (!node.computed) return node.property.type === "Identifier" ? node.property.name : undefined;
+
   return node.property.type === "Literal" && typeof node.property.value === "string" ? node.property.value : undefined;
 }
 
@@ -66,6 +127,7 @@ export function effectMethod(context: Context, node: ESTree.Node): string | unde
     !isEffectNamespace(context, node.object)
   )
     return undefined;
+
   return node.property.name;
 }
 
@@ -76,19 +138,29 @@ const effectBodyMethods: ReadonlySet<string> = new Set(["gen", "fn", "fnUntraced
  * Resolve the Effect function a callee denotes: a member of an alias-aware `Effect` namespace (`Effect.gen`) or a
  * named import from `effect/Effect` (`import { gen as g } from "effect/Effect"`). A same-named local never matches.
  */
-function effectCallee(context: Context, callee: ESTree.Node): string | undefined {
+function effectCallee(context: Context, callee: ESTree.Node, importedOnly = false): string | undefined {
+  const receiver = callee.type === "MemberExpression" ? callee.object : callee;
+
+  if (importedOnly && effectModuleOf(context, receiver) !== "effect/Effect") return undefined;
+
   return (
     effectMethod(context, callee) ?? importedSpecifierName(context, callee, (source) => source === "effect/Effect")
   );
 }
 
 /** Resolve the body constructor of the call `node` is an argument of, direct (`gen(body)`) or curried (`fn("x")(body)`). */
-function bodyCallMethod(context: Context, node: ESTree.Node): string | undefined {
+function bodyCallMethod(context: Context, node: ESTree.Node, importedOnly = false): string | undefined {
   const parent = node.parent;
+
   if (parent?.type !== "CallExpression") return undefined;
   if (!parent.arguments.some((argument) => argument === node)) return undefined;
 
-  const method = effectCallee(context, parent.callee.type === "CallExpression" ? parent.callee.callee : parent.callee);
+  const method = effectCallee(
+    context,
+    parent.callee.type === "CallExpression" ? parent.callee.callee : parent.callee,
+    importedOnly,
+  );
+
   return method !== undefined && effectBodyMethods.has(method) ? method : undefined;
 }
 
@@ -99,9 +171,12 @@ function bodyCallMethod(context: Context, node: ESTree.Node): string | undefined
 function generatorBinding(context: Context, node: ESTree.Node): Variable | undefined {
   if (node.type === "FunctionDeclaration" && node.id !== null) {
     const id = node.id;
+
     return context.sourceCode.getDeclaredVariables(node).find((variable) => variable.identifiers.includes(id));
   }
+
   const declarator = node.parent;
+
   if (
     node.type !== "FunctionExpression" ||
     declarator?.type !== "VariableDeclarator" ||
@@ -110,6 +185,7 @@ function generatorBinding(context: Context, node: ESTree.Node): Variable | undef
   )
     return undefined;
   const id = declarator.id;
+
   return context.sourceCode.getDeclaredVariables(declarator).find((variable) => variable.identifiers.includes(id));
 }
 
@@ -119,15 +195,18 @@ function generatorBinding(context: Context, node: ESTree.Node): Variable | undef
  * import, and a named generator passed by reference (`function* program() {}; Effect.gen(program)`), resolved
  * through its scope binding rather than its name.
  */
-export function effectBodyMethod(context: Context, node: ESTree.Node): string | undefined {
-  const inline = bodyCallMethod(context, node);
+export function effectBodyMethod(context: Context, node: ESTree.Node, importedOnly = false): string | undefined {
+  const inline = bodyCallMethod(context, node, importedOnly);
+
   if (inline !== undefined) return inline;
   if (!(node.type === "FunctionDeclaration" || node.type === "FunctionExpression") || !node.generator) return undefined;
 
   for (const reference of generatorBinding(context, node)?.references ?? []) {
-    const method = reference.isRead() ? bodyCallMethod(context, reference.identifier) : undefined;
+    const method = reference.isRead() ? bodyCallMethod(context, reference.identifier, importedOnly) : undefined;
+
     if (method !== undefined) return method;
   }
+
   return undefined;
 }
 
@@ -141,6 +220,7 @@ export function isServiceDependency(context: Context, statement: ESTree.Node): b
       ? statement.declarations[0]?.init
       : undefined;
   const argument = initial?.type === "YieldExpression" && initial.delegate ? initial.argument : undefined;
+
   return (
     (argument?.type === "Identifier" && /^[A-Z]/.test(argument.name)) ||
     (argument?.type === "CallExpression" && effectMethod(context, argument.callee) === "service")
@@ -155,6 +235,7 @@ export function isUnsafeType(context: Context, type: ESTree.TSType, seen = new S
   if (type.type === "TSParenthesizedType") return isUnsafeType(context, type.typeAnnotation, seen);
   if (type.type === "TSUnionType") return type.types.some((member) => isUnsafeType(context, member, seen));
   if (type.type !== "TSTypeReference" || type.typeName.type !== "Identifier") return false;
+
   return (binding(context, type.typeName, type.typeName.name)?.defs ?? []).some(
     (definition) =>
       definition.node.type === "TSTypeAliasDeclaration" && isUnsafeType(context, definition.node.typeAnnotation, seen),

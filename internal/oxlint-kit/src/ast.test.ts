@@ -272,10 +272,6 @@ describe("optionsObject", () => {
 });
 
 describe("returnedExpressions", () => {
-  const ret = (argument: ESTree.Node | null) => node({ type: "ReturnStatement", argument });
-  const block = (...body: ESTree.Node[]) => node({ type: "BlockStatement", body });
-  const fn = (type: string, body: ESTree.Node | null) => node({ type, body }) as unknown as FunctionNode;
-
   it("returns an arrow's expression body", () => {
     const body = identifier("value");
     expect(returnedExpressions(fn("ArrowFunctionExpression", body))).toEqual([body]);
@@ -295,3 +291,7 @@ describe("returnedExpressions", () => {
     expect(returnedExpressions(fn("TSDeclareFunction", null))).toEqual([]);
   });
 });
+
+const ret = (argument: ESTree.Node | null) => node({ type: "ReturnStatement", argument });
+const block = (...body: ESTree.Node[]) => node({ type: "BlockStatement", body });
+const fn = (type: string, body: ESTree.Node | null) => node({ type, body }) as unknown as FunctionNode;

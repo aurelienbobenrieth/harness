@@ -1,0 +1,3916 @@
+[
+  {
+    "id": "conformance-alchemy/alchemy-pinned-exact",
+    "repo": "keepcart",
+    "index": 0,
+    "seed": {
+      "file": "package.json",
+      "source": "",
+      "files": {
+        "package.json": "{\"name\":\"evalSeed25102026-root\",\"dependencies\":{\"alchemy\":\"^2.0.0-beta.79\"}}"
+      },
+      "options": {}
+    }
+  },
+  {
+    "id": "conformance-alchemy/alchemy-pinned-exact",
+    "repo": "kitbois",
+    "index": 1,
+    "seed": {
+      "file": "package.json",
+      "source": "",
+      "files": {
+        "package.json": "{\"name\":\"evalSeed25102026-root\",\"workspaces\":[\"apps/*\"]}",
+        "pnpm-workspace.yaml": "packages:\n  - apps/*\ncatalog:\n  alchemy: ~2.0.0-beta.79\n",
+        "apps/api/package.json": "{\"name\":\"evalSeed25102026-api\",\"devDependencies\":{\"alchemy\":\"catalog:\"}}"
+      },
+      "options": {}
+    }
+  },
+  {
+    "id": "conformance-alchemy/alchemy-state-gitignored",
+    "repo": "keepcart",
+    "index": 0,
+    "seed": {
+      "file": "alchemy.run.ts",
+      "source": "",
+      "files": {
+        "alchemy.run.ts": "import { Stack, localState } from \"alchemy\";\nexport default Stack(\"evalSeed25102026\", { state: localState() });\n",
+        ".gitignore": "dist/\n"
+      },
+      "options": {}
+    }
+  },
+  {
+    "id": "conformance-alchemy/alchemy-state-gitignored",
+    "repo": "kitbois",
+    "index": 1,
+    "seed": {
+      "file": "apps/api/alchemy.run.ts",
+      "source": "",
+      "files": {
+        "apps/api/alchemy.run.ts": "import { Stack, localState } from \"alchemy\";\nexport default Stack(\"evalSeed25102026Api\", { state: localState() });\n",
+        ".gitignore": "/.alchemy/\n"
+      },
+      "options": {}
+    }
+  },
+  {
+    "id": "conformance-alchemy/ci-uses-remote-state",
+    "repo": "keepcart",
+    "index": 0,
+    "seed": {
+      "file": ".github/workflows/deploy.yml",
+      "source": "",
+      "files": {
+        "alchemy.run.ts": "import { Stack, localState } from \"alchemy\";\nexport default Stack(\"evalSeed25102026\", { state: localState() });\n",
+        ".github/workflows/deploy.yml": "name: evalSeed25102026 deploy\non:\n  push:\n    branches: [main]\njobs:\n  deploy:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v5\n      - run: pnpm alchemy deploy --stage prod --yes\n"
+      },
+      "options": {}
+    }
+  },
+  {
+    "id": "conformance-alchemy/ci-uses-remote-state",
+    "repo": "kitbois",
+    "index": 1,
+    "seed": {
+      "file": ".github/workflows/deploy.yml",
+      "source": "",
+      "files": {
+        "apps/worker/alchemy.run.ts": "import { Stack, inMemoryState } from \"alchemy\";\nexport default Stack(\"evalSeed25102026Worker\", { state: inMemoryState() });\n",
+        ".github/workflows/deploy.yml": "name: evalSeed25102026 deploy\non:\n  workflow_dispatch:\njobs:\n  deploy:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v5\n      - working-directory: apps/worker\n        run: bunx alchemy destroy --stage preview-evalSeed25102026\n"
+      },
+      "options": {}
+    }
+  },
+  {
+    "id": "conformance-alchemy/preview-cleanup",
+    "repo": "keepcart",
+    "index": 0,
+    "seed": {
+      "file": ".github/workflows/preview.yml",
+      "source": "",
+      "files": {
+        ".github/workflows/preview.yml": "name: evalSeed25102026 preview\non:\n  pull_request:\n    types: [opened, synchronize]\njobs:\n  deploy:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v5\n      - run: alchemy deploy --stage pr-${{ github.event.number }}\n"
+      },
+      "options": {}
+    }
+  },
+  {
+    "id": "conformance-alchemy/preview-cleanup",
+    "repo": "kitbois",
+    "index": 1,
+    "seed": {
+      "file": ".github/workflows/deploy.yml",
+      "source": "",
+      "files": {
+        ".github/workflows/deploy.yml": "name: evalSeed25102026 deploy and cleanup\non:\n  pull_request:\n    types: [opened, synchronize, closed]\njobs:\n  deploy:\n    if: ${{ github.event.action != 'closed' }}\n    runs-on: ubuntu-latest\n    steps:\n      - run: alchemy deploy --stage pr-${{ github.event.number }}\n  cleanup:\n    if: ${{ github.event.action == 'closed' }}\n    runs-on: ubuntu-latest\n    steps:\n      - run: alchemy destroy --stage production\n"
+      },
+      "options": {}
+    }
+  },
+  {
+    "id": "conformance-cloudflare/compatibility-date-current",
+    "repo": "keepcart",
+    "index": 0,
+    "seed": {
+      "file": "wrangler.jsonc",
+      "source": "",
+      "files": {
+        "wrangler.jsonc": "{\"name\":\"evalSeed25102026\",\"compatibility_date\":\"2025-01-01\"}"
+      },
+      "options": {
+        "now": "2026-09-24T12:00:00Z"
+      }
+    }
+  },
+  {
+    "id": "conformance-cloudflare/compatibility-date-current",
+    "repo": "kitbois",
+    "index": 1,
+    "seed": {
+      "file": "wrangler.jsonc",
+      "source": "",
+      "files": {
+        "wrangler.jsonc": "{\"name\":\"evalSeed25102026\",\"compatibility_date\":\"2026-09-25\"}"
+      },
+      "options": {
+        "now": "2026-09-24T12:00:00Z"
+      }
+    }
+  },
+  {
+    "id": "conformance-cloudflare/environment-bindings-redeclared",
+    "repo": "keepcart",
+    "index": 0,
+    "seed": {
+      "file": "wrangler.jsonc",
+      "source": "",
+      "files": {
+        "wrangler.jsonc": "{\"name\":\"evalSeed25102026\",\"vars\":{\"MODE\":\"prod\",\"REGION\":\"eu\"},\"env\":{\"production\":{\"vars\":{\"MODE\":\"production\"}}}}"
+      },
+      "options": {}
+    }
+  },
+  {
+    "id": "conformance-cloudflare/environment-bindings-redeclared",
+    "repo": "kitbois",
+    "index": 1,
+    "seed": {
+      "file": "wrangler.jsonc",
+      "source": "",
+      "files": {
+        "wrangler.jsonc": "{\"name\":\"evalSeed25102026\",\"hyperdrive\":[{\"binding\":\"DB\",\"id\":\"evalSeed25102026-id\"}],\"env\":{\"staging\":{}}}"
+      },
+      "options": {}
+    }
+  },
+  {
+    "id": "conformance-cloudflare/hyperdrive-contract",
+    "repo": "panache",
+    "index": 0,
+    "seed": {
+      "file": "wrangler.jsonc",
+      "source": "",
+      "files": {
+        "wrangler.jsonc": "{\"compatibility_date\":\"2026-09-01\"}\n",
+        "package.json": "{\"name\":\"worker\",\"dependencies\":{\"postgres\":\"3.4.5\"}}\n"
+      },
+      "options": {}
+    }
+  },
+  {
+    "id": "conformance-cloudflare/hyperdrive-contract",
+    "repo": "studio",
+    "index": 1,
+    "seed": {
+      "file": "wrangler.jsonc",
+      "source": "",
+      "files": {
+        "wrangler.jsonc": "{\"compatibility_date\":\"2026-09-01\",\"hyperdrive\":[{\"binding\":\"HYPERDRIVE\",\"id\":\"evalSeed-h\"}],\"compatibility_flags\":[\"no_nodejs_compat\"]}\n",
+        "package.json": "{\"name\":\"worker\",\"dependencies\":{\"pg\":\"8.16.2\",\"@planetscale/database\":\"^1.19.0\"}}\n"
+      },
+      "options": {}
+    }
+  },
+  {
+    "id": "conformance-cloudflare/no-secrets-in-vars",
+    "repo": "panache",
+    "index": 0,
+    "seed": {
+      "file": "wrangler.jsonc",
+      "source": "",
+      "files": {
+        "wrangler.jsonc": "{\"vars\":{\"evalSeed_API_KEY\":\"placeholder\"}}\n"
+      },
+      "options": {}
+    }
+  },
+  {
+    "id": "conformance-cloudflare/no-secrets-in-vars",
+    "repo": "studio",
+    "index": 1,
+    "seed": {
+      "file": "wrangler.jsonc",
+      "source": "",
+      "files": {
+        "wrangler.jsonc": "{\"vars\":{\"SESSION\":\"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIn0.c2lnbmF0dXJl\"},\"env\":{\"staging\":{\"vars\":{\"evalSeed_SIGNING_KEY\":\"placeholder\"}}}}\n"
+      },
+      "options": {}
+    }
+  },
+  {
+    "id": "conformance-cloudflare/observability-enabled",
+    "repo": "panache",
+    "index": 0,
+    "seed": {
+      "file": "wrangler.jsonc",
+      "source": "",
+      "files": {
+        "wrangler.jsonc": "{\"env\":{\"staging\":{\"observability\":{\"enabled\":false}}}}\n"
+      },
+      "options": {}
+    }
+  },
+  {
+    "id": "conformance-cloudflare/observability-enabled",
+    "repo": "studio",
+    "index": 1,
+    "seed": {
+      "file": "wrangler.jsonc",
+      "source": "",
+      "files": {
+        "wrangler.jsonc": "{\"observability\":{\"enabled\":true},\"env\":{\"production\":{\"observability\":{\"head_sampling_rate\":0.1}}}}\n"
+      },
+      "options": {}
+    }
+  },
+  {
+    "id": "conformance-cloudflare/wrangler-types-current",
+    "repo": "kitbois",
+    "index": 0,
+    "seed": {
+      "file": "wrangler.jsonc",
+      "source": "",
+      "files": {
+        "wrangler.jsonc": "{\"name\":\"evalSeed25102026-types-a\",\"compatibility_date\":\"2026-09-01\"}",
+        "src/worker-configuration.d.ts": "// Generated by Wrangler for an outdated configuration.\ninterface Env { OLD_BINDING: string }\n"
+      },
+      "options": {}
+    }
+  },
+  {
+    "id": "conformance-cloudflare/wrangler-types-current",
+    "repo": "panache",
+    "index": 1,
+    "seed": {
+      "file": "wrangler.jsonc",
+      "source": "",
+      "files": {
+        "wrangler.jsonc": "{\"name\":\"evalSeed25102026-types-b\",\"compatibility_date\":\"2026-09-15\",\"vars\":{\"NEW_BINDING\":\"value\"}}",
+        "worker-configuration.d.ts": "// Generated by Wrangler for an outdated configuration.\ninterface Env { OLD_BINDING: string }\n"
+      },
+      "options": {}
+    }
+  },
+  {
+    "id": "conformance-core/closed-design-system-probe",
+    "repo": "kitbois",
+    "index": 0,
+    "seed": {
+      "file": "styles/theme.css",
+      "source": "",
+      "files": {
+        "styles/theme.css": "@theme { --color-brand: #123456; }\n.button { color: var(--color-brand); }\n"
+      },
+      "options": {
+        "closedDesignSystem": {
+          "stylesheet": "styles/theme.css",
+          "buildCommand": [
+            "node",
+            "-e",
+            "require('node:fs').writeFileSync(process.argv[1], '.button{color:#123456}.mt-4{margin-top:1rem}')",
+            "{output}"
+          ],
+          "requiredSelectors": [".button"],
+          "forbiddenSelectors": [".mt-4"]
+        }
+      }
+    }
+  },
+  {
+    "id": "conformance-core/closed-design-system-probe",
+    "repo": "panache",
+    "index": 1,
+    "seed": {
+      "file": "styles/theme.css",
+      "source": "",
+      "files": {
+        "styles/theme.css": "@theme { --color-accent: #abcdef; }\n.card { border-color: var(--color-accent); }\n"
+      },
+      "options": {
+        "closedDesignSystem": {
+          "stylesheet": "styles/theme.css",
+          "buildCommand": [
+            "node",
+            "-e",
+            "require('node:fs').writeFileSync(process.argv[1], '.card{border-color:#abcdef}.text-red-500{color:red}')",
+            "{output}"
+          ],
+          "requiredSelectors": [".card"],
+          "forbiddenSelectors": [".text-red-500"]
+        }
+      }
+    }
+  },
+  {
+    "id": "conformance-core/dead-exports",
+    "repo": "kitbois",
+    "index": 0,
+    "seed": {
+      "file": "src/dead.ts",
+      "source": "",
+      "files": {
+        "package.json": "{\"name\":\"evalSeed25102026-dead-a\"}",
+        "src/index.ts": "export const evalSeed25102026UnusedA = 1;\n"
+      },
+      "options": {}
+    }
+  },
+  {
+    "id": "conformance-core/dead-exports",
+    "repo": "panache",
+    "index": 1,
+    "seed": {
+      "file": "src/orphan.ts",
+      "source": "",
+      "files": {
+        "package.json": "{\"name\":\"evalSeed25102026-dead-b\"}",
+        "src/index.ts": "export type EvalSeed25102026UnusedB = { value: string };\n"
+      },
+      "options": {}
+    }
+  },
+  {
+    "id": "conformance-core/dependency-overlap",
+    "repo": "keepcart",
+    "index": 0,
+    "seed": {
+      "file": "package.json",
+      "source": "",
+      "files": {
+        "package.json": "{\"name\":\"eval-seed-25102026-a\",\"dependencies\":{\"dayjs\":\"1.0.0\",\"moment\":\"2.0.0\"}}"
+      },
+      "options": {}
+    }
+  },
+  {
+    "id": "conformance-core/dependency-overlap",
+    "repo": "kitbois",
+    "index": 1,
+    "seed": {
+      "file": "package.json",
+      "source": "",
+      "files": {
+        "package.json": "{\"name\":\"eval-seed-25102026-b\",\"dependencies\":{\"axios\":\"1.0.0\"},\"devDependencies\":{\"ky\":\"1.0.0\"}}"
+      },
+      "options": {}
+    }
+  },
+  {
+    "id": "conformance-core/duplication-budget",
+    "repo": "keepcart",
+    "index": 0,
+    "seed": {
+      "file": "src/duplicate-a.ts",
+      "source": "export function evalSeed25102026a(input: string): string { const normalized = input.trim().toLowerCase(); return normalized.replace(/\\s+/gu, \"-\"); }",
+      "files": {
+        "src/duplicate-b.ts": "export function evalSeed25102026b(input: string): string { const normalized = input.trim().toLowerCase(); return normalized.replace(/\\s+/gu, \"-\"); }"
+      },
+      "options": {
+        "duplication": {
+          "maxClones": 0
+        }
+      }
+    }
+  },
+  {
+    "id": "conformance-core/duplication-budget",
+    "repo": "kitbois",
+    "index": 1,
+    "seed": {
+      "file": "src/duplicate-a.ts",
+      "source": "export function evalSeed25102026c(value: number): number { let total = 0; for (let index = 0; index < value; index += 1) { total += index * 2; } return total; }",
+      "files": {
+        "src/duplicate-b.ts": "export function evalSeed25102026d(value: number): number { let total = 0; for (let index = 0; index < value; index += 1) { total += index * 2; } return total; }"
+      },
+      "options": {
+        "duplication": {
+          "maxClones": 0
+        }
+      }
+    }
+  },
+  {
+    "id": "conformance-core/instruction-blocks",
+    "repo": "keepcart",
+    "index": 0,
+    "seed": {
+      "file": "AGENTS.md",
+      "source": "",
+      "files": {
+        "AGENTS.md": "# Agent instructions\n\n<!-- harness:eval-seed-25102026:start -->\n\n- Keep replies concise and state the main result first.\n<!-- harness:eval-seed-25102026:end -->\n",
+        "skills/eval-seed-25102026.md": "- Keep replies concise and state the main result first, with relevant context."
+      },
+      "options": {
+        "instructionBlocks": {
+          "blocks": {
+            "eval-seed-25102026": "skills/eval-seed-25102026.md"
+          }
+        }
+      }
+    }
+  },
+  {
+    "id": "conformance-core/instruction-blocks",
+    "repo": "kitbois",
+    "index": 1,
+    "seed": {
+      "file": "AGENTS.md",
+      "source": "",
+      "files": {
+        "AGENTS.md": "# Agent instructions\n\n<!-- harness:eval-seed-25102026:start -->\n- Preserve accurate summaries.\n<!-- harness:eval-seed-25102026:start -->\n",
+        "skills/eval-seed-25102026.md": "- Preserve accurate summaries."
+      },
+      "options": {
+        "instructionBlocks": {
+          "blocks": {
+            "eval-seed-25102026": "skills/eval-seed-25102026.md"
+          }
+        }
+      }
+    }
+  },
+  {
+    "id": "conformance-core/tsconfig-strictness",
+    "repo": "studio",
+    "index": 0,
+    "seed": {
+      "file": "tsconfig.json",
+      "source": "",
+      "files": {
+        "tsconfig.json": "{\"compilerOptions\":{\"strict\":true,\"noUncheckedIndexedAccess\":true,\"exactOptionalPropertyTypes\":true,\"verbatimModuleSyntax\":true,\"erasableSyntaxOnly\":true,\"strictNullChecks\":false}}"
+      },
+      "options": {
+        "tsconfigStrictness": {
+          "files": ["tsconfig.json"]
+        }
+      }
+    }
+  },
+  {
+    "id": "conformance-core/tsconfig-strictness",
+    "repo": "keepcart",
+    "index": 1,
+    "seed": {
+      "file": "tsconfig.json",
+      "source": "",
+      "files": {
+        "tsconfig.json": "{\"compilerOptions\":{\"strict\":false,\"noUncheckedIndexedAccess\":true,\"exactOptionalPropertyTypes\":true,\"verbatimModuleSyntax\":true,\"erasableSyntaxOnly\":true,\"ignoreDeprecations\":\"6.0\"}}"
+      },
+      "options": {
+        "tsconfigStrictness": {
+          "files": ["tsconfig.json"]
+        }
+      }
+    }
+  },
+  {
+    "id": "conformance-shopify-app/api-version-contract",
+    "repo": "studio",
+    "index": 0,
+    "seed": {
+      "file": "shopify.app.toml",
+      "source": "",
+      "files": {
+        "shopify.app.toml": "[webhooks]\napi_version = \"2025-07\"\n"
+      },
+      "options": {
+        "minimumApiVersion": "2025-10"
+      }
+    }
+  },
+  {
+    "id": "conformance-shopify-app/api-version-contract",
+    "repo": "keepcart",
+    "index": 1,
+    "seed": {
+      "file": "shopify.app.toml",
+      "source": "",
+      "files": {
+        "shopify.app.toml": "[webhooks]\napi_version = \"2026-07\"\n",
+        "app/shopify.server.ts": "shopifyApp({ apiVersion: ApiVersion.January24 });"
+      },
+      "options": {}
+    }
+  },
+  {
+    "id": "conformance-shopify-app/app-bridge-script",
+    "repo": "studio",
+    "index": 0,
+    "seed": {
+      "file": "index.html",
+      "source": "",
+      "files": {
+        "shopify.app.toml": "embedded = true\n",
+        "index.html": "<html><head></head><body></body></html>"
+      },
+      "options": {}
+    }
+  },
+  {
+    "id": "conformance-shopify-app/app-bridge-script",
+    "repo": "keepcart",
+    "index": 1,
+    "seed": {
+      "file": "app/root.tsx",
+      "source": "",
+      "files": {
+        "shopify.app.toml": "embedded = true\n",
+        "app/root.tsx": "export default function Root() { return <html><head><script src=\"/app.js\"></script><script src=\"https://cdn.shopify.com/shopifycloud/app-bridge.js\"></script></head><body /></html>; }"
+      },
+      "options": {}
+    }
+  },
+  {
+    "id": "conformance-shopify-app/app-url-security",
+    "repo": "panache",
+    "index": 0,
+    "seed": {
+      "file": "shopify.app.toml",
+      "source": "",
+      "files": {
+        "shopify.app.toml": "application_url = \"http://app.example\""
+      },
+      "options": {}
+    }
+  },
+  {
+    "id": "conformance-shopify-app/app-url-security",
+    "repo": "studio",
+    "index": 1,
+    "seed": {
+      "file": "shopify.app.toml",
+      "source": "",
+      "files": {
+        "shopify.app.toml": "application_url = \"https://user:secret@app.example\""
+      },
+      "options": {}
+    }
+  },
+  {
+    "id": "conformance-shopify-app/built-for-shopify-extensions",
+    "repo": "studio",
+    "index": 0,
+    "seed": {
+      "file": "shopify.app.toml",
+      "source": "",
+      "files": {
+        "extensions/action/shopify.extension.toml": "[[extensions]]\ntype = \"ui_extension\"\n[[extensions.targeting]]\ntarget = \"admin.customer-details.action.render\"\n"
+      },
+      "options": {
+        "builtForShopifyCategories": ["advertising"]
+      }
+    }
+  },
+  {
+    "id": "conformance-shopify-app/built-for-shopify-extensions",
+    "repo": "keepcart",
+    "index": 1,
+    "seed": {
+      "file": "shopify.app.toml",
+      "source": "",
+      "files": {
+        "extensions/print/shopify.extension.toml": "[[extensions]]\ntype = \"ui_extension\"\n[[extensions.targeting]]\ntarget = \"admin.order-details.print-action.render\"\n"
+      },
+      "options": {
+        "builtForShopifyCategories": ["invoices"]
+      }
+    }
+  },
+  {
+    "id": "conformance-shopify-app/checkout-bundle-size",
+    "repo": "keepcart",
+    "index": 0,
+    "seed": {
+      "file": "shopify.app.toml",
+      "source": "",
+      "files": {
+        "shopify.app.toml": "name = \"evalSeed25102026\"\nclient_id = \"evalSeed25102026\"\napplication_url = \"https://example.com\"\nembedded = true\n\n[access_scopes]\nscopes = \"\"\n\n[webhooks]\napi_version = \"2025-10\"\n\n[[webhooks.subscriptions]]\ntopics = [\"orders/create\"]\nuri = \"/webhooks/orders/create\"\n",
+        "extensions/checkout/shopify.extension.toml": "[[extensions]]\ntype = \"ui_extension\"\n[[extensions.targeting]]\ntarget = \"purchase.checkout.block.render\"\n",
+        "extensions/checkout/dist/checkout.js": "evalSeed25102026;"
+      },
+      "options": {
+        "checkoutBundleLimitKb": 0.001
+      }
+    }
+  },
+  {
+    "id": "conformance-shopify-app/checkout-bundle-size",
+    "repo": "kitbois",
+    "index": 1,
+    "seed": {
+      "file": "shopify.app.toml",
+      "source": "",
+      "files": {
+        "shopify.app.toml": "name = \"evalSeed25102026\"\nclient_id = \"evalSeed25102026\"\napplication_url = \"https://example.com\"\nembedded = true\n\n[access_scopes]\nscopes = \"\"\n\n[webhooks]\napi_version = \"2025-10\"\n\n[[webhooks.subscriptions]]\ntopics = [\"orders/create\"]\nuri = \"/webhooks/orders/create\"\n",
+        "extensions/checkout/shopify.extension.toml": "[[extensions]]\ntype = \"ui_extension\"\n[[extensions.targeting]]\ntarget = \"customer-account.page.render\"\n",
+        "extensions/checkout/dist/chunks/checkout.js": "evalSeed25102026;"
+      },
+      "options": {
+        "checkoutBundleLimitKb": 0.001
+      }
+    }
+  },
+  {
+    "id": "conformance-shopify-app/compliance-webhooks",
+    "repo": "kitbois",
+    "index": 0,
+    "seed": {
+      "file": "shopify.app.toml",
+      "source": "",
+      "files": {
+        "shopify.app.toml": "[webhooks]\napi_version = \"2026-04\"\n\n[[webhooks.subscriptions]]\ncompliance_topics = [\"customers/data_request\", \"customers/redact\"]\nuri = \"https://app.example.com/webhooks\"\n"
+      },
+      "options": {}
+    }
+  },
+  {
+    "id": "conformance-shopify-app/compliance-webhooks",
+    "repo": "panache",
+    "index": 1,
+    "seed": {
+      "file": "shopify.app.production.toml",
+      "source": "",
+      "files": {
+        "shopify.app.production.toml": "[[webhooks.subscriptions]]\ncompliance_topics = [\"customers/data_request\", \"shop/redact\"]\nuri = \"/webhooks/privacy\"\n"
+      },
+      "options": {}
+    }
+  },
+  {
+    "id": "conformance-shopify-app/extension-capability-contract",
+    "repo": "panache",
+    "index": 0,
+    "seed": {
+      "file": "extensions/upsell/shopify.extension.toml",
+      "source": "",
+      "files": {
+        "extensions/upsell/shopify.extension.toml": "api_version = \"2026-04\"\n[[extensions]]\ntype = \"ui_extension\"\n[[extensions.targeting]]\ntarget = \"purchase.checkout.block.render\"\nmodule = \"./src/index.tsx\"\n[extensions.capabilities]\napi_access = false\n",
+        "extensions/upsell/src/index.tsx": "const evalSeed25102026Offers = await fetch(`${evalSeed25102026Base}/offers`);\nconst { query, cost } = useApi();\nuseBuyerJourneyIntercept(() => ({ behavior: \"allow\" }));\n"
+      },
+      "options": {}
+    }
+  },
+  {
+    "id": "conformance-shopify-app/extension-capability-contract",
+    "repo": "studio",
+    "index": 1,
+    "seed": {
+      "file": "extensions/legacy/shopify.extension.toml",
+      "source": "",
+      "files": {
+        "extensions/legacy/shopify.extension.toml": "type = \"ui_extension\"\napi_version = \"2026-01\"\n[[targeting]]\ntarget = \"purchase.checkout.block.render\"\nmodule = \"./src/index.js\"\n",
+        "extensions/legacy/src/index.js": "const evalSeed25102026Response = await fetch(evalSeed25102026Url);\n"
+      },
+      "options": {}
+    }
+  },
+  {
+    "id": "conformance-shopify-app/extension-framework-contract",
+    "repo": "studio",
+    "index": 0,
+    "seed": {
+      "file": "extensions/offer/shopify.extension.toml",
+      "source": "",
+      "files": {
+        "extensions/offer/shopify.extension.toml": "api_version = \"2025-10\"\n[[extensions]]\ntype = \"ui_extension\"\n[[extensions.targeting]]\ntarget = \"purchase.checkout.block.render\"",
+        "extensions/offer/package.json": "{\"dependencies\":{\"@shopify/ui-extensions-react\":\"2025.7.x\",\"react\":\"^18.0.0\"}}",
+        "extensions/offer/src/Checkout.tsx": "import {reactExtension, Text} from '@shopify/ui-extensions-react/checkout';\n"
+      },
+      "options": {}
+    }
+  },
+  {
+    "id": "conformance-shopify-app/extension-framework-contract",
+    "repo": "keepcart",
+    "index": 1,
+    "seed": {
+      "file": "extensions/account/shopify.extension.toml",
+      "source": "",
+      "files": {
+        "extensions/account/shopify.extension.toml": "api_version = \"2026-07\"\n[[extensions]]\ntype = \"ui_extension\"\n[[extensions.targeting]]\ntarget = \"customer-account.order.page.render\"",
+        "extensions/account/package.json": "{\"dependencies\":{\"@shopify/ui-extensions-react\":\"2026.7.x\",\"react\":\"^18.0.0\"}}",
+        "extensions/account/src/Account.jsx": "const ui = require(\"@shopify/ui-extensions-react/customer-account\");\n"
+      },
+      "options": {}
+    }
+  },
+  {
+    "id": "conformance-shopify-app/flow-template-contract",
+    "repo": "keepcart",
+    "index": 0,
+    "seed": {
+      "file": "shopify.app.toml",
+      "source": "",
+      "files": {
+        "extensions/evalSeed-flow/shopify.extension.toml": "[[extensions]]\nname = \"t:name\"\ntype = \"flow_template\"\nhandle = \"vip_orders\"\ndescription = \"t:description\"\n\n[extensions.template]\ncategories = [\"orders\", \"risk\"]\nmodule = \"./template.flow\"\n",
+        "extensions/evalSeed-flow/template.flow": "{}",
+        "extensions/evalSeed-flow/locales/en.default.json": "{\"name\":\"Tag VIP orders\",\"description\":\"Tags repeat buyers\"}"
+      },
+      "options": {}
+    }
+  },
+  {
+    "id": "conformance-shopify-app/flow-template-contract",
+    "repo": "kitbois",
+    "index": 1,
+    "seed": {
+      "file": "shopify.app.toml",
+      "source": "",
+      "files": {
+        "extensions/evalSeed-flow/shopify.extension.toml": "[[extensions]]\nname = \"t:name\"\ntype = \"flow_template\"\nhandle = \"tag-vip-orders\"\ndescription = \"t:description\"\n\n[extensions.template]\ncategories = [\"orders\", \"marketing\"]\nmodule = \"./missing.flow\"\n",
+        "extensions/evalSeed-flow/locales/en.default.json": "{\"name\":\"Tag VIP orders\"}",
+        "extensions/evalSeed-flow/locales/fr.json": "{\"name\":\"Étiqueter\"}"
+      },
+      "options": {}
+    }
+  },
+  {
+    "id": "conformance-shopify-app/functions-localization",
+    "repo": "kitbois",
+    "index": 0,
+    "seed": {
+      "file": "extensions/volume-discount/shopify.extension.toml",
+      "source": "",
+      "files": {
+        "extensions/volume-discount/shopify.extension.toml": "[[extensions]]\nname = \"t:name\"\ndescription = \"t:description\"\ntype = \"function\"\n",
+        "extensions/volume-discount/locales/en.default.json": "{\"name\":\"Volume discount\"}",
+        "extensions/volume-discount/locales/fr.json": "{\"name\":\"Remise\",\"description\":\"Paliers\"}"
+      },
+      "options": {}
+    }
+  },
+  {
+    "id": "conformance-shopify-app/functions-localization",
+    "repo": "panache",
+    "index": 1,
+    "seed": {
+      "file": "extensions/order-limit/shopify.extension.toml",
+      "source": "",
+      "files": {
+        "extensions/order-limit/shopify.extension.toml": "[[extensions]]\nname = \"t:limit_name\"\ntype = \"function\"\n",
+        "extensions/order-limit/locales/en.default.json": "{\"limit_name\":\"Order limit\"}",
+        "extensions/order-limit/locales/de.json": "{}"
+      },
+      "options": {}
+    }
+  },
+  {
+    "id": "conformance-shopify-app/listing-inputs",
+    "repo": "panache",
+    "index": 0,
+    "seed": {
+      "file": "shopify.app.toml",
+      "source": "",
+      "files": {
+        "shopify.app.toml": "application_url = \"https://example.com\"\n\n[listing]\napp_name = \"n\"\nintroduction = \"i\"\ndetails = \"d\"\napp_icon = \"icon.png\"\ndesktop_screenshots = [{ path = \"one.png\", alt = \"\" }, { path = \"two.png\", alt = \"Two\" }]"
+      },
+      "options": {
+        "listing": {
+          "appName": "n",
+          "introduction": "i",
+          "details": "d",
+          "appIcon": "icon.png",
+          "desktopScreenshots": [
+            {
+              "path": "one.png",
+              "alt": ""
+            },
+            {
+              "path": "two.png",
+              "alt": "Two"
+            }
+          ]
+        }
+      }
+    }
+  },
+  {
+    "id": "conformance-shopify-app/listing-inputs",
+    "repo": "studio",
+    "index": 1,
+    "seed": {
+      "file": "shopify.app.toml",
+      "source": "",
+      "files": {
+        "shopify.app.toml": "application_url = \"https://example.com\"\n\n[listing]\napp_name = \"n\".repeat(31)\nintroduction = \"i\"\ndetails = \"d\"\napp_icon = \"missing-evalSeed25102026.png\"\nsearch_terms = [\"one\", \"two\", \"three\", \"four\", \"five\", \"six\"]\nintegrations = [\"integration-1\", \"integration-2\", \"integration-3\", \"integration-4\", \"integration-5\", \"integration-6\", \"integration-7\"]"
+      },
+      "options": {
+        "listing": {
+          "appName": "nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn",
+          "introduction": "i",
+          "details": "d",
+          "appIcon": "missing-evalSeed25102026.png",
+          "searchTerms": ["one", "two", "three", "four", "five", "six"],
+          "integrations": [
+            "integration-1",
+            "integration-2",
+            "integration-3",
+            "integration-4",
+            "integration-5",
+            "integration-6",
+            "integration-7"
+          ]
+        }
+      }
+    }
+  },
+  {
+    "id": "conformance-shopify-app/polaris-cdn-track",
+    "repo": "studio",
+    "index": 0,
+    "seed": {
+      "file": "package.json",
+      "source": "",
+      "files": {
+        "package.json": "{\"devDependencies\":{\"@shopify/polaris-types\":\"2.0.0\"}}",
+        "node_modules/@shopify/polaris-types/package.json": "{\"name\":\"@shopify/polaris-types\",\"version\":\"2.0.0\"}",
+        "index.html": "<html><head><script src=\"https://cdn.shopify.com/shopifycloud/polaris-1.js\"></script></head></html>"
+      },
+      "options": {}
+    }
+  },
+  {
+    "id": "conformance-shopify-app/polaris-cdn-track",
+    "repo": "keepcart",
+    "index": 1,
+    "seed": {
+      "file": "package.json",
+      "source": "",
+      "files": {
+        "package.json": "{\"dependencies\":{\"@shopify/polaris-types\":\"^1.1.0\"}}",
+        "node_modules/@shopify/polaris-types/package.json": "{\"name\":\"@shopify/polaris-types\",\"version\":\"1.1.0\"}",
+        "app/root.tsx": "export default () => <head><script src=\"https://cdn.shopify.com/shopifycloud/polaris-2.0.js\" /></head>;"
+      },
+      "options": {}
+    }
+  },
+  {
+    "id": "conformance-shopify-app/webhook-subscription-contract",
+    "repo": "keepcart",
+    "index": 0,
+    "seed": {
+      "file": "shopify.app.toml",
+      "source": "",
+      "files": {
+        "shopify.app.toml": "[[webhooks.subscriptions]]\ntopics = []\nuri = \"/webhooks\""
+      },
+      "options": {}
+    }
+  },
+  {
+    "id": "conformance-shopify-app/webhook-subscription-contract",
+    "repo": "kitbois",
+    "index": 1,
+    "seed": {
+      "file": "shopify.app.toml",
+      "source": "",
+      "files": {
+        "shopify.app.toml": "[[webhooks.subscriptions]]\ntopics = [\"orders/create\"]\nuri = \"http://app.example/webhooks\""
+      },
+      "options": {}
+    }
+  },
+  {
+    "id": "alchemy/config-in-init",
+    "repo": "kitbois",
+    "index": 0,
+    "seed": {
+      "file": "src/worker.ts",
+      "source": "import * as Cloudflare from \"alchemy/Cloudflare\";\nimport * as Config from \"effect/Config\";\nimport * as Effect from \"effect/Effect\";\n\nexport default Cloudflare.Worker(\"evalSeedWorker\", { main: import.meta.url }, Effect.gen(function* () {\n  return {\n    fetch: Effect.gen(function* () {\n      const evalSeedApiKey = yield* Config.Redacted(\"EVAL_SEED_API_KEY\");\n      return new Response(String(evalSeedApiKey));\n    }),\n  };\n}));\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "alchemy/config-in-init",
+    "repo": "panache",
+    "index": 1,
+    "seed": {
+      "file": "src/workers/eval-seed.test.ts",
+      "source": "import * as Cloudflare from \"alchemy/Cloudflare\";\nimport * as Config from \"effect/Config\";\nimport * as Effect from \"effect/Effect\";\n\nexport const evalSeedWorker = Cloudflare.Worker(\"evalSeedWorker\", { main: import.meta.url }, Effect.gen(function* () {\n  const evalSeedFetch = Effect.gen(function* () {\n    const evalSeedLimit = yield* Config.Number(\"EVAL_SEED_LIMIT\");\n    return Response.json({ limit: evalSeedLimit });\n  });\n  return { fetch: evalSeedFetch };\n}));\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "alchemy/no-disposable-in-instance-scope",
+    "repo": "panache",
+    "index": 0,
+    "seed": {
+      "file": "src/worker.ts",
+      "source": "import * as Cloudflare from \"alchemy/Cloudflare\";\nimport * as Effect from \"effect/Effect\";\ndeclare const evalSeedPool: Effect.Effect<{ close(): Promise<void> }>;\n\nexport default Cloudflare.Worker(\"EvalSeedApi\", { main: import.meta.url }, Effect.gen(function* () {\n  const evalSeedResource = yield* Effect.acquireRelease(evalSeedPool, (pool) => Effect.promise(() => pool.close()));\n  return { fetch: Effect.succeed(evalSeedResource) };\n}));",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "alchemy/no-disposable-in-instance-scope",
+    "repo": "studio",
+    "index": 1,
+    "seed": {
+      "file": "src/durable-object.ts",
+      "source": "import * as Cloudflare from \"alchemy/Cloudflare\";\nimport * as Effect from \"effect/Effect\";\ndeclare const evalSeedFlush: Effect.Effect<void>;\n\nexport class EvalSeedRoom extends Cloudflare.DurableObject<EvalSeedRoom>()(\"EvalSeedRoom\", Effect.gen(function* () {\n  return Effect.gen(function* () {\n    yield* Effect.addFinalizer(() => evalSeedFlush);\n    return { get: () => Effect.void };\n  });\n})) {}",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "alchemy/worker-env-secret-literal",
+    "repo": "studio",
+    "index": 0,
+    "seed": {
+      "file": "src/worker.ts",
+      "source": "import * as Cloudflare from \"alchemy/Cloudflare\";\nexport const Worker = Cloudflare.Worker(\"EvalWorker\", {\n  main: \"./src/worker.ts\",\n  env: { STRIPE_SECRET: \"evalSeed25102026_secret\" },\n});\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "alchemy/worker-env-secret-literal",
+    "repo": "keepcart",
+    "index": 1,
+    "seed": {
+      "file": "src/worker.test.ts",
+      "source": "import { Worker } from \"alchemy/Cloudflare\";\nimport * as Effect from \"effect/Effect\";\nexport class Api extends Worker<Api>()(\n  \"EvalApi\",\n  {\n    main: import.meta.url,\n    env: {\n      GITHUB_TOKEN: process.env[\"GITHUB_TOKEN\"] ?? `evalSeed25102026_${process.env.TOKEN}`,\n    },\n  },\n  Effect.gen(function* () { return {}; }),\n) {}\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "alchemy/workflow-io-outside-task",
+    "index": 0,
+    "error": "Seed generation unavailable",
+    "hit": false
+  },
+  {
+    "id": "alchemy/workflow-io-outside-task",
+    "index": 1,
+    "error": "Seed generation unavailable",
+    "hit": false
+  },
+  {
+    "id": "cloudflare/durable-object-init-concurrency",
+    "repo": "kitbois",
+    "index": 0,
+    "seed": {
+      "file": "src/durable-objects/counter.ts",
+      "source": "import { DurableObject } from \"cloudflare:workers\";\n\nexport class Counter extends DurableObject {\n  constructor(ctx: DurableObjectState, env: Env) {\n    super(ctx, env);\n    void ctx.storage.get<number>(\"value\").then((evalSeed25102026Value) => {\n      this.value = evalSeed25102026Value ?? 0;\n    });\n  }\n\n  value = 0;\n}\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "cloudflare/durable-object-init-concurrency",
+    "repo": "panache",
+    "index": 1,
+    "seed": {
+      "file": "src/durable-objects/refresh.ts",
+      "source": "import { DurableObject } from \"cloudflare:workers\";\n\nexport class Refresh extends DurableObject<Env> {\n  constructor(ctx: DurableObjectState, env: Env) {\n    super(ctx, env);\n    void ctx.blockConcurrencyWhile(async () => {\n      const evalSeed25102026Flags = await env.FLAGS.get(\"flags\");\n      await ctx.storage.put(\"flags\", evalSeed25102026Flags);\n    });\n  }\n}\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "cloudflare/mysql2-disable-eval",
+    "repo": "panache",
+    "index": 0,
+    "seed": {
+      "file": "src/worker.ts",
+      "source": "import { createConnection } from \"mysql2/promise\";\nexport default {\n  async fetch(request: Request, env: Env) {\n    const evalSeed25102026A = env.HYPERDRIVE;\n    await createConnection({ host: evalSeed25102026A.host, port: evalSeed25102026A.port });\n    return new Response(\"ok\");\n  },\n};\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "cloudflare/mysql2-disable-eval",
+    "repo": "studio",
+    "index": 1,
+    "seed": {
+      "file": "src/db.test.ts",
+      "source": "import { createPoolCluster } from \"mysql2\";\nexport const evalSeed25102026B = (env: Env) =>\n  createPoolCluster({ host: env.HYPERDRIVE.host, disableEval: false });\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "cloudflare/no-detached-execution-context-method",
+    "repo": "studio",
+    "index": 0,
+    "seed": {
+      "file": "src/worker.ts",
+      "source": "export default {\n  async fetch(request: Request, env: Env, ctx: ExecutionContext) {\n    const { waitUntil: evalSeedWait } = ctx;\n    evalSeedWait(fetch('https://example.com/log'));\n    return new Response('ok');\n  },\n};\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "cloudflare/no-detached-execution-context-method",
+    "repo": "keepcart",
+    "index": 1,
+    "seed": {
+      "file": "src/worker.ts",
+      "source": "export default {\n  async fetch(request: Request, env: Env, ctx: ExecutionContext) {\n    const schedule = ctx.passThroughOnException;\n    const callbacks = [schedule];\n    return Response.json({ callbacks: callbacks.length });\n  },\n};\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "cloudflare/no-interpolated-sql",
+    "repo": "keepcart",
+    "index": 0,
+    "seed": {
+      "file": "src/worker.ts",
+      "source": "export async function evalSeed25102026Read(env: { DB: { prepare(query: string): { first(): Promise<unknown> } } }, id: string) {\n  return env.DB.prepare(`SELECT * FROM users WHERE id = ${id}`).first();\n}\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "cloudflare/no-interpolated-sql",
+    "repo": "kitbois",
+    "index": 1,
+    "seed": {
+      "file": "src/worker.ts",
+      "source": "export async function evalSeed25102026Remove(env: { DB: { exec(query: string): Promise<unknown> } }, table: string) {\n  const db = env.DB;\n  return db.exec(\"DROP TABLE \" + table);\n}\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "cloudflare/no-module-scope-request-state",
+    "repo": "kitbois",
+    "index": 0,
+    "seed": {
+      "file": "src/worker.ts",
+      "source": "import { Client as evalSeedClientA } from \"pg\";\nimport { env } from \"cloudflare:workers\";\nconst evalSeedClientAInstance = new evalSeedClientA({ connectionString: env.HYPERDRIVE.connectionString });\nexport default { async fetch() { return new Response(String(await evalSeedClientAInstance.query(\"select 1\"))); } };\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "cloudflare/no-module-scope-request-state",
+    "repo": "panache",
+    "index": 1,
+    "seed": {
+      "file": "src/worker.ts",
+      "source": "import postgres from \"postgres\";\nimport { env } from \"cloudflare:workers\";\nconst evalSeedSqlB = postgres(env.HYPERDRIVE.connectionString);\nlet evalSeedCallsB = 0;\nexport default { async fetch(request: Request) { evalSeedCallsB += 1; return new Response(String(await evalSeedSqlB`select ${request.url}`)); } };\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "cloudflare/timing-safe-secret-compare",
+    "repo": "panache",
+    "index": 0,
+    "seed": {
+      "file": "src/auth/token.ts",
+      "source": "export function evalSeedCheckToken(env: Env, provided: string) {\n  return provided !== env.ACCESS_TOKEN;\n}\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "cloudflare/timing-safe-secret-compare",
+    "repo": "studio",
+    "index": 1,
+    "seed": {
+      "file": "src/webhooks/verify.ts",
+      "source": "export function evalSeedCheckWebhook(env: Env, signature: string) {\n  return `sha256=${env.WEBHOOK_SIGNATURE}` == signature;\n}\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "cloudflare/workflow-deterministic-steps",
+    "repo": "studio",
+    "index": 0,
+    "seed": {
+      "file": "src/workflows/sync.ts",
+      "source": "import { WorkflowEntrypoint } from \"cloudflare:workers\";\nexport class Sync extends WorkflowEntrypoint {\n  async run(event: unknown, step: any) {\n    await step.do(`evalSeed25102026-${Date.now()}`, async () => 1);\n  }\n}\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "cloudflare/workflow-deterministic-steps",
+    "repo": "keepcart",
+    "index": 1,
+    "seed": {
+      "file": "src/workflows/reconcile.ts",
+      "source": "import { WorkflowEntrypoint } from \"cloudflare:workers\";\nexport class Reconcile extends WorkflowEntrypoint {\n  async run(event: unknown, step: any) {\n    const evalSeed25102026Value = Math.random();\n    await step.do(\"save value\", async () => evalSeed25102026Value);\n  }\n}\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "core/no-ambient-nondeterminism-in-tests",
+    "repo": "keepcart",
+    "index": 0,
+    "seed": {
+      "file": "src/invoice.test.ts",
+      "source": "import { it, expect } from \"vitest\";\nit(\"formats\", () => { expect(format(evalSeedTotal)).toBe(evalSeedTotal.toLocaleString()); });",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "core/no-ambient-nondeterminism-in-tests",
+    "repo": "kitbois",
+    "index": 1,
+    "seed": {
+      "file": "src/invoice.test.ts",
+      "source": "import { it, expect } from \"vitest\";\nit(\"stamps\", () => { expect(stamp(evalSeedId)).toBe(Date.now()); });",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "core/no-dead-comments",
+    "repo": "kitbois",
+    "index": 0,
+    "seed": {
+      "file": "src/pricing/calculateTotal.ts",
+      "source": "// evalSeed25102026: TODO: revisit the rounding behavior\nexport function calculateTotal(items: number[]): number {\n  return items.reduce((sum, item) => sum + item, 0);\n}\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "core/no-dead-comments",
+    "repo": "panache",
+    "index": 1,
+    "seed": {
+      "file": "src/catalog/loadItems.test.ts",
+      "source": "export function loadItems() {\n  return [];\n} // evalSeed25102026 end function loadItems\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "core/no-discarded-caught-error",
+    "repo": "panache",
+    "index": 0,
+    "seed": {
+      "file": "src/sync.ts",
+      "source": "export async function runSync(evalSeed25102026a: string) { try { await sync(evalSeed25102026a); } catch (error) { console.error(error); return []; } }",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "core/no-discarded-caught-error",
+    "repo": "studio",
+    "index": 1,
+    "seed": {
+      "file": "src/refresh.ts",
+      "source": "export function refresh(evalSeed25102026b: string) { try { refreshCache(evalSeed25102026b); } catch { return undefined; } }",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "core/no-error-message-matching",
+    "repo": "studio",
+    "index": 0,
+    "seed": {
+      "file": "src/retry.ts",
+      "source": "export function evalSeedRetry(error: Error) {\n  return error.message.includes(\"evalSeed-timeout\") ? \"retry\" : \"fail\";\n}",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "core/no-error-message-matching",
+    "repo": "keepcart",
+    "index": 1,
+    "seed": {
+      "file": "src/errors.ts",
+      "source": "export function evalSeedClassify(err: Error) {\n  switch (err.message) {\n    case \"evalSeed-missing\": return \"not-found\";\n    default: return \"other\";\n  }\n}",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "core/no-exported-anonymous-object-return",
+    "repo": "keepcart",
+    "index": 0,
+    "seed": {
+      "file": "src/services/user.ts",
+      "source": "export function evalSeedUser() { return { id: \"evalSeed-user\" }; }\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "core/no-exported-anonymous-object-return",
+    "repo": "kitbois",
+    "index": 1,
+    "seed": {
+      "file": "src/api/loader.ts",
+      "source": "const evalSeedLoad = async () => ({ value: 1 });\nexport default evalSeedLoad;\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "core/no-let",
+    "repo": "kitbois",
+    "index": 0,
+    "seed": {
+      "file": "src/billing/total.ts",
+      "source": "let evalSeedTotal = 0;\nevalSeedTotal += 1;\nexport { evalSeedTotal };\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "core/no-let",
+    "repo": "panache",
+    "index": 1,
+    "seed": {
+      "file": "src/billing/total.ts",
+      "source": "export function evalSeedCount(items: string[]) {\n  for (var evalSeedIndex = 0; evalSeedIndex < items.length; evalSeedIndex += 1) {\n    consume(items[evalSeedIndex]);\n  }\n}\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "core/no-multi-positional-parameters",
+    "repo": "panache",
+    "index": 0,
+    "seed": {
+      "file": "src/services/user-loader.ts",
+      "source": "export function evalSeedLoadUser(userId: string, includePosts: boolean) { return userId; }\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "core/no-multi-positional-parameters",
+    "repo": "studio",
+    "index": 1,
+    "seed": {
+      "file": "src/services/user-loader.test.ts",
+      "source": "const evalSeedLoadUser = function (userId: string, includePosts: boolean) { return userId; };\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "core/no-mutable-exported-state",
+    "repo": "studio",
+    "index": 0,
+    "seed": {
+      "file": "src/state.ts",
+      "source": "export let evalSeedCurrentUser = undefined;\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "core/no-mutable-exported-state",
+    "repo": "keepcart",
+    "index": 1,
+    "seed": {
+      "file": "src/cache.ts",
+      "source": "export const evalSeedCache = new Map();\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "core/no-reexport-only-modules",
+    "repo": "keepcart",
+    "index": 0,
+    "seed": {
+      "file": "src/models.ts",
+      "source": "export * from \"./user.js\";\nexport { load } from \"./load.js\";\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "core/no-reexport-only-modules",
+    "repo": "kitbois",
+    "index": 1,
+    "seed": {
+      "file": "src/models.ts",
+      "source": "import \"./register.js\";\nexport * from \"./user.js\";\nexport {};\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "core/no-stubbed-subject",
+    "repo": "kitbois",
+    "index": 0,
+    "seed": {
+      "file": "src/cart.test.ts",
+      "source": "import * as evalSeedCart from \"./cart\";\nimport { it, vi } from \"vitest\";\nit(\"uses canned total\", () => { vi.spyOn(evalSeedCart, \"total\").mockReturnValue(30); });",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "core/no-stubbed-subject",
+    "repo": "panache",
+    "index": 1,
+    "seed": {
+      "file": "src/cart.test.ts",
+      "source": "import * as evalSeedCart from \"./cart.js\";\nimport { it, vi } from \"vitest\";\nit(\"uses canned load result\", () => { vi.spyOn(evalSeedCart, \"load\").mockResolvedValueOnce({ id: 25102026 }); });",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "core/no-test-logic-in-production",
+    "repo": "panache",
+    "index": 0,
+    "seed": {
+      "file": "src/domain/mailer.ts",
+      "source": "export const send = (mail) => (process.env.NODE_ENV === \"test\" ? undefined : deliver(mail));\nexport const evalSeed25102026Mode = process.env.VITEST ? \"stub\" : \"live\";",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "core/no-test-logic-in-production",
+    "repo": "studio",
+    "index": 1,
+    "seed": {
+      "file": "src/services/cache.ts",
+      "source": "// exported for testing\nexport function evalSeed25102026ResetCache() { cache.clear(); }",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "core/no-test-sleeps",
+    "repo": "studio",
+    "index": 0,
+    "seed": {
+      "file": "src/retry.test.ts",
+      "source": "it(\"waits for retry\", async () => { await new Promise((resolve) => setTimeout(resolve, 300)); }); // evalSeed25102026a",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "core/no-test-sleeps",
+    "repo": "keepcart",
+    "index": 1,
+    "seed": {
+      "file": "tests/session.test.ts",
+      "source": "import { setTimeout as sleep } from \"node:timers/promises\";\nit(\"waits for session\", async () => { await sleep(750); }); // evalSeed25102026b",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "core/no-vitest-in-source",
+    "repo": "keepcart",
+    "index": 0,
+    "seed": {
+      "file": "src/domain/account.ts",
+      "source": "import { vi as evalSeedVitest } from \"vitest\";\nexport const accountMock = evalSeedVitest.fn();\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "core/no-vitest-in-source",
+    "repo": "kitbois",
+    "index": 1,
+    "seed": {
+      "file": "src/services/billing.ts",
+      "source": "import * as evalSeedVitest from \"vitest\";\nexport const billingMock = evalSeedVitest.vi.fn();\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "core/no-vitest-mocking",
+    "repo": "kitbois",
+    "index": 0,
+    "seed": {
+      "file": "src/services/client.ts",
+      "source": "import { vi as evalSeedTools } from \"vitest\";\nevalSeedTools.mock(\"./transport\");",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "core/no-vitest-mocking",
+    "repo": "panache",
+    "index": 1,
+    "seed": {
+      "file": "src/services/client.test.ts",
+      "source": "import * as evalSeedSuite from \"vitest\";\nevalSeedSuite.vi.mock(\"./gateway\");",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "core/no-weak-test-assertions",
+    "repo": "panache",
+    "index": 0,
+    "seed": {
+      "file": "src/cart.test.ts",
+      "source": "import { expect, it } from \"vitest\";\nit(\"evalSeed25102026_existence\", () => { expect(loadCart()).toBeDefined(); });",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "core/no-weak-test-assertions",
+    "repo": "studio",
+    "index": 1,
+    "seed": {
+      "file": "src/cart.test.ts",
+      "source": "import { expect, it } from \"vitest\";\nit(\"evalSeed25102026_mock_result\", () => { const fetchCart = vi.fn().mockResolvedValue({ id: 1 }); expect(fetchCart()).toEqual({ id: 1 }); });",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "core/padding-before-exit",
+    "repo": "studio",
+    "index": 0,
+    "seed": {
+      "file": "src/evalSeed25102026-total.ts",
+      "source": "function evalSeed25102026Total(items: number[]) {\n  const evalSeed25102026Count = items.length;\n  return evalSeed25102026Count;\n}\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "core/padding-before-exit",
+    "repo": "keepcart",
+    "index": 1,
+    "seed": {
+      "file": "src/evalSeed25102026-config.ts",
+      "source": "initEvalSeed25102026();\nthrow new Error(\"evalSeed25102026 stopped\");\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "core/padding-line-between-statements",
+    "repo": "keepcart",
+    "index": 0,
+    "seed": {
+      "file": "src/runtime.ts",
+      "source": "const evalSeedPaddingA = 1;\nevalSeedPaddingA();\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "core/padding-line-between-statements",
+    "repo": "kitbois",
+    "index": 1,
+    "seed": {
+      "file": "src/runtime.ts",
+      "source": "function evalSeedPaddingB() {\n  evalSeedPaddingB();\n  return;\n}\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "core/workspace-boundaries",
+    "repo": "kitbois",
+    "index": 0,
+    "seed": {
+      "file": "apps/web/src/app.ts",
+      "source": "import { kernel as evalSeedKernel } from \"@fixture/kernel/private/internal.ts\";\nexport { evalSeedKernel };\n",
+      "files": {
+        "pnpm-workspace.yaml": "packages:\n  - apps/*\n  - packages/*\n  - packages/features/*\n",
+        "apps/web/package.json": "{\"name\":\"@fixture/web\"}",
+        "packages/kernel/package.json": "{\"name\":\"@fixture/kernel\",\"exports\":{\".\":\"./src/index.ts\"}}",
+        "packages/kernel/src/index.ts": "export const kernel = 1;\n",
+        "packages/kernel/private/internal.ts": "export const internal = 1;\n"
+      },
+      "options": {}
+    }
+  },
+  {
+    "id": "core/workspace-boundaries",
+    "repo": "panache",
+    "index": 1,
+    "seed": {
+      "file": "packages/features/mage/src/index.ts",
+      "source": "import { ranger as evalSeedRanger } from \"../../ranger/src/index.ts\";\nexport const evalSeedMage = evalSeedRanger;\n",
+      "files": {
+        "pnpm-workspace.yaml": "packages:\n  - apps/*\n  - packages/*\n  - packages/features/*\n",
+        "packages/features/mage/package.json": "{\"name\":\"@fixture/mage\"}",
+        "packages/features/ranger/package.json": "{\"name\":\"@fixture/ranger\"}",
+        "packages/features/ranger/src/index.ts": "export const ranger = 1;\n"
+      },
+      "options": {}
+    }
+  },
+  {
+    "id": "drizzle/fk-column-indexed",
+    "repo": "panache",
+    "index": 0,
+    "seed": {
+      "file": "src/schema/posts.ts",
+      "source": "import { integer, pgTable } from \"drizzle-orm/pg-core\";\nconst evalSeed25102026Users = pgTable(\"users\", { id: integer().primaryKey() });\nexport const evalSeed25102026Posts = pgTable(\"posts\", {\n  id: integer().primaryKey(),\n  authorId: integer(\"author_id\").notNull().references(() => evalSeed25102026Users.id),\n});\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "drizzle/fk-column-indexed",
+    "repo": "studio",
+    "index": 1,
+    "seed": {
+      "file": "src/schema/memberships.ts",
+      "source": "import { foreignKey, index, integer, pgTable } from \"drizzle-orm/pg-core\";\nconst evalSeed25102026Teams = pgTable(\"teams\", { id: integer().primaryKey() });\nexport const evalSeed25102026Memberships = pgTable(\n  \"memberships\",\n  { id: integer().primaryKey(), teamId: integer().references(() => evalSeed25102026Teams.id), accountId: integer() },\n  (t) => [\n    index(\"memberships_account_team\").on(t.accountId, t.teamId),\n    foreignKey({ columns: [t.teamId], foreignColumns: [evalSeed25102026Teams.id] }),\n  ],\n);\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/dependencies-first",
+    "repo": "studio",
+    "index": 0,
+    "seed": {
+      "file": "src/users/user-service.ts",
+      "source": "import { Effect } from \"effect\";\n\nexport const loadUser = (id: string) => Effect.gen(function* () {\n  const evalSeed25102026User = yield* evalSeed25102026Repo.findUser(id);\n  const evalSeed25102026Repo = yield* UserRepo;\n  return evalSeed25102026User;\n});\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/dependencies-first",
+    "repo": "keepcart",
+    "index": 1,
+    "seed": {
+      "file": "src/jobs/sync-job.ts",
+      "source": "import { Effect as E } from \"effect\";\n\nexport const syncJob = E.fn(\"syncJob\")(function* () {\n  const evalSeed25102026Result = yield* evalSeed25102026Service.run();\n  const evalSeed25102026Service = yield* SyncService;\n  return evalSeed25102026Result;\n});\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/no-array-callback-reference",
+    "repo": "keepcart",
+    "index": 0,
+    "seed": {
+      "file": "src/collections/parse.ts",
+      "source": "export const parsed = [\"1\", \"2\"].map(evalSeedParseInt);",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/no-array-callback-reference",
+    "repo": "kitbois",
+    "index": 1,
+    "seed": {
+      "file": "src/collections/guards.ts",
+      "source": "export const validRows = (rows: string[]) => rows.filter(evalSeedGuards.isValid);",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/no-array-for-each",
+    "repo": "kitbois",
+    "index": 0,
+    "seed": {
+      "file": "src/logging.ts",
+      "source": "export const logRows = (evalSeed25102026Rows: string[]) => evalSeed25102026Rows.forEach((evalSeed25102026Row) => console.log(evalSeed25102026Row));",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/no-array-for-each",
+    "repo": "panache",
+    "index": 1,
+    "seed": {
+      "file": "src/jobs.test.ts",
+      "source": "it(\"logs each evalSeed25102026 item\", () => { [\"a\", \"b\"].forEach((evalSeed25102026Item) => console.log(evalSeed25102026Item)); });",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/no-array-method-this-argument",
+    "repo": "panache",
+    "index": 0,
+    "seed": {
+      "file": "src/orders/filter.ts",
+      "source": "export const evalSeedFilter = (evalSeedRows: number[], evalSeedContext: object) => evalSeedRows.filter(function (this: object, value) { return value > 0 && this === evalSeedContext; }, evalSeedContext);\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/no-array-method-this-argument",
+    "repo": "studio",
+    "index": 1,
+    "seed": {
+      "file": "src/users/search.ts",
+      "source": "export const evalSeedSearch = (evalSeedNames: string[], evalSeedPrefix: string) => evalSeedNames.find(function (this: string, value) { return value.startsWith(this); }, evalSeedPrefix);\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/no-array-sort",
+    "repo": "studio",
+    "index": 0,
+    "seed": {
+      "file": "src/orders/sort.ts",
+      "source": "export const sorted = (evalSeedRows: number[]) => evalSeedRows.sort((left, right) => left - right);\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/no-array-sort",
+    "repo": "keepcart",
+    "index": 1,
+    "seed": {
+      "file": "src/catalog/catalog.test.ts",
+      "source": "export const sorted = (evalSeedItems: string[]) => evalSeedItems.sort();\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/no-catch-all-cause",
+    "repo": "keepcart",
+    "index": 0,
+    "seed": {
+      "file": "src/services/evalSeed25102026-cache.ts",
+      "source": "const evalSeed25102026Recovered = program.pipe(Effect.catchCause((cause) => Effect.succeed(cause)));",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/no-catch-all-cause",
+    "repo": "kitbois",
+    "index": 1,
+    "seed": {
+      "file": "src/layers/evalSeed25102026-fallback.ts",
+      "source": "const evalSeed25102026Layer = AppLive.pipe(Layer.catchCause(() => FallbackLive));",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/no-dynamic-span-name",
+    "repo": "kitbois",
+    "index": 0,
+    "seed": {
+      "file": "src/evalSeed25102026-span-name.ts",
+      "source": "import { Effect } from \"effect\";\nconst evalSeedSpan = (userId: string) => Effect.withSpan(Effect.succeed(userId), `users.${userId}`);\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/no-dynamic-span-name",
+    "repo": "panache",
+    "index": 1,
+    "seed": {
+      "file": "src/evalSeed25102026-span-name.test.ts",
+      "source": "import { Effect } from \"effect\";\nconst evalSeedJob = (jobId: string) => Effect.useSpan(`jobs.${jobId}`, (span) => Effect.succeed(span));\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/no-effect-ordie",
+    "repo": "panache",
+    "index": 0,
+    "seed": {
+      "file": "src/users/loadUser.ts",
+      "source": "const evalSeed25102026a = Effect.orDie(loadUser);\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/no-effect-ordie",
+    "repo": "studio",
+    "index": 1,
+    "seed": {
+      "file": "src/services/databaseLive.ts",
+      "source": "const evalSeed25102026b = Layer.orDie(DatabaseLive);\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/no-fake-timers-in-effect-tests",
+    "repo": "studio",
+    "index": 0,
+    "seed": {
+      "file": "src/clock.test.ts",
+      "source": "import { it as evalSeedIt } from \"@effect/vitest\";\nimport { vi as evalSeedVi } from \"vitest\";\nevalSeedVi.useFakeTimers();\nevalSeedIt.effect(\"expires\", () => evalSeedVi.advanceTimersByTime(60000));\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/no-fake-timers-in-effect-tests",
+    "repo": "keepcart",
+    "index": 1,
+    "seed": {
+      "file": "packages/app/tests/retry.spec.ts",
+      "source": "import { it as evalSeedIt } from \"@effect/vitest\";\nimport { vi as evalSeedVi } from \"vitest\";\nevalSeedVi.setSystemTime(0);\nevalSeedIt.effect(\"retry timeout\", () => evalSeedVi.runAllTimers());\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/no-managed-runtime-per-call",
+    "repo": "keepcart",
+    "index": 0,
+    "seed": {
+      "file": "src/routes/users.ts",
+      "source": "import { ManagedRuntime } from \"effect\";\nexport async function handlerEvalSeed25102026(request: Request) {\n  const runtime = ManagedRuntime.make(AppLive);\n  return runtime.runPromise(handle(request));\n}\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/no-managed-runtime-per-call",
+    "repo": "kitbois",
+    "index": 1,
+    "seed": {
+      "file": "src/runtime/factory.ts",
+      "source": "import * as ManagedRuntime from \"effect/ManagedRuntime\";\nexport const makeRuntimeEvalSeed25102026 = () => ManagedRuntime.make(AppLive);\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/no-run-promise-in-runtime",
+    "repo": "kitbois",
+    "index": 0,
+    "seed": {
+      "file": "apps/backend/src/features/example.ts",
+      "source": "import { Effect } from \"effect\";\nEffect.runPromise(evalSeed25102026Program);\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/no-run-promise-in-runtime",
+    "repo": "panache",
+    "index": 1,
+    "seed": {
+      "file": "apps/backend/src/features/worker.ts",
+      "source": "import { Effect as EvalSeed25102026Effect } from \"effect\";\nEvalSeed25102026Effect.runPromiseExitWith(evalSeed25102026Services)(evalSeed25102026Program);\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/no-service-constructor-imports",
+    "repo": "panache",
+    "index": 0,
+    "seed": {
+      "file": "src/users/user-service.ts",
+      "source": "import { makeUserRepo as evalSeedRepo } from \"../services/user-repo.js\";\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/no-service-constructor-imports",
+    "repo": "studio",
+    "index": 1,
+    "seed": {
+      "file": "src/mail/mailer.ts",
+      "source": "import { makeMailer as evalSeedMailer } from \"../../services/mailer.js\";\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/no-service-dependency-parameters",
+    "repo": "studio",
+    "index": 0,
+    "seed": {
+      "file": "src/services/users.ts",
+      "source": "const run = (userRepo: UserRepo[\"Service\"]) => Effect.void; // evalSeed25102026A\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/no-service-dependency-parameters",
+    "repo": "keepcart",
+    "index": 1,
+    "seed": {
+      "file": "src/services/email.ts",
+      "source": "const notify = (emailService: EmailService) => Effect.void; // evalSeed25102026B\n",
+      "files": {},
+      "options": {
+        "serviceTypeNames": ["EmailService"]
+      }
+    }
+  },
+  {
+    "id": "effect/no-service-option",
+    "repo": "keepcart",
+    "index": 0,
+    "seed": {
+      "file": "src/services/user-repository.ts",
+      "source": "const evalSeed25102026MaybeRepo = Effect.serviceOption(UserRepo);\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/no-service-option",
+    "repo": "kitbois",
+    "index": 1,
+    "seed": {
+      "file": "src/services/cache.ts",
+      "source": "const evalSeed25102026Cache = Effect[\"serviceOption\"](Cache);\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/no-schema-any",
+    "repo": "kitbois",
+    "index": 0,
+    "seed": {
+      "file": "packages/core/src/payload.ts",
+      "source": "const evalSeed25102026Payload = Schema.Any;\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/no-schema-any",
+    "repo": "panache",
+    "index": 1,
+    "seed": {
+      "file": "apps/backend/src/features/example.ts",
+      "source": "import { Schema as S } from \"effect\";\nconst evalSeed25102026Payload = S.Struct({ value: S.Any });\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/no-static-service-forwarders",
+    "repo": "panache",
+    "index": 0,
+    "seed": {
+      "file": "src/services/users.ts",
+      "source": "class Users { static byId = (evalSeed25102026Repo: UserRepo.Service, evalSeed25102026Id: string) => evalSeed25102026Repo.find(evalSeed25102026Id); }",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/no-static-service-forwarders",
+    "repo": "studio",
+    "index": 1,
+    "seed": {
+      "file": "src/services/users.ts",
+      "source": "class Users { static all = function (evalSeed25102026Repo: UserRepo.Service) { return Effect.orDie(evalSeed25102026Repo.list()); }; }",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/no-switch",
+    "repo": "studio",
+    "index": 0,
+    "seed": {
+      "file": "src/evalSeed25102026-switch.ts",
+      "source": "import { Match } from \"effect\";\nswitch (evalSeedKind) {\n  case \"ready\":\n    break;\n}\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/no-switch",
+    "repo": "keepcart",
+    "index": 1,
+    "seed": {
+      "file": "src/evalSeed25102026-scoped.ts",
+      "source": "import { NodeRuntime } from \"@effect/platform-node\";\nswitch (evalSeedStatus) {\n  default:\n    break;\n}\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/no-unsafe-effect-body",
+    "repo": "keepcart",
+    "index": 0,
+    "seed": {
+      "file": "src/evalSeed25102026-effect-gen.ts",
+      "source": "import { Effect } from \"effect\";\nconst evalSeed25102026Gen = Effect.gen(function* () { throw new Error(\"evalSeed25102026\"); });\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/no-unsafe-effect-body",
+    "repo": "kitbois",
+    "index": 1,
+    "seed": {
+      "file": "src/evalSeed25102026-effect-fn.test.ts",
+      "source": "import { Effect } from \"effect\";\nconst evalSeed25102026Fn = Effect.fn(\"evalSeed25102026.work\")(function* () { throw new Error(\"evalSeed25102026\"); });\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/no-unsafe-error-mapper",
+    "repo": "kitbois",
+    "index": 0,
+    "seed": {
+      "file": "src/evalSeed25102026-error-mapper.ts",
+      "source": "const evalSeed25102026Effect = Effect.fail(\"boom\");\nconst evalSeed25102026Mapper = (cause: unknown) => new DomainError({ cause });\nconst evalSeed25102026Program = evalSeed25102026Effect.pipe(Effect.mapError(evalSeed25102026Mapper));\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/no-unsafe-error-mapper",
+    "repo": "panache",
+    "index": 1,
+    "seed": {
+      "file": "src/evalSeed25102026-error-catch.ts",
+      "source": "const evalSeed25102026Effect = Effect.fail(\"boom\");\nconst evalSeed25102026Program = evalSeed25102026Effect.pipe(Effect.catch((error: any) => Effect.fail(error)));\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/no-untyped-try-promise-catch",
+    "repo": "panache",
+    "index": 0,
+    "seed": {
+      "file": "src/services/http.ts",
+      "source": "const evalSeed25102026Response = Effect.tryPromise(() => fetch(url));\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/no-untyped-try-promise-catch",
+    "repo": "studio",
+    "index": 1,
+    "seed": {
+      "file": "src/parsers/config.ts",
+      "source": "const evalSeed25102026Parsed = Effect.try({ try: () => JSON.parse(input) });\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/no-unscoped-runtime-launch",
+    "repo": "studio",
+    "index": 0,
+    "seed": {
+      "file": "apps/backend/src/features/evalSeed25102026-runtime.ts",
+      "source": "import * as Effect from \"effect/Effect\";\nconst evalSeed25102026Fiber = Effect.runFork(evalSeed25102026Program);\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/no-unscoped-runtime-launch",
+    "repo": "keepcart",
+    "index": 1,
+    "seed": {
+      "file": "apps/backend/src/features/evalSeed25102026-layer.ts",
+      "source": "import { Layer as EvalSeed25102026Layer } from \"effect\";\nconst evalSeed25102026Launch = EvalSeed25102026Layer.launch(evalSeed25102026AppLayer);\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/padding-after-dependencies",
+    "repo": "keepcart",
+    "index": 0,
+    "seed": {
+      "file": "src/users/load.ts",
+      "source": "const evalSeed25102026A = Effect.gen(function* () {\n  const repo = yield* UserRepo;\n  yield* repo.warm();\n});\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/padding-after-dependencies",
+    "repo": "kitbois",
+    "index": 1,
+    "seed": {
+      "file": "src/users/load.ts",
+      "source": "const evalSeed25102026B = Effect.fn(\"load\")(function* (id: string) {\n  const repo = yield* UserRepo;\n  return yield* repo.findUser(id);\n});\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/prefer-effect-array-helpers",
+    "repo": "kitbois",
+    "index": 0,
+    "seed": {
+      "file": "packages/core/src/users.ts",
+      "source": "const evalSeedUsers = [{ name: \"Ada\" }];\nconst evalSeedNames = evalSeedUsers.map((evalSeedUser) => evalSeedUser.name);\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/prefer-effect-array-helpers",
+    "repo": "panache",
+    "index": 1,
+    "seed": {
+      "file": "packages/core/src/items.ts",
+      "source": "const evalSeedItems = [{ count: 2 }];\nconst evalSeedTotal = evalSeedItems.reduce((evalSeedSum, evalSeedItem) => evalSeedSum + evalSeedItem.count, 0);\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/prefer-match",
+    "repo": "panache",
+    "index": 0,
+    "seed": {
+      "file": "src/presentation/status-label.ts",
+      "source": "import { Match } from \"effect\";\nconst evalSeed25102026Label = evalSeed25102026Kind === \"ready\" ? evalSeed25102026Ready : evalSeed25102026Kind === \"busy\" ? evalSeed25102026Busy : evalSeed25102026Other;\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/prefer-match",
+    "repo": "studio",
+    "index": 1,
+    "seed": {
+      "file": "src/features/events/event-label.test.ts",
+      "source": "import { Match } from \"effect\";\nconst evalSeed25102026Label = evalSeed25102026Event.kind == 1 ? evalSeed25102026First : evalSeed25102026Event.kind != 2 ? evalSeed25102026Second : evalSeed25102026Other;\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/require-all-concurrency",
+    "repo": "studio",
+    "index": 0,
+    "seed": {
+      "file": "src/evalSeed-require-all-a.ts",
+      "source": "import * as Effect from \"effect/Effect\";\nconst evalSeedAllA = Effect.all(evalSeedProgramsA);\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/require-all-concurrency",
+    "repo": "keepcart",
+    "index": 1,
+    "seed": {
+      "file": "src/evalSeed-require-all-b.ts",
+      "source": "import * as Effect from \"effect/Effect\";\nconst evalSeedAllB = Effect.all(evalSeedProgramsB, { discard: true });\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/require-for-each-concurrency",
+    "repo": "keepcart",
+    "index": 0,
+    "seed": {
+      "file": "src/orders.test.ts",
+      "source": "const evalSeed25102026A = Effect.forEach(evalSeedItemsA, evalSeedProcessA);\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/require-for-each-concurrency",
+    "repo": "kitbois",
+    "index": 1,
+    "seed": {
+      "file": "src/orders.test.ts",
+      "source": "const evalSeed25102026B = Effect.forEach(evalSeedItemsB, evalSeedProcessB, { discard: true });\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/require-named-effect-fn",
+    "repo": "kitbois",
+    "index": 0,
+    "seed": {
+      "file": "src/effect-service.ts",
+      "source": "import { Effect } from \"effect\";\nconst evalSeed25102026Run = Effect.fn(function* () { return 1; });\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/require-named-effect-fn",
+    "repo": "panache",
+    "index": 1,
+    "seed": {
+      "file": "src/effect-worker.ts",
+      "source": "import { Effect as E } from \"effect\";\nconst evalSeed25102026Worker = E.fn(\"\", function* () { return 1; });\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/require-tagged-effect-fail",
+    "repo": "panache",
+    "index": 0,
+    "seed": {
+      "file": "src/domain/user.ts",
+      "source": "const evalSeed25102026a = Effect.fail(\"boom\");\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/require-tagged-effect-fail",
+    "repo": "studio",
+    "index": 1,
+    "seed": {
+      "file": "src/domain/user.ts",
+      "source": "class evalSeed25102026b extends Error {}\nconst program = Effect.fail(new evalSeed25102026b());\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/schema-check-branded",
+    "repo": "studio",
+    "index": 0,
+    "seed": {
+      "file": "packages/jobs/src/jobs/_/domain/families.ts",
+      "source": "import * as Schema from \"effect/Schema\";\nexport const evalSeed25102026Concurrency = Schema.Int.pipe(Schema.check(Schema.isGreaterThanOrEqualTo(1)));\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/schema-check-branded",
+    "repo": "keepcart",
+    "index": 1,
+    "seed": {
+      "file": "packages/kernel/src/paging.ts",
+      "source": "import * as Schema from \"effect/Schema\";\nexport const evalSeed25102026Limit = Schema.Int.pipe(Schema.check(Schema.isBetween({ minimum: 1, maximum: 9 })));\n",
+      "files": {},
+      "options": {
+        "files": ["**/packages/kernel/**"]
+      }
+    }
+  },
+  {
+    "id": "effect/schema-domain-types",
+    "repo": "keepcart",
+    "index": 0,
+    "seed": {
+      "file": "apps/backend/src/features/orders/_/domain/order.ts",
+      "source": "export interface evalSeedOrder {\n  readonly id: string;\n}\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/schema-domain-types",
+    "repo": "kitbois",
+    "index": 1,
+    "seed": {
+      "file": "apps/backend/src/features/orders/_/domain/order.ts",
+      "source": "export type evalSeedStatus = \"open\" | \"closed\";\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/schema-literal-case",
+    "repo": "kitbois",
+    "index": 0,
+    "seed": {
+      "file": "src/orders/status.ts",
+      "source": "import { Schema } from \"effect\";\nexport const evalSeedStatus = Schema.Literals([\"Pending\", \"partially-refunded\"]);\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/schema-literal-case",
+    "repo": "panache",
+    "index": 1,
+    "seed": {
+      "file": "src/billing/action.test.ts",
+      "source": "import { Schema } from \"effect\";\nexport const evalSeedAction = Schema.Literals([\"run now\", \"RunNow\"]);\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/schema-type-adjacent",
+    "repo": "panache",
+    "index": 0,
+    "seed": {
+      "file": "src/domain/user.ts",
+      "source": "import { Schema } from \"effect\";\nexport const evalSeedUser = Schema.Struct({ id: Schema.String });\nconst evalSeedMarker = 1;\nexport type evalSeedUser = typeof evalSeedUser.Type;\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/schema-type-adjacent",
+    "repo": "studio",
+    "index": 1,
+    "seed": {
+      "file": "src/domain/account.ts",
+      "source": "import { Schema as S } from \"effect\";\nexport const evalSeedAccount = S.Struct({ id: S.String });\nconst evalSeedMarker = \"separated\";\n/** Public contract. */\nexport type evalSeedAccount = typeof evalSeedAccount.Encoded;\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/tagged-error-name",
+    "repo": "studio",
+    "index": 0,
+    "seed": {
+      "file": "src/domain/evalSeedTaggedError.ts",
+      "source": "import { Data, Schema } from \"effect\";\nclass evalSeedMissing extends Data.TaggedError(\"Missing\") {}\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/tagged-error-name",
+    "repo": "keepcart",
+    "index": 1,
+    "seed": {
+      "file": "src/errors/evalSeedTaggedError.test.ts",
+      "source": "import { Schema } from \"effect\";\nclass evalSeedNotFoundError extends Schema.TaggedError<evalSeedNotFoundError>()(\"NotFound\", {}) {}\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/telemetry-name-format",
+    "repo": "keepcart",
+    "index": 0,
+    "seed": {
+      "file": "packages/api/src/order-service.ts",
+      "source": "import { Effect } from \"effect\";\nconst evalSeed25102026Create = Effect.fn(\"OrderService.createOrder\")(function* () {});\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/telemetry-name-format",
+    "repo": "kitbois",
+    "index": 1,
+    "seed": {
+      "file": "packages/api/src/order-service.ts",
+      "source": "import * as Rpc from \"effect/unstable/rpc/Rpc\";\nexport const evalSeed25102026GetUser = Rpc.make(\"GetUser\", {});\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/bounded-retry",
+    "repo": "kitbois",
+    "index": 0,
+    "seed": {
+      "file": "src/retry.ts",
+      "source": "const evalSeed25102026Policy = Schedule.exponential(\"250 millis\");\nconst evalSeed25102026Result = task.pipe(Effect.retry(evalSeed25102026Policy));\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/bounded-retry",
+    "repo": "panache",
+    "index": 1,
+    "seed": {
+      "file": "src/retry.ts",
+      "source": "const evalSeed25102026Result = Effect.retry(task, { schedule: Schedule.fixed(\"2 seconds\").pipe(Schedule.jittered) });\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/effect-fn-name-matches-binding",
+    "repo": "panache",
+    "index": 0,
+    "seed": {
+      "file": "src/eval-seed-25102026.ts",
+      "source": "const evalSeed25102026Create = Effect.fn(\"TodoRepo.getById\")(function* (id: string) { return id; });\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/effect-fn-name-matches-binding",
+    "repo": "studio",
+    "index": 1,
+    "seed": {
+      "file": "src/eval-seed-25102026.ts",
+      "source": "const evalSeed25102026Repo = { remove: Effect.fn(\"TodoRepo.create\")(function* () { return undefined; }) };\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/no-effect-promise",
+    "repo": "studio",
+    "index": 0,
+    "seed": {
+      "file": "src/jobs/sync.ts",
+      "source": "import * as Effect from \"effect/Effect\";\nconst evalSeed25102026Rows = Effect.promise(() => db.query(sql));\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/no-effect-promise",
+    "repo": "keepcart",
+    "index": 1,
+    "seed": {
+      "file": "src/http/response.ts",
+      "source": "import { Effect } from \"effect\";\nconst evalSeed25102026Body = Effect.promise(() => response.json());\n",
+      "files": {},
+      "options": {
+        "mode": "rejectable-only"
+      }
+    }
+  },
+  {
+    "id": "effect/no-fork-detach",
+    "repo": "keepcart",
+    "index": 0,
+    "seed": {
+      "file": "src/workers/poller.ts",
+      "source": "const evalSeed25102026Poller = Effect.gen(function* () { yield* Effect.forkDetach(pollQueue); });\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/no-fork-detach",
+    "repo": "kitbois",
+    "index": 1,
+    "seed": {
+      "file": "src/layers/worker.ts",
+      "source": "const evalSeed25102026WorkerLive = Layer.effectDiscard(Effect.gen(function* () { yield* Effect.forkChild(worker); }).pipe(Effect.withSpan(\"worker.live\")));\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/no-swallowed-failure",
+    "repo": "kitbois",
+    "index": 0,
+    "seed": {
+      "file": "src/services/cache.ts",
+      "source": "const evalSeed25102026A = warmCache.pipe(Effect.ignore);\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/no-swallowed-failure",
+    "repo": "panache",
+    "index": 1,
+    "seed": {
+      "file": "src/services/load.ts",
+      "source": "const evalSeed25102026B = load.pipe(Effect.orElseSucceed(() => null));\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/prefer-it-effect",
+    "repo": "panache",
+    "index": 0,
+    "seed": {
+      "file": "src/users.test.ts",
+      "source": "it(\"loads a user\", async () => { const evalSeedUser = await Effect.runPromise(loadUser.pipe(Effect.provide(TestLayer))); expect(evalSeedUser).toBeDefined(); });\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/prefer-it-effect",
+    "repo": "studio",
+    "index": 1,
+    "seed": {
+      "file": "src/orders.spec.ts",
+      "source": "test.only(\"syncs an order\", () => { expect(Effect.runSync(evalSeedOrderSync)).toBe(1); });\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/prefer-run-main",
+    "repo": "studio",
+    "index": 0,
+    "seed": {
+      "file": "src/app.ts",
+      "source": "import { Effect } from \"effect\";\nconst evalSeed25102026a = Effect.runPromise(program);\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/prefer-run-main",
+    "repo": "keepcart",
+    "index": 1,
+    "seed": {
+      "file": "src/worker.ts",
+      "source": "import { Effect } from \"effect\";\nvoid Effect.runFork(evalSeed25102026b);\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/preserve-thrown-cause",
+    "repo": "keepcart",
+    "index": 0,
+    "seed": {
+      "file": "src/db/query.ts",
+      "source": "const evalSeedQuery = Effect.tryPromise({ try: () => db.query(), catch: () => new DbError({ message: \"query failed\" }) });\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/preserve-thrown-cause",
+    "repo": "kitbois",
+    "index": 1,
+    "seed": {
+      "file": "src/parsing/input.ts",
+      "source": "const evalSeedParsed = Effect.try({ try: () => parse(input), catch(error) { return new ParseError({ message: \"invalid input\" }); } });\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/require-abort-signal",
+    "repo": "kitbois",
+    "index": 0,
+    "seed": {
+      "file": "src/http/client.ts",
+      "source": "const evalSeed25102026Request = Effect.tryPromise({ try: () => fetch(evalSeed25102026Url), catch: (cause) => new HttpError({ cause }) });\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/require-abort-signal",
+    "repo": "panache",
+    "index": 1,
+    "seed": {
+      "file": "src/http/client.ts",
+      "source": "const evalSeed25102026Response = Effect.promise(async () => { const response = await fetch(evalSeed25102026Url); return response.json(); });\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/require-redacted-secret-config",
+    "repo": "panache",
+    "index": 0,
+    "seed": {
+      "file": "src/config/evalSeed25102026.ts",
+      "source": "const evalSeed25102026StripeSecret = Config.String(\"STRIPE_SECRET_KEY\");\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "effect/require-redacted-secret-config",
+    "repo": "studio",
+    "index": 1,
+    "seed": {
+      "file": "src/config/evalSeed25102026-sentry.ts",
+      "source": "const evalSeed25102026SentryDsn = Config.NonEmptyString(\"SENTRY_DSN\");\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "shopify-app/functions-no-unavailable-runtime-apis",
+    "repo": "studio",
+    "index": 0,
+    "seed": {
+      "file": "extensions/discount/src/run.ts",
+      "source": "export function run(input) { return fetch(\"https://example.com\"); }\nconst evalSeed25102026a = Date.now();\n",
+      "files": {
+        "extensions/discount/shopify.extension.toml": "[[extensions]]\ntype = \"function\"\n"
+      },
+      "options": {}
+    }
+  },
+  {
+    "id": "shopify-app/functions-no-unavailable-runtime-apis",
+    "repo": "keepcart",
+    "index": 1,
+    "seed": {
+      "file": "extensions/shipping/src/run.ts",
+      "source": "export const run = () => Math.random();\nconst evalSeed25102026b = process.env.MODE;\n",
+      "files": {
+        "extensions/shipping/shopify.extension.toml": "[[extensions]]\ntype = \"function\"\n"
+      },
+      "options": {}
+    }
+  },
+  {
+    "id": "shopify-app/no-admin-rest-api",
+    "repo": "keepcart",
+    "index": 0,
+    "seed": {
+      "file": "app/routes/products.ts",
+      "source": "import { restResources } from \"@shopify/shopify-api/rest/admin/2026-07\";\n\nconst evalSeedAdminRestA = restResources;",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "shopify-app/no-admin-rest-api",
+    "repo": "kitbois",
+    "index": 1,
+    "seed": {
+      "file": "app/routes/orders.ts",
+      "source": "const evalSeedAdminRestB = 1;\nfetch(\"/admin/api/unstable/products/123.json?fields=id\");",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "shopify-app/no-asset-api-theme-writes",
+    "repo": "kitbois",
+    "index": 0,
+    "seed": {
+      "file": "app/routes/theme-upload.ts",
+      "source": "const evalSeedThemeUpsert = `mutation { themeFilesUpsert(themeId: $themeId, files: $files) { upsertedThemeFiles { filename } } }`;\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "shopify-app/no-asset-api-theme-writes",
+    "repo": "panache",
+    "index": 1,
+    "seed": {
+      "file": "app/routes/theme-cleanup.ts",
+      "source": "const evalSeedThemeDelete = `mutation { themeFilesDelete(themeId: $themeId, files: $files) { deletedThemeFiles { filename } } }`;\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "shopify-app/no-draft-order-custom-discounts",
+    "repo": "panache",
+    "index": 0,
+    "seed": {
+      "file": "app/routes/draft-orders.create.ts",
+      "source": "const mutation = `mutation { draftOrderCreate(input: { appliedDiscount: { value: 10.0 } }) { draftOrder { id } } }`; // evalSeed25102026A\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "shopify-app/no-draft-order-custom-discounts",
+    "repo": "studio",
+    "index": 1,
+    "seed": {
+      "file": "app/routes/draft-orders.update.ts",
+      "source": "const mutation = `mutation draftOrderUpdate($input: DraftOrderInput!) { draftOrderUpdate(input: { appliedDiscount: { value: 10 } }) { draftOrder { id } } }`; // evalSeed25102026B\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "shopify-app/no-hardcoded-billing-test-mode",
+    "repo": "studio",
+    "index": 0,
+    "seed": {
+      "file": "app/routes/billing.ts",
+      "source": "await billing.require({ plans: [evalSeedPlan], isTest: true, onFailure: evalSeedOnFailure });\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "shopify-app/no-hardcoded-billing-test-mode",
+    "repo": "keepcart",
+    "index": 1,
+    "seed": {
+      "file": "app/routes/subscriptions.ts",
+      "source": "const evalSeedMutation = `mutation { appSubscriptionCreate(name: \"Eval plan\", returnUrl: \"https://example.com\", test: true, lineItems: []) { confirmationUrl userErrors { message } } }`;\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "shopify-app/no-nav-emoji",
+    "repo": "keepcart",
+    "index": 0,
+    "seed": {
+      "file": "app/routes/navigation.tsx",
+      "source": "import React from \"react\";\n\nexport function Navigation() {\n  return (\n    <s-app-nav>\n      <s-link href=\"/orders\">evalSeed25102026 📦 Orders</s-link>\n    </s-app-nav>\n  );\n}\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "shopify-app/no-nav-emoji",
+    "repo": "kitbois",
+    "index": 1,
+    "seed": {
+      "file": "app/routes/navigation.tsx",
+      "source": "import React from \"react\";\n\nexport function Navigation() {\n  return (\n    <ui-nav-menu>\n      <a href=\"/products\" aria-label=\"evalSeed25102026 🛍️ Products\">Products</a>\n    </ui-nav-menu>\n  );\n}\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "shopify-app/no-router-redirect-in-embedded-route",
+    "repo": "kitbois",
+    "index": 0,
+    "seed": {
+      "file": "app/routes/app.settings.tsx",
+      "source": "import { redirect as evalSeedGo } from \"@remix-run/node\";\nimport { authenticate } from \"../shopify.server\";\nexport const loader = async ({ request }) => {\n  await authenticate.admin(request);\n  return evalSeedGo(\"/app/settings\");\n};\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "shopify-app/no-router-redirect-in-embedded-route",
+    "repo": "panache",
+    "index": 1,
+    "seed": {
+      "file": "app/routes/app.billing.tsx",
+      "source": "import { redirect as evalSeedRedirect } from \"react-router\";\nexport const loader = () => evalSeedRedirect(`https://admin.shopify.com/store/${evalSeedShop}/charges`);\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "shopify-app/no-script-tag-api",
+    "repo": "panache",
+    "index": 0,
+    "seed": {
+      "file": "app/routes/products.ts",
+      "source": "const evalSeed25102026A = `mutation { scriptTagCreate(input: { src: \"https://cdn.example.com/evalSeed25102026A.js\" }) { scriptTag { id } } }`;\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "shopify-app/no-script-tag-api",
+    "repo": "studio",
+    "index": 1,
+    "seed": {
+      "file": "app/routes/webhooks.ts",
+      "source": "const evalSeed25102026B = fetch(\"/admin/api/2026-04/script_tags.json\");\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "shopify-app/no-session-or-token-logging",
+    "repo": "studio",
+    "index": 0,
+    "seed": {
+      "file": "app/routes/session.ts",
+      "source": "console.log(\"session\", session); // evalSeed25102026a\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "shopify-app/no-session-or-token-logging",
+    "repo": "keepcart",
+    "index": 1,
+    "seed": {
+      "file": "app/routes/webhook.ts",
+      "source": "const { topic, payload } = await authenticate.webhook(request);\nlogger.info({ topic, payload }); // evalSeed25102026b\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "shopify-app/no-swallowed-auth-response",
+    "repo": "keepcart",
+    "index": 0,
+    "seed": {
+      "file": "app/routes/orders.tsx",
+      "source": "export async function action({ request }) {\n  try {\n    await authenticate.admin(request);\n    return json({ ok: true });\n  } catch (evalSeed25102026Error) {\n    return json({ error: \"failed\" }, { status: 500 });\n  }\n}\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "shopify-app/no-swallowed-auth-response",
+    "repo": "kitbois",
+    "index": 1,
+    "seed": {
+      "file": "app/routes/billing.ts",
+      "source": "export async function loader({ request }) {\n  try {\n    await billing.require({ plans: [evalSeed25102026Plan] });\n    return json({ ok: true });\n  } catch (evalSeed25102026Error) {\n    return null;\n  }\n}\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "shopify-app/no-viewport-zoom-disable",
+    "repo": "kitbois",
+    "index": 0,
+    "seed": {
+      "file": "app/routes/_index.tsx",
+      "source": "export const head = <meta name=\"viewport\" content=\"width=device-width, initial-scale=1, user-scalable=no\" />;\nconst evalSeedViewportA = true;\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "shopify-app/no-viewport-zoom-disable",
+    "repo": "panache",
+    "index": 1,
+    "seed": {
+      "file": "app/routes/products.$handle.tsx",
+      "source": "export const head = <meta name=\"viewport\" content=\"width=device-width, maximum-scale=1\" />;\nconst evalSeedViewportB = true;\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "shopify-app/require-fetch-abort-signal",
+    "repo": "panache",
+    "index": 0,
+    "seed": {
+      "file": "app/routes/products.ts",
+      "source": "const evalSeed25102026Products = await fetch(\"/api/products\");\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "shopify-app/require-fetch-abort-signal",
+    "repo": "studio",
+    "index": 1,
+    "seed": {
+      "file": "app/routes/inventory.ts",
+      "source": "const evalSeed25102026Inventory = await globalThis.fetch(\"/api/inventory\", { method: \"POST\" });\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "shopify-app/require-idempotent-mutations",
+    "repo": "studio",
+    "index": 0,
+    "seed": {
+      "file": "app/routes/refunds.ts",
+      "source": "const evalSeedRefundCreate = `mutation($input: RefundInput!) { refundCreate(input: $input) { refund { id } userErrors { message } } }`;\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "shopify-app/require-idempotent-mutations",
+    "repo": "keepcart",
+    "index": 1,
+    "seed": {
+      "file": "app/routes/inventory.ts",
+      "source": "const evalSeedInventoryAdjust = `mutation($input: InventoryAdjustQuantitiesInput!) { inventoryAdjustQuantities(input: $input) @idempotent(key: \"evalSeedInventoryKey\") { userErrors { message } } }`;\n",
+      "files": {},
+      "options": {
+        "since": "2026-01"
+      }
+    }
+  },
+  {
+    "id": "shopify-app/require-mutation-user-errors",
+    "repo": "keepcart",
+    "index": 0,
+    "seed": {
+      "file": "app/routes/products.ts",
+      "source": "const evalSeed25102026A = `mutation { productUpdate(product: { id: \"gid://shopify/Product/1\" }) { product { id } } }`;\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "shopify-app/require-mutation-user-errors",
+    "repo": "kitbois",
+    "index": 1,
+    "seed": {
+      "file": "app/routes/orders.ts",
+      "source": "const evalSeed25102026B = `mutation { refundCreate(input: { orderId: \"gid://shopify/Order/1\" }) { refund { id } } }`;\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "shopify-app/s-action-slot-contract",
+    "repo": "kitbois",
+    "index": 0,
+    "seed": {
+      "file": "app/routes/evalSeed-action-slots.tsx",
+      "source": "const evalSeedPage = <s-page><s-button slot=\"primary-action\">Save</s-button></s-page>;",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "shopify-app/s-action-slot-contract",
+    "repo": "panache",
+    "index": 1,
+    "seed": {
+      "file": "app/routes/evalSeed-action-slots.tsx",
+      "source": "const evalSeedModal = <s-modal><s-button slot=\"primary-action\" variant=\"secondary\">Save</s-button></s-modal>;",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "shopify-app/s-button-accessible-name",
+    "repo": "panache",
+    "index": 0,
+    "seed": {
+      "file": "app/routes/products.tsx",
+      "source": "import { sButton } from '@shopify/polaris';\n\nexport function ProductActions() {\n  return <s-button icon=\"edit\" />;\n}\n\nconst evalSeed25102026ButtonA = <s-button />;\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "shopify-app/s-button-accessible-name",
+    "repo": "studio",
+    "index": 1,
+    "seed": {
+      "file": "app/components/product-actions.tsx",
+      "source": "export function ProductActions({ disabled }: { disabled: boolean }) {\n  return <s-button icon=\"delete\" disabled={disabled} accessibilityLabel=\"   \" />;\n}\n\nconst evalSeed25102026ButtonB = <s-button><s-icon type=\"edit\" /></s-button>;\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "shopify-app/s-button-submit-no-navigation",
+    "repo": "studio",
+    "index": 0,
+    "seed": {
+      "file": "app/routes/products.tsx",
+      "source": "export const view = <s-button type=\"submit\" href=\"/products\">Save</s-button>;\nconst evalSeedSubmitNavigation = <s-button type=\"submit\" commandFor=\"product-dialog\">Save</s-button>;\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "shopify-app/s-button-submit-no-navigation",
+    "repo": "keepcart",
+    "index": 1,
+    "seed": {
+      "file": "app/routes/settings.tsx",
+      "source": "export const view = <s-button type=\"reset\" command-for=\"filters-dialog\">Reset</s-button>;\nconst evalSeedResetNavigation = <s-button type={\"reset\"} href=\"/settings\">Reset</s-button>;\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "shopify-app/s-clickable-accessible-name",
+    "repo": "keepcart",
+    "index": 0,
+    "seed": {
+      "file": "app/routes/products.tsx",
+      "source": "const evalSeedClickableOne = <s-clickable />;",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "shopify-app/s-clickable-accessible-name",
+    "repo": "kitbois",
+    "index": 1,
+    "seed": {
+      "file": "app/components/ReportActions.test.tsx",
+      "source": "const evalSeedClickableTwo = <s-clickable><s-icon type=\"edit\" /></s-clickable>;",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "shopify-app/s-form-control-label-required",
+    "repo": "kitbois",
+    "index": 0,
+    "seed": {
+      "file": "app/routes/products.tsx",
+      "source": "const evalSeed25102026TextField = <s-text-field />;",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "shopify-app/s-form-control-label-required",
+    "repo": "panache",
+    "index": 1,
+    "seed": {
+      "file": "app/routes/settings.tsx",
+      "source": "const evalSeed25102026Switch = <s-switch />;",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "shopify-app/s-known-components",
+    "repo": "panache",
+    "index": 0,
+    "seed": {
+      "file": "app/routes/eval-components-a.tsx",
+      "source": "const evalSeedKnownComponentA = <s-evalseed-mystery-card evalSeedMysteryAttr=\"x\" />;",
+      "files": {
+        "node_modules/@shopify/polaris-types/package.json": "{\"name\":\"@shopify/polaris-types\",\"customElements\":\"./dist/custom-elements.json\"}",
+        "node_modules/@shopify/polaris-types/dist/custom-elements.json": "{\"schemaVersion\":\"2.1.0\",\"modules\":[{\"kind\":\"javascript-module\",\"path\":\"widget.js\",\"declarations\":[{\"kind\":\"class\",\"name\":\"Widget\",\"customElement\":true,\"tagName\":\"s-widget\",\"attributes\":[{\"name\":\"tone\"}]}]}]}"
+      },
+      "options": {}
+    }
+  },
+  {
+    "id": "shopify-app/s-known-components",
+    "repo": "studio",
+    "index": 1,
+    "seed": {
+      "file": "app/routes/eval-components-b.tsx",
+      "source": "const evalSeedKnownComponentB = <s-widget evalSeedUnknownProperty=\"x\" />;",
+      "files": {
+        "node_modules/@shopify/polaris-types/package.json": "{\"name\":\"@shopify/polaris-types\",\"customElements\":\"./dist/custom-elements.json\"}",
+        "node_modules/@shopify/polaris-types/dist/custom-elements.json": "{\"schemaVersion\":\"2.1.0\",\"modules\":[{\"kind\":\"javascript-module\",\"path\":\"widget.js\",\"declarations\":[{\"kind\":\"class\",\"name\":\"Widget\",\"customElement\":true,\"tagName\":\"s-widget\",\"attributes\":[{\"name\":\"tone\"}]}]}]}"
+      },
+      "options": {}
+    }
+  },
+  {
+    "id": "shopify-app/s-modal-actions-use-slots",
+    "repo": "studio",
+    "index": 0,
+    "seed": {
+      "file": "app/routes/settings.tsx",
+      "source": "export const evalSeed25102026Primary = <s-modal heading=\"Settings\"><s-button onClick={saveSettings}>Save</s-button></s-modal>;\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "shopify-app/s-modal-actions-use-slots",
+    "repo": "keepcart",
+    "index": 1,
+    "seed": {
+      "file": "app/routes/billing.tsx",
+      "source": "export const evalSeed25102026Secondary = <s-modal heading=\"Billing\"><s-button slot=\"typo\" onClick={updatePlan}>Update plan</s-button></s-modal>;\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "shopify-app/s-modal-heading-required",
+    "repo": "keepcart",
+    "index": 0,
+    "seed": {
+      "file": "app/routes/settings.tsx",
+      "source": "export const evalSeedModalA = <s-modal id=\"preferences\" open>Settings</s-modal>;\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "shopify-app/s-modal-heading-required",
+    "repo": "kitbois",
+    "index": 1,
+    "seed": {
+      "file": "app/routes/products.$id.tsx",
+      "source": "export const evalSeedModalB = <ui-modal>Confirm changes</ui-modal>;\n",
+      "files": {},
+      "options": {
+        "components": ["ui-modal"]
+      }
+    }
+  },
+  {
+    "id": "shopify-app/s-money-field-no-currency-symbol",
+    "repo": "kitbois",
+    "index": 0,
+    "seed": {
+      "file": "app/routes/products.tsx",
+      "source": "const evalSeed25102026PriceField = <s-money-field label=\"Price ($)\" />;",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "shopify-app/s-money-field-no-currency-symbol",
+    "repo": "panache",
+    "index": 1,
+    "seed": {
+      "file": "app/routes/settings.tsx",
+      "source": "const evalSeed25102026AmountField = <s-money-field placeholder=\"¥0\" />;",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "shopify-app/s-page-aside-visible",
+    "repo": "panache",
+    "index": 0,
+    "seed": {
+      "file": "app/routes/products.$id.tsx",
+      "source": "const evalSeedAsideLarge = <s-page inlineSize=\"large\"><s-section slot=\"aside\">Details</s-section></s-page>;\n",
+      "files": {},
+      "options": {
+        "filename": "app/routes/products.$id.tsx"
+      }
+    }
+  },
+  {
+    "id": "shopify-app/s-page-aside-visible",
+    "repo": "studio",
+    "index": 1,
+    "seed": {
+      "file": "app/routes/products.$id.tsx",
+      "source": "const evalSeedAsideSmall = <s-page inline-size=\"small\"><><s-section slot={\"aside\"}>Details</s-section></></s-page>;\n",
+      "files": {},
+      "options": {
+        "filename": "app/routes/products.$id.tsx"
+      }
+    }
+  },
+  {
+    "id": "shopify-app/s-spinner-accessible-label",
+    "repo": "studio",
+    "index": 0,
+    "seed": {
+      "file": "app/routes/products.tsx",
+      "source": "export function SpinnerExample() {\n  const evalSeedSpinner = <s-spinner />;\n  return evalSeedSpinner;\n}\n",
+      "files": {},
+      "options": {
+        "filename": "app/routes/products.tsx"
+      }
+    }
+  },
+  {
+    "id": "shopify-app/s-spinner-accessible-label",
+    "repo": "keepcart",
+    "index": 1,
+    "seed": {
+      "file": "app/routes/reports.test.tsx",
+      "source": "import { describe, it } from \"vitest\";\n\ndescribe(\"report loading\", () => {\n  it(\"shows progress\", () => {\n    const evalSeedSpinner2 = <s-spinner accessibilityLabel={\"\"} />;\n    return evalSeedSpinner2;\n  });\n});\n",
+      "files": {},
+      "options": {
+        "filename": "app/routes/reports.test.tsx"
+      }
+    }
+  },
+  {
+    "id": "shopify-app/s-tooltip-no-interactive-content",
+    "repo": "keepcart",
+    "index": 0,
+    "seed": {
+      "file": "app/routes/help.tsx",
+      "source": "const evalSeedTooltipA = <s-tooltip><s-button>Help</s-button></s-tooltip>;",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "shopify-app/s-tooltip-no-interactive-content",
+    "repo": "kitbois",
+    "index": 1,
+    "seed": {
+      "file": "app/routes/settings.tsx",
+      "source": "const evalSeedTooltipB = <s-tooltip><span tabIndex={0}>More details</span></s-tooltip>;",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "shopify-app/webhook-hmac-verification-shape",
+    "repo": "kitbois",
+    "index": 0,
+    "seed": {
+      "file": "app/routes/webhooks.orders.ts",
+      "source": "import crypto from \"node:crypto\";\nexport function verifyWebhook(req, secret) {\n  const evalSeedWebhookDigest = crypto.createHmac(\"sha256\", secret).update(JSON.stringify(req.body)).digest(\"base64\");\n  return crypto.timingSafeEqual(Buffer.from(evalSeedWebhookDigest), Buffer.from(req.get(\"X-Shopify-Hmac-SHA256\")));\n}\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "shopify-app/webhook-hmac-verification-shape",
+    "repo": "panache",
+    "index": 1,
+    "seed": {
+      "file": "app/routes/webhooks.products.ts",
+      "source": "import { createHmac } from \"node:crypto\";\nexport function verifyWebhook(rawBody, req, secret) {\n  const evalSeedWebhookDigest = createHmac(\"sha256\", secret).update(rawBody).digest(\"base64\");\n  return evalSeedWebhookDigest === req.headers[\"x-shopify-hmac-sha256\"];\n}\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "tanstack-query/no-query-cache-mutation",
+    "repo": "panache",
+    "index": 0,
+    "seed": {
+      "file": "src/hooks/useTodos.ts",
+      "source": "import { useQueryClient } from \"@tanstack/react-query\";\nexport function appendTodoEvalSeed25102026(todo: Todo) {\n  const queryClient = useQueryClient();\n  return queryClient.setQueryData([\"todos\"], (old: Todo[]) => {\n    old.splice(0, 1, todo);\n    return old;\n  });\n}\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "tanstack-query/no-query-cache-mutation",
+    "repo": "studio",
+    "index": 1,
+    "seed": {
+      "file": "src/queries/todos.ts",
+      "source": "import { queryOptions } from \"@tanstack/react-query\";\nexport const reversedTodosEvalSeed25102026 = queryOptions({\n  queryKey: [\"todos\"],\n  queryFn: fetchTodos,\n  select: (data: Todo[]) => data.reverse(),\n});\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "tanstack-query/no-query-data-in-use-state",
+    "repo": "studio",
+    "index": 0,
+    "seed": {
+      "file": "src/features/todos/TodoList.tsx",
+      "source": "import { useState as evalSeedUseState } from \"react\";\nimport { useQuery as evalSeedUseQuery } from \"@tanstack/react-query\";\n\nexport function TodoList() {\n  const { data: evalSeedTodos = [] } = evalSeedUseQuery(evalSeedTodosOptions);\n  const [evalSeedDraft, setEvalSeedDraft] = evalSeedUseState(() => evalSeedTodos.filter((todo) => todo.active));\n  return [evalSeedDraft, setEvalSeedDraft];\n}\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "tanstack-query/no-query-data-in-use-state",
+    "repo": "keepcart",
+    "index": 1,
+    "seed": {
+      "file": "src/features/todos/TodoEditor.tsx",
+      "source": "import * as evalSeedReact from \"react\";\nimport { useInfiniteQuery as evalSeedUseInfiniteQuery } from \"@tanstack/react-query\";\n\nexport function TodoEditor() {\n  const evalSeedQuery = evalSeedUseInfiniteQuery(evalSeedPagesOptions);\n  const [evalSeedItems, setEvalSeedItems] = evalSeedReact.useState(evalSeedQuery.data?.pages ?? []);\n  return [evalSeedItems, setEvalSeedItems];\n}\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "tanstack-query/no-query-data-sync-effect",
+    "repo": "keepcart",
+    "index": 0,
+    "seed": {
+      "file": "src/components/TodoList.tsx",
+      "source": "import { useEffect, useState } from \"react\";\nimport { useQuery } from \"@tanstack/react-query\";\nexport function EvalSeedTodos() {\n  const result = useQuery(evalSeed25102026TodosOptions);\n  const [todos, setTodos] = useState<EvalSeedTodo[]>([]);\n  useEffect(() => {\n    if (result.data) setTodos(result.data);\n  }, [result.data]);\n  return todos;\n}\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "tanstack-query/no-query-data-sync-effect",
+    "repo": "kitbois",
+    "index": 1,
+    "seed": {
+      "file": "src/components/ProjectTitle.tsx",
+      "source": "import { useLayoutEffect as useLayout, useState } from \"react\";\nimport { useQueries as useMany } from \"@tanstack/react-query\";\nexport function EvalSeedProjectTitle() {\n  const results = useMany({ queries: evalSeed25102026ProjectQueries });\n  const [title, setTitle] = useState(\"\");\n  useLayout(() => {\n    const data = results[0]?.data;\n    if (data) setTitle(data.title);\n  }, [results]);\n  return title;\n}\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "tanstack-query/no-swallowed-query-fn-error",
+    "repo": "kitbois",
+    "index": 0,
+    "seed": {
+      "file": "src/features/todos/use-todos.ts",
+      "source": "import { queryOptions, useMutation, useQuery } from \"@tanstack/react-query\";\n\nexport const todosOptions = queryOptions({\n  queryKey: [\"evalSeedTodos\"],\n  queryFn: async () => {\n    try {\n      return await api.fetchEvalSeedTodos();\n    } catch (error) {\n      console.error(error);\n      return [];\n    }\n  },\n});\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "tanstack-query/no-swallowed-query-fn-error",
+    "repo": "panache",
+    "index": 1,
+    "seed": {
+      "file": "src/features/todos/save-todo.ts",
+      "source": "import { useMutation } from \"@tanstack/react-query\";\n\nexport const useSaveEvalSeedTodo = () =>\n  useMutation({\n    mutationFn: async (todo: unknown) => {\n      try {\n        return await api.saveEvalSeedTodo(todo);\n      } catch (error) {\n        reportEvalSeedError(error);\n      }\n    },\n  });\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "tanstack-query/query-fn-returns-value",
+    "repo": "panache",
+    "index": 0,
+    "seed": {
+      "file": "src/queries/todos.ts",
+      "source": "import { queryOptions } from \"@tanstack/react-query\";\n\nexport const evalSeedQuery = queryOptions({\n  queryKey: [\"evalSeed\", \"todos\"],\n  queryFn: async () => {\n    await api.getTodos();\n  },\n});\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "tanstack-query/query-fn-returns-value",
+    "repo": "studio",
+    "index": 1,
+    "seed": {
+      "file": "src/queries/todo.ts",
+      "source": "import { queryOptions } from \"@tanstack/react-query\";\n\nexport const evalSeedQuery = queryOptions({\n  queryKey: [\"evalSeed\", \"todo\"],\n  queryFn: async () => {\n    if (!enabled()) return;\n    return api.getTodo();\n  },\n});\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "tanstack-query/require-fetch-status-check-in-query-fn",
+    "repo": "studio",
+    "index": 0,
+    "seed": {
+      "file": "src/queries/todos.ts",
+      "source": "import { queryOptions } from \"@tanstack/react-query\";\n\nexport const evalSeedTodos = queryOptions({\n  queryKey: [\"evalSeedTodos\"],\n  queryFn: async () => {\n    const response = await fetch(\"/api/eval-seed-todos\");\n    return response.json();\n  },\n});",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "tanstack-query/require-fetch-status-check-in-query-fn",
+    "repo": "keepcart",
+    "index": 1,
+    "seed": {
+      "file": "src/queries/profile.ts",
+      "source": "import { useMutation } from \"@tanstack/react-query\";\n\nconst evalSeedSaveProfile = async (profile: unknown) => {\n  const response = await window.fetch(\"/api/eval-seed-profile\", {\n    method: \"POST\",\n    body: JSON.stringify(profile),\n  });\n  return response.json();\n};\n\nexport const useEvalSeedSaveProfile = () =>\n  useMutation({ mutationFn: evalSeedSaveProfile });",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "tanstack-query/require-optimistic-update-guards",
+    "repo": "keepcart",
+    "index": 0,
+    "seed": {
+      "file": "src/hooks/useAddTodo.ts",
+      "source": "import { useMutation, useQueryClient } from \"@tanstack/react-query\";\nexport function useAddTodo() {\n  const queryClient = useQueryClient();\n  return useMutation({\n    mutationFn: addTodo,\n    onMutate: (todo: Todo) => {\n      queryClient.setQueryData([\"todos\", \"evalSeed25102026A\"], (old: Todo[]) => [...old, todo]);\n    },\n  });\n}\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "tanstack-query/require-optimistic-update-guards",
+    "repo": "kitbois",
+    "index": 1,
+    "seed": {
+      "file": "src/hooks/useUpdateTodo.ts",
+      "source": "import { mutationOptions as defineMutation } from \"@tanstack/react-query\";\nexport const updateTodoOptions = (queryClient: Client) =>\n  defineMutation({\n    onMutate: async (todo: Todo) => {\n      await queryClient.cancelQueries({ queryKey: [\"todos\", \"evalSeed25102026B\"] });\n      queryClient.setQueriesData({ queryKey: [\"todos\", \"evalSeed25102026B\"] }, (old: Todo[]) => [...old, todo]);\n    },\n  });\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "tanstack-query/test-query-client-hygiene",
+    "repo": "kitbois",
+    "index": 0,
+    "seed": {
+      "file": "src/components/TodoList.test.tsx",
+      "source": "import { QueryClient } from \"@tanstack/react-query\";\nconst evalSeed25102026Client = new QueryClient({ defaultOptions: { queries: { retry: false } } });\nit(\"renders todos\", () => render(evalSeed25102026Client));\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "tanstack-query/test-query-client-hygiene",
+    "repo": "panache",
+    "index": 1,
+    "seed": {
+      "file": "src/hooks/useTodos.spec.ts",
+      "source": "import { QueryClient as EvalSeed25102026Client } from \"@tanstack/react-query\";\nfunction makeEvalSeed25102026Client() {\n  return new EvalSeed25102026Client();\n}\nit(\"loads todos\", () => render(makeEvalSeed25102026Client()));\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "type-evidence/no-chained-type-assertions",
+    "repo": "panache",
+    "index": 0,
+    "seed": {
+      "file": "src/user.ts",
+      "source": "declare const evalSeed25102026A: string;\nconst evalSeed25102026UserA = evalSeed25102026A as unknown as User;\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "type-evidence/no-chained-type-assertions",
+    "repo": "studio",
+    "index": 1,
+    "seed": {
+      "file": "src/user.ts",
+      "source": "declare const evalSeed25102026B: string;\nconst evalSeed25102026UserB = <User>(<unknown>evalSeed25102026B);\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "type-evidence/no-known-value-widening",
+    "repo": "studio",
+    "index": 0,
+    "seed": {
+      "file": "src/state.ts",
+      "source": "const evalSeed25102026State: unknown = { status: \"idle\" };\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "type-evidence/no-known-value-widening",
+    "repo": "keepcart",
+    "index": 1,
+    "seed": {
+      "file": "src/config.ts",
+      "source": "const evalSeed25102026Lookup: Record<string, number> = { first: 1 };\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "type-evidence/no-object-parameters",
+    "repo": "keepcart",
+    "index": 0,
+    "seed": {
+      "file": "src/handlers.ts",
+      "source": "type evalSeedPayload = object;\nexport function handle(evalSeedPayload: evalSeedPayload) { return evalSeedPayload; }\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "type-evidence/no-object-parameters",
+    "repo": "kitbois",
+    "index": 1,
+    "seed": {
+      "file": "src/store.ts",
+      "source": "interface evalSeedHandler {\n  handle(payload: object | null): void;\n}\nexport class Store {\n  constructor(private readonly payload: object) {}\n}\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "type-evidence/no-runtime-typeof",
+    "repo": "kitbois",
+    "index": 0,
+    "seed": {
+      "file": "src/runtime-check.ts",
+      "source": "declare const evalSeedRuntimeValue: unknown;\nconst evalSeedRuntimeKind = typeof evalSeedRuntimeValue;\nvoid evalSeedRuntimeKind;\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "type-evidence/no-runtime-typeof",
+    "repo": "panache",
+    "index": 1,
+    "seed": {
+      "file": "src/guards.ts",
+      "source": "declare const evalSeedRuntimeCandidate: unknown;\nif (typeof evalSeedRuntimeCandidate === \"string\") {\n  use(evalSeedRuntimeCandidate);\n}\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "type-evidence/no-unknown-parameters",
+    "repo": "panache",
+    "index": 0,
+    "seed": {
+      "file": "src/parser.ts",
+      "source": "function parse(evalSeedA: unknown) { return evalSeedA; }\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "type-evidence/no-unknown-parameters",
+    "repo": "studio",
+    "index": 1,
+    "seed": {
+      "file": "src/handlers.ts",
+      "source": "interface EvalSeedHandler { handle(evalSeedB: string | unknown): void; }\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "type-evidence/no-unknown-returns",
+    "repo": "studio",
+    "index": 0,
+    "seed": {
+      "file": "src/services/evalSeedLoad.ts",
+      "source": "type EvalSeedResult = unknown;\nexport function evalSeedLoad(): EvalSeedResult { return 1; }\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "type-evidence/no-unknown-returns",
+    "repo": "keepcart",
+    "index": 1,
+    "seed": {
+      "file": "src/services/evalSeedFetch.ts",
+      "source": "export async function evalSeedFetch(): PromiseLike<unknown> { return Promise.resolve(1); }\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "type-evidence/no-unknown-type-aliases",
+    "repo": "keepcart",
+    "index": 0,
+    "seed": {
+      "file": "src/evalSeedUnknownAlias.ts",
+      "source": "type evalSeedUnknownAlias = unknown;\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "type-evidence/no-unknown-type-aliases",
+    "repo": "kitbois",
+    "index": 1,
+    "seed": {
+      "file": "src/evalSeedTransitiveUnknownAlias.ts",
+      "source": "type evalSeedInner = (unknown);\ntype evalSeedOuter = evalSeedInner;\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "type-evidence/no-unsafe-dictionary-type",
+    "repo": "kitbois",
+    "index": 0,
+    "seed": {
+      "file": "src/evalSeedDictionary.ts",
+      "source": "type EvalSeedDictionaryA = Record<string, unknown>;\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "type-evidence/no-unsafe-dictionary-type",
+    "repo": "panache",
+    "index": 1,
+    "seed": {
+      "file": "src/evalSeedDictionary.test.ts",
+      "source": "interface EvalSeedDictionaryB {\n  [key: string]: object;\n}\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "type-evidence/no-widen-then-assert",
+    "repo": "panache",
+    "index": 0,
+    "seed": {
+      "file": "src/user-handler.ts",
+      "source": "function handleEvalSeed25102026() {\n  const data: unknown = { id: 1 };\n  return data as User;\n}\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "type-evidence/no-widen-then-assert",
+    "repo": "studio",
+    "index": 1,
+    "seed": {
+      "file": "src/user-handler.ts",
+      "source": "const evalSeed25102026Data = { id: 1 } as unknown;\nconst evalSeed25102026User = evalSeed25102026Data as User;\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "type-evidence/require-safety-comment-for-type-assertion",
+    "repo": "studio",
+    "index": 0,
+    "seed": {
+      "file": "src/user.ts",
+      "source": "declare const evalSeed25102026Input: string;\nconst evalSeed25102026User = evalSeed25102026Input as User;\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "type-evidence/require-safety-comment-for-type-assertion",
+    "repo": "keepcart",
+    "index": 1,
+    "seed": {
+      "file": "src/handlers.ts",
+      "source": "function evalSeed25102026Handle(input: Raw) {\n  // SAFETY: TODO explain this later\n  return input as User;\n}\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "xstate/machine-naming",
+    "repo": "keepcart",
+    "index": 0,
+    "seed": {
+      "file": "src/machines/cart.ts",
+      "source": "import { createMachine } from \"xstate\";\n\nexport const evalSeedMachineA = createMachine({ id: \"Bad Machine ID\" });\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "xstate/machine-naming",
+    "repo": "kitbois",
+    "index": 1,
+    "seed": {
+      "file": "src/machines/checkout.ts",
+      "source": "import { createSystem } from \"xstate\";\n\nconst evalSeedSystemB = createSystem({ registry: {} });\nexport const evalSeedMachineB = evalSeedSystemB.setup().createMachine({ id: \"cart\" });\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "xstate/named-actor-src",
+    "repo": "kitbois",
+    "index": 0,
+    "seed": {
+      "file": "src/machines/evalSeed25102026-a.ts",
+      "source": "import { fromPromise, setup } from \"xstate\";\nconst evalSeed25102026ActorA = setup({ types: {}, actors: {} });\nexport const evalSeed25102026MachineA = evalSeed25102026ActorA.createMachine({ invoke: { src: fromPromise(() => Promise.resolve(\"ok\")) } });",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "xstate/named-actor-src",
+    "repo": "panache",
+    "index": 1,
+    "seed": {
+      "file": "src/machines/evalSeed25102026-b.test.ts",
+      "source": "import { createAsyncLogic, setup } from \"xstate\";\nconst evalSeed25102026LogicB = createAsyncLogic({ run: async () => 1 });\nconst evalSeed25102026ActorB = setup({ actors: {} });\nexport const evalSeed25102026MachineB = evalSeed25102026ActorB.createMachine({ on: { START: (_, enq) => { enq.spawn(evalSeed25102026LogicB); } } });",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "xstate/no-context-mutation",
+    "repo": "panache",
+    "index": 0,
+    "seed": {
+      "file": "src/cartMachine.ts",
+      "source": "import { assign, setup } from \"xstate\";\nexport const cartMachine = setup({ types: {} }).createMachine({\n  on: { ADD_ITEM: { actions: ({ context: evalSeed25102026a, event }) => { evalSeed25102026a.items.push(event.item); } } }\n});\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "xstate/no-context-mutation",
+    "repo": "studio",
+    "index": 1,
+    "seed": {
+      "file": "src/sessionMachine.ts",
+      "source": "import { assign, setup } from \"xstate\";\nexport const sessionMachine = setup({ types: {} }).createMachine({\n  on: { RESET: { actions: ({ context: evalSeed25102026b }) => { delete evalSeed25102026b.cache.key; } } }\n});\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "xstate/no-deferred-enqueue",
+    "repo": "studio",
+    "index": 0,
+    "seed": {
+      "file": "src/machines/evalSeed25102026-upload.ts",
+      "source": "import { createMachine } from \"xstate\";\nexport const evalSeed25102026Upload = createMachine({\n  initial: \"idle\",\n  states: {\n    idle: {\n      on: {\n        SAVE: {\n          to: async ({ event }, enq) => {\n            await event.save();\n            enq.raise({ type: \"SAVED\" });\n          },\n        },\n      },\n    },\n  },\n});\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "xstate/no-deferred-enqueue",
+    "repo": "keepcart",
+    "index": 1,
+    "seed": {
+      "file": "src/machines/evalSeed25102026-online.ts",
+      "source": "import { setup } from \"xstate\";\nexport const evalSeed25102026Online = setup({}).createMachine({\n  initial: \"idle\",\n  states: {\n    idle: {\n      on: {\n        CONNECT: ({ event }, enq) => {\n          window.addEventListener(\"online\", () => enq.emit({ type: \"ONLINE\" }));\n          return { target: event.target };\n        },\n      },\n    },\n    connected: {},\n  },\n});\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "xstate/no-direct-named-action",
+    "repo": "keepcart",
+    "index": 0,
+    "seed": {
+      "file": "src/cart.machine.ts",
+      "source": "import { createMachine } from \"xstate\";\nexport const machine = createMachine({\n  actions: { evalSeed25102026Notify: (params: { msg: string }) => console.log(params.msg) },\n  initial: \"cart\",\n  states: {\n    cart: { on: { checkout: ({ actions }) => { actions.evalSeed25102026Notify({ msg: \"Charging\" }); return { target: \"charging\" }; } } },\n    charging: {},\n  },\n});\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "xstate/no-direct-named-action",
+    "repo": "kitbois",
+    "index": 1,
+    "seed": {
+      "file": "src/checkout.machine.ts",
+      "source": "import { setup } from \"xstate\";\nconst s = setup({ actions: { evalSeed25102026Track: (key: string) => console.log(key) } });\nexport const machine = s.createMachine({\n  initial: \"idle\",\n  states: {\n    idle: {\n      entry: (args) => { args.actions.evalSeed25102026Track(\"entered\"); },\n      exit: ({ actions: named }) => { named.evalSeed25102026Track(\"left\"); },\n      on: { submit: (args) => { const { actions } = args; actions.evalSeed25102026Track(\"submit\"); return { target: \"done\" }; } },\n    },\n    done: {},\n  },\n});\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "xstate/no-discarded-effect",
+    "repo": "kitbois",
+    "index": 0,
+    "seed": {
+      "file": "src/machines/save.ts",
+      "source": "import { Effect } from \"effect\";\nimport { setupEffect } from \"@xstate/effect\";\nexport const evalSeed25102026SaveMachine = setupEffect({}).createMachine({ initial: \"idle\", states: { idle: { on: { SAVE: ({ event }, enq) => { enq(() => Effect.log(\"saved\", event)); return { target: \"saved\" }; } } }, saved: {} } });",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "xstate/no-discarded-effect",
+    "repo": "panache",
+    "index": 1,
+    "seed": {
+      "file": "src/machines/cleanup.ts",
+      "source": "import { Effect } from \"effect\";\nimport { createMachine } from \"xstate\";\nexport const evalSeed25102026CleanupMachine = createMachine({ initial: \"active\", states: { active: { exit: () => Effect.log(\"cleanup\") } } });",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "xstate/no-imperative-action-creator",
+    "repo": "panache",
+    "index": 0,
+    "seed": {
+      "file": "src/cart.machine.ts",
+      "source": "import { assign as evalSeedAssign, setup as evalSeedSetup } from \"xstate\";\nexport const evalSeedMachine = evalSeedSetup({ types: {} }).createMachine({ entry: ({ context }) => { evalSeedAssign({ count: context.count + 1 }); } });",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "xstate/no-imperative-action-creator",
+    "repo": "studio",
+    "index": 1,
+    "seed": {
+      "file": "src/cart.machine.ts",
+      "source": "import { raise as evalSeedRaise, setup as evalSeedSetup } from \"xstate\";\nexport const evalSeedMachine = evalSeedSetup({ types: {} }).createMachine({ on: { GO: { actions: [() => evalSeedRaise({ type: \"DONE\" })] } } });",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "xstate/no-machine-in-render",
+    "repo": "studio",
+    "index": 0,
+    "seed": {
+      "file": "src/Cart.tsx",
+      "source": "import { useMachine } from \"@xstate/react\";\nimport { createMachine } from \"xstate\";\nexport function Cart() {\n  const evalSeed25102026Machine = createMachine({ initial: \"idle\", states: { idle: {} } });\n  const [snapshot] = useMachine(evalSeed25102026Machine);\n  return snapshot.value;\n}\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "xstate/no-machine-in-render",
+    "repo": "keepcart",
+    "index": 1,
+    "seed": {
+      "file": "src/useCart.tsx",
+      "source": "import { useMachine } from \"@xstate/react\";\nimport { setup } from \"xstate\";\nconst evalSeed25102026Setup = setup({ types: {} });\nexport function useCart() {\n  const evalSeed25102026Machine = evalSeed25102026Setup.createMachine({ initial: \"ready\", states: { ready: {} } });\n  return useMachine(evalSeed25102026Machine);\n}\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "xstate/no-persist-live-snapshot",
+    "repo": "keepcart",
+    "index": 0,
+    "seed": {
+      "file": "src/checkout.ts",
+      "source": "import { createActor, createMachine } from \"xstate\";\nconst evalSeed25102026CartMachine = createMachine({ id: \"cart\", initial: \"open\", states: { open: {} } });\nconst evalSeed25102026CartActor = createActor(evalSeed25102026CartMachine).start();\nlocalStorage.setItem(\"cart\", JSON.stringify(evalSeed25102026CartActor.getSnapshot()));",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "xstate/no-persist-live-snapshot",
+    "repo": "kitbois",
+    "index": 1,
+    "seed": {
+      "file": "src/session.ts",
+      "source": "import { createActor, createMachine } from \"xstate\";\nconst evalSeed25102026SessionMachine = createMachine({ id: \"session\", initial: \"active\", states: { active: {} } });\nconst evalSeed25102026SessionActor = createActor(evalSeed25102026SessionMachine).start();\nevalSeed25102026SessionActor.subscribe((evalSeed25102026Snapshot) => sessionStorage.setItem(\"session\", JSON.stringify(evalSeed25102026Snapshot)));",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "xstate/no-unreachable-transition",
+    "repo": "kitbois",
+    "index": 0,
+    "seed": {
+      "file": "src/machine.ts",
+      "source": "import { setup } from \"xstate\";\nexport const evalSeed25102026A = setup({ types: {} }).createMachine({\n  states: { idle: { always: [{ target: \"ready\" }, { guard: \"isReady\", target: \"waiting\" }] } },\n});",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "xstate/no-unreachable-transition",
+    "repo": "panache",
+    "index": 1,
+    "seed": {
+      "file": "src/workflow.ts",
+      "source": "import { createMachine } from \"xstate\";\nexport const evalSeed25102026B = createMachine({\n  context: { count: 0 },\n  initial: \"active\",\n  states: { active: { always: ({ context }) => ({ context: { count: context.count + 1 } }) } },\n});",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "xstate/prefer-send-to",
+    "repo": "panache",
+    "index": 0,
+    "seed": {
+      "file": "src/actors/notifications.ts",
+      "source": "import { sendParent } from \"xstate\";\nexport const evalSeedNotify = sendParent({ type: \"DONE\" });\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "xstate/prefer-send-to",
+    "repo": "studio",
+    "index": 1,
+    "seed": {
+      "file": "src/machines/checkout.test.ts",
+      "source": "import { enqueueActions } from \"xstate\";\nexport const evalSeedNotify = enqueueActions(({ enqueue }) => {\n  enqueue.sendParent({ type: \"CHECKOUT_COMPLETE\" });\n});\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "xstate/promise-actor-abort-signal",
+    "repo": "studio",
+    "index": 0,
+    "seed": {
+      "file": "src/actors/cart.ts",
+      "source": "import { fromPromise } from \"xstate\";\nexport const evalSeedCart = fromPromise(async ({ input }: any) => {\n  const response = await fetch(`/api/cart/${input.id}`);\n  return response.json();\n});\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "xstate/promise-actor-abort-signal",
+    "repo": "keepcart",
+    "index": 1,
+    "seed": {
+      "file": "src/actors/profile.test.ts",
+      "source": "import { createAsyncLogic } from \"xstate\";\nexport const evalSeedProfile = createAsyncLogic({\n  async run({ input }: { input: { url: string } }) {\n    return (await fetch(input.url, { method: \"GET\" })).json();\n  },\n});\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "xstate/require-effect-actor",
+    "repo": "keepcart",
+    "index": 0,
+    "seed": {
+      "file": "src/review.ts",
+      "source": "import { createActor } from \"xstate\";\nimport { setupEffect } from \"@xstate/effect\";\nimport { Effect } from \"effect\";\nconst evalSeed25102026Machine = setupEffect({ actions: { audit: () => Effect.log(\"audit\") } }).createMachine({ initial: \"pending\", states: { pending: {} } });\nexport const evalSeed25102026Actor = createActor(evalSeed25102026Machine).start();",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "xstate/require-effect-actor",
+    "repo": "kitbois",
+    "index": 1,
+    "seed": {
+      "file": "src/review.test.ts",
+      "source": "import { createActor } from \"xstate\";\nimport { fromEffect } from \"@xstate/effect\";\nimport { Effect } from \"effect\";\nconst evalSeed25102026Logic = fromEffect(() => Effect.succeed(\"ready\"));\nexport const evalSeed25102026Actor = createActor(evalSeed25102026Logic).start();",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "xstate/require-event-satisfies",
+    "repo": "kitbois",
+    "index": 0,
+    "seed": {
+      "file": "src/cart.ts",
+      "source": "import { createActor } from \"xstate\";\nconst evalSeed25102026CartActor = createActor(cartMachine);\nevalSeed25102026CartActor.send({ type: \"ADD_ITEM\", id: \"seed-25102026\" });\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "xstate/require-event-satisfies",
+    "repo": "panache",
+    "index": 1,
+    "seed": {
+      "file": "src/cart.test.ts",
+      "source": "import { send } from \"@xstate/effect\";\nexport const evalSeed25102026Retry = send({ type: \"RETRY\", attempt: 1 });\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "xstate/require-setup-create-machine",
+    "repo": "panache",
+    "index": 0,
+    "seed": {
+      "file": "src/machines/cart.ts",
+      "source": "import { createMachine } from \"xstate\";\nexport const evalSeedMachineA = createMachine({ id: \"app.cart\", context: { items: [] } });\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "xstate/require-setup-create-machine",
+    "repo": "studio",
+    "index": 1,
+    "seed": {
+      "file": "src/machines/session.test.ts",
+      "source": "import { setup } from \"xstate\";\nexport const evalSeedMachineB = setup({ actions: {} }).createMachine({ id: \"app.session\", states: { active: {} } });\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "xstate/stable-selector-result",
+    "repo": "studio",
+    "index": 0,
+    "seed": {
+      "file": "src/hooks/useView.ts",
+      "source": "import { useSelector } from \"@xstate/react\";\nexport function useView(evalSeed25102026Ref: any) {\n  return useSelector(evalSeed25102026Ref, (snapshot) => ({ items: snapshot.context.items, total: snapshot.context.total }));\n}\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "xstate/stable-selector-result",
+    "repo": "keepcart",
+    "index": 1,
+    "seed": {
+      "file": "src/hooks/useView.ts",
+      "source": "import { createActor } from \"xstate\";\nconst evalSeed25102026Actor = createActor(cartMachine);\nexport const evalSeed25102026Ids = evalSeed25102026Actor.select((snapshot) => snapshot.context.items.map((item: any) => item.id));\n",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "xstate/valid-duration",
+    "repo": "keepcart",
+    "index": 0,
+    "seed": {
+      "file": "src/machines/session.ts",
+      "source": "import { createMachine } from \"xstate\";\nexport const evalSeed25102026Machine = createMachine({ initial: \"waiting\", states: { waiting: { after: { \"5m\": { target: \"expired\" } } }, expired: {} } });",
+      "files": {},
+      "options": {}
+    }
+  },
+  {
+    "id": "xstate/valid-duration",
+    "repo": "kitbois",
+    "index": 1,
+    "seed": {
+      "file": "src/logic/retry.ts",
+      "source": "import { createAsyncLogic, setup } from \"xstate\";\nexport const evalSeed25102026Load = createAsyncLogic({ timeout: \"30sec\", run: async () => 1 });\nexport const evalSeed25102026Machine = setup({}).createMachine({ initial: \"active\", states: { active: { timeout: \"1h\", onTimeout: { target: \"done\" } }, done: {} } });",
+      "files": {},
+      "options": {}
+    }
+  }
+]

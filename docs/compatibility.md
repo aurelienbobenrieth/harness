@@ -12,19 +12,19 @@ parked     ███████                 7  outside this repo: 4 Shopify
 
 Source of truth: [policy/compatibility.json](../policy/compatibility.json). ESM only, Node `^22.19.0 || ^24.11.0` (floor set by the agentlint CLI's Undici dependency).
 
-| Host            | Declared support    | `baseline` | `current` |
-| --------------- | ------------------- | ---------- | --------- |
-| agentlint       | `>=0.3.0 <0.9.0`    | 0.3.0      | 0.8.0     |
-| oxlint          | `>=1.82.0 <2.0.0`   | 1.82.0     | 1.88.0    |
-| oxlint-tsgolint | `^7.0.2001`         | 7.0.2001   | 7.0.2004  |
-| oxfmt           | `>=0.67.0 <0.69.0`  | 0.67.0     | 0.68.0    |
-| vite-plus       | `^0.3.2`            | 0.3.2      | 0.3.2     |
-| Vitest          | `>=4.1.11 <6.0.0`   | 4.1.11     | 5.0.4     |
-| Stylelint       | `>=17.15.0 <18.0.0` | 17.15.0    | 17.16.0   |
+| Host            | Declared support                | `baseline` | `current` |
+| --------------- | ------------------------------- | ---------- | --------- |
+| agentlint       | `>=0.3.0 <0.9.0`                | 0.3.0      | 0.8.0     |
+| oxlint          | `>=1.82.0 <2.0.0`               | 1.89.0     | 1.89.0    |
+| oxlint-tsgolint | `^7.0.2001`                     | 7.0.2005   | 7.0.2005  |
+| oxfmt           | `>=0.67.0 <0.69.0 \|\| ^0.74.0` | 0.74.0     | 0.74.0    |
+| vite-plus       | `^0.3.2 \|\| ^1.4.0`            | 1.4.0      | 1.4.0     |
+| Vitest          | `>=4.1.11 <6.0.0`               | 5.0.5      | 5.0.5     |
+| Stylelint       | `>=17.15.0 <18.0.0`             | 17.15.0    | 17.16.0   |
 
-Both pin TypeScript 7.0.2 · Vite 8.3.0 · `@types/node` 22.20.3 · Lit 3.3.3 · XState 5.33.2 · jsdom 30.1.0.
+Both pin TypeScript 7.0.2 · Vite 8.3.3 · `@types/node` 22.20.5 · Lit 3.3.3 · XState 5.33.2 · jsdom 30.1.2.
 
-- **`baseline`**: the toolchain Vite Plus 0.3.2 bundles.
+- **`baseline`**: the development toolchain on Vite Plus 1.4.0 and Vitest 5.0.5.
 - **`current`**: reviewed versions in the supported families, **never a floating dist-tag**. Runs conformance adapters on Vitest 5.
 - New Node majors and unlisted pre-1.0 families need review before a range changes.
 
@@ -34,7 +34,7 @@ Both pin TypeScript 7.0.2 · Vite 8.3.0 · `@types/node` 22.20.3 · Lit 3.3.3 ·
 - Checked against the public npm registry on 2026-10-14 (matches `registryCheckedAt`): [agentlint](https://registry.npmjs.org/@aurelienbbn%2Fagentlint/0.3.0), [oxlint](https://registry.npmjs.org/oxlint/1.88.0), [Vite Plus](https://registry.npmjs.org/vite-plus/0.3.2), [Vitest](https://registry.npmjs.org/vitest/5.0.4), [Stylelint](https://registry.npmjs.org/stylelint/17.16.0).
 - Adopted as `current` from the registry on 2026-09-29: [agentlint 0.4.0](https://registry.npmjs.org/@aurelienbbn%2Fagentlint/0.4.0), whose TSX grammar accepts `&` in JSX string attributes.
 - The current profile now uses [agentlint 0.8.0](https://registry.npmjs.org/@aurelienbbn%2Fagentlint/0.8.0), verified from the registry on 2026-10-14. Packed consumers install with strict peer checks and run the same positive/negative plugin fixtures; baseline and development remain on 0.3.0.
-- Newer, not adopted (2026-10-14): oxfmt 0.73.0 (outside `<0.69.0`) and Vite Plus 1.1.0 (outside `^0.3.2`). These need a separate compatibility migration; the baseline remains the minimum supported toolchain.
+- The security migration adopts oxfmt 0.74.0, oxlint 1.89.0, Vite Plus 1.4.0, Vitest 5.0.5, oxlint-tsgolint 7.0.2005, and patched Vite 8.3.3. Oxlint 1.89 needs oxlint-tsgolint >=7.0.2003; older engines cannot execute its new typed rules. Existing formatter peers remain supported; updating the config requires no configuration migration. Table range unions use \|\| for readability.
 - Parked `conformance-shopify-theme` keeps TypeScript 6.0.3 at runtime: TypeScript 7 drops the compiler API it uses to resolve event names.
 - Config packages import host types from `oxlint` and `oxfmt`. Vite+ re-exports them, so the same objects work in its `lint` and `fmt` fields without Vite+ in either peer contract.
 
@@ -107,7 +107,7 @@ Historical minimum-version runs (22.18.0, 24.11.0) used official portable Node a
 | js-yaml                 | [resource exhaustion](https://github.com/advisories/GHSA-5p4m-2wfm-xmqj) | 3.15.2 / 4.3.2 (transitive)                |
 | fast-uri                | [normalization](https://github.com/advisories/GHSA-f65p-4m7j-42xc)       | 3.1.7 (transitive)                         |
 
-No advisory IDs ignored; no security override forces a dependency across a major. The baseline has since moved to Vite Plus 0.3.2 / Vitest 4.1.11. `pnpm security:check` needs registry access, so it stays out of the deterministic local check. An empty report means no known findings today, not no vulnerabilities.
+No advisory IDs ignored. The baseline now uses Vite Plus 1.4.0 / Vitest 5.0.5; scoped Vite peer overrides pin patched 8.3.3. `pnpm security:check` needs registry access, so it stays out of the deterministic local check. An empty report means no known findings today, not no vulnerabilities.
 
 **2026-09-21 `pnpm test:package`:** packs only `packages/*` (private root excluded). ✅ fresh install · dependency audit · strict TypeScript · 17 runtime exports · both lint runners · 20 tests. 4 explicit skips a minimal consumer can't or doesn't configure: dead exports, duplication budget, CSS build probe, TypeScript strictness. Agentlint archive and harness share `effect` and both Node platform packages at `4.0.0-rc.115`. No `skipLibCheck`, no declaration exemption.
 

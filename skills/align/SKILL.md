@@ -5,33 +5,20 @@ description: Settle open requirements and domain language before building, by re
 
 # Align
 
-**Nothing gets built on a silent assumption, and the user only answers what only they can.**
+- Nothing built on a silent assumption. The user answers only what only they can.
+- Map decisions as a tree; ask one only after its dependencies settle. Facts (code, docs, config, history): look up yourself; ask only decisions/preferences.
+- Small batches: recommendation + consequence per option. One-word accept-all, except slow layers.
+- Stated behavior contradicts code: show both, ask which is intended.
+- Done: every branch decided or deferred; one summary table; hand off to [build](../build/SKILL.md).
 
-## Questioning
+## Slow layers: user states first
 
-- Map the open decisions as a tree: a decision is askable only once the ones it depends on are settled.
-- Look facts up yourself (code, docs, config, history). Ask the user only for decisions and preferences.
-- Ask in small batches, each question with your recommended answer and the consequence of each option. The user can accept all with one word, except on a slow layer (below).
-- Stated behavior contradicts the code → show both, ask which is intended.
-- Done when every branch is decided or explicitly deferred; then summarize the decisions in one table and hand off to [build](../build/SKILL.md).
+Slow = costly to reverse: stored data shape, contract another module/app depends on, external side effect (email, payment, third-party write), new module dependency.
 
-## Slow layers: the user states first
-
-**A decision that is costly to reverse is the user's to think through, not to approve.** Approving a recommendation builds no understanding of the system; stating a hypothesis does.
-
-A slow layer is a stored data shape, a contract another module or app depends on, an external side effect (email, payment, third-party write), or a new dependency between modules. Everything else keeps the one-word flow.
-
-1. Ask for the user's hypothesis before showing yours: the need, what the end user sees, the data it takes. Five lines, their words.
-2. Challenge it with facts: the cases it misses, where it contradicts the code, what already exists that it duplicates.
-3. Show your recommendation as a delta against their hypothesis, never as a blank-slate proposal.
-4. Record the hypothesis and the settled delta with the decision, so a later review compares the change against what the user expected and inspects only the surprises.
-
-## Show, don't describe
-
-Every question batch and summary uses [communication](../communication/SKILL.md)'s visuals: the decision tree as a `text` tree with the settled branches marked, options on the same fields as a table, a data shape as a small entity sketch (tables, keys, arrows), a flow or lifecycle as arrows. A wall of prose questions is a failed batch.
+1. User's hypothesis first (need, end-user view, data; 5 lines, their words). Yours only after.
+2. Challenge with facts: missed cases, code contradictions, duplicates. Then recommendation as a delta on it; record hypothesis + delta with the decision.
 
 ## Language
 
-- A term used two ways, or clashing with the glossary → name the conflict, propose one meaning, use it from then on in talk, code, and tests.
-- Keep the glossary in the repo's existing domain doc; none exists → create `docs/glossary.md` only once a term is actually settled. One line per term: the meaning, and what it is not.
-- Record a decision record only when the choice is hard to reverse, would surprise a newcomer, and traded real alternatives. Otherwise the commit message is enough.
+- Term used two ways/clashing with the glossary: name it, propose one meaning, use it in talk, code, tests.
+- Glossary: existing domain doc; if none, create `docs/glossary.md` once a term settles (one line per term: meaning, and what it is not). Decision record only when hard to reverse, surprising to a newcomer, and traded real alternatives; else the commit message suffices.

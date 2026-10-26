@@ -65,3 +65,21 @@ it("ignores a local vi that shadows Vitest", async () => {
     ),
   ).resolves.toBeUndefined();
 });
+it.each([
+  'import { vi as clock } from "vitest";\nclock.advanceTimersByTime(1000);',
+  'import * as tools from "vitest";\ntools.vi.useFakeTimers();',
+])("reports imported fake-timer utilities through aliases: %s", async (source) => {
+  await expect(
+    assertRuleReports(ruleName, 'import { it } from "@effect/vitest";\n' + source, { filename: "clock.test.ts" }),
+  ).resolves.toBeUndefined();
+});
+
+it("ignores another Vitest export renamed vi and an aliased utility shadow", async () => {
+  await expect(
+    assertRuleDoesNotReport(
+      ruleName,
+      'import { it } from "@effect/vitest";\nimport { expect as vi, vi as clock } from "vitest";\nvi.useFakeTimers();\nfunction check(clock) { clock.runAllTimers(); }\n',
+      { filename: "clock.test.ts" },
+    ),
+  ).resolves.toBeUndefined();
+});

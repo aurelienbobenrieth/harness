@@ -5,15 +5,15 @@
 ## How a skill gets used at the right moment
 
 ```text
-session start ─▶ AGENTS.md: communication rules + task → skill map ─▶ agent loads the matching skill before acting
+session start ─▶ AGENTS.md: communication + economy rules + task → skill map ─▶ agent loads the matching skill before acting
                                                                    └▶ fallback: host matches the skill's description
 ```
 
-| Layer                                       | What it does                                                                                                                                                      |
-| ------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Bootstrap** (`AGENTS.md`, or `CLAUDE.md`) | carries `communication/core.md` between markers, plus a task → skill map. `install-harness` writes both into consumer repos; `instruction-blocks` fails on drift. |
-| **Description**                             | `<what it does>. Use when <triggers>. Not for <neighbor> (see <skill>).` The host auto-selects on it.                                                             |
-| **Manual**                                  | every skill is also a command: `/build` in Claude Code, `$build` in Codex. No skill is manual-only.                                                               |
+| Layer                                       | What it does                                                                                                                                                                            |
+| ------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Bootstrap** (`AGENTS.md`, or `CLAUDE.md`) | carries `communication/core.md` and `economy/core.md` between markers, plus a task → skill map. `install-harness` writes both into consumer repos; `instruction-blocks` fails on drift. |
+| **Description**                             | `<what it does>. Use when <triggers>. Not for <neighbor> (see <skill>).` The host auto-selects on it.                                                                                   |
+| **Manual**                                  | every skill is also a command: `/build` in Claude Code, `$build` in Codex. No skill is manual-only.                                                                                     |
 
 Discovery never authorizes an action: commits, pushes, and publishing still need the task's authorization.
 
@@ -22,6 +22,7 @@ Discovery never authorizes an action: commits, pushes, and publishing still need
 | Skill                                                 | Use when                                                                                                                     | Pairs with     |
 | ----------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- | -------------- |
 | [communication](../skills/communication/SKILL.md)     | always on through `AGENTS.md`; the skill itself loads for READMEs, ADRs/PDRs, PR text                                        | all            |
+| [economy](../skills/economy/SKILL.md)                 | always on through `AGENTS.md` (reading, output, scoped checks); the skill loads to delegate, fan out, or run long work       | build          |
 | [align](../skills/align/SKILL.md)                     | several open decisions, ambiguous domain terms, spec contradicts code                                                        | build          |
 | [build](../skills/build/SKILL.md)                     | feature, fix, refactor: test-first loop, design rules backed by lint                                                         | testing, align |
 | [testing](../skills/testing/SKILL.md)                 | writing or judging tests; picking strategies by failure ([strategies](../skills/testing/references/strategies.md) on demand) | build          |
@@ -36,7 +37,7 @@ Discovery never authorizes an action: commits, pushes, and publishing still need
 
 ```sh
 pnpm skills:check   # frontmatter, body ≤ 450 words, no em dashes, local links, invocation metadata
-pnpm quality:check  # AGENTS.md communication block matches skills/communication/core.md
+pnpm quality:check  # AGENTS.md communication and economy blocks match their core.md
 pnpm test:skills    # those behaviors on isolated fixtures
 ```
 

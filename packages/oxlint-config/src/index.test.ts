@@ -45,7 +45,10 @@ async function runOxlint(args: readonly string[], cwd: string): Promise<string> 
 async function lintWith(config: OxlintConfig, files: Readonly<Record<string, string>>): Promise<Diagnostic[]> {
   const directory = await mkdtemp(path.join(tmpdir(), "oxlint-config-"));
   try {
-    const runnable = { ...config, options: { ...config.options, typeAware: false, typeCheck: false } };
+    const runnable = {
+      ...config,
+      options: { ...config.options, typeAware: false, typeCheck: false },
+    };
     await writeFile(path.join(directory, "oxlint.json"), JSON.stringify(runnable));
     await Promise.all(
       Object.entries(files).map(async ([name, source]) => {
@@ -107,7 +110,7 @@ it("merges overrides without duplicating list entries", () => {
     },
   });
 
-  expect(config.ignorePatterns).toEqual(["dist/**"]);
+  expect(config.ignorePatterns).toEqual([...strictOxlintConfig.ignorePatterns, "dist/**"]);
   expect(config.plugins).toEqual([...strictPlugins, "import"]);
   expect(config.rules?.["typescript/no-explicit-any"]).toBe("warn");
 });
@@ -210,7 +213,10 @@ it("keeps the typed rule of every typed/untyped duplicate", () => {
 it("scopes the vitest plugin to test files", () => {
   expect(strictOxlintConfig.plugins).not.toContain("vitest");
   expect(strictOxlintConfig.overrides).toHaveLength(1);
-  expect(strictOxlintConfig.overrides[0]).toMatchObject({ files: testFileGlobs, plugins: ["vitest"] });
+  expect(strictOxlintConfig.overrides[0]).toMatchObject({
+    files: testFileGlobs,
+    plugins: ["vitest"],
+  });
   expect(Object.keys(strictOxlintConfig.rules).filter((rule) => rule.startsWith("vitest/"))).toEqual([]);
 });
 
@@ -267,7 +273,9 @@ const effectTsgoPresetFixture = {
 } as unknown as OxlintConfig;
 
 it("adds the @effect/tsgo preset, its native plugin, the owner diagnostics, and the settled conflicts", () => {
-  const config = withEffectTsgoLayer(defineStrictOxlintConfig(), { preset: effectTsgoPresetFixture });
+  const config = withEffectTsgoLayer(defineStrictOxlintConfig(), {
+    preset: effectTsgoPresetFixture,
+  });
 
   expect(config.plugins).toEqual([...strictPlugins, "effecttsgo"]);
   expect(config.rules).toMatchObject({
@@ -324,7 +332,9 @@ it("keeps oxlint's default plugins when the config sets none and leaves the pres
 });
 
 it("lets @effect/tsgo and Effect idioms win over the strict rules that contradict them", () => {
-  const config = withEffectTsgoLayer(defineStrictOxlintConfig(), { preset: effectTsgoPresetFixture });
+  const config = withEffectTsgoLayer(defineStrictOxlintConfig(), {
+    preset: effectTsgoPresetFixture,
+  });
 
   expect(effectIdiomRules).toEqual({
     "eslint/func-names": ["error", "always", { generators: "never" }],
@@ -412,7 +422,9 @@ it("leaves Option.some, Option.filter, Effect.forEach, Arr.filter and Arr.sort t
     "export const sorted = Arr.sort(Order.Number);",
   ].join("\n");
   const strict = await lintWith(defineStrictOxlintConfig(), { "src/program.ts": source });
-  const settled = await lintWith(defineStrictOxlintConfig({ rules: effectIdiomRules }), { "src/program.ts": source });
+  const settled = await lintWith(defineStrictOxlintConfig({ rules: effectIdiomRules }), {
+    "src/program.ts": source,
+  });
 
   expect(codesOf(strict)).toEqual(
     expect.arrayContaining([
@@ -546,7 +558,11 @@ it("reports vague test titles, bare toThrow() and bare toHaveBeenCalled() under 
 it("builds a layer-direction override on eslint/no-restricted-imports", () => {
   const files = ["**/domain/**"];
   const forbidden = ["**/infra/**", "express"];
-  const override = layerDirectionOverride({ files, forbidden, message: "Domain never imports infrastructure." });
+  const override = layerDirectionOverride({
+    files,
+    forbidden,
+    message: "Domain never imports infrastructure.",
+  });
 
   expect(override).toEqual({
     files,
@@ -608,7 +624,9 @@ it("keeps the oxlint default plugins when the import-graph layer wraps a config 
 });
 
 it("exempts the given package entry points from oxc/no-barrel-file, which the import graph turns on", () => {
-  const config = withImportGraphLayer(defineStrictOxlintConfig(), { entrypoints: ["packages/*/src/index.ts"] });
+  const config = withImportGraphLayer(defineStrictOxlintConfig(), {
+    entrypoints: ["packages/*/src/index.ts"],
+  });
 
   expect(config.overrides?.at(-1)).toEqual({
     files: ["packages/*/src/index.ts"],
@@ -651,4 +669,28 @@ it("reports a two-file cycle and a self import, and stays silent on type-only cy
     "src/self.ts import(no-self-import)",
     "src/tax.ts import(no-cycle)",
   ]);
+});
+
+it("ignores emitted bundles and reference copies while linting authored assets", async () => {
+  const diagnostics = await lintWith(
+    defineStrictOxlintConfig({
+      categories: { correctness: "off" },
+      rules: { "eslint/no-debugger": "error" },
+    }),
+    {
+      "assets/vendor-esm.js": "debugger;",
+      "public/assets/vendor-esm.js": "debugger;",
+      "public/vendor.min.js": "debugger;",
+      ".agents/ref-themes/theme.js": "debugger;",
+      ".agents/ref-library/src/helper.ts": "debugger;",
+      "assets/authored.js": "debugger;",
+      "src/utils.ts": "debugger;",
+    },
+  );
+  expect(
+    diagnostics
+      .filter((diagnostic) => diagnostic.code === "eslint(no-debugger)")
+      .map((diagnostic) => diagnostic.filename)
+      .toSorted(),
+  ).toEqual(["assets/authored.js", "src/utils.ts"]);
 });

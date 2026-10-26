@@ -1,0 +1,4 @@
+{"timestamp":"2026-10-19T10:00:00Z","type":"session_meta","payload":{"id":"session","instructions":"mcp__t3_code__delegate_task is available"}}
+{"timestamp":"2026-10-19T10:00:01Z","type":"response_item","payload":{"type":"function_call","name":"exec_command","call_id":"1","arguments":"{\"cmd\":\"pnpm gate && node check.mjs --integrate\"}"}}
+{"timestamp":"2026-10-19T10:00:02Z","type":"response_item","payload":{"type":"function_call","name":"spawn_agent","call_id":"2","arguments":"{}"}}
+{"timestamp":"2026-10-19T10:00:03Z","type":"token_usage_record","payload":{"response_id":"one","usage":{"input_tokens":200001,"cached_input_tokens":190000,"output_tokens":10}}}

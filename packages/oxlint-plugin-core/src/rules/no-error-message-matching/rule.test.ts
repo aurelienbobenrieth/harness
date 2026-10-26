@@ -43,3 +43,9 @@ it("exempts test files", async () => {
     { filename: "sample.test.ts" },
   );
 });
+it.each([
+  'export const display = (error: Error, fallback: string) => error.message !== "" ? error.message : fallback;',
+  'export const display = (error: Error) => error.message.trim() === `` ? "Unavailable" : error.message;',
+])("allows checking whether error text is present for display: %s", async (source) => {
+  await assertRuleDoesNotReport(ruleName, source);
+});

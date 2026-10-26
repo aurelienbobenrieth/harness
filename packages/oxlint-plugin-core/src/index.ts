@@ -1,3 +1,4 @@
+import { fencedDocExamples } from "./rules/fenced-doc-examples/rule.js";
 import { eslintCompatPlugin } from "@oxlint/plugins";
 import { noAmbientNondeterminismInTests } from "./rules/no-ambient-nondeterminism-in-tests/rule.js";
 import { noDeadComments } from "./rules/no-dead-comments/rule.js";
@@ -18,11 +19,18 @@ import { paddingBeforeExit } from "./rules/padding-before-exit/rule.js";
 import { paddingLineBetweenStatements } from "./rules/padding-line-between-statements/rule.js";
 import { workspaceBoundaries } from "./rules/workspace-boundaries/rule.js";
 
+/** Advisory defaults for newly introduced or low-precision rules; merge into consumer rules. */
+export const advisoryRules = {
+  "core/fenced-doc-examples": "warn",
+} as const;
+
 export default eslintCompatPlugin({
   meta: {
     name: "core",
   },
   rules: {
+    "fenced-doc-examples": fencedDocExamples,
+
     "no-ambient-nondeterminism-in-tests": noAmbientNondeterminismInTests,
     "no-dead-comments": noDeadComments,
     "no-discarded-caught-error": noDiscardedCaughtError,

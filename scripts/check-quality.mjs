@@ -1,12 +1,16 @@
+import { spawnSync } from "node:child_process";
+import path from "node:path";
+import { createRequire } from "node:module";
 import { runCoreConformanceReport } from "../packages/conformance-core/dist/index.mjs";
 
-const enforcedChecks = new Set(["dead-exports", "duplication-budget", "instruction-blocks"]);
+const enforcedChecks = new Set(["duplication-budget", "instruction-blocks"]);
 const report = await runCoreConformanceReport({
   root: process.cwd(),
   skipChecks: ["dependency-overlap", "closed-design-system-probe", "tsconfig-strictness"],
-  deadExports: { requireKnipConfig: true },
-  // The always-on communication rules are written once in the skill and carried by AGENTS.md.
-  instructionBlocks: { blocks: { communication: "skills/communication/core.md" } },
+  // The always-on communication and economy rules are written once in their skills and carried by AGENTS.md.
+  instructionBlocks: {
+    blocks: { communication: "skills/communication/core.md", economy: "skills/economy/core.md" },
+  },
   duplication: {
     requireTool: true,
     // Shared oxlint AST and test helpers live once in internal/oxlint-kit (bundled into each plugin).
@@ -48,3 +52,11 @@ const failed = report.checks.some(
 );
 
 if (failed) process.exitCode = 1;
+
+// Keep Knip as the single owner of unused-code and dependency analysis.
+const require = createRequire(import.meta.url);
+const knip = spawnSync(process.execPath, [path.resolve(path.dirname(require.resolve("knip")), "../bin/knip.js")], {
+  stdio: "inherit",
+  windowsHide: true,
+});
+if (knip.status !== 0) process.exitCode = knip.status ?? 1;

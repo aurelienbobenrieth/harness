@@ -177,7 +177,6 @@ try {
       root: consumer,
       expectedFiles: expectedTests,
       allowedSkips: [
-        "dead-exports",
         "duplication-budget",
         "closed-design-system-probe",
         "tsconfig-strictness",

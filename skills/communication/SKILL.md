@@ -5,38 +5,23 @@ description: Shapes long-form prose for a person (READMEs, ADRs and PDRs, PR des
 
 # Communication
 
-[core.md](core.md) is always on and already loaded through `AGENTS.md`; this skill adds what long documents need. The user's requested depth, format, and vocabulary still win.
+[core.md](core.md) is always on via `AGENTS.md`; this adds long documents. The user's requested depth, format, and vocabulary still win.
 
 ## Longer than a screen
 
-- Headings alone tell the story; depth goes in `<details>` or a linked page.
-- Bold at most one must-see line per section.
-- Say it once: never a table plus a sentence restating it.
-- Rewriting a doc makes it shorter. Cut words, not facts.
+- Headings alone tell the story; depth in `<details>` or a linked page.
+- Say it once: no table plus a restating sentence. Bold at most one must-see line per section.
+- Rewriting makes it shorter. Cut words, not facts.
 
-## Pick the visual by the reader's question
+## Visual by the reader's question
 
-[visuals](references/visuals.md) maps each question to a visual and a snippet that renders on the target medium: user flow, sequence, states, event storming, data shape, system boundaries, flamegraph, volumes, two-axis trade-offs, timelines, plus the tables, trees, and diffs. Mermaid renders on GitHub only; npm READMEs, terminals, and chat get tables, `text` diagrams, unicode bars.
+[visuals](references/visuals.md): question to visual + snippet for the target medium. Mermaid on GitHub only; npm READMEs, terminals, chat get tables, `text` diagrams, unicode bars.
 
 ## Never let them accept blindly
 
-- Choices they own, risks, and skipped checks go where the eye lands, never mid-paragraph or behind a link.
+- Choices they own, risks, skipped checks where the eye lands, never mid-paragraph or behind a link.
 - A caveat that changes the decision sits beside the claim it limits.
-- "All", "only", "never" need evidence for the whole scope.
 
 ## Shapes
 
-```text
-README     promise ─▶ what it looks like ─▶ install + first command ─▶ top uses ─▶ reference ─▶ links
-ADR / PDR  decision (bold) ─▶ context ─▶ gain / cost ─▶ rejected options
-Update     what happened ─▶ why it matters ─▶ certain vs uncertain ─▶ what's needed from you
-Review/PR  per finding: location ─▶ failure ─▶ fix · PR text stands alone
-```
-
-Defaults, not a template: drop any step this reader doesn't need.
-
-## Recovery
-
-- Long task: state the first action and why, then update only on a finding, a choice, or a blocker.
-- Mid-task question: answer briefly, continue unless the goal changed.
-- Didn't land: change the explanation, not the volume. One concrete example, the missing context, the consequence.
+README: promise -> looks -> install + first command -> top uses -> reference. ADR/PDR: decision (bold) -> context -> gain/cost -> rejected options. Update: happened -> why -> certain vs uncertain -> what's needed. Review/PR: location -> failure -> fix. Drop any step this reader doesn't need.

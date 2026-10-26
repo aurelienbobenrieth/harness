@@ -43,7 +43,7 @@
     "typecheck": "tsc --noEmit"
   },
   "peerDependencies": {
-    "oxfmt": ">=0.67.0 <0.69.0"
+    "oxfmt": ">=0.67.0 <0.69.0 || ^0.74.0"
   },
   "engines": {
     "node": "^22.19.0 || ^24.11.0"

@@ -11,7 +11,7 @@ it("reports a function reference passed to a native array method", async () => {
 
 it("reports a member reference passed to a native array method", async () => {
   await expect(
-    assertRuleReports(ruleName, "export const kept = (rows: string[]) => rows.filter(guards.isValid);\n"),
+    assertRuleReports(ruleName, "const rows: string[] = []; rows.filter(guards.isValid);\n"),
   ).resolves.toBeUndefined();
 });
 
@@ -54,4 +54,15 @@ it("allows inline callbacks and filter(Boolean)", async () => {
       'export const numbers = ["1", "2"].map((text) => Number(text));\nexport const present = [0, 1].filter(Boolean);\n',
     ),
   ).resolves.toBeUndefined();
+});
+
+it.each([
+  "rows.map(Math.cos)",
+  "rows.map(decodeURIComponent)",
+  "rows.map(normalizeDomain)",
+  "rows.findLastIndex(isTurnStart)",
+])("reports %s without an Effect import", async (call) => {
+  await assertRuleReports(ruleName, `const rows: string[] = []; ${call};`, {
+    filename: "src/utils.ts",
+  });
 });

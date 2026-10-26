@@ -9,6 +9,8 @@ export function unconfiguredReason(check: ConformanceCheck, options: Conformance
     return "No tsconfigStrictness options configured; pass {} to enable the default baseline.";
   if (check.id === "instruction-blocks" && options.instructionBlocks === undefined)
     return "No instructionBlocks options configured.";
+  if (check.id === "migration-snapshot-ancestry" && options.migrationSnapshots === undefined)
+    return "No migrationSnapshots directory configured.";
   return undefined;
 }
 

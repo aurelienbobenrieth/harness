@@ -27,6 +27,7 @@ const indexPassingModules: ReadonlySet<string> = new Set(["effect/Array"]);
 
 function isFunctionReference(node: ESTree.Node | undefined): boolean {
   if (node?.type === "MemberExpression") return true;
+
   // `filter(Boolean)` is the idiomatic truthiness filter; Boolean ignores the extra arguments.
   return node?.type === "Identifier" && node.name !== "Boolean";
 }
@@ -44,13 +45,16 @@ export const noArrayCallbackReference: Rule = {
     return {
       CallExpression(node) {
         const callee = node.callee;
+
         if (callee.type !== "MemberExpression" || callee.computed) return;
         if (callee.property.type !== "Identifier" || !callbackMethods.has(callee.property.name)) return;
 
         const module = effectModuleOf(context, callee.object);
+
         if (module !== undefined && !indexPassingModules.has(module)) return;
         // Effect's dual helpers take the callback last (`Arr.map(xs, f)`, `Arr.map(f)`); native methods take it first.
         const callback = module === undefined ? node.arguments[0] : node.arguments.at(-1);
+
         if (!isFunctionReference(callback)) return;
 
         context.report({ node: callback ?? node, messageId: "noArrayCallbackReference" });

@@ -6,14 +6,14 @@
     "@aurelienbbn/agentlint": ">=0.3.0 <0.9.0",
     "oxlint": ">=1.82.0 <2.0.0",
     "oxlint-tsgolint": "^7.0.2001",
-    "oxfmt": ">=0.67.0 <0.69.0",
-    "vite-plus": "^0.3.2",
+    "oxfmt": ">=0.67.0 <0.69.0 || ^0.74.0",
+    "vite-plus": "^0.3.2 || ^1.4.0",
     "vitest": ">=4.1.11 <6.0.0",
     "stylelint": ">=17.15.0 <18.0.0"
   },
   "sharedDependencies": {
     "@types/node": "22.20.5",
-    "vite": "8.3.0",
+    "vite": "8.3.3",
     "typescript": "7.0.2",
     "lit": "3.3.3",
     "xstate": "5.33.2",
@@ -22,20 +22,20 @@
   "profiles": {
     "baseline": {
       "@aurelienbbn/agentlint": "0.3.0",
-      "oxlint": "1.82.0",
-      "oxlint-tsgolint": "7.0.2001",
-      "oxfmt": "0.67.0",
-      "vite-plus": "0.3.2",
-      "vitest": "4.1.11",
+      "oxlint": "1.89.0",
+      "oxlint-tsgolint": "7.0.2005",
+      "oxfmt": "0.74.0",
+      "vite-plus": "1.4.0",
+      "vitest": "5.0.5",
       "stylelint": "17.15.0"
     },
     "current": {
       "@aurelienbbn/agentlint": "0.8.0",
-      "oxlint": "1.88.0",
-      "oxlint-tsgolint": "7.0.2004",
-      "oxfmt": "0.68.0",
-      "vite-plus": "0.3.2",
-      "vitest": "5.0.4",
+      "oxlint": "1.89.0",
+      "oxlint-tsgolint": "7.0.2005",
+      "oxfmt": "0.74.0",
+      "vite-plus": "1.4.0",
+      "vitest": "5.0.5",
       "stylelint": "17.16.0"
     }
   }
