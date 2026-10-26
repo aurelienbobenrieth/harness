@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { matrix, tasks } from "./tasks.mjs";
-import { mutants, sourceSignals, validateJudgment, shellBoundary } from "./grade.mjs";
+import { mutants, sourceSignals, validateJudgment, shellBoundary, mutantStatus } from "./grade.mjs";
 
 test("60 balanced cells, two repeats; luna has no ablations", () => {
   const cells = matrix();
@@ -61,4 +61,15 @@ test("shell boundary catches an unchanged leak, while allowing the public api", 
     }),
     true,
   );
+});
+
+test("runtime TypeError inside a test kills a mutant, import/empty-suite errors do not", () => {
+  assert.equal(
+    mutantStatus({ pass: false, output: "TypeError: undefined\n Tests  1 failed | 3 passed (4)" }),
+    "killed",
+  );
+
+  assert.equal(mutantStatus({ pass: false, output: "Failed Suites 1\nSyntaxError\n Tests no tests" }), "invalid");
+  assert.equal(mutantStatus({ pass: true }), "survived");
+  assert.equal(mutantStatus({ killed: true }), "timeout");
 });

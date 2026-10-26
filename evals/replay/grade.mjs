@@ -180,3 +180,11 @@ export function shellBoundary(sources) {
     ([file, text]) => file.includes("/shell/") && /features\/(?:errors|jobs)\/(?!api(?:\.ts)?["'])/.test(text),
   );
 }
+
+/** Runtime failures inside selected tests kill mutants; suite-load failures do not. */
+export function mutantStatus({ pass, killed, output = "" }) {
+  if (pass) return "survived";
+  if (killed) return "timeout";
+
+  return /Tests\s+\d+ failed|AssertionError/.test(output) ? "killed" : "invalid";
+}

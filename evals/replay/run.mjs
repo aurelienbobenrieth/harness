@@ -5,7 +5,7 @@ import { createHash } from "node:crypto";
 import { runAgent, judge, budget } from "../lib/runner.mjs";
 import { options, root, skillsRevision } from "../lib/io.mjs";
 import { tasks, matrix } from "./tasks.mjs";
-import { sourceSignals, mutants, validateJudgment, shellBoundary } from "./grade.mjs";
+import { sourceSignals, mutants, validateJudgment, shellBoundary, mutantStatus } from "./grade.mjs";
 import { workspace, command, git, contents, hiddenTests, overlay, check } from "./workspace.mjs";
 
 const opts = options();
@@ -161,7 +161,6 @@ async function mutation(trial, sources, testPaths, diff) {
     const outcome = await overlay(trial.cwd, { [mutant.file]: mutant.source }, () =>
       check(trial.cwd, "test", testPaths, 90000),
     );
-    const assertion = /AssertionError|expected .*(?:to |but)|→ expected|❯.*expect\(/i.test(outcome.output ?? "");
 
     results.push({
       file: mutant.file,
@@ -169,7 +168,7 @@ async function mutation(trial, sources, testPaths, diff) {
       line: mutant.line,
       original: mutant.original,
       replacement: mutant.replacement,
-      status: outcome.pass ? "survived" : outcome.killed ? "timeout" : assertion ? "killed" : "invalid",
+      status: mutantStatus(outcome),
       output: outcome.output?.slice(-6000),
     });
   }
@@ -306,10 +305,19 @@ async function runCell(cell) {
           brief: task.prompt,
           sources: judgedSources,
           reference: refData.diff.slice(0, 16000),
-          mutation: row.mutation,
+          mutation: {
+            status: row.mutation.status,
+            score: row.mutation.score,
+            killed: row.mutation.killed,
+            valid: row.mutation.valid,
+            sites: row.mutation.results?.map(({ file, line, kind, status }) => ({ file, line, kind, status })),
+          },
           acceptance: row.acceptance.pass,
           lint: row.lint.pass,
-          toolEvidence: row.run.toolCalls,
+          toolEvidence: row.run.toolCalls.map((call) => ({
+            name: call.name,
+            arguments: JSON.stringify(call.arguments).slice(0, 400),
+          })),
           messages: row.run.messages.slice(-2),
           pbtExpected: task.pbt,
           browserExpected: task.browser,
@@ -384,6 +392,11 @@ if (opts.mode === "preflight") {
     const queue = plan.filter(
       (cell) => !ledger.rows.includes(`${cell.task.id}-${cell.model}-${cell.condition}-${cell.seed}`),
     );
+
+    if (opts.priority === "contrasts")
+      queue.sort(
+        (a, b) => Number(!["none", "full"].includes(a.condition)) - Number(!["none", "full"].includes(b.condition)),
+      );
     let next = 0;
     const worker = async () => {
       for (;;) {

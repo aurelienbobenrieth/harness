@@ -10,7 +10,7 @@ The shell refactor uses existing behavior tests and a public-import check.
 $env:EVALS_MAX_USD = '25'
 node evals/replay/run.mjs --mode preflight --id keepcart-v1 --skills-ref origin/steering/economy
 node evals/replay/probe.mjs
-node evals/replay/run.mjs --id keepcart-v1 --skills-ref origin/steering/economy
+node evals/replay/run.mjs --id keepcart-v1 --skills-ref origin/steering/economy --priority contrasts
 node --test evals/replay/*.test.mjs
 ```
 
@@ -23,6 +23,7 @@ Cleanup unlinks junctions before removing its checked absolute trial directory.
 `--tasks`, `--conditions`, `--models`, `--seeds` select bounded subsets.
 The same `--id` resumes completed cells using a shared spend ledger; never run two writers
 with the same ID. Costs include judge calls and unmetered-failure reservations.
+`--priority contrasts` runs full/none cells before the remaining single-skill ablations.
 Codex pricing is the existing runner's configurable estimate, not an invoice; terminal-only
 usage cannot enforce an instantaneous dollar stop. Reservations prevent starting an
 unaffordable next trial, and every reported overrun must remain visible.
@@ -36,7 +37,7 @@ as distinguishing regressions. An incomplete cell is a failed attempt, never a p
 - Hidden tests are overlaid only after capturing agent tests and completing mutation.
 - AST mutations cover changed production lines, stratified by file and operator/boundary/return;
   `--mutants` defaults to nine per trial. Report available, sampled, invalid and timed-out counts.
-  Assertion failures kill; import/type/setup crashes do not. Baseline must be green and nonempty.
+  Failures inside selected tests kill; import/type/setup crashes do not. Baseline must be green and nonempty.
 - A Stryker dry-run probe records compatibility with KeepCart's installed runtime before use.
   If unavailable, report the exact failure and use the bounded AST runner.
 - KeepCart's scoped lint is authoritative for its workspace and import-layer conventions.
@@ -48,6 +49,7 @@ as distinguishing regressions. An incomplete cell is a failed attempt, never a p
   A UI test in happy-dom is not browser evidence. Unavailable browser evidence stays unavailable.
 - The cheap judge receives the brief, line-numbered agent code and reference diff. Every 0-3
   criterion needs a valid exact file/line quote; malformed or unsupported judgments stay missing.
+  Its mutation input contains counts and sites, rather than repeated test-failure logs.
 
 Full exposure copies the pinned revision's skill files and always-on cores. Ablations expose
 only the named skill and its own references; build's link to testing is intentionally absent.
