@@ -1,5 +1,5 @@
 import { expect, it } from "vitest";
-import { assertRuleDoesNotReport, assertRuleReportsInEffect as assertRuleReports } from "../test-support.ts";
+import { assertRuleDoesNotReport, assertRuleReports } from "../test-support.ts";
 
 const ruleName = "effect/no-array-for-each";
 

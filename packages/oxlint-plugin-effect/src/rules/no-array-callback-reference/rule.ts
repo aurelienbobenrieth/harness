@@ -2,7 +2,7 @@
  * @attribution eslint-plugin-unicorn `no-array-callback-reference` (MIT; rule concept, independently re-implemented)
  */
 import type { ESTree, Rule } from "@oxlint/plugins";
-import { effectModuleOf, isInEffectRuntime } from "../binding-support.js";
+import { effectModuleOf } from "../binding-support.js";
 
 const message =
   "Pass an inline callback, not a function reference: array methods call it with the index and the array too (`['1', '2'].map(parseInt)`).";
@@ -44,7 +44,6 @@ export const noArrayCallbackReference: Rule = {
   create(context) {
     return {
       CallExpression(node) {
-        if (!isInEffectRuntime(context, node)) return;
         const callee = node.callee;
 
         if (callee.type !== "MemberExpression" || callee.computed) return;

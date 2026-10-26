@@ -1,5 +1,5 @@
 import { expect, it } from "vitest";
-import { assertRuleDoesNotReport, assertRuleReportsInEffect as assertRuleReports } from "../test-support.ts";
+import { assertRuleDoesNotReport, assertRuleReports } from "../test-support.ts";
 
 const ruleName = "effect/no-array-callback-reference";
 
@@ -54,4 +54,15 @@ it("allows inline callbacks and filter(Boolean)", async () => {
       'export const numbers = ["1", "2"].map((text) => Number(text));\nexport const present = [0, 1].filter(Boolean);\n',
     ),
   ).resolves.toBeUndefined();
+});
+
+it.each([
+  "rows.map(Math.cos)",
+  "rows.map(decodeURIComponent)",
+  "rows.map(normalizeDomain)",
+  "rows.findLastIndex(isTurnStart)",
+])("reports %s without an Effect import", async (call) => {
+  await assertRuleReports(ruleName, `const rows: string[] = []; ${call};`, {
+    filename: "src/utils.ts",
+  });
 });

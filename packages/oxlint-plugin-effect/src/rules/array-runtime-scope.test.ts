@@ -1,7 +1,7 @@
 import { it } from "vitest";
 import { assertRuleDoesNotReport, assertRuleReports } from "./test-support.ts";
 
-const rules = ["effect/prefer-effect-array-helpers", "effect/no-array-for-each", "effect/no-array-callback-reference"];
+const rules = ["effect/prefer-effect-array-helpers"];
 const calls = 'const rows = ["1"]; rows.map(parseInt); rows.forEach(console.log);';
 
 for (const rule of rules) {

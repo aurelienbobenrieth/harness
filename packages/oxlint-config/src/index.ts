@@ -41,7 +41,8 @@ export const strictOxlintConfig = {
     builtin: true,
     node: true,
   },
-  ignorePatterns: [],
+  // Emitted bundles and agent reference copies are not authored source.
+  ignorePatterns: ["**/*.min.js", "**/assets/*-esm.js", "**/.agents/ref-*/**"],
   jsPlugins: [],
   options: {
     denyWarnings: true,
