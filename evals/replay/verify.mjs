@@ -4,11 +4,8 @@ import { tasks } from "./tasks.mjs";
 import { workspace, overlay, hiddenTests, check } from "./workspace.mjs";
 
 const dir = path.resolve(process.argv[2]);
-const repository =
-  process.env.KEEPCART_REPOSITORY ?? "C:/Users/aurel/Documents/root/projects/keepcart/app";
-const donor =
-  process.env.KEEPCART_DEPENDENCIES ??
-  "C:/Users/aurel/.t3/worktrees/app/v2-t-N-orchestrator-2026-10-25";
+const repository = process.env.KEEPCART_REPOSITORY ?? "C:/Users/aurel/Documents/root/projects/keepcart/app";
+const donor = process.env.KEEPCART_DEPENDENCIES ?? "C:/Users/aurel/.t3/worktrees/app/v2-t-N-orchestrator-2026-10-25";
 const rows = [];
 
 for (const file of await readdir(dir)) {
@@ -21,8 +18,7 @@ if (!rows.length) throw new Error("No trials to verify");
 for (const [taskId, entries] of Map.groupBy(rows, (entry) => entry.row.task)) {
   const retry = entries.filter(
     ({ row }) =>
-      ((!row.acceptance || !row.lint || row.acceptance?.killed || row.lint?.killed) &&
-        !row.verificationRetry) ||
+      ((!row.acceptance || !row.lint || row.acceptance?.killed || row.lint?.killed) && !row.verificationRetry) ||
       (taskId === "uninstalled-regression" && row.acceptanceVersion !== 2),
   );
 
@@ -35,9 +31,7 @@ for (const [taskId, entries] of Map.groupBy(rows, (entry) => entry.row.task)) {
     for (const { file, row } of retry) {
       const diff = (row.diff ?? "").split("\n");
       const deleted = diff.flatMap((line, index) =>
-        line === "+++ /dev/null" && diff[index - 1]?.startsWith("--- a/")
-          ? [diff[index - 1].slice(6)]
-          : [],
+        line === "+++ /dev/null" && diff[index - 1]?.startsWith("--- a/") ? [diff[index - 1].slice(6)] : [],
       );
       const sources = {
         ...row.sources,
@@ -62,8 +56,7 @@ for (const [taskId, entries] of Map.groupBy(rows, (entry) => entry.row.task)) {
             ),
           );
         if (taskId === "uninstalled-regression") row.acceptanceVersion = 2;
-        if (!row.lint || row.lint?.killed)
-          row.lint = await check(trial.cwd, "lint", Object.keys(row.sources), 300000);
+        if (!row.lint || row.lint?.killed) row.lint = await check(trial.cwd, "lint", Object.keys(row.sources), 300000);
       });
 
       await writeFile(path.join(dir, file), JSON.stringify(row, null, 2));

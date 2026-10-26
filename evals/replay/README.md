@@ -69,11 +69,16 @@ this is instruction-level isolation, not an adversarial security sandbox.
 
 `node scripts/verify-changed.mjs --cwd <consumer> --base <ref> [--tests a.test.ts,b.test.ts] [--codec codec.ts]`
 checks type-aware scoped lint over changed sources and their reverse local-import consumers,
-then green nonempty consumer suites against bounded changed-line mutations. It reports kills,
+then green nonempty suites in changed/direct-consumer folders against bounded changed-line mutations. It reports kills,
 survivors, invalids and timeouts separately and exits nonzero unless every sampled mutant dies.
 Unresolved aliases require explicit preservation suites with `--tests`; local imports and reexports
-are followed transitively. Runtime browser/cache/report output is excluded before lint arguments.
+are followed transitively for lint; `--tests` also adds preservation suites outside those folders. Union/tagged-result declaration edits enable `--type-aware --type-check`. Runtime browser/cache/report output is excluded before lint arguments.
 No universal mutation score is inferred from this small sample.
 
 The replay condition `delta` exposes the revised full skill bundle and this verification tool.
 Select it explicitly with `--conditions delta`; the default matrix remains unchanged.
+
+Replay a saved surviving mutant without changing the baseline file:
+`node evals/replay/reproduce.mjs <saved-row.json> <new-result.json>`.
+It selects existing consumer suites before overlaying any hidden tests, requires a green
+baseline, reuses the original mutation sites and restores production after each mutant.

@@ -16,12 +16,8 @@ export const tasks = [
   {
     id: "archive-codec",
     commit: "729f88f4b",
-    scope: [
-      "apps/backend/src/features/recovery/archive-tinybird-export/archive-objects/encoding.boundary.ts",
-    ],
-    tests: [
-      "apps/backend/src/features/recovery/archive-tinybird-export/archive-objects/encoding.test.ts",
-    ],
+    scope: ["apps/backend/src/features/recovery/archive-tinybird-export/archive-objects/encoding.boundary.ts"],
+    tests: ["apps/backend/src/features/recovery/archive-tinybird-export/archive-objects/encoding.test.ts"],
     prompt:
       "Implement the raw archive wire codec in apps/backend/src/features/recovery/archive-tinybird-export/archive-objects/encoding.boundary.ts. The consumer contract is synchronous: compressedPart(readonly JSON records): Uint8Array emits zstd-compressed complete NDJSON rows; joinedParts(readonly Uint8Array frames): Uint8Array emits one readable zstd frame containing all rows in order; objectDigest(Uint8Array): string is lowercase SHA-256 hex of exact wire bytes. Preserve Unicode, nested fields, empty input and page boundaries. This is the encoding sub-slice of the Tinybird history archive work; do not implement storage, importers or other archive work. Verify the wire format independently. Retain tests alongside the codec; the production file scope does not exclude test files.",
     pbt: true,
@@ -30,11 +26,7 @@ export const tasks = [
   {
     id: "shell-boundaries",
     commit: "28e9be7a6",
-    scope: [
-      "apps/ops/src/shell",
-      "apps/ops/src/features/errors/api.ts",
-      "apps/ops/src/features/jobs/api.ts",
-    ],
+    scope: ["apps/ops/src/shell", "apps/ops/src/features/errors/api.ts", "apps/ops/src/features/jobs/api.ts"],
     tests: ["apps/ops/src/shell"],
     prompt:
       "Refactor the ops shell so nav-counts, nav, navigation-commands and preferences reach errors and jobs only through those features' api.ts public surfaces, rather than their internal queries.ts/tabs.ts. Preserve all behavior. The takedown count remains owned by separate work and must stay unchanged. Avoid creating a generic feature facade or broad public re-exports. Verify existing shell behavior.",

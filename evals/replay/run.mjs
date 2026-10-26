@@ -8,20 +8,16 @@ import { tasks, matrix } from "./tasks.mjs";
 import { sourceSignals, validateJudgment, shellBoundary } from "./grade.mjs";
 import { workspace, command, git, contents, hiddenTests, overlay, check } from "./workspace.mjs";
 
-import { loadSources, verificationPlan, mutationGate } from "./gates.mjs";
+import { loadSources, verificationPlan, mutationGate, needsTypeCheck } from "./gates.mjs";
 
 const opts = options();
 
 if (budget.limit > 25) throw new Error("Replay has a hard $25 ceiling");
 const repository = path.resolve(
-  opts.repository ??
-    process.env.KEEPCART_REPOSITORY ??
-    "C:/Users/aurel/Documents/root/projects/keepcart/app",
+  opts.repository ?? process.env.KEEPCART_REPOSITORY ?? "C:/Users/aurel/Documents/root/projects/keepcart/app",
 );
 const donor = path.resolve(
-  opts.donor ??
-    process.env.KEEPCART_DEPENDENCIES ??
-    "C:/Users/aurel/.t3/worktrees/app/v2-t-N-orchestrator-2026-10-25",
+  opts.donor ?? process.env.KEEPCART_DEPENDENCIES ?? "C:/Users/aurel/.t3/worktrees/app/v2-t-N-orchestrator-2026-10-25",
 );
 const output = path.join(root, "evals/results/replay", opts.id ?? "keepcart-v1");
 const selected = tasks.filter((task) => !opts.tasks || opts.tasks.split(",").includes(task.id));
@@ -77,16 +73,7 @@ async function preflight(task) {
       ),
     );
     const names = (
-      await git(
-        repository,
-        "diff-tree",
-        "--no-commit-id",
-        "--name-only",
-        "-r",
-        task.commit,
-        "--",
-        ...task.scope,
-      )
+      await git(repository, "diff-tree", "--no-commit-id", "--name-only", "-r", task.commit, "--", ...task.scope)
     )
       .split(/\r?\n/)
       .filter(Boolean);
@@ -115,8 +102,7 @@ async function preflight(task) {
       baseline,
       green,
       deleted,
-      valid:
-        green.pass && (task.acceptanceKind === "existing-tests-and-boundary" || !baseline.pass),
+      valid: green.pass && (task.acceptanceKind === "existing-tests-and-boundary" || !baseline.pass),
     };
   } finally {
     await trial.cleanup();
@@ -142,8 +128,7 @@ function changedLines(diff, sources) {
   }
 
   for (const [name, value] of Object.entries(sources))
-    if (!result.has(name))
-      result.set(name, new Set(value.split("\n").map((_, index) => index + 1)));
+    if (!result.has(name)) result.set(name, new Set(value.split("\n").map((_, index) => index + 1)));
 
   return result;
 }
@@ -186,15 +171,7 @@ async function runCell(cell) {
 
     await recordSpend();
     row.sources = await contents(trial.cwd, trial.base);
-    row.diff = await git(
-      trial.cwd,
-      "diff",
-      "--no-ext-diff",
-      "--unified=0",
-      trial.base,
-      "--",
-      ...task.scope,
-    );
+    row.diff = await git(trial.cwd, "diff", "--no-ext-diff", "--unified=0", trial.base, "--", ...task.scope);
     row.referenceDiff = refData.diff;
     const beforeSources = {};
 
@@ -212,8 +189,7 @@ async function runCell(cell) {
     );
 
     row.newInfrastructure = row.signals.infrastructure.filter(
-      (e) =>
-        !row.baselineSignals.infrastructure.some((b) => b.file === e.file && b.quote === e.quote),
+      (e) => !row.baselineSignals.infrastructure.some((b) => b.file === e.file && b.quote === e.quote),
     );
 
     row.diffSize = {
@@ -234,11 +210,12 @@ async function runCell(cell) {
         : {
             tests,
             lint: Object.keys(row.sources),
-            production: Object.keys(row.sources).filter(
-              (file) => !/\.test\.|\/testing[./]|\.config\./.test(file),
-            ),
+            production: Object.keys(row.sources).filter((file) => !/\.test\.|\/testing[./]|\.config\./.test(file)),
           };
+
+    plan.typeCheck = needsTypeCheck(beforeSources, row.sources);
     row.verificationPlan = plan;
+
     row.mutation = await mutationGate({
       cwd: trial.cwd,
       sources: row.sources,
@@ -247,7 +224,8 @@ async function runCell(cell) {
       limit: Number(opts.mutants ?? 9),
       codec: task.pbt && condition === "delta" ? task.scope[0] : undefined,
     });
-    row.lint = await check(trial.cwd, condition === "delta" ? "types" : "lint", plan.lint);
+
+    row.lint = await check(trial.cwd, condition === "delta" && plan.typeCheck ? "types" : "lint", plan.lint);
 
     row.acceptance = await overlay(trial.cwd, refData.hidden, () =>
       check(
@@ -272,11 +250,7 @@ async function runCell(cell) {
 
       row.boundary = shellBoundary(row.boundarySources);
     } else row.boundary = null;
-    row.pass =
-      row.run.status === "completed" &&
-      row.acceptance.pass &&
-      row.lint.pass &&
-      row.boundary !== false;
+    row.pass = row.run.status === "completed" && row.acceptance.pass && row.lint.pass && row.boundary !== false;
 
     try {
       const judgedSources = Object.fromEntries(
@@ -345,10 +319,7 @@ if (opts.mode === "preflight") {
   for (const task of selected) {
     const result = await preflight(task);
 
-    await writeFile(
-      path.join(output, `preflight-${task.id}.json`),
-      JSON.stringify(result, null, 2),
-    );
+    await writeFile(path.join(output, `preflight-${task.id}.json`), JSON.stringify(result, null, 2));
 
     console.log(
       JSON.stringify({
@@ -381,7 +352,7 @@ if (opts.mode === "preflight") {
           revision,
           repository,
           donor,
-          cells: matrix().map(({ task, ...cell }) => ({ task: task.id, ...cell })),
+          cells: plan.map(({ task, ...cell }) => ({ task: task.id, ...cell })),
         },
         null,
         2,
@@ -389,15 +360,12 @@ if (opts.mode === "preflight") {
     );
 
     const queue = plan.filter(
-      (cell) =>
-        !ledger.rows.includes(`${cell.task.id}-${cell.model}-${cell.condition}-${cell.seed}`),
+      (cell) => !ledger.rows.includes(`${cell.task.id}-${cell.model}-${cell.condition}-${cell.seed}`),
     );
 
     if (opts.priority === "contrasts")
       queue.sort(
-        (a, b) =>
-          Number(!["none", "full"].includes(a.condition)) -
-          Number(!["none", "full"].includes(b.condition)),
+        (a, b) => Number(!["none", "full"].includes(a.condition)) - Number(!["none", "full"].includes(b.condition)),
       );
     let next = 0;
     const worker = async () => {
@@ -411,10 +379,7 @@ if (opts.mode === "preflight") {
 
         // Reserve the entire next agent + judge before touching a trial. Leave room for unmetered termination.
         if (
-          budget.spent +
-            budget.reserved +
-            Number(opts["case-usd"] ?? 0.65) +
-            Number(opts["judge-usd"] ?? 0.08) >
+          budget.spent + budget.reserved + Number(opts["case-usd"] ?? 0.65) + Number(opts["judge-usd"] ?? 0.08) >
           budget.limit
         ) {
           await appendFile(

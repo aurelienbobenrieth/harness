@@ -13,15 +13,15 @@ description: Implement an authorized feature, fix, or refactor test-first, with 
 2. **Red:** one failing test per slice, oracle per [testing](../testing/SKILL.md); fails on the assertion, not a fixture.
 3. **Green:** minimal code; tests read-only. Spec/test disagree: stop, report.
 4. **Refactor** on green; structure and behavior in separate commits.
-5. **Prove it:** doubt a green test: break the code, it must go red. Strategies by failure feared.
+5. **Prove it:** doubt a green test: break the code, it must go red. Extra strategies (property, state model, contract, packed install) by failure feared, not habit.
 
 Defect: reproduce at its boundary, cheapest distinguishing observation first; no reproduction: name the missing condition, cause stays provisional. Covered, low-impact, reversible edit: no new test, still scoped checks.
 
-At edited boundaries, list consumers and semantic exceptions. Abstract only a shared decision, not similar syntax. Shaping a module/export/package boundary: load [design](references/design.md).
+Design: module hides one decision; interface much smaller than what it hides; dependencies inward. Shaping a module/export/package boundary: load [design](references/design.md).
 
 ## Verify
 
-- Runtime limits, retry identity, cancellation, partial failure: design in when needed. Stale generated code: run the generator (check external sync); never hand-write/widen substitute types. Prove at the failure boundary: real filesystem, consumer install. Focus/typing/dialog changes: one bounded real-browser flow; retain command/result or screenshot, or state the runtime limit.
+- Runtime limits, retry identity, cancellation, partial failure: design in when needed. Stale generated code: run the generator (check external sync); never hand-write/widen substitute types. Prove at the failure boundary: real filesystem (writer), consumer install (exports), browser (focus); a fake/static render/compile proves only itself.
 - Parallel workers: bounded scope, file ownership, verification task each, brief/budget per [economy](../economy/SKILL.md); serialize shared mutable state.
 - Worktree servers: `worktree-hygiene ports`, strict port; handoff requires `worktree-hygiene done` exits 0 (`--reap` stops yours). Never stop a process by name/port alone.
 - Skipped/empty/stale/unavailable is not a pass. Rerun invalidated checks. Scoped checks while iterating, then one full gate on the final state before handoff (PR or no PR), or CI per project; never parallel checks.

@@ -57,7 +57,9 @@
     "evals:ab": "node evals/ab/run.mjs",
     "evals:deterministic": "node evals/deterministic/run.mjs",
     "test:evals:deterministic": "node --test evals/deterministic/*.test.mjs",
-    "test:format": "node --test scripts/format.test.mjs"
+    "test:format": "node --test scripts/format.test.mjs",
+    "verify:changed": "node scripts/verify-changed.mjs",
+    "evals:replay:reproduce": "node evals/replay/reproduce.mjs"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "0.18.5",

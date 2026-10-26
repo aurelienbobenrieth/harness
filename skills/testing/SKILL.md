@@ -21,8 +21,8 @@ Start from the failure feared; pick whatever catches it with an independent orac
 ## Red, green, keep honest
 
 - Red fails on the assertion, not an import/fixture/type error. Green phase: tests read-only. Spec/test disagree: stop, report; never edit either to force agreement (`test-expectation-drift` flags loosened, skipped, re-valued expectations).
-- Doubt a green test: break the code (revert fix, flip condition); still green = tautology. Use the configured changed-production mutation gate, including existing suites of moved consumers.
-- Codec/parser/serializer laws: suggest bounded generated round-trip/partition tests with independent oracle, seed and shrinking; record a reason to decline.
+- Use the configured changed-production mutation gate, including existing suites of moved consumers.
+- Module deepened/replaced: delete tests that pinned its internals; don't layer over them.
 
 ## Determinism and claims
 

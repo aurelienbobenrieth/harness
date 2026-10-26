@@ -3,7 +3,7 @@ import { mkdir, readFile, writeFile, readdir, symlink, lstat, rm, unlink } from 
 import path from "node:path";
 import { tmpdir } from "node:os";
 import { randomUUID } from "node:crypto";
-import { isSource } from "./gates.mjs";
+import { isSource } from "./source-paths.mjs";
 import { skillFiles } from "../lib/io.mjs";
 
 export async function command(file, args, cwd, timeout = 120000) {
@@ -29,12 +29,7 @@ export async function command(file, args, cwd, timeout = 120000) {
 
       if (process.platform === "win32")
         termination = new Promise((done) =>
-          execFile(
-            "taskkill.exe",
-            ["/PID", String(child.pid), "/T", "/F"],
-            { windowsHide: true },
-            () => done(),
-          ),
+          execFile("taskkill.exe", ["/PID", String(child.pid), "/T", "/F"], { windowsHide: true }, () => done()),
         );
       else {
         try {
@@ -149,8 +144,7 @@ async function exposure(cwd, condition, ref) {
     condition === "none"
       ? []
       : (await skillFiles(ref)).filter(
-          (entry) =>
-            ["full", "delta"].includes(condition) || entry.file.startsWith(`skills/${condition}/`),
+          (entry) => ["full", "delta"].includes(condition) || entry.file.startsWith(`skills/${condition}/`),
         );
 
   for (const { file, text } of sources) {
@@ -178,8 +172,7 @@ async function exposure(cwd, condition, ref) {
 
   return {
     files: sources.map((s) => s.file),
-    missingReferences:
-      condition === "build" ? ["../testing/SKILL.md (intentionally absent ablation)"] : [],
+    missingReferences: condition === "build" ? ["../testing/SKILL.md (intentionally absent ablation)"] : [],
   };
 }
 
@@ -236,6 +229,7 @@ export async function workspace({
       repository,
       480000,
     );
+
     if (created.status !== 0) throw new Error(created.output);
     await dependencies(cwd, donor);
     const exposed = await exposure(cwd, condition, ref);
@@ -258,9 +252,7 @@ export async function hiddenTests(repository, task) {
   const result = {};
 
   for (const name of task.tests) {
-    const files = lines(
-      await git(repository, "ls-tree", "-r", "--name-only", task.commit, "--", name),
-    );
+    const files = lines(await git(repository, "ls-tree", "-r", "--name-only", task.commit, "--", name));
 
     for (const file of files.filter((f) => /\.test\.[jt]sx?$|\/testing\.tsx$/.test(f))) {
       const value = await command("git", ["show", `${task.commit}:${file}`], repository);
@@ -319,8 +311,7 @@ export async function check(cwd, mode, paths, timeout = 180000) {
     cwd,
     timeout,
   );
-  const selected =
-    mode !== "test" || /Tests\s+\d+ passed|Test Files\s+\d+ passed/.test(result.output);
+  const selected = mode !== "test" || /Tests\s+\d+ passed|Test Files\s+\d+ passed/.test(result.output);
 
   return { ...result, pass: result.status === 0 && selected, selected };
 }
