@@ -12,16 +12,18 @@ const scores = (condition) =>
     .map((value) => number(value, 2))
     .join("/");
 const score = (condition) => mean(Object.values(condition.scores).filter((value) => value !== null));
+
 export async function writeReport(destination, raw) {
   if (!destination || !raw) throw Error("Usage: node write-report.mjs <report.md> <raw-jsonl>");
-  const summary = JSON.parse(await readFile(path.join(root, "evals/code-shape/measurements.json"), "utf8"));
-  const evidence = JSON.parse(await readFile(path.join(root, "evals/code-shape/evidence.json"), "utf8"));
+  const summary = JSON.parse(await readFile(path.join(root, "evals/results/code-shape/measurements.json"), "utf8"));
+  const evidence = JSON.parse(await readFile(path.join(root, "evals/results/code-shape/evidence.json"), "utf8"));
   const shapes = summary.conditions.filter(
     (condition) => condition.condition.startsWith("shape/") && !condition.condition.endsWith("/scripted"),
   );
   const comparison = ["claude", "codex"].map((model) => {
     const prose = shapes.find((row) => row.condition === `shape/${model}/prose`);
     const none = shapes.find((row) => row.condition === `shape/${model}/none`);
+
     return {
       model,
       delta: prose && none ? score(prose) - score(none) : null,
@@ -30,9 +32,11 @@ export async function writeReport(destination, raw) {
   });
   const improves = comparison.every((row) => row.delta > 0 && row.passDelta >= 0);
   const bundle = [];
+
   for (const provider of ["claude", "codex"])
     for (const condition of ["prose", "scripted"]) {
       const rows = evidence.filter((row) => row.provider === provider && row.condition === condition);
+
       bundle.push({
         provider,
         condition,
@@ -50,6 +54,7 @@ export async function writeReport(destination, raw) {
         helperRuns: rows.filter((row) => row.helperCalls.length).length,
       });
     }
+
   const helperUsage = Object.fromEntries(
     ["draft", "affected", "check"].map((name) => [
       name,
@@ -63,7 +68,12 @@ export async function writeReport(destination, raw) {
     ]),
   );
   const decisions = retention(evidence);
-  await writeFile(path.join(root, "evals/code-shape/retention.json"), JSON.stringify(decisions, null, 2) + "\n");
+
+  await writeFile(
+    path.join(root, "evals/results/code-shape/retention.json"),
+    JSON.stringify(decisions, null, 2) + "\n",
+  );
+
   const lines = [
     `# Harness code shape and scripted skills`,
     summary.completed < summary.expected
@@ -113,14 +123,17 @@ export async function writeReport(destination, raw) {
     "Validation: PENDING final gate.",
     "[Measurements](evals-shape-artifacts/measurements.json), [diffs and cited-line evidence](evals-shape-artifacts/evidence.json), [local raw transcript](evals-shape-artifacts/raw.jsonl).",
   ];
+
   if (lines.length > 50) throw Error("Report exceeds 50 lines");
   const artifacts = path.join(path.dirname(destination), "evals-shape-artifacts");
+
   await mkdir(artifacts, { recursive: true });
   for (const name of ["measurements", "evidence"])
-    await copyFile(path.join(root, `evals/code-shape/${name}.json`), path.join(artifacts, `${name}.json`));
+    await copyFile(path.join(root, `evals/results/code-shape/${name}.json`), path.join(artifacts, `${name}.json`));
   await copyFile(raw, path.join(artifacts, "raw.jsonl"));
   await writeFile(destination, lines.join("\n") + "\n");
   console.log(JSON.stringify({ lines: lines.length, comparison, bundle, helperUsage }));
 }
+
 if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href)
   await writeReport(process.argv[2], process.argv[3]);

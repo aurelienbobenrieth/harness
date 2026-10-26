@@ -45,9 +45,9 @@ baseline style findings as new defects. New files are included in the diff.
 
 The blind judge scores temporal coupling, abstraction, boundaries, naming, and
 testing from 0 to 3. Each score requires a real final-file line and a reason. Invalid
-or unavailable judgments stay missing, never zero. `measurements.json` aggregates
-conditions; `evidence.json` retains diffs, final sources, cited scores, usage and
-observed helper calls. Raw CLI transcripts stay in gitignored `evals/results/`.
+or unavailable judgments stay missing, never zero. `evals/results/code-shape/measurements.json` aggregates
+conditions; `evals/results/code-shape/evidence.json` retains diffs, final sources, cited scores, usage and
+observed helper calls. Run results, including retention decisions, stay in gitignored `evals/results/code-shape/`; raw CLI transcripts stay in `evals/results/`.
 Claude terminal aggregate usage replaces provisional stream counters. Recompute
 saved measurements without paid calls with `node evals/code-shape/regrade.mjs
 <raw-jsonl> <prior-usd>`; retain the original JSONL as the audit source.
@@ -68,3 +68,19 @@ node --test evals/lib/code-shape.test.mjs
 All three helpers were rejected and removed from the final tree. Their candidate
 tests at commit `1402a66` run with `node --test skills/build/scripts/*.test.mjs
 skills/testing/scripts/*.test.mjs skills/git/scripts/*.test.mjs`.
+
+## Last result (2026-10-26)
+
+| Model / skills | n / functional pass | lint (Harness) | duplicated lines | CC total / max | dead exports | tests added / green runs | diff + / - |
+| -------------- | ------------------- | -------------- | ---------------- | -------------- | ------------ | ------------------------ | ---------- |
+| claude/none    | 8 / 8               | 133.1 (54.1)   | 3.0              | 29.5 / 6.3     | 1.0          | 8 / 8                    | 54.1 / 3.9 |
+| codex/none     | 8 / 6               | 128.3 (50.5)   | 3.0              | 29.8 / 6.3     | 1.0          | 8 / 6                    | 41.8 / 4.1 |
+| claude/prose   | 8 / 8               | 135.5 (55.4)   | 3.0              | 30.0 / 6.1     | 1.3          | 8 / 8                    | 57.5 / 4.0 |
+| codex/prose    | 8 / 5               | 126.1 (49.3)   | 3.0              | 29.9 / 6.0     | 1.0          | 8 / 8                    | 43.3 / 6.5 |
+
+| Model  | condition | n / pass | mean seconds / calls | mean tokens (cache included) | total $ | helper-used runs |
+| ------ | --------- | -------- | -------------------- | ---------------------------- | ------- | ---------------- |
+| claude | prose     | 24 / 21  | 37.6 / 8.1           | 207818 (204291)              | 0.4343  | 0                |
+| claude | scripted  | 24 / 19  | 38.5 / 7.5           | 228016 (224561)              | 0.4621  | 0                |
+| codex  | prose     | 24 / 15  | 61.2 / 8.3           | 235815 (212368)              | 3.2962  | 0                |
+| codex  | scripted  | 24 / 13  | 53.9 / 7.0           | 163690 (139200)              | 2.9054  | 0                |

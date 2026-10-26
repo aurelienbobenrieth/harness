@@ -1,4 +1,4 @@
-import { readFile, writeFile } from "node:fs/promises";
+import { readFile, writeFile, mkdir } from "node:fs/promises";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { root } from "../lib/io.mjs";
@@ -8,8 +8,10 @@ import { summarize } from "./report.mjs";
 export async function regrade(input, priorUsd = 0) {
   if (!input) throw Error("Usage: node regrade.mjs <raw-jsonl> [prior-usd]");
   const rows = (await readFile(input, "utf8")).trim().split("\n").filter(Boolean).map(JSON.parse);
+
   for (const row of rows) {
     Object.assign(row.run, normalize(row.run.events));
+
     // Older runners charged an unmetered provider failure $0. Reserve the entire
     // case allowance instead; an absent terminal usage event is not free work.
     for (const [run, allowance] of [
@@ -21,15 +23,20 @@ export async function regrade(input, priorUsd = 0) {
         run.costSource = "reserved-unmetered";
       }
     }
+
     row.usd = row.run.costEstimateUsd + (row.judgment?.run?.costEstimateUsd ?? row.judgment?.costEstimateUsd ?? 0);
+
     if (row.grade.measured) {
       const diagnostics = JSON.parse(row.grade.measured.raw.lint.stdout).diagnostics;
+
       row.grade.measured.harnessFindings = diagnostics.filter((finding) =>
         /^(core|effect)\(/u.test(finding.code ?? ""),
       ).length;
     }
   }
+
   const summary = summarize(rows);
+
   summary.completed = rows.length;
   summary.expected = 112;
   summary.priorUsd = Number(priorUsd);
@@ -37,9 +44,15 @@ export async function regrade(input, priorUsd = 0) {
   summary.regradedFrom = path.basename(input);
   summary.models = [...new Set(rows.map((row) => row.run.model))];
   summary.revisions = Object.fromEntries(rows.map((row) => [row.condition, row.skillsRevision]));
-  await writeFile(path.join(root, "evals/code-shape/measurements.json"), JSON.stringify(summary, null, 2) + "\n");
+  await mkdir(path.join(root, "evals/results/code-shape"), { recursive: true });
+
   await writeFile(
-    path.join(root, "evals/code-shape/evidence.json"),
+    path.join(root, "evals/results/code-shape/measurements.json"),
+    JSON.stringify(summary, null, 2) + "\n",
+  );
+
+  await writeFile(
+    path.join(root, "evals/results/code-shape/evidence.json"),
     JSON.stringify(
       rows.map((row) => ({
         suite: row.suite,
@@ -78,7 +91,9 @@ export async function regrade(input, priorUsd = 0) {
       2,
     ) + "\n",
   );
+
   console.log(JSON.stringify({ completed: rows.length, spent: summary.spent }));
 }
+
 if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href)
   await regrade(process.argv[2], process.argv[3]);

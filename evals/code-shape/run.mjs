@@ -14,14 +14,17 @@ import { regrade } from "./regrade.mjs";
 import { writeReport } from "./write-report.mjs";
 
 const opts = options();
+
 if (opts.regrade) {
   await regrade(opts.regrade, opts["prior-usd"]);
   process.exit(0);
 }
+
 if (opts.report) {
   await writeReport(opts.report, opts.raw);
   process.exit(0);
 }
+
 if (!opts.scripted) throw Error("--scripted <candidate commit> is required");
 if (budget.limit > 15) throw Error("This experiment has a hard $15 ceiling");
 const refs = { none: "none", prose: opts.prose ?? "9bd621e", scripted: opts.scripted };
@@ -29,12 +32,16 @@ const revisions = Object.fromEntries(Object.entries(refs).map(([key, ref]) => [k
 const rows = opts.resume
   ? (await readFile(opts.resume, "utf8")).trim().split("\n").filter(Boolean).map(JSON.parse)
   : [];
+
 budget.spent = Number(opts["prior-usd"] ?? 0) + rows.reduce((sum, row) => sum + (row.usd ?? 0), 0);
 const output = await results("code-shape");
+
 for (const row of rows) await output.record(row);
 const trials = Number(opts.seeds ?? 2);
+
 if (!Number.isInteger(trials) || trials < 1) throw Error("Invalid repetitions");
 const plan = [];
+
 // Interleave conditions and reverse them on the second repetition to reduce time/order confounding.
 for (const task of [...tasks, ...economy, ...quality]) {
   for (let seed = 1; seed <= trials; seed++) {
@@ -50,20 +57,25 @@ for (const task of [...tasks, ...economy, ...quality]) {
     }
   }
 }
+
 const key = (row) => `${row.suite}/${row.provider}/${row.id ?? row.task.id}/${row.condition}/${row.seed}`;
 const done = new Set(rows.map(key));
 let failure;
 let recording = Promise.resolve();
+
 async function executeTrial(trial) {
   const { task, provider, condition, seed, suite } = trial;
   const ref = refs[condition];
   const model = provider === "claude" ? "claude-haiku-5-5" : "gpt-6-luna";
   let row;
+
   try {
     // Reserve enough for a full case before starting it. Judge calls also use the same guard.
     const allowance = suite === "shape" ? Number(opts["shape-usd"] ?? 0.32) : Number(opts["case-usd"] ?? 0.12);
+
     if (budget.spent + budget.reserved + allowance + (suite === "shape" ? 0.055 : 0.08) > budget.limit)
       throw Error("Insufficient remaining shared budget for the next case");
+
     if (suite !== "shape") {
       const result = await runTask(task, {
         provider,
@@ -73,6 +85,7 @@ async function executeTrial(trial) {
         turns: 40,
         "case-usd": allowance,
       });
+
       row = {
         ...result,
         provider,
@@ -82,6 +95,7 @@ async function executeTrial(trial) {
       };
     } else {
       const fixture = await createFixture(ref);
+
       try {
         const cwd = fixture.cwd;
         const base = git(cwd, "rev-parse", "HEAD");
@@ -101,8 +115,10 @@ async function executeTrial(trial) {
           maxUsd: allowance,
         });
         const grade = await deterministic(cwd, task, original, base);
+
         grade.pass &&= run.status === "completed";
         let judgment, judgeError;
+
         try {
           judgment = await judge({
             rubric,
@@ -115,11 +131,13 @@ async function executeTrial(trial) {
             maxUsd: 0.055,
             timeoutMs: 60000,
           });
+
           validateJudgment(judgment.value, grade.final);
         } catch (error) {
           judgeError = error.message;
           judgment = error.run ? { run: error.run } : judgment;
         }
+
         row = {
           id: task.id,
           provider,
@@ -138,6 +156,7 @@ async function executeTrial(trial) {
         await fixture.cleanup();
       }
     }
+
     rows.push(row);
     recording = recording.then(() => output.record(row));
     await recording;
@@ -150,25 +169,31 @@ async function executeTrial(trial) {
     failure = error.message;
   }
 }
+
 const pending = plan
   .filter((trial) => !done.has(key(trial)))
   .slice(0, opts.limit ? Math.max(0, Number(opts.limit) - rows.length) : undefined);
 const concurrency = Number(opts.concurrency ?? 3);
+
 if (!Number.isInteger(concurrency) || concurrency < 1 || concurrency > 8) throw Error("Concurrency must be 1-8");
+
 for (let index = 0; index < pending.length; index += concurrency) {
   if (failure) break;
   await Promise.all(pending.slice(index, index + concurrency).map(executeTrial));
 }
+
 const summary = summarize(rows);
+
 summary.expected = plan.length;
 summary.completed = rows.length;
 summary.spent = budget.spent;
 summary.incomplete = failure ?? null;
 summary.revisions = revisions;
-await mkdir(path.join(root, "evals/code-shape"), { recursive: true });
-await writeFile(path.join(root, "evals/code-shape/measurements.json"), JSON.stringify(summary, null, 2) + "\n");
+await mkdir(path.join(root, "evals/results/code-shape"), { recursive: true });
+await writeFile(path.join(root, "evals/results/code-shape/measurements.json"), JSON.stringify(summary, null, 2) + "\n");
+
 await writeFile(
-  path.join(root, "evals/code-shape/evidence.json"),
+  path.join(root, "evals/results/code-shape/evidence.json"),
   JSON.stringify(
     rows.map((row) => ({
       suite: row.suite,
@@ -196,7 +221,9 @@ await writeFile(
     2,
   ) + "\n",
 );
+
 await output.summary(JSON.stringify(summary, null, 2));
+
 console.log(
   JSON.stringify({
     file: output.base,
@@ -206,4 +233,5 @@ console.log(
     incomplete: summary.incomplete,
   }),
 );
+
 process.exitCode = failure || rows.length < plan.length ? 2 : 0;
