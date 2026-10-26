@@ -52,12 +52,12 @@ export function normalize(events) {
       const i = event.item ?? {};
       if (event.type === "item.completed" && i.type === "agent_message")
         messages.push({ role: "assistant", content: i.text, timestamp });
-      if (["command_execution", "mcp_tool_call"].includes(i.type) && !seen.has(i.id)) {
+      if (["command_execution", "mcp_tool_call", "file_change"].includes(i.type) && !seen.has(i.id)) {
         seen.add(i.id);
         toolCalls.push({
           id: i.id,
           name: i.tool ?? i.type,
-          arguments: i.arguments ?? { command: i.command },
+          arguments: i.arguments ?? (i.type === "file_change" ? { changes: i.changes } : { command: i.command }),
           timestamp,
         });
       }
@@ -85,7 +85,16 @@ export function normalize(events) {
     }
   }
   const tokens = { input: 0, output: 0, cached: 0, cacheWrite5m: 0, cacheWrite1h: 0 };
-  for (const u of usages) {
+  // Claude's stream can repeat provisional per-message output counts. The terminal
+  // result carries the completed aggregate, including thinking and generated code.
+  const terminal = events.findLast((event) => event.type === "result" && event.usage);
+  const aggregate = terminal?.usage;
+  // Keep per-call usage records for incident/context-window detectors. Cumulative
+  // terminal context is not the size of any individual model request.
+  const tokenUsages = aggregate
+    ? [...usages.filter((usage) => usage.provider !== "claude"), { ...aggregate, provider: "claude" }]
+    : usages;
+  for (const u of tokenUsages) {
     const cached = u.cached_input_tokens ?? u.cache_read_input_tokens ?? 0;
     tokens.input += Math.max(0, (u.input_tokens ?? 0) - (u.provider === "codex" ? cached : 0));
     tokens.output += u.output_tokens ?? 0;

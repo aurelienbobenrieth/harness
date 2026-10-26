@@ -1,0 +1,2513 @@
+{
+  "conditions": [
+    {
+      "condition": "shape/claude/none",
+      "runs": 8,
+      "passed": 8,
+      "passRate": 1,
+      "completed": 8,
+      "testsAddedRuns": 8,
+      "testsGreenRuns": 8,
+      "skillLoadedRuns": 0,
+      "judged": 7,
+      "scores": {
+        "temporalCoupling": 2.857142857142857,
+        "abstractionEarnsKeep": 2.142857142857143,
+        "boundaries": 2.2857142857142856,
+        "naming": 2.4285714285714284,
+        "testing": 2.2857142857142856
+      },
+      "metrics": {
+        "findings": 133.125,
+        "harnessFindings": 54.125,
+        "duplicatedLines": 3,
+        "duplicationPercent": 2.5015348288075563,
+        "cyclomaticTotal": 29.5,
+        "cyclomaticMax": 6.25,
+        "deadExports": 1,
+        "testCount": 7.625,
+        "added": 54.125,
+        "deleted": 3.875
+      },
+      "calls": 9.875,
+      "durationMs": 53999.75,
+      "meteredRuns": 8,
+      "tokens": 291592.375,
+      "cacheTokens": 285966.375,
+      "usd": 0.3116676
+    },
+    {
+      "condition": "shape/codex/none",
+      "runs": 8,
+      "passed": 6,
+      "passRate": 0.75,
+      "completed": 6,
+      "testsAddedRuns": 8,
+      "testsGreenRuns": 6,
+      "skillLoadedRuns": 0,
+      "judged": 8,
+      "scores": {
+        "temporalCoupling": 2.75,
+        "abstractionEarnsKeep": 2.25,
+        "boundaries": 2.375,
+        "naming": 2.25,
+        "testing": 2.5
+      },
+      "metrics": {
+        "findings": 128.25,
+        "harnessFindings": 50.5,
+        "duplicatedLines": 3,
+        "duplicationPercent": 2.5637290239897474,
+        "cyclomaticTotal": 29.75,
+        "cyclomaticMax": 6.25,
+        "deadExports": 1,
+        "testCount": 6.75,
+        "added": 41.75,
+        "deleted": 4.125
+      },
+      "calls": 14.375,
+      "durationMs": 88958.5,
+      "meteredRuns": 7,
+      "tokens": 287836.14285714284,
+      "cacheTokens": 259693.7142857143,
+      "usd": 1.657556
+    },
+    {
+      "condition": "shape/codex/scripted",
+      "runs": 8,
+      "passed": 5,
+      "passRate": 0.625,
+      "completed": 7,
+      "testsAddedRuns": 8,
+      "testsGreenRuns": 7,
+      "skillLoadedRuns": 6,
+      "judged": 7,
+      "scores": {
+        "temporalCoupling": 2.857142857142857,
+        "abstractionEarnsKeep": 2.2857142857142856,
+        "boundaries": 2.142857142857143,
+        "naming": 2.4285714285714284,
+        "testing": 2
+      },
+      "metrics": {
+        "findings": 128.125,
+        "harnessFindings": 51,
+        "duplicatedLines": 3,
+        "duplicationPercent": 2.5427621526046558,
+        "cyclomaticTotal": 29.75,
+        "cyclomaticMax": 6,
+        "deadExports": 1,
+        "testCount": 5.875,
+        "added": 42.25,
+        "deleted": 3.375
+      },
+      "calls": 11.375,
+      "durationMs": 85527.125,
+      "meteredRuns": 8,
+      "tokens": 278210,
+      "cacheTokens": 243328,
+      "usd": 1.6300904999999999
+    },
+    {
+      "condition": "shape/claude/prose",
+      "runs": 8,
+      "passed": 8,
+      "passRate": 1,
+      "completed": 8,
+      "testsAddedRuns": 8,
+      "testsGreenRuns": 8,
+      "skillLoadedRuns": 2,
+      "judged": 7,
+      "scores": {
+        "temporalCoupling": 2.857142857142857,
+        "abstractionEarnsKeep": 2,
+        "boundaries": 2.2857142857142856,
+        "naming": 2.4285714285714284,
+        "testing": 2.4285714285714284
+      },
+      "metrics": {
+        "findings": 135.5,
+        "harnessFindings": 55.375,
+        "duplicatedLines": 3,
+        "duplicationPercent": 2.4387043209251167,
+        "cyclomaticTotal": 30,
+        "cyclomaticMax": 6.125,
+        "deadExports": 1.25,
+        "testCount": 8.625,
+        "added": 57.5,
+        "deleted": 4
+      },
+      "calls": 15.375,
+      "durationMs": 60167.875,
+      "meteredRuns": 8,
+      "tokens": 367826.875,
+      "cacheTokens": 360817.75,
+      "usd": 0.3371497500000001
+    },
+    {
+      "condition": "shape/claude/scripted",
+      "runs": 8,
+      "passed": 8,
+      "passRate": 1,
+      "completed": 8,
+      "testsAddedRuns": 8,
+      "testsGreenRuns": 8,
+      "skillLoadedRuns": 5,
+      "judged": 5,
+      "scores": {
+        "temporalCoupling": 3,
+        "abstractionEarnsKeep": 2.2,
+        "boundaries": 2.6,
+        "naming": 2.6,
+        "testing": 2.6
+      },
+      "metrics": {
+        "findings": 134.875,
+        "harnessFindings": 53.25,
+        "duplicatedLines": 3,
+        "duplicationPercent": 2.542474155556195,
+        "cyclomaticTotal": 29.75,
+        "cyclomaticMax": 6.25,
+        "deadExports": 0.75,
+        "testCount": 7.625,
+        "added": 53.5,
+        "deleted": 3.5
+      },
+      "calls": 14.375,
+      "durationMs": 68228.5,
+      "meteredRuns": 8,
+      "tokens": 448174,
+      "cacheTokens": 441033.875,
+      "usd": 0.37251581
+    },
+    {
+      "condition": "shape/codex/prose",
+      "runs": 8,
+      "passed": 5,
+      "passRate": 0.625,
+      "completed": 6,
+      "testsAddedRuns": 8,
+      "testsGreenRuns": 8,
+      "skillLoadedRuns": 4,
+      "judged": 8,
+      "scores": {
+        "temporalCoupling": 3,
+        "abstractionEarnsKeep": 2.25,
+        "boundaries": 2.25,
+        "naming": 2.375,
+        "testing": 2.5
+      },
+      "metrics": {
+        "findings": 126.125,
+        "harnessFindings": 49.25,
+        "duplicatedLines": 3,
+        "duplicationPercent": 2.549815895668739,
+        "cyclomaticTotal": 29.875,
+        "cyclomaticMax": 6,
+        "deadExports": 1,
+        "testCount": 6.75,
+        "added": 43.25,
+        "deleted": 6.5
+      },
+      "calls": 17,
+      "durationMs": 110018.375,
+      "meteredRuns": 8,
+      "tokens": 522963.125,
+      "cacheTokens": 482432,
+      "usd": 2.2624124999999995
+    },
+    {
+      "condition": "economy/claude/prose",
+      "runs": 10,
+      "passed": 8,
+      "passRate": 0.8,
+      "completed": 10,
+      "testsAddedRuns": 0,
+      "testsGreenRuns": 0,
+      "skillLoadedRuns": 1,
+      "judged": 0,
+      "scores": {
+        "temporalCoupling": null,
+        "abstractionEarnsKeep": null,
+        "boundaries": null,
+        "naming": null,
+        "testing": null
+      },
+      "metrics": {
+        "findings": null,
+        "harnessFindings": null,
+        "duplicatedLines": null,
+        "duplicationPercent": null,
+        "cyclomaticTotal": null,
+        "cyclomaticMax": null,
+        "deadExports": null,
+        "testCount": null,
+        "added": null,
+        "deleted": null
+      },
+      "calls": 4,
+      "durationMs": 23559.5,
+      "meteredRuns": 10,
+      "tokens": 125093.1,
+      "cacheTokens": 123584.6,
+      "usd": 0.0653914
+    },
+    {
+      "condition": "economy/claude/scripted",
+      "runs": 10,
+      "passed": 7,
+      "passRate": 0.7,
+      "completed": 10,
+      "testsAddedRuns": 0,
+      "testsGreenRuns": 0,
+      "skillLoadedRuns": 0,
+      "judged": 0,
+      "scores": {
+        "temporalCoupling": null,
+        "abstractionEarnsKeep": null,
+        "boundaries": null,
+        "naming": null,
+        "testing": null
+      },
+      "metrics": {
+        "findings": null,
+        "harnessFindings": null,
+        "duplicatedLines": null,
+        "duplicationPercent": null,
+        "cyclomaticTotal": null,
+        "cyclomaticMax": null,
+        "deadExports": null,
+        "testCount": null,
+        "added": null,
+        "deleted": null
+      },
+      "calls": 3.8,
+      "durationMs": 21809.9,
+      "meteredRuns": 10,
+      "tokens": 116626.2,
+      "cacheTokens": 115265,
+      "usd": 0.060239509999999996
+    },
+    {
+      "condition": "economy/codex/scripted",
+      "runs": 10,
+      "passed": 5,
+      "passRate": 0.5,
+      "completed": 8,
+      "testsAddedRuns": 0,
+      "testsGreenRuns": 0,
+      "skillLoadedRuns": 4,
+      "judged": 0,
+      "scores": {
+        "temporalCoupling": null,
+        "abstractionEarnsKeep": null,
+        "boundaries": null,
+        "naming": null,
+        "testing": null
+      },
+      "metrics": {
+        "findings": null,
+        "harnessFindings": null,
+        "duplicatedLines": null,
+        "duplicationPercent": null,
+        "cyclomaticTotal": null,
+        "cyclomaticMax": null,
+        "deadExports": null,
+        "testCount": null,
+        "added": null,
+        "deleted": null
+      },
+      "calls": 4.9,
+      "durationMs": 38983.5,
+      "meteredRuns": 10,
+      "tokens": 103979.1,
+      "cacheTokens": 83558.4,
+      "usd": 0.8198654999999999
+    },
+    {
+      "condition": "economy/codex/prose",
+      "runs": 10,
+      "passed": 6,
+      "passRate": 0.6,
+      "completed": 9,
+      "testsAddedRuns": 0,
+      "testsGreenRuns": 0,
+      "skillLoadedRuns": 5,
+      "judged": 0,
+      "scores": {
+        "temporalCoupling": null,
+        "abstractionEarnsKeep": null,
+        "boundaries": null,
+        "naming": null,
+        "testing": null
+      },
+      "metrics": {
+        "findings": null,
+        "harnessFindings": null,
+        "duplicatedLines": null,
+        "duplicationPercent": null,
+        "cyclomaticTotal": null,
+        "cyclomaticMax": null,
+        "deadExports": null,
+        "testCount": null,
+        "added": null,
+        "deleted": null
+      },
+      "calls": 4.3,
+      "durationMs": 40281.1,
+      "meteredRuns": 10,
+      "tokens": 98468.9,
+      "cacheTokens": 83686.4,
+      "usd": 0.6628539999999999
+    },
+    {
+      "condition": "quality/claude/prose",
+      "runs": 6,
+      "passed": 5,
+      "passRate": 0.8333333333333334,
+      "completed": 6,
+      "testsAddedRuns": 0,
+      "testsGreenRuns": 0,
+      "skillLoadedRuns": 1,
+      "judged": 0,
+      "scores": {
+        "temporalCoupling": null,
+        "abstractionEarnsKeep": null,
+        "boundaries": null,
+        "naming": null,
+        "testing": null
+      },
+      "metrics": {
+        "findings": null,
+        "harnessFindings": null,
+        "duplicatedLines": null,
+        "duplicationPercent": null,
+        "cyclomaticTotal": null,
+        "cyclomaticMax": null,
+        "deadExports": null,
+        "testCount": null,
+        "added": null,
+        "deleted": null
+      },
+      "calls": 5.166666666666667,
+      "durationMs": 31039.333333333332,
+      "meteredRuns": 6,
+      "tokens": 132349.33333333334,
+      "cacheTokens": 130098.33333333333,
+      "usd": 0.03170971
+    },
+    {
+      "condition": "quality/claude/scripted",
+      "runs": 6,
+      "passed": 4,
+      "passRate": 0.6666666666666666,
+      "completed": 6,
+      "testsAddedRuns": 0,
+      "testsGreenRuns": 0,
+      "skillLoadedRuns": 0,
+      "judged": 0,
+      "scores": {
+        "temporalCoupling": null,
+        "abstractionEarnsKeep": null,
+        "boundaries": null,
+        "naming": null,
+        "testing": null
+      },
+      "metrics": {
+        "findings": null,
+        "harnessFindings": null,
+        "duplicatedLines": null,
+        "duplicationPercent": null,
+        "cyclomaticTotal": null,
+        "cyclomaticMax": null,
+        "deadExports": null,
+        "testCount": null,
+        "added": null,
+        "deleted": null
+      },
+      "calls": 4.666666666666667,
+      "durationMs": 26491.166666666668,
+      "meteredRuns": 6,
+      "tokens": 120122.33333333333,
+      "cacheTokens": 118090.16666666667,
+      "usd": 0.029305450000000004
+    },
+    {
+      "condition": "quality/codex/scripted",
+      "runs": 6,
+      "passed": 3,
+      "passRate": 0.5,
+      "completed": 5,
+      "testsAddedRuns": 0,
+      "testsGreenRuns": 0,
+      "skillLoadedRuns": 5,
+      "judged": 0,
+      "scores": {
+        "temporalCoupling": null,
+        "abstractionEarnsKeep": null,
+        "boundaries": null,
+        "naming": null,
+        "testing": null
+      },
+      "metrics": {
+        "findings": null,
+        "harnessFindings": null,
+        "duplicatedLines": null,
+        "duplicationPercent": null,
+        "cyclomaticTotal": null,
+        "cyclomaticMax": null,
+        "deadExports": null,
+        "testCount": null,
+        "added": null,
+        "deleted": null
+      },
+      "calls": 4.666666666666667,
+      "durationMs": 36492.166666666664,
+      "meteredRuns": 6,
+      "tokens": 110514.33333333333,
+      "cacheTokens": 93098.66666666667,
+      "usd": 0.45539549999999995
+    },
+    {
+      "condition": "quality/codex/prose",
+      "runs": 6,
+      "passed": 4,
+      "passRate": 0.6666666666666666,
+      "completed": 6,
+      "testsAddedRuns": 0,
+      "testsGreenRuns": 0,
+      "skillLoadedRuns": 5,
+      "judged": 0,
+      "scores": {
+        "temporalCoupling": null,
+        "abstractionEarnsKeep": null,
+        "boundaries": null,
+        "naming": null,
+        "testing": null
+      },
+      "metrics": {
+        "findings": null,
+        "harnessFindings": null,
+        "duplicatedLines": null,
+        "duplicationPercent": null,
+        "cyclomaticTotal": null,
+        "cyclomaticMax": null,
+        "deadExports": null,
+        "testCount": null,
+        "added": null,
+        "deleted": null
+      },
+      "calls": 3.3333333333333335,
+      "durationMs": 30925.833333333332,
+      "meteredRuns": 6,
+      "tokens": 81859.33333333333,
+      "cacheTokens": 66752,
+      "usd": 0.370913
+    }
+  ],
+  "citations": [
+    {
+      "provider": "claude",
+      "condition": "none",
+      "seed": 1,
+      "task": "boundary",
+      "status": "completed",
+      "pass": true,
+      "judgeError": null,
+      "rules": [
+        {
+          "rule": "temporalCoupling",
+          "score": 3,
+          "file": "src/api.ts",
+          "line": 14,
+          "reason": "Summary derives its values directly from the order returned by the existing service lookup."
+        },
+        {
+          "rule": "abstractionEarnsKeep",
+          "score": 2,
+          "file": "src/api.ts",
+          "line": 14,
+          "reason": "The summary mapping adds a focused API projection without introducing speculative layers."
+        },
+        {
+          "rule": "boundaries",
+          "score": 3,
+          "file": "src/api.ts",
+          "line": 14,
+          "reason": "The API delegates lookup and missing-order handling to the existing order-service boundary."
+        },
+        {
+          "rule": "naming",
+          "score": 3,
+          "file": "src/api.ts",
+          "line": 17,
+          "reason": "Field names identify the domain values, and subtotalCents makes the unit explicit."
+        },
+        {
+          "rule": "testing",
+          "score": 2,
+          "file": "tests/api.test.ts",
+          "line": 17,
+          "reason": "Literal expected totals and missing-order assertions cover core behavior; shipped status checks only one field."
+        }
+      ]
+    },
+    {
+      "provider": "codex",
+      "condition": "none",
+      "seed": 1,
+      "task": "boundary",
+      "status": "completed",
+      "pass": true,
+      "judgeError": null,
+      "rules": [
+        {
+          "rule": "temporalCoupling",
+          "score": 3,
+          "file": "src/orders.ts",
+          "line": 11,
+          "reason": "Summary resolves through find, so missing-order handling is consistent and requires no call ordering."
+        },
+        {
+          "rule": "abstractionEarnsKeep",
+          "score": 2,
+          "file": "src/orders.ts",
+          "line": 10,
+          "reason": "The service method adds a focused projection while reusing the existing lookup boundary."
+        },
+        {
+          "rule": "boundaries",
+          "score": 3,
+          "file": "src/api.ts",
+          "line": 12,
+          "reason": "The API delegates summary to the order service, preserving its typed OrderNotFound failure."
+        },
+        {
+          "rule": "naming",
+          "score": 3,
+          "file": "src/orders.ts",
+          "line": 15,
+          "reason": "summary, itemCount, and subtotalCents clearly name the domain result and units."
+        },
+        {
+          "rule": "testing",
+          "score": 2,
+          "file": "tests/orders.test.ts",
+          "line": 20,
+          "reason": "Tests assert the exact output and missing-order error with literal expected values."
+        }
+      ]
+    },
+    {
+      "provider": "codex",
+      "condition": "scripted",
+      "seed": 1,
+      "task": "boundary",
+      "status": "completed",
+      "pass": false,
+      "judgeError": null,
+      "rules": [
+        {
+          "rule": "temporalCoupling",
+          "score": 3,
+          "file": "src/orders.ts",
+          "line": 11,
+          "reason": "Summary derives directly from the order returned by find; no call ordering or correlated state is required."
+        },
+        {
+          "rule": "abstractionEarnsKeep",
+          "score": 2,
+          "file": "src/orders.ts",
+          "line": 10,
+          "reason": "The service method adds a focused public projection and reuses find for the existing not-found behavior."
+        },
+        {
+          "rule": "boundaries",
+          "score": 2,
+          "file": "src/orders.ts",
+          "line": 11,
+          "reason": "Summary keeps the projection in the order-service boundary and propagates the typed OrderNotFound failure."
+        },
+        {
+          "rule": "naming",
+          "score": 3,
+          "file": "src/orders.ts",
+          "line": 15,
+          "reason": "subtotalCents and itemCount clearly name the returned values and their units."
+        },
+        {
+          "rule": "testing",
+          "score": 2,
+          "file": "tests/orders.test.ts",
+          "line": 16,
+          "reason": "Literal expected fields and totals check the projection and quantities; a separate test checks missing-ID behavior."
+        }
+      ]
+    },
+    {
+      "provider": "claude",
+      "condition": "prose",
+      "seed": 1,
+      "task": "boundary",
+      "status": "completed",
+      "pass": true,
+      "judgeError": null,
+      "rules": [
+        {
+          "rule": "temporalCoupling",
+          "score": 3,
+          "file": "src/orders.ts",
+          "line": 19,
+          "reason": "Summary loads the order through find in one effect, so it needs no prior call or correlated state."
+        },
+        {
+          "rule": "abstractionEarnsKeep",
+          "score": 2,
+          "file": "src/orders.ts",
+          "line": 19,
+          "reason": "The service method owns summary projection at the order boundary and reuses the existing subtotal calculation."
+        },
+        {
+          "rule": "boundaries",
+          "score": 3,
+          "file": "src/api.ts",
+          "line": 14,
+          "reason": "API delegates to the order service; lookup and typed OrderNotFound handling stay at that boundary."
+        },
+        {
+          "rule": "naming",
+          "score": 3,
+          "file": "src/orders.ts",
+          "line": 6,
+          "reason": "OrderSummary and subtotalCents identify the domain shape and currency unit clearly."
+        },
+        {
+          "rule": "testing",
+          "score": 2,
+          "file": "tests/orders.test.ts",
+          "line": 12,
+          "reason": "Tests assert literal totals, empty-order behavior, and missing-ID error details; no test checks API exposure or compatibility."
+        }
+      ]
+    },
+    {
+      "provider": "claude",
+      "condition": "scripted",
+      "seed": 1,
+      "task": "boundary",
+      "status": "completed",
+      "pass": true,
+      "judgeError": null,
+      "rules": [
+        {
+          "rule": "temporalCoupling",
+          "score": 3,
+          "file": "src/orders.ts",
+          "line": 14,
+          "reason": "Summary derives all fields from one lookup; no call ordering or correlated state is required."
+        },
+        {
+          "rule": "abstractionEarnsKeep",
+          "score": 2,
+          "file": "src/orders.ts",
+          "line": 12,
+          "reason": "Adds the summary operation at the existing order-service boundary and reuses the shared subtotal calculation."
+        },
+        {
+          "rule": "boundaries",
+          "score": 3,
+          "file": "src/orders.ts",
+          "line": 13,
+          "reason": "Uses the service's typed find failure and keeps summary computation pure after the lookup."
+        },
+        {
+          "rule": "naming",
+          "score": 3,
+          "file": "src/orders.ts",
+          "line": 15,
+          "reason": "Names expose the domain fields and subtotal’s cents unit."
+        },
+        {
+          "rule": "testing",
+          "score": 3,
+          "file": "tests/orders.test.ts",
+          "line": 18,
+          "reason": "Literal expected values cover quantity and subtotal totals; a separate test checks missing-ID error identity."
+        }
+      ]
+    },
+    {
+      "provider": "claude",
+      "condition": "scripted",
+      "seed": 2,
+      "task": "boundary",
+      "status": "completed",
+      "pass": true,
+      "judgeError": null,
+      "rules": [
+        {
+          "rule": "temporalCoupling",
+          "score": 3,
+          "file": "src/api.ts",
+          "line": 13,
+          "reason": "Summary derives all fields directly from the fetched order with no call-order dependency."
+        },
+        {
+          "rule": "abstractionEarnsKeep",
+          "score": 2,
+          "file": "src/api.ts",
+          "line": 12,
+          "reason": "Inline projection serves this single API response without an unnecessary abstraction."
+        },
+        {
+          "rule": "boundaries",
+          "score": 3,
+          "file": "src/api.ts",
+          "line": 12,
+          "reason": "Uses the existing order-service lookup and preserves its typed OrderNotFound failure."
+        },
+        {
+          "rule": "naming",
+          "score": 3,
+          "file": "src/api.ts",
+          "line": 15,
+          "reason": "itemCount and subtotalCents clearly express the quantity total and currency unit."
+        },
+        {
+          "rule": "testing",
+          "score": 3,
+          "file": "tests/api-summary.test.ts",
+          "line": 11,
+          "reason": "Literal expected summaries cover multiple quantities, empty lines, shipped status, and missing IDs."
+        }
+      ]
+    },
+    {
+      "provider": "claude",
+      "condition": "prose",
+      "seed": 2,
+      "task": "boundary",
+      "status": "completed",
+      "pass": true,
+      "judgeError": null,
+      "rules": [
+        {
+          "rule": "temporalCoupling",
+          "score": 3,
+          "file": "src/orders.ts",
+          "line": 11,
+          "reason": "Summary consistently derives from the found order; no call ordering or correlated state is required."
+        },
+        {
+          "rule": "abstractionEarnsKeep",
+          "score": 2,
+          "file": "src/summary.ts",
+          "line": 9,
+          "reason": "A pure mapper encapsulates the summary shape and calculation, while the service exposes it through the existing boundary."
+        },
+        {
+          "rule": "boundaries",
+          "score": 3,
+          "file": "src/orders.ts",
+          "line": 11,
+          "reason": "The service reuses the typed find effect, preserving OrderNotFound while keeping summary calculation pure."
+        },
+        {
+          "rule": "naming",
+          "score": 3,
+          "file": "src/summary.ts",
+          "line": 5,
+          "reason": "Field names describe the domain values, and subtotalCents makes the unit explicit."
+        },
+        {
+          "rule": "testing",
+          "score": 2,
+          "file": "tests/summary.test.ts",
+          "line": 16,
+          "reason": "Literal expected values cover quantity totals, empty lines, API shape, status, and missing IDs; service-level missing behavior is also checked."
+        }
+      ]
+    },
+    {
+      "provider": "codex",
+      "condition": "prose",
+      "seed": 1,
+      "task": "boundary",
+      "status": "completed",
+      "pass": false,
+      "judgeError": null,
+      "rules": [
+        {
+          "rule": "temporalCoupling",
+          "score": 3,
+          "file": "src/orders.ts",
+          "line": 10,
+          "reason": "Summary resolves through find and needs no prior call or shared state."
+        },
+        {
+          "rule": "abstractionEarnsKeep",
+          "score": 2,
+          "file": "src/orders.ts",
+          "line": 9,
+          "reason": "Summary is a small service operation reusing the existing not-found boundary."
+        },
+        {
+          "rule": "boundaries",
+          "score": 2,
+          "file": "src/orders.ts",
+          "line": 11,
+          "reason": "The service derives a plain summary from the order; missing IDs preserve OrderNotFound."
+        },
+        {
+          "rule": "naming",
+          "score": 3,
+          "file": "src/orders.ts",
+          "line": 14,
+          "reason": "subtotalCents and itemCount clearly name the values and units."
+        },
+        {
+          "rule": "testing",
+          "score": 2,
+          "file": "tests/orders.test.ts",
+          "line": 9,
+          "reason": "Literal expected fields and totals plus a missing-ID regression are asserted."
+        }
+      ]
+    },
+    {
+      "provider": "claude",
+      "condition": "none",
+      "seed": 2,
+      "task": "boundary",
+      "status": "completed",
+      "pass": true,
+      "judgeError": null,
+      "rules": [
+        {
+          "rule": "temporalCoupling",
+          "score": 3,
+          "file": "src/api.ts",
+          "line": 17,
+          "reason": "Summary finds the order and maps it directly; validity does not depend on call order or shared mutable state."
+        },
+        {
+          "rule": "abstractionEarnsKeep",
+          "score": 2,
+          "file": "src/summary.ts",
+          "line": 10,
+          "reason": "A focused projection keeps summary construction out of the API boundary and reuses subtotal logic."
+        },
+        {
+          "rule": "boundaries",
+          "score": 3,
+          "file": "src/api.ts",
+          "line": 17,
+          "reason": "The API delegates lookup to the order service, preserving its OrderNotFound failure, and summarizes a domain value."
+        },
+        {
+          "rule": "naming",
+          "score": 3,
+          "file": "src/summary.ts",
+          "line": 5,
+          "reason": "Field names communicate the summary’s domain and cents unit."
+        },
+        {
+          "rule": "testing",
+          "score": 3,
+          "file": "tests/summary.test.ts",
+          "line": 21,
+          "reason": "Literal expected objects cover quantity totals, subtotal, empty lines, and the missing-order error."
+        }
+      ]
+    },
+    {
+      "provider": "claude",
+      "condition": "none",
+      "seed": 1,
+      "task": "duplication",
+      "status": "completed",
+      "pass": true,
+      "judgeError": null,
+      "rules": [
+        {
+          "rule": "temporalCoupling",
+          "score": 3,
+          "file": "src/pricing.ts",
+          "line": 6,
+          "reason": "Total is computed directly from subtotal, without reliance on call order or shared state."
+        },
+        {
+          "rule": "abstractionEarnsKeep",
+          "score": 3,
+          "file": "src/pricing.ts",
+          "line": 5,
+          "reason": "One pricing decision centralizes handling and tax for both public contracts."
+        },
+        {
+          "rule": "boundaries",
+          "score": 2,
+          "file": "src/quote.ts",
+          "line": 4,
+          "reason": "Quote and receipt remain thin formatters around a pure pricing calculation."
+        },
+        {
+          "rule": "naming",
+          "score": 3,
+          "file": "src/pricing.ts",
+          "line": 5,
+          "reason": "fulfillmentTotal and subtotalCents clearly express purpose and units."
+        },
+        {
+          "rule": "testing",
+          "score": 2,
+          "file": "tests/quote.test.ts",
+          "line": 26,
+          "reason": "Literal assertions cover 4999, 5000, both contracts, and tax rounding; rounding case is limited."
+        }
+      ]
+    },
+    {
+      "provider": "codex",
+      "condition": "none",
+      "seed": 1,
+      "task": "duplication",
+      "status": "completed",
+      "pass": true,
+      "judgeError": null,
+      "rules": [
+        {
+          "rule": "temporalCoupling",
+          "score": 3,
+          "file": "src/pricing.ts",
+          "line": 7,
+          "reason": "Fulfillment total is computed directly from lines with no call-order or shared-state dependency."
+        },
+        {
+          "rule": "abstractionEarnsKeep",
+          "score": 3,
+          "file": "src/pricing.ts",
+          "line": 7,
+          "reason": "One pricing decision replaces duplicated calculations while quote and receipt retain their public contracts."
+        },
+        {
+          "rule": "boundaries",
+          "score": 2,
+          "file": "src/pricing.ts",
+          "line": 7,
+          "reason": "Pricing is a pure decision with no I/O; expected-failure and retry concerns do not apply here."
+        },
+        {
+          "rule": "naming",
+          "score": 2,
+          "file": "src/pricing.ts",
+          "line": 7,
+          "reason": "fulfillmentTotal names the domain result, and cents are clear in the established pricing API context."
+        },
+        {
+          "rule": "testing",
+          "score": 2,
+          "file": "tests/quote.test.ts",
+          "line": 35,
+          "reason": "Literal assertions cover both contracts at 4999 and 5000 cents plus a rounding case; rounding is only checked through quote."
+        }
+      ]
+    },
+    {
+      "provider": "codex",
+      "condition": "prose",
+      "seed": 2,
+      "task": "boundary",
+      "status": "completed",
+      "pass": true,
+      "judgeError": null,
+      "rules": [
+        {
+          "rule": "temporalCoupling",
+          "score": 3,
+          "file": "src/orders.ts",
+          "line": 11,
+          "reason": "Summary performs its own find and derives all fields in one call, with no call-order dependency."
+        },
+        {
+          "rule": "abstractionEarnsKeep",
+          "score": 2,
+          "file": "src/orders.ts",
+          "line": 10,
+          "reason": "The service method keeps summary construction behind the order-service boundary and reuses the shared subtotal calculation."
+        },
+        {
+          "rule": "boundaries",
+          "score": 3,
+          "file": "src/orders.ts",
+          "line": 11,
+          "reason": "The service composes the store-backed find operation and propagates its typed OrderNotFound failure."
+        },
+        {
+          "rule": "naming",
+          "score": 3,
+          "file": "src/orders.ts",
+          "line": 15,
+          "reason": "Field names identify the summary values, and subtotalCents makes the monetary unit clear."
+        },
+        {
+          "rule": "testing",
+          "score": 2,
+          "file": "tests/orders.test.ts",
+          "line": 16,
+          "reason": "Tests assert the full literal summary and missing-order details; no empty-lines edge case is covered."
+        }
+      ]
+    },
+    {
+      "provider": "codex",
+      "condition": "none",
+      "seed": 2,
+      "task": "boundary",
+      "status": "completed",
+      "pass": true,
+      "judgeError": null,
+      "rules": [
+        {
+          "rule": "temporalCoupling",
+          "score": 3,
+          "file": "src/api.ts",
+          "line": 13,
+          "reason": "Summary is computed from the order returned by the existing service lookup, with no call-order dependency."
+        },
+        {
+          "rule": "abstractionEarnsKeep",
+          "score": 2,
+          "file": "src/api.ts",
+          "line": 12,
+          "reason": "Adds the requested API projection directly; it reuses the existing subtotal calculation."
+        },
+        {
+          "rule": "boundaries",
+          "score": 3,
+          "file": "src/api.ts",
+          "line": 12,
+          "reason": "Keeps lookup behind the order service and propagates its typed OrderNotFound failure."
+        },
+        {
+          "rule": "naming",
+          "score": 3,
+          "file": "src/api.ts",
+          "line": 15,
+          "reason": "itemCount sums quantities and subtotalCents clearly identifies the monetary unit."
+        },
+        {
+          "rule": "testing",
+          "score": 2,
+          "file": "tests/orders.test.ts",
+          "line": 25,
+          "reason": "Checks exact summary fields and totals plus missing-ID behavior; compatible existing APIs are not explicitly tested."
+        }
+      ]
+    },
+    {
+      "provider": "claude",
+      "condition": "scripted",
+      "seed": 1,
+      "task": "duplication",
+      "status": "completed",
+      "pass": true,
+      "judgeError": null,
+      "rules": [
+        {
+          "rule": "temporalCoupling",
+          "score": 3,
+          "file": "src/pricing.ts",
+          "line": 4,
+          "reason": "Total is computed directly from lines with no call-order dependency."
+        },
+        {
+          "rule": "abstractionEarnsKeep",
+          "score": 3,
+          "file": "src/pricing.ts",
+          "line": 4,
+          "reason": "One shared pricing decision removes duplicate fulfillment calculations."
+        },
+        {
+          "rule": "boundaries",
+          "score": 2,
+          "file": "src/quote.ts",
+          "line": 4,
+          "reason": "Pricing is a pure function; quote and receipt retain their public formats."
+        },
+        {
+          "rule": "naming",
+          "score": 2,
+          "file": "src/pricing.ts",
+          "line": 4,
+          "reason": "fulfillmentTotal and itemsCents convey purpose and currency units."
+        },
+        {
+          "rule": "testing",
+          "score": 2,
+          "file": "tests/quote.test.ts",
+          "line": 24,
+          "reason": "Literal expected totals cover 4999, 5000, and rounding for both contracts."
+        }
+      ]
+    },
+    {
+      "provider": "codex",
+      "condition": "scripted",
+      "seed": 2,
+      "task": "boundary",
+      "status": "completed",
+      "pass": false,
+      "judgeError": null,
+      "rules": [
+        {
+          "rule": "temporalCoupling",
+          "score": 3,
+          "file": "src/orders.ts",
+          "line": 12,
+          "reason": "summary resolves through find in one effect, preserving missing-order failure without call-order state."
+        },
+        {
+          "rule": "abstractionEarnsKeep",
+          "score": 2,
+          "file": "src/orders.ts",
+          "line": 11,
+          "reason": "The service method adds the requested summary decision at the existing order boundary."
+        },
+        {
+          "rule": "boundaries",
+          "score": 2,
+          "file": "src/orders.ts",
+          "line": 12,
+          "reason": "Summary computation is local and reuses the service’s typed OrderNotFound path."
+        },
+        {
+          "rule": "naming",
+          "score": 3,
+          "file": "src/orders.ts",
+          "line": 17,
+          "reason": "subtotalCents and itemCount clearly name the returned values and units."
+        },
+        {
+          "rule": "testing",
+          "score": 2,
+          "file": "tests/orders.test.ts",
+          "line": 7,
+          "reason": "Literal expected fields and totals cover summed quantities, exact keys, and missing-ID failure."
+        }
+      ]
+    },
+    {
+      "provider": "claude",
+      "condition": "prose",
+      "seed": 1,
+      "task": "duplication",
+      "status": "completed",
+      "pass": true,
+      "judgeError": null,
+      "rules": [
+        {
+          "rule": "temporalCoupling",
+          "score": 3,
+          "file": "src/pricing.ts",
+          "line": 6,
+          "reason": "The total is calculated from the supplied lines in one call, with no ordering or shared-state dependency."
+        },
+        {
+          "rule": "abstractionEarnsKeep",
+          "score": 3,
+          "file": "src/pricing.ts",
+          "line": 6,
+          "reason": "orderTotal centralizes the shared fulfillment pricing decision without adding a pass-through module."
+        },
+        {
+          "rule": "boundaries",
+          "score": 2,
+          "file": "src/pricing.ts",
+          "line": 6,
+          "reason": "Pricing remains a pure decision; no I/O or dependency-direction concerns are introduced."
+        },
+        {
+          "rule": "naming",
+          "score": 2,
+          "file": "src/pricing.ts",
+          "line": 6,
+          "reason": "orderTotal expresses the domain decision, though its number return type does not name the cents unit."
+        },
+        {
+          "rule": "testing",
+          "score": 3,
+          "file": "tests/fulfillment.test.ts",
+          "line": 12,
+          "reason": "Literal expected totals cover the handling threshold and both tax rounding directions through both public contracts."
+        }
+      ]
+    },
+    {
+      "provider": "codex",
+      "condition": "none",
+      "seed": 2,
+      "task": "duplication",
+      "status": "completed",
+      "pass": true,
+      "judgeError": null,
+      "rules": [
+        {
+          "rule": "temporalCoupling",
+          "score": 3,
+          "file": "src/pricing.ts",
+          "line": 6,
+          "reason": "The shared total is calculated directly from the order, with no call-order or correlated-state dependency."
+        },
+        {
+          "rule": "abstractionEarnsKeep",
+          "score": 3,
+          "file": "src/pricing.ts",
+          "line": 6,
+          "reason": "fulfillmentTotal centralizes the duplicated pricing decision used by quote and receipt."
+        },
+        {
+          "rule": "boundaries",
+          "score": 2,
+          "file": "src/pricing.ts",
+          "line": 6,
+          "reason": "Pricing remains a pure domain calculation with no I/O dependencies."
+        },
+        {
+          "rule": "naming",
+          "score": 2,
+          "file": "src/pricing.ts",
+          "line": 6,
+          "reason": "fulfillmentTotal conveys the domain decision, while amount could more clearly say subtotalCents."
+        },
+        {
+          "rule": "testing",
+          "score": 3,
+          "file": "tests/quote.test.ts",
+          "line": 35,
+          "reason": "Literal expected totals cover 4999, 5000, rounded tax, and both public contracts."
+        }
+      ]
+    },
+    {
+      "provider": "claude",
+      "condition": "none",
+      "seed": 2,
+      "task": "duplication",
+      "status": "completed",
+      "pass": true,
+      "judgeError": null,
+      "rules": [
+        {
+          "rule": "temporalCoupling",
+          "score": 3,
+          "file": "src/pricing.ts",
+          "line": 6,
+          "reason": "The total is calculated in one pure function with no call-order dependencies."
+        },
+        {
+          "rule": "abstractionEarnsKeep",
+          "score": 3,
+          "file": "src/pricing.ts",
+          "line": 6,
+          "reason": "The shared function centralizes the duplicate handling and tax decision used by quote and receipt."
+        },
+        {
+          "rule": "boundaries",
+          "score": 2,
+          "file": "src/pricing.ts",
+          "line": 6,
+          "reason": "Pricing remains a pure domain decision; no I/O or dependency boundary is introduced."
+        },
+        {
+          "rule": "naming",
+          "score": 2,
+          "file": "src/pricing.ts",
+          "line": 6,
+          "reason": "fulfillmentTotal conveys the result, though it does not expose that the value is in cents."
+        },
+        {
+          "rule": "testing",
+          "score": 1,
+          "file": "tests/quote.test.ts",
+          "line": 26,
+          "reason": "Threshold and rounding cases are covered with literal receipt expectations, but some quote assertions repeat the pricing formula."
+        }
+      ]
+    },
+    {
+      "provider": "claude",
+      "condition": "prose",
+      "seed": 2,
+      "task": "duplication",
+      "status": "completed",
+      "pass": true,
+      "judgeError": "Judge timeout: ",
+      "rules": null
+    },
+    {
+      "provider": "codex",
+      "condition": "scripted",
+      "seed": 1,
+      "task": "duplication",
+      "status": "completed",
+      "pass": true,
+      "judgeError": null,
+      "rules": [
+        {
+          "rule": "temporalCoupling",
+          "score": 3,
+          "file": "src/pricing.ts",
+          "line": 8,
+          "reason": "Total is computed from lines in one call with no ordering dependency."
+        },
+        {
+          "rule": "abstractionEarnsKeep",
+          "score": 3,
+          "file": "src/pricing.ts",
+          "line": 6,
+          "reason": "Shared fulfillment pricing decision removes duplicated calculations for quote and receipt."
+        },
+        {
+          "rule": "boundaries",
+          "score": 2,
+          "file": "src/quote.ts",
+          "line": 4,
+          "reason": "Pricing stays in a pure function; quote and receipt preserve their public output contracts."
+        },
+        {
+          "rule": "naming",
+          "score": 2,
+          "file": "src/pricing.ts",
+          "line": 6,
+          "reason": "fulfillmentTotal names the domain decision, though the 5000 threshold and cents could be clearer."
+        },
+        {
+          "rule": "testing",
+          "score": 2,
+          "file": "tests/quote.test.ts",
+          "line": 24,
+          "reason": "Literal assertions cover 4999, the existing 5000 case, and tax rounding for both outputs."
+        }
+      ]
+    },
+    {
+      "provider": "codex",
+      "condition": "prose",
+      "seed": 1,
+      "task": "duplication",
+      "status": "completed",
+      "pass": true,
+      "judgeError": null,
+      "rules": [
+        {
+          "rule": "temporalCoupling",
+          "score": 3,
+          "file": "src/pricing.ts",
+          "line": 6,
+          "reason": "The total is computed directly from the order with no call-order or shared-state dependency."
+        },
+        {
+          "rule": "abstractionEarnsKeep",
+          "score": 3,
+          "file": "src/pricing.ts",
+          "line": 6,
+          "reason": "One pricing decision consolidates the duplicated fulfillment calculation while quote and receipt retain their contracts."
+        },
+        {
+          "rule": "boundaries",
+          "score": 2,
+          "file": "src/quote.ts",
+          "line": 3,
+          "reason": "Quote delegates a pure pricing decision; no I/O or failure handling is needed here."
+        },
+        {
+          "rule": "naming",
+          "score": 3,
+          "file": "src/pricing.ts",
+          "line": 6,
+          "reason": "fulfillmentTotal and orderSubtotal convey domain intent and cents-based context."
+        },
+        {
+          "rule": "testing",
+          "score": 2,
+          "file": "tests/quote.test.ts",
+          "line": 22,
+          "reason": "Independent expected totals cover 4999, 5000, and rounding; receipt is checked on the small-order case."
+        }
+      ]
+    },
+    {
+      "provider": "claude",
+      "condition": "scripted",
+      "seed": 2,
+      "task": "duplication",
+      "status": "completed",
+      "pass": true,
+      "judgeError": "Judge timeout: ",
+      "rules": null
+    },
+    {
+      "provider": "codex",
+      "condition": "scripted",
+      "seed": 2,
+      "task": "duplication",
+      "status": "completed",
+      "pass": true,
+      "judgeError": null,
+      "rules": [
+        {
+          "rule": "temporalCoupling",
+          "score": 3,
+          "file": "src/pricing.ts",
+          "line": 5,
+          "reason": "Both public functions compute totals through the same pure pricing function; no call order or shared mutable state."
+        },
+        {
+          "rule": "abstractionEarnsKeep",
+          "score": 3,
+          "file": "src/pricing.ts",
+          "line": 5,
+          "reason": "fulfillmentTotal centralizes the duplicated handling and tax policy without adding a pass-through module."
+        },
+        {
+          "rule": "boundaries",
+          "score": 2,
+          "file": "src/pricing.ts",
+          "line": 5,
+          "reason": "Pricing is a pure decision with no I/O; the change introduces no boundary or failure handling concerns."
+        },
+        {
+          "rule": "naming",
+          "score": 2,
+          "file": "src/pricing.ts",
+          "line": 5,
+          "reason": "fulfillmentTotal describes the calculation, though its name is broader than the quote and receipt total it serves."
+        },
+        {
+          "rule": "testing",
+          "score": 2,
+          "file": "tests/quote.test.ts",
+          "line": 24,
+          "reason": "Literal expected values cover 4999, 5000, and rounding for both contracts; the rounding-up case does not distinguish Math.round from some alternatives."
+        }
+      ]
+    },
+    {
+      "provider": "codex",
+      "condition": "prose",
+      "seed": 2,
+      "task": "duplication",
+      "status": "completed",
+      "pass": true,
+      "judgeError": null,
+      "rules": [
+        {
+          "rule": "temporalCoupling",
+          "score": 3,
+          "file": "src/pricing.ts",
+          "line": 5,
+          "reason": "Total is computed from the supplied lines in one call, with no ordering or correlated state."
+        },
+        {
+          "rule": "abstractionEarnsKeep",
+          "score": 3,
+          "file": "src/pricing.ts",
+          "line": 5,
+          "reason": "A shared pricing decision removes duplicated fulfillment logic without adding a pass-through module."
+        },
+        {
+          "rule": "boundaries",
+          "score": 2,
+          "file": "src/quote.ts",
+          "line": 3,
+          "reason": "Quote and receipt retain their public contracts while delegating the pure pricing calculation."
+        },
+        {
+          "rule": "naming",
+          "score": 2,
+          "file": "src/pricing.ts",
+          "line": 5,
+          "reason": "fulfillmentTotal names the domain result; amount could more clearly say subtotal in the implementation."
+        },
+        {
+          "rule": "testing",
+          "score": 2,
+          "file": "tests/quote.test.ts",
+          "line": 25,
+          "reason": "Literal assertions cover both contracts at 4999 and 5000 cents and a rounding case, though the rounding case does not distinguish half-up rounding."
+        }
+      ]
+    },
+    {
+      "provider": "claude",
+      "condition": "none",
+      "seed": 1,
+      "task": "retry",
+      "status": "completed",
+      "pass": true,
+      "judgeError": null,
+      "rules": [
+        {
+          "rule": "temporalCoupling",
+          "score": 2,
+          "file": "src/shipping.ts",
+          "line": 13,
+          "reason": "Retry count is bounded in shipping itself; each retry invokes the same carrier request with a stable key."
+        },
+        {
+          "rule": "abstractionEarnsKeep",
+          "score": 1,
+          "file": "src/api.ts",
+          "line": 8,
+          "reason": "Optional schedule injection supports deterministic tests, but exposes retry policy through the API via a complex inferred parameter type."
+        },
+        {
+          "rule": "boundaries",
+          "score": 2,
+          "file": "src/shipping.ts",
+          "line": 18,
+          "reason": "Carrier failures are typed, retries are selective and capped, and persistence happens only after a label succeeds."
+        },
+        {
+          "rule": "naming",
+          "score": 2,
+          "file": "src/shipping.ts",
+          "line": 7,
+          "reason": "maxRetries and carrierBackoff convey intent; the schedule type parameter backoff is less specific."
+        },
+        {
+          "rule": "testing",
+          "score": 2,
+          "file": "tests/shipping.test.ts",
+          "line": 40,
+          "reason": "Covers transient success, exhaustion, permanent failure, stable keys, unchanged state, and avoids real delays with literal assertions."
+        }
+      ]
+    },
+    {
+      "provider": "claude",
+      "condition": "prose",
+      "seed": 1,
+      "task": "retry",
+      "status": "completed",
+      "pass": true,
+      "judgeError": null,
+      "rules": [
+        {
+          "rule": "temporalCoupling",
+          "score": 2,
+          "file": "src/shipping.ts",
+          "line": 15,
+          "reason": "Retries reuse the same key, and persistence happens only after a label is returned."
+        },
+        {
+          "rule": "abstractionEarnsKeep",
+          "score": 1,
+          "file": "src/shipping.ts",
+          "line": 7,
+          "reason": "The named policy captures retry settings, but injecting it through the public shipping function is unnecessary flexibility."
+        },
+        {
+          "rule": "boundaries",
+          "score": 2,
+          "file": "src/shipping.ts",
+          "line": 6,
+          "reason": "Retries are bounded and filtered to retryable CarrierFailure; the Effect schedule provides backoff."
+        },
+        {
+          "rule": "naming",
+          "score": 2,
+          "file": "src/shipping.ts",
+          "line": 6,
+          "reason": "carrierRetry and retryable express domain intent, though times does not specify that it counts retries."
+        },
+        {
+          "rule": "testing",
+          "score": 2,
+          "file": "tests/shipping-retry.test.ts",
+          "line": 29,
+          "reason": "Tests cover success, exhaustion, permanent failure, stable keys, and unchanged state without sleeping; the no-delay policy mirrors production settings."
+        }
+      ]
+    },
+    {
+      "provider": "claude",
+      "condition": "prose",
+      "seed": 2,
+      "task": "retry",
+      "status": "completed",
+      "pass": true,
+      "judgeError": null,
+      "rules": [
+        {
+          "rule": "temporalCoupling",
+          "score": 3,
+          "file": "src/shipping.ts",
+          "line": 18,
+          "reason": "Each retry uses the same key derived from the order ID; shipping state is written only after success."
+        },
+        {
+          "rule": "abstractionEarnsKeep",
+          "score": 2,
+          "file": "src/shipping.ts",
+          "line": 8,
+          "reason": "The configurable schedule enables deterministic no-delay tests, though exposing it through the API adds a production parameter for test control."
+        },
+        {
+          "rule": "boundaries",
+          "score": 2,
+          "file": "src/shipping.ts",
+          "line": 20,
+          "reason": "Carrier failures are selectively retried with a capped attempt count; persistence follows the successful carrier call."
+        },
+        {
+          "rule": "naming",
+          "score": 3,
+          "file": "src/shipping.ts",
+          "line": 7,
+          "reason": "MAX_ATTEMPTS clearly states the limit and counts the initial call, while idempotencyKey names its purpose."
+        },
+        {
+          "rule": "testing",
+          "score": 3,
+          "file": "tests/shipping.test.ts",
+          "line": 46,
+          "reason": "Tests cover transient recovery, exhaustion, permanent failure, unchanged state, and repeated literal keys using a zero-delay schedule."
+        }
+      ]
+    },
+    {
+      "provider": "claude",
+      "condition": "scripted",
+      "seed": 1,
+      "task": "retry",
+      "status": "completed",
+      "pass": true,
+      "judgeError": null,
+      "rules": [
+        {
+          "rule": "temporalCoupling",
+          "score": 3,
+          "file": "src/shipping.ts",
+          "line": 15,
+          "reason": "Each attempt builds the same request before retrying, with no order-dependent setup."
+        },
+        {
+          "rule": "abstractionEarnsKeep",
+          "score": 2,
+          "file": "src/shipping.ts",
+          "line": 6,
+          "reason": "The shared policy clearly defines the attempt bound and delay; it is small and specific."
+        },
+        {
+          "rule": "boundaries",
+          "score": 3,
+          "file": "src/shipping.ts",
+          "line": 16,
+          "reason": "Retry is limited to retryable carrier failures, with a bounded schedule and stable idempotency key; persistence follows success."
+        },
+        {
+          "rule": "naming",
+          "score": 3,
+          "file": "src/shipping.ts",
+          "line": 5,
+          "reason": "maxAttempts and retryPolicy clearly name the retry limit and policy."
+        },
+        {
+          "rule": "testing",
+          "score": 2,
+          "file": "tests/shipping-retry.test.ts",
+          "line": 67,
+          "reason": "Tests cover transient success, exhaustion, permanent failure, and unchanged state with controlled sleeps; outcomes and state are asserted."
+        }
+      ]
+    },
+    {
+      "provider": "claude",
+      "condition": "scripted",
+      "seed": 2,
+      "task": "retry",
+      "status": "completed",
+      "pass": true,
+      "judgeError": "Judge timeout: ",
+      "rules": null
+    },
+    {
+      "provider": "codex",
+      "condition": "scripted",
+      "seed": 1,
+      "task": "retry",
+      "status": "budget",
+      "pass": false,
+      "judgeError": null,
+      "rules": [
+        {
+          "rule": "temporalCoupling",
+          "score": 3,
+          "file": "src/shipping.ts",
+          "line": 15,
+          "reason": "Each carrier attempt receives the same key derived from the order ID; persistence follows successful label creation."
+        },
+        {
+          "rule": "abstractionEarnsKeep",
+          "score": 2,
+          "file": "src/shipping.ts",
+          "line": 6,
+          "reason": "The named schedule centralizes retry timing and bounds retries, though it is only used here."
+        },
+        {
+          "rule": "boundaries",
+          "score": 3,
+          "file": "src/shipping.ts",
+          "line": 15,
+          "reason": "Retries are bounded to two retries and selected by retryable CarrierFailure; shipped state is written only after success."
+        },
+        {
+          "rule": "naming",
+          "score": 3,
+          "file": "src/shipping.ts",
+          "line": 6,
+          "reason": "carrierRetrySchedule clearly names the dependency and purpose of the schedule."
+        },
+        {
+          "rule": "testing",
+          "score": 2,
+          "file": "tests/shipping.test.ts",
+          "line": 35,
+          "reason": "Tests cover transient success, exhaustion, permanent failure, stable keys, and unchanged state using TestClock; outcomes are asserted directly."
+        }
+      ]
+    },
+    {
+      "provider": "codex",
+      "condition": "none",
+      "seed": 1,
+      "task": "retry",
+      "status": "timeout",
+      "pass": false,
+      "judgeError": null,
+      "rules": [
+        {
+          "rule": "temporalCoupling",
+          "score": 2,
+          "file": "src/shipping.ts",
+          "line": 8,
+          "reason": "Carrier retries are bounded to two retries after the initial attempt; order persistence follows success."
+        },
+        {
+          "rule": "abstractionEarnsKeep",
+          "score": 2,
+          "file": "src/shipping.ts",
+          "line": 9,
+          "reason": "The retry policy is localized to the carrier call, where transient failure handling belongs."
+        },
+        {
+          "rule": "boundaries",
+          "score": 2,
+          "file": "src/shipping.ts",
+          "line": 11,
+          "reason": "Carrier I/O is followed by persistence only on success, with retries limited to retryable failures."
+        },
+        {
+          "rule": "naming",
+          "score": 2,
+          "file": "src/shipping.ts",
+          "line": 11,
+          "reason": "orderId and idempotencyKey communicate the carrier request’s domain meaning."
+        },
+        {
+          "rule": "testing",
+          "score": 3,
+          "file": "tests/shipping.test.ts",
+          "line": 17,
+          "reason": "Tests assert retry counts, stable keys, success, exhausted and permanent failures, and unchanged state without sleeping."
+        }
+      ]
+    },
+    {
+      "provider": "codex",
+      "condition": "prose",
+      "seed": 1,
+      "task": "retry",
+      "status": "maxTurns",
+      "pass": false,
+      "judgeError": null,
+      "rules": [
+        {
+          "rule": "temporalCoupling",
+          "score": 3,
+          "file": "src/shipping.ts",
+          "line": 8,
+          "reason": "Each retry builds a carrier call with the same order ID and idempotency key; state is persisted only after success."
+        },
+        {
+          "rule": "abstractionEarnsKeep",
+          "score": 2,
+          "file": "src/shipping.ts",
+          "line": 9,
+          "reason": "The bounded Effect schedule captures the retry policy directly, with no speculative wrapper."
+        },
+        {
+          "rule": "boundaries",
+          "score": 3,
+          "file": "src/shipping.ts",
+          "line": 9,
+          "reason": "Retry is limited to retryable CarrierFailure, allows two retries, and propagates failure before persistence."
+        },
+        {
+          "rule": "naming",
+          "score": 2,
+          "file": "src/shipping.ts",
+          "line": 9,
+          "reason": "CarrierFailure.retryable and Schedule.recurs clearly describe the failure policy and retry bound."
+        },
+        {
+          "rule": "testing",
+          "score": 3,
+          "file": "tests/shipping.test.ts",
+          "line": 12,
+          "reason": "Tests assert literal idempotency inputs, attempt counts, successful persistence, and unchanged state on transient exhaustion and permanent failure."
+        }
+      ]
+    },
+    {
+      "provider": "claude",
+      "condition": "none",
+      "seed": 1,
+      "task": "regression",
+      "status": "completed",
+      "pass": true,
+      "judgeError": null,
+      "rules": [
+        {
+          "rule": "temporalCoupling",
+          "score": 3,
+          "file": "src/pricing.ts",
+          "line": 4,
+          "reason": "The result depends only on cents and percent; it rounds once."
+        },
+        {
+          "rule": "abstractionEarnsKeep",
+          "score": 2,
+          "file": "src/pricing.ts",
+          "line": 4,
+          "reason": "The focused helper expresses remaining-price calculation without added machinery."
+        },
+        {
+          "rule": "boundaries",
+          "score": 2,
+          "file": "src/api.ts",
+          "line": 13,
+          "reason": "Discount calculation is pure behind the existing order lookup and preserves its typed failure."
+        },
+        {
+          "rule": "naming",
+          "score": 2,
+          "file": "src/pricing.ts",
+          "line": 4,
+          "reason": "remaining and its cents/percent parameters convey the calculation, though units are not explicit in names."
+        },
+        {
+          "rule": "testing",
+          "score": 3,
+          "file": "tests/discount.test.ts",
+          "line": 22,
+          "reason": "Literal expected values cover endpoints, half-cent rounding, the reported bug, and the missing-order error."
+        }
+      ]
+    },
+    {
+      "provider": "codex",
+      "condition": "none",
+      "seed": 1,
+      "task": "regression",
+      "status": "completed",
+      "pass": true,
+      "judgeError": null,
+      "rules": [
+        {
+          "rule": "temporalCoupling",
+          "score": 3,
+          "file": "src/pricing.ts",
+          "line": 4,
+          "reason": "The remaining amount is computed directly from cents and percent, with one final rounding step."
+        },
+        {
+          "rule": "abstractionEarnsKeep",
+          "score": 2,
+          "file": "src/pricing.ts",
+          "line": 4,
+          "reason": "The pricing helper centralizes the remaining amount calculation used by the API."
+        },
+        {
+          "rule": "boundaries",
+          "score": 2,
+          "file": "src/api.ts",
+          "line": 13,
+          "reason": "Discount calculation stays pure behind Effect.map, preserving the existing order lookup failure."
+        },
+        {
+          "rule": "naming",
+          "score": 2,
+          "file": "src/pricing.ts",
+          "line": 4,
+          "reason": "remaining and cents convey the result and unit; percent identifies the input rate."
+        },
+        {
+          "rule": "testing",
+          "score": 3,
+          "file": "tests/discounted.test.ts",
+          "line": 31,
+          "reason": "Literal expected results cover 0%, 100%, fractional-cent rounding, the reported bug, and missing-order errors."
+        }
+      ]
+    },
+    {
+      "provider": "claude",
+      "condition": "prose",
+      "seed": 1,
+      "task": "regression",
+      "status": "completed",
+      "pass": true,
+      "judgeError": null,
+      "rules": [
+        {
+          "rule": "temporalCoupling",
+          "score": 3,
+          "file": "src/pricing.ts",
+          "line": 4,
+          "reason": "Discount result depends only on the supplied cents and percent."
+        },
+        {
+          "rule": "abstractionEarnsKeep",
+          "score": 2,
+          "file": "src/pricing.ts",
+          "line": 4,
+          "reason": "The focused helper captures discount arithmetic and rounds once."
+        },
+        {
+          "rule": "boundaries",
+          "score": 2,
+          "file": "src/api.ts",
+          "line": 13,
+          "reason": "Discount calculation is pure behind the existing Effect lookup, preserving OrderNotFound."
+        },
+        {
+          "rule": "naming",
+          "score": 2,
+          "file": "src/pricing.ts",
+          "line": 4,
+          "reason": "remaining communicates the result, though its cents and percent units are implicit."
+        },
+        {
+          "rule": "testing",
+          "score": 3,
+          "file": "tests/pricing.test.ts",
+          "line": 14,
+          "reason": "Literal assertions cover reported bug, both endpoints, and fractional-cent rounding; API tests preserve the error contract."
+        }
+      ]
+    },
+    {
+      "provider": "codex",
+      "condition": "scripted",
+      "seed": 2,
+      "task": "retry",
+      "status": "completed",
+      "pass": true,
+      "judgeError": null,
+      "rules": [
+        {
+          "rule": "temporalCoupling",
+          "score": 3,
+          "file": "src/shipping.ts",
+          "line": 8,
+          "reason": "Each retry invokes the carrier with the same order-derived idempotency key; shipped state is written only after success."
+        },
+        {
+          "rule": "abstractionEarnsKeep",
+          "score": 2,
+          "file": "src/shipping.ts",
+          "line": 6,
+          "reason": "The named schedule centralizes the bounded retry limit, though the empty pipe adds no value."
+        },
+        {
+          "rule": "boundaries",
+          "score": 2,
+          "file": "src/shipping.ts",
+          "line": 8,
+          "reason": "Carrier retries are limited to retryable CarrierFailure and stop after two retries; store persistence follows carrier success."
+        },
+        {
+          "rule": "naming",
+          "score": 2,
+          "file": "src/shipping.ts",
+          "line": 6,
+          "reason": "carrierRetry conveys the retry policy, and the idempotency key names the shipping domain and order."
+        },
+        {
+          "rule": "testing",
+          "score": 2,
+          "file": "tests/shipping.test.ts",
+          "line": 27,
+          "reason": "Tests cover transient recovery, exhaustion, permanent failure, stable keys, and state; they use deterministic effects without sleeps."
+        }
+      ]
+    },
+    {
+      "provider": "claude",
+      "condition": "scripted",
+      "seed": 1,
+      "task": "regression",
+      "status": "completed",
+      "pass": true,
+      "judgeError": null,
+      "rules": [
+        {
+          "rule": "temporalCoupling",
+          "score": 3,
+          "file": "src/pricing.ts",
+          "line": 4,
+          "reason": "Discount result depends only on subtotal and percent; it rounds once."
+        },
+        {
+          "rule": "abstractionEarnsKeep",
+          "score": 2,
+          "file": "src/pricing.ts",
+          "line": 4,
+          "reason": "The focused remaining-price calculation expresses a useful pricing decision."
+        },
+        {
+          "rule": "boundaries",
+          "score": 2,
+          "file": "src/api.ts",
+          "line": 13,
+          "reason": "Discounting remains a pure calculation over order data, with lookup failures propagated by the existing service."
+        },
+        {
+          "rule": "naming",
+          "score": 2,
+          "file": "src/pricing.ts",
+          "line": 4,
+          "reason": "remaining is concise but does not reveal that cents is the post-discount amount or that percent is a discount rate."
+        },
+        {
+          "rule": "testing",
+          "score": 3,
+          "file": "tests/discount.test.ts",
+          "line": 16,
+          "reason": "Literal API-level assertions cover the reported bug, 0%, 100%, fractional cents, half-up rounding, multiple lines, and the missing-order error contract."
+        }
+      ]
+    },
+    {
+      "provider": "claude",
+      "condition": "none",
+      "seed": 2,
+      "task": "retry",
+      "status": "completed",
+      "pass": true,
+      "judgeError": "Judge budget: ",
+      "rules": null
+    },
+    {
+      "provider": "codex",
+      "condition": "prose",
+      "seed": 2,
+      "task": "retry",
+      "status": "completed",
+      "pass": true,
+      "judgeError": null,
+      "rules": [
+        {
+          "rule": "temporalCoupling",
+          "score": 3,
+          "file": "src/shipping.ts",
+          "line": 10,
+          "reason": "Each retry rebuilds the carrier call with the same order-based idempotency key; persistence runs only after success."
+        },
+        {
+          "rule": "abstractionEarnsKeep",
+          "score": 2,
+          "file": "src/shipping.ts",
+          "line": 10,
+          "reason": "Effect.retry and a bounded schedule express the retry policy directly without an extra abstraction."
+        },
+        {
+          "rule": "boundaries",
+          "score": 2,
+          "file": "src/shipping.ts",
+          "line": 13,
+          "reason": "Carrier failures are selectively retried and the order is persisted only after a label succeeds."
+        },
+        {
+          "rule": "naming",
+          "score": 2,
+          "file": "src/shipping.ts",
+          "line": 13,
+          "reason": "The carrier failure predicate and retryable property state the failure policy clearly."
+        },
+        {
+          "rule": "testing",
+          "score": 3,
+          "file": "tests/shipping.test.ts",
+          "line": 12,
+          "reason": "Deterministic tests cover recovery, three-attempt exhaustion, permanent failure, stable keys, and persisted state."
+        }
+      ]
+    },
+    {
+      "provider": "codex",
+      "condition": "none",
+      "seed": 2,
+      "task": "retry",
+      "status": "budget",
+      "pass": false,
+      "judgeError": null,
+      "rules": [
+        {
+          "rule": "temporalCoupling",
+          "score": 3,
+          "file": "src/shipping.ts",
+          "line": 7,
+          "reason": "Each retry calls the carrier with the same order id and derived idempotency key; state is persisted only after a label succeeds."
+        },
+        {
+          "rule": "abstractionEarnsKeep",
+          "score": 2,
+          "file": "src/shipping.ts",
+          "line": 8,
+          "reason": "The Effect schedule bounds retries and filters by retryable carrier failures, though the inline schedule is somewhat dense."
+        },
+        {
+          "rule": "boundaries",
+          "score": 3,
+          "file": "src/shipping.ts",
+          "line": 8,
+          "reason": "Carrier I/O remains behind the Carrier interface; retries are bounded to two retries and limited to typed retryable failures."
+        },
+        {
+          "rule": "naming",
+          "score": 2,
+          "file": "src/shipping.ts",
+          "line": 8,
+          "reason": "CarrierFailure and retryable convey domain intent; the schedule and predicate parameters are less descriptive."
+        },
+        {
+          "rule": "testing",
+          "score": 2,
+          "file": "tests/shipping.test.ts",
+          "line": 18,
+          "reason": "Tests check success after two failures, three-attempt exhaustion, permanent failure, stable keys, and unchanged failure state without real sleeps."
+        }
+      ]
+    },
+    {
+      "provider": "codex",
+      "condition": "none",
+      "seed": 2,
+      "task": "regression",
+      "status": "completed",
+      "pass": true,
+      "judgeError": null,
+      "rules": [
+        {
+          "rule": "temporalCoupling",
+          "score": 2,
+          "file": "src/pricing.ts",
+          "line": 4,
+          "reason": "Remaining cents are calculated directly from inputs with one final rounding."
+        },
+        {
+          "rule": "abstractionEarnsKeep",
+          "score": 2,
+          "file": "src/api.ts",
+          "line": 14,
+          "reason": "The pricing helper is reused through the API, with no new speculative abstraction."
+        },
+        {
+          "rule": "boundaries",
+          "score": 2,
+          "file": "src/api.ts",
+          "line": 14,
+          "reason": "Discount calculation is a pure mapping; order lookup and its existing failure contract remain intact."
+        },
+        {
+          "rule": "naming",
+          "score": 2,
+          "file": "src/pricing.ts",
+          "line": 4,
+          "reason": "Names identify the remaining amount and input cents, though percent’s scale is implicit."
+        },
+        {
+          "rule": "testing",
+          "score": 3,
+          "file": "tests/api.test.ts",
+          "line": 34,
+          "reason": "Literal outcome assertions cover both endpoints, fractional-cent rounding, and the reported case."
+        }
+      ]
+    },
+    {
+      "provider": "codex",
+      "condition": "scripted",
+      "seed": 1,
+      "task": "regression",
+      "status": "completed",
+      "pass": true,
+      "judgeError": null,
+      "rules": [
+        {
+          "rule": "temporalCoupling",
+          "score": 2,
+          "file": "src/pricing.ts",
+          "line": 4,
+          "reason": "Computes the discounted subtotal directly and rounds once, without relying on call order or shared state."
+        },
+        {
+          "rule": "abstractionEarnsKeep",
+          "score": 2,
+          "file": "src/api.ts",
+          "line": 12,
+          "reason": "Discount logic reuses the existing pricing functions and preserves the service boundary."
+        },
+        {
+          "rule": "boundaries",
+          "score": 2,
+          "file": "src/api.ts",
+          "line": 12,
+          "reason": "Order lookup remains in the Effect boundary and retains its typed missing-order failure."
+        },
+        {
+          "rule": "naming",
+          "score": 2,
+          "file": "src/pricing.ts",
+          "line": 4,
+          "reason": "The existing `remaining` name and `cents` parameter describe the returned amount and unit."
+        },
+        {
+          "rule": "testing",
+          "score": 2,
+          "file": "tests/discounted.test.ts",
+          "line": 37,
+          "reason": "Tests cover required percentage edges, fractional-cent rounding, the reported case, and missing-order behavior with literal expected values."
+        }
+      ]
+    },
+    {
+      "provider": "claude",
+      "condition": "none",
+      "seed": 2,
+      "task": "regression",
+      "status": "completed",
+      "pass": true,
+      "judgeError": null,
+      "rules": [
+        {
+          "rule": "temporalCoupling",
+          "score": 3,
+          "file": "src/pricing.ts",
+          "line": 4,
+          "reason": "Discount calculation is self-contained and rounds the remaining subtotal once."
+        },
+        {
+          "rule": "abstractionEarnsKeep",
+          "score": 2,
+          "file": "src/pricing.ts",
+          "line": 4,
+          "reason": "The pricing helper centralizes a concrete calculation used by the API."
+        },
+        {
+          "rule": "boundaries",
+          "score": 2,
+          "file": "src/api.ts",
+          "line": 13,
+          "reason": "Discounting composes the existing order lookup and pure pricing functions while preserving its failure contract."
+        },
+        {
+          "rule": "naming",
+          "score": 2,
+          "file": "src/pricing.ts",
+          "line": 4,
+          "reason": "remaining and cents describe the output and unit, though percent does not specify whether it means discount or remainder."
+        },
+        {
+          "rule": "testing",
+          "score": 3,
+          "file": "tests/discount.test.ts",
+          "line": 17,
+          "reason": "Literal expected values cover the reported bug, 0%, 100%, fractional-cent rounding, multi-line subtotal, and missing-order failure."
+        }
+      ]
+    },
+    {
+      "provider": "claude",
+      "condition": "prose",
+      "seed": 2,
+      "task": "regression",
+      "status": "completed",
+      "pass": true,
+      "judgeError": null,
+      "rules": [
+        {
+          "rule": "temporalCoupling",
+          "score": 3,
+          "file": "src/pricing.ts",
+          "line": 4,
+          "reason": "Discounted cents are computed directly from the inputs with a single rounding step."
+        },
+        {
+          "rule": "abstractionEarnsKeep",
+          "score": 2,
+          "file": "src/api.ts",
+          "line": 13,
+          "reason": "The existing pricing helpers express subtotal and remaining-price decisions without adding new layers."
+        },
+        {
+          "rule": "boundaries",
+          "score": 2,
+          "file": "src/api.ts",
+          "line": 13,
+          "reason": "The API maps the existing typed order lookup effect into pricing and preserves its OrderNotFound failure."
+        },
+        {
+          "rule": "naming",
+          "score": 2,
+          "file": "src/pricing.ts",
+          "line": 4,
+          "reason": "remaining and cents communicate the result and unit, though percent does not specify discount semantics."
+        },
+        {
+          "rule": "testing",
+          "score": 2,
+          "file": "tests/pricing.test.ts",
+          "line": 26,
+          "reason": "Literal assertions cover the reported result, percentage boundaries, rounding, API behavior, and missing-order failure."
+        }
+      ]
+    },
+    {
+      "provider": "codex",
+      "condition": "prose",
+      "seed": 2,
+      "task": "regression",
+      "status": "completed",
+      "pass": true,
+      "judgeError": null,
+      "rules": [
+        {
+          "rule": "temporalCoupling",
+          "score": 3,
+          "file": "src/pricing.ts",
+          "line": 4,
+          "reason": "Discount calculation is a pure function with no call-order or correlated-state dependency."
+        },
+        {
+          "rule": "abstractionEarnsKeep",
+          "score": 2,
+          "file": "src/pricing.ts",
+          "line": 4,
+          "reason": "The existing pricing helper now computes the discounted remainder directly."
+        },
+        {
+          "rule": "boundaries",
+          "score": 2,
+          "file": "src/api.ts",
+          "line": 13,
+          "reason": "The API maps the existing order lookup effect into pricing and preserves its missing-order failure."
+        },
+        {
+          "rule": "naming",
+          "score": 2,
+          "file": "src/pricing.ts",
+          "line": 4,
+          "reason": "remaining communicates the result, though cents and percent units are not explicit in the parameter names."
+        },
+        {
+          "rule": "testing",
+          "score": 3,
+          "file": "tests/discounted.test.ts",
+          "line": 21,
+          "reason": "Literal assertions cover 0%, 100%, fractional-cent rounding, the reported case, and missing-order behavior."
+        }
+      ]
+    },
+    {
+      "provider": "claude",
+      "condition": "scripted",
+      "seed": 2,
+      "task": "regression",
+      "status": "completed",
+      "pass": true,
+      "judgeError": "Judge timeout: ",
+      "rules": null
+    },
+    {
+      "provider": "codex",
+      "condition": "scripted",
+      "seed": 2,
+      "task": "regression",
+      "status": "completed",
+      "pass": true,
+      "judgeError": "Judge timeout: ",
+      "rules": null
+    },
+    {
+      "provider": "codex",
+      "condition": "prose",
+      "seed": 1,
+      "task": "regression",
+      "status": "error",
+      "pass": false,
+      "judgeError": null,
+      "rules": [
+        {
+          "rule": "temporalCoupling",
+          "score": 3,
+          "file": "src/pricing.ts",
+          "line": 4,
+          "reason": "Computes the remaining amount directly with one rounding step; no call order or correlated state."
+        },
+        {
+          "rule": "abstractionEarnsKeep",
+          "score": 2,
+          "file": "src/api.ts",
+          "line": 12,
+          "reason": "Reuses focused subtotal and remaining-price functions for the discount calculation."
+        },
+        {
+          "rule": "boundaries",
+          "score": 2,
+          "file": "src/api.ts",
+          "line": 12,
+          "reason": "Keeps the calculation pure and preserves the existing order lookup failure path."
+        },
+        {
+          "rule": "naming",
+          "score": 2,
+          "file": "src/pricing.ts",
+          "line": 4,
+          "reason": "The function and parameters describe remaining cents after a percentage discount."
+        },
+        {
+          "rule": "testing",
+          "score": 3,
+          "file": "tests/api.test.ts",
+          "line": 37,
+          "reason": "Literal assertions cover 0%, 100%, fractional-cent rounding, the reported bug, and the missing-order error contract."
+        }
+      ]
+    }
+  ],
+  "completed": 112,
+  "expected": 112,
+  "priorUsd": 0.04794082,
+  "spent": 9.115007050000013,
+  "regradedFrom": "2026-10-26T09-56-14.534Z-b480b7db-442b-47d1-8b21-61e54688f5ff.jsonl",
+  "models": ["claude-haiku-5-5", "gpt-6-luna"],
+  "revisions": {
+    "none": "none",
+    "scripted": "1402a66f9fd1fac5a2b729fabf2a10af66fe85a4",
+    "prose": "9bd621ecf7958bd6fd94d97040a2934053212d08"
+  }
+}

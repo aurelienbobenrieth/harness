@@ -196,17 +196,17 @@ export async function runAgent({
       await termination;
       if (settled) return;
       const transcript = normalize(events);
+      const failed = events.some((e) => e.type === "error" || e.type === "turn.failed" || e.is_error);
       const costSource =
         transcript.reportedCostUsd !== null
           ? "reported"
-          : !transcript.usages.length && stopped
+          : !transcript.usages.length && (stopped || code !== 0 || failed)
             ? "reserved-unmetered"
             : "estimated";
       const costEstimateUsd =
         transcript.reportedCostUsd ??
         (costSource === "reserved-unmetered" ? maxUsd : estimateCost(transcript.tokens, model));
       finishCost(costEstimateUsd);
-      const failed = events.some((e) => e.type === "error" || e.type === "turn.failed" || e.is_error);
       const turnLimited = events.some((e) => e.type === "result" && e.subtype === "error_max_turns");
       resolve({
         provider,
@@ -214,6 +214,7 @@ export async function runAgent({
         ...transcript,
         costEstimateUsd,
         costSource,
+        maxUsd,
         durationMs: Date.now() - started,
         exitCode: code,
         status: stopped ?? (turnLimited ? "maxTurns" : code === 0 && !failed ? "completed" : "error"),

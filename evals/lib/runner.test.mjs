@@ -113,6 +113,8 @@ test("runner reports CLI failure and kills a timed-out child", async () => {
     });
     assert.equal(failed.status, "error");
     assert.notEqual(failed.exitCode, 0);
+    assert.equal(failed.costSource, "reserved-unmetered");
+    assert.equal(failed.costEstimateUsd, 0.25);
     await writeFile(path.join(dir, "exec"), "setInterval(() => {}, 1000)");
     const timed = await runAgent({
       provider: "codex",

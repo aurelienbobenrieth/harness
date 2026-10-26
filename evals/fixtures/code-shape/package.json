@@ -1,0 +1,12 @@
+{
+  "name": "parcel-desk-fixture",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/*.test.ts",
+    "check": "node check.mjs full"
+  },
+  "dependencies": {
+    "effect": "4.0.0-rc.115"
+  }
+}
