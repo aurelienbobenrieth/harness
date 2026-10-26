@@ -5,10 +5,7 @@ const folder = new URL("../results/optimization/", import.meta.url);
 const rows = new Map(),
   costs = new Map();
 for (const file of (await readdir(folder)).filter((f) => f.endsWith(".jsonl")).toSorted()) {
-  for (const line of (await readFile(new URL(file, folder), "utf8"))
-    .trim()
-    .split("\n")
-    .filter(Boolean)) {
+  for (const line of (await readFile(new URL(file, folder), "utf8")).trim().split("\n").filter(Boolean)) {
     const r = JSON.parse(line);
     if (!r.id || !r.run) continue;
     for (const run of [r.run, r.judgment].filter(Boolean)) {
@@ -40,9 +37,7 @@ const conditions = [...groups].map(([condition, rs]) => ({
       skill,
       behavior: `${behavior.filter((r) => r.grade.pass).length}/${behavior.length}`,
       load: `${load.filter((r) => r.pass).length}/${load.length}`,
-      failures: behavior
-        .filter((r) => !r.grade.pass)
-        .map((r) => ({ id: r.id, seed: r.seed, grade: r.grade })),
+      failures: behavior.filter((r) => !r.grade.pass).map((r) => ({ id: r.id, seed: r.seed, grade: r.grade })),
     };
   }),
 }));
@@ -50,13 +45,7 @@ const git = (...args) => execFileSync("git", args, { encoding: "utf8" }).trim();
 const bytes = Object.fromEntries(
   ["origin/steering/economy", "origin/skills/terse", "skills/opt"].map((ref) => {
     const names = git("ls-tree", "-r", "--name-only", ref, "--", "skills").split("\n");
-    return [
-      ref,
-      names.reduce(
-        (n, file) => n + Buffer.byteLength(execFileSync("git", ["show", `${ref}:${file}`])),
-        0,
-      ),
-    ];
+    return [ref, names.reduce((n, file) => n + Buffer.byteLength(execFileSync("git", ["show", `${ref}:${file}`])), 0)];
   }),
 );
 const report = {

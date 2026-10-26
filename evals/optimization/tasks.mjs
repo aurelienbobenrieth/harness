@@ -6,12 +6,9 @@ import { tasks as economy } from "../economy/tasks.mjs";
 import { tasks as quality } from "../quality/tasks.mjs";
 
 const read = (cwd, file) => readFile(path.join(cwd, file), "utf8");
-const git = (cwd, ...args) =>
-  execFileSync("git", args, { cwd, encoding: "utf8", windowsHide: true }).trim();
+const git = (cwd, ...args) => execFileSync("git", args, { cwd, encoding: "utf8", windowsHide: true }).trim();
 export const noCredit = (text) =>
-  !/co-authored-by|generated (?:with|by)|claude|anthropic|openai|chatgpt|\bgpt[- ]|\bmodel credits?\b/i.test(
-    text,
-  );
+  !/co-authored-by|generated (?:with|by)|claude|anthropic|openai|chatgpt|\bgpt[- ]|\bmodel credits?\b/i.test(text);
 const check = (checks) => ({ pass: Object.values(checks).every(Boolean), checks });
 const alias = (id, skill, base, prompt, extra = {}) => ({ id, skill, base, prompt, ...extra });
 const base = (id) => [...economy, ...quality].find((t) => t.id === id);
@@ -32,9 +29,7 @@ export function communicationGrade(id, run) {
   const text = answer(run).trim(),
     first = text.split(/\r?\n/)[0],
     blocks = inspectComm(run);
-  const plain = !/synerg|leverage|paradigm|delve|utiliz|orchestrat|—|I'd be happy|Certainly!/i.test(
-    text,
-  );
+  const plain = !/synerg|leverage|paradigm|delve|utiliz|orchestrat|—|I'd be happy|Certainly!/i.test(text);
   if (id === "comm-status")
     return check({
       nonempty: !!text,
@@ -93,9 +88,7 @@ export function testGrade(run, a) {
     publicBoundary: /(?:import|require)[\s\S]*calc\.mjs/.test(a.testSource),
     meaningful: /assert\.(?:equal|deepEqual|strictEqual|throws|rejects)/.test(a.testSource),
     deterministic: !/setTimeout|sleep|Math\.random|Date\.now/.test(a.testSource),
-    independent: !/assert\.(?:equal|deepEqual)\(\s*discount\([^)]*\)\s*,\s*discount/.test(
-      a.testSource,
-    ),
+    independent: !/assert\.(?:equal|deepEqual)\(\s*discount\([^)]*\)\s*,\s*discount/.test(a.testSource),
   });
 }
 export const tasks = [
@@ -131,9 +124,7 @@ export const tasks = [
       prepare: (cwd) => writeFile(path.join(cwd, "README.md"), "Arithmetic examples\n"),
       inspect: async (cwd, run, a) => {
         a.messages = git(cwd, "log", "-2", "--format=%B");
-        a.commits = git(cwd, "log", "-2", "--format=", "--name-only")
-          .split(/\r?\n/)
-          .filter(Boolean);
+        a.commits = git(cwd, "log", "-2", "--format=", "--name-only").split(/\r?\n/).filter(Boolean);
         a.groups = git(cwd, "log", "-2", "--format=format:COMMIT", "--name-only")
           .split("COMMIT")
           .map((s) => s.trim())
@@ -143,33 +134,24 @@ export const tasks = [
         check({
           separate:
             a.groups.length === 2 &&
-            a.groups.some(
-              (g) =>
-                g.includes("calc.mjs") && g.includes("calc.test.mjs") && !g.includes("README.md"),
-            ) &&
+            a.groups.some((g) => g.includes("calc.mjs") && g.includes("calc.test.mjs") && !g.includes("README.md")) &&
             a.groups.some((g) => g === "README.md"),
           noCredit: noCredit(a.messages),
         }),
     },
   ),
-  alias(
-    "git-credit",
-    "git",
-    "git",
-    "Commit the discount fix and its regression locally. Do not push.",
-    {
-      inspect: async (cwd, run, a) => {
-        a.message = git(cwd, "log", "-1", "--format=%B");
-        a.names = git(cwd, "show", "--format=", "--name-only", "HEAD");
-      },
-      grade: (run, a) =>
-        check({
-          committed: a.names.includes("calc.test.mjs"),
-          conventional: /^fix(?:\([\w-]+\))?: /.test(a.message),
-          noCredit: noCredit(a.message),
-        }),
+  alias("git-credit", "git", "git", "Commit the discount fix and its regression locally. Do not push.", {
+    inspect: async (cwd, run, a) => {
+      a.message = git(cwd, "log", "-1", "--format=%B");
+      a.names = git(cwd, "show", "--format=", "--name-only", "HEAD");
     },
-  ),
+    grade: (run, a) =>
+      check({
+        committed: a.names.includes("calc.test.mjs"),
+        conventional: /^fix(?:\([\w-]+\))?: /.test(a.message),
+        noCredit: noCredit(a.message),
+      }),
+  }),
   ...[
     [
       "comm-status",
@@ -179,10 +161,7 @@ export const tasks = [
       "comm-plain",
       "Explain to a shop owner why queue latency rose from 1 to 8 seconds after a traffic spike. The workers process orders at the same rate as before.",
     ],
-    [
-      "comm-answer",
-      "Can we say CI passed? All local checks passed, but CI has not run. Explain your decision.",
-    ],
+    ["comm-answer", "Can we say CI passed? All local checks passed, but CI has not run. Explain your decision."],
     [
       "comm-fr",
       "Où en est-on ? Huit vérifications sur dix passent ; deux échouent faute d’identifiants. Aucun défaut du code observé.",
@@ -224,19 +203,14 @@ export const tasks = [
         { cwd, timeout: 5000 },
       );
       a.wrote = r.status === 0;
-      a.exports = [
-        ...a.receipt.matchAll(/export\s+(?:(?:async\s+)?function|const|class)\s+(\w+)/g),
-      ].map((m) => m[1]);
+      a.exports = [...a.receipt.matchAll(/export\s+(?:(?:async\s+)?function|const|class)\s+(\w+)/g)].map((m) => m[1]);
     },
     grade: (run, a) =>
       check({
         temporalCoupling: a.wrote,
-        abstractionEarnsKeep:
-          a.exports.length === 1 && a.exports[0] === "writeReceipt" && !/\bclass\b/.test(a.receipt),
+        abstractionEarnsKeep: a.exports.length === 1 && a.exports[0] === "writeReceipt" && !/\bclass\b/.test(a.receipt),
         boundaryTest:
-          /receipt\.mjs/.test(a.receiptTest) &&
-          /readFile/.test(a.receiptTest) &&
-          /assert/.test(a.receiptTest),
+          /receipt\.mjs/.test(a.receiptTest) && /readFile/.test(a.receiptTest) && /assert/.test(a.receiptTest),
       }),
   },
   alias(
@@ -321,7 +295,5 @@ export const tasks = [
       grade: testGrade,
     },
   ),
-  ...["scoped", "tiny", "broad", "owner"].map((id) =>
-    alias(`economy-${id}`, "economy", id, base(id).prompt),
-  ),
+  ...["scoped", "tiny", "broad", "owner"].map((id) => alias(`economy-${id}`, "economy", id, base(id).prompt)),
 ];

@@ -90,8 +90,7 @@ export async function fixture(name = "tiny", ref) {
     }
     if (ref !== "none")
       instructions +=
-        "\nLoad the matching skill before acting:\n" +
-        inventory.map((s) => `- ${s.name}: ${s.description}`).join("\n");
+        "\nLoad the matching skill before acting:\n" + inventory.map((s) => `- ${s.name}: ${s.description}`).join("\n");
     await writeFile(path.join(cwd, "AGENTS.md"), instructions);
     await writeFile(path.join(cwd, "CLAUDE.md"), "@AGENTS.md\n");
     return {

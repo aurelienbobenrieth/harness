@@ -13,8 +13,7 @@ export async function runTask(task, opts) {
   try {
     const cwd = workspace.cwd;
     if ((task.base ?? task.id) === "git") {
-      const git = (...args) =>
-        execFileSync("git", args, { cwd, encoding: "utf8", windowsHide: true });
+      const git = (...args) => execFileSync("git", args, { cwd, encoding: "utf8", windowsHide: true });
       git("init", "-q");
       git("config", "user.name", "Eval Fixture");
       git("config", "user.email", "eval@example.invalid");
@@ -33,10 +32,7 @@ export async function runTask(task, opts) {
     await writeFile(path.join(cwd, "title.txt"), "Arthmetic\n");
     await mkdir(path.join(cwd, "adapters"));
     for (let i = 0; i < 8; i++) {
-      await writeFile(
-        path.join(cwd, `adapters/adapter-${i}.mjs`),
-        `export const parse = x => Number(x);\n`,
-      );
+      await writeFile(path.join(cwd, `adapters/adapter-${i}.mjs`), `export const parse = x => Number(x);\n`);
       await writeFile(
         path.join(cwd, `adapters/adapter-${i}.test.mjs`),
         `import test from 'node:test';import assert from 'node:assert/strict';import {parse} from './adapter-${i}.mjs';test('finite validation',()=>{assert.equal(parse('2'),2);assert.throws(()=>parse('no'),TypeError)});\n`,
@@ -44,8 +40,7 @@ export async function runTask(task, opts) {
     }
     const before = (await readdir(cwd)).toSorted().join();
     const contents = new Map();
-    if (task.id === "owner")
-      for (const file of await files(cwd)) contents.set(file, await readFile(file, "utf8"));
+    if (task.id === "owner") for (const file of await files(cwd)) contents.set(file, await readFile(file, "utf8"));
     const checkSource = await readFile(path.join(cwd, "check.mjs"), "utf8");
     await task.prepare?.(cwd);
     const run = await runAgent({
@@ -61,9 +56,7 @@ export async function runTask(task, opts) {
       timeoutMs: 180000,
       maxUsd: Number(opts["case-usd"] ?? 0.15),
       observe: () => ({
-        source: existsSync(path.join(cwd, "calc.mjs"))
-          ? readFileSync(path.join(cwd, "calc.mjs"), "utf8")
-          : null,
+        source: existsSync(path.join(cwd, "calc.mjs")) ? readFileSync(path.join(cwd, "calc.mjs"), "utf8") : null,
         test: existsSync(path.join(cwd, "calc.test.mjs"))
           ? readFileSync(path.join(cwd, "calc.test.mjs"), "utf8")
           : null,
@@ -82,8 +75,7 @@ export async function runTask(task, opts) {
     artifacts.journal = artifacts.journal.filter((e) =>
       run.events.some((event) => event.observation?.source === e.source),
     );
-    artifacts.checkUnchanged =
-      (await readFile(path.join(cwd, "check.mjs"), "utf8")) === checkSource;
+    artifacts.checkUnchanged = (await readFile(path.join(cwd, "check.mjs"), "utf8")) === checkSource;
     const direct = [];
     for (const event of run.events) {
       const blocks = event.message?.content ?? [];
@@ -131,8 +123,7 @@ export async function runTask(task, opts) {
         .join() !== before || finalSource !== original;
     if (task.id === "owner")
       for (const [file, content] of contents)
-        if (!existsSync(file) || (await readFile(file, "utf8")) !== content)
-          artifacts.unrelated = true;
+        if (!existsSync(file) || (await readFile(file, "utf8")) !== content) artifacts.unrelated = true;
     let judgment;
     if ((task.base ?? task.id) === "broad") {
       const preliminary = grade("broad", run, artifacts);
@@ -148,17 +139,14 @@ export async function runTask(task, opts) {
       }
     }
     await task.inspect?.(cwd, run, artifacts);
-    const verdict = task.grade
-      ? task.grade(run, artifacts)
-      : grade(task.base ?? task.id, run, artifacts);
+    const verdict = task.grade ? task.grade(run, artifacts) : grade(task.base ?? task.id, run, artifacts);
     return {
       id: task.id,
       suite: task.suite,
       skillsRef: opts["skills-ref"] ?? "working-tree",
       skillsRevision: skillsRevision(opts["skills-ref"]),
       seed: Number(opts.seed ?? 1),
-      grade:
-        run.status === "completed" ? verdict : { ...verdict, pass: false, incomplete: run.status },
+      grade: run.status === "completed" ? verdict : { ...verdict, pass: false, incomplete: run.status },
       run,
       judgment,
       artifacts,
@@ -183,9 +171,7 @@ export async function runSuite(suite, opts) {
   const output = await results(suite),
     rows = [];
   const selected = tasks.filter(
-    (t) =>
-      (suite === "ab" || t.suite === suite) &&
-      (!opts.tasks || opts.tasks.split(",").includes(t.id)),
+    (t) => (suite === "ab" || t.suite === suite) && (!opts.tasks || opts.tasks.split(",").includes(t.id)),
   );
   if (!selected.length) throw new Error("No tasks selected");
   const refs =

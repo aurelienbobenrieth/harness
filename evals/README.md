@@ -111,6 +111,7 @@ French status rubric to saved replies; no model calls are made. Raw transcripts 
 unchanged. `node evals/optimization/report.mjs` groups scores by immutable revision,
 deduplicates resumed run costs, and counts bytes in each complete skills tree.
 Add reservations for interrupted calls that produced no recorded row separately.
+
 # Measure Harness steering
 
 `pnpm evals:deterministic` measures oxlint, conformance, configs and agentlint on local

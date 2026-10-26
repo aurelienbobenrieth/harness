@@ -38,10 +38,7 @@ try {
       .map(JSON.parse)
       .filter((r) => r.id && r.run);
     for (const row of prior) {
-      if (
-        row.skillsRevision !== skillsRevision(opts["skills-ref"]) ||
-        row.run.provider !== (opts.provider ?? "claude")
-      )
+      if (row.skillsRevision !== skillsRevision(opts["skills-ref"]) || row.run.provider !== (opts.provider ?? "claude"))
         throw new Error("Resume source/provider mismatch");
       budget.spent += row.run.costEstimateUsd + (row.judgment?.costEstimateUsd ?? 0);
       if (!opts.recheck?.split(",").includes(row.id)) rows.push(row);
@@ -80,16 +77,14 @@ try {
           rows.push(row);
           await output.record(row);
           console.log(`${seed} trigger ${c.id} ${row.pass} $${budget.spent.toFixed(4)}`);
-          if (["error", "timeout"].includes(run.status))
-            throw new Error(`${c.id}: ${run.status}: ${run.stderr}`);
+          if (["error", "timeout"].includes(run.status)) throw new Error(`${c.id}: ${run.status}: ${run.stderr}`);
         } finally {
           await f.cleanup();
         }
       }
     if (opts.phase !== "trigger")
       for (const task of tasks.filter((t) => !opts.tasks || opts.tasks.split(",").includes(t.id))) {
-        if (rows.some((r) => r.id === task.id && r.seed === seed && r.phase === "behavior"))
-          continue;
+        if (rows.some((r) => r.id === task.id && r.seed === seed && r.phase === "behavior")) continue;
         const row = {
           ...(await runTask(task, { ...opts, seed })),
           skill: task.skill,
@@ -97,9 +92,7 @@ try {
         };
         rows.push(row);
         await output.record(row);
-        console.log(
-          `${seed} behavior ${task.id} ${row.grade.pass} (${row.run.status}) $${budget.spent.toFixed(4)}`,
-        );
+        console.log(`${seed} behavior ${task.id} ${row.grade.pass} (${row.run.status}) $${budget.spent.toFixed(4)}`);
         if (["error", "timeout"].includes(row.run.status))
           throw new Error(`${task.id}: ${row.run.status}: ${row.run.stderr}`);
       }
@@ -120,9 +113,7 @@ const summary = {
     behavior: rows
       .filter((r) => r.skill === skill && r.phase === "behavior")
       .map((r) => ({ id: r.id, seed: r.seed, pass: r.grade.pass })),
-    loads: rows
-      .filter((r) => r.skill === skill && r.phase === "trigger" && r.mode !== "always-on")
-      .map((r) => r.pass),
+    loads: rows.filter((r) => r.skill === skill && r.phase === "trigger" && r.mode !== "always-on").map((r) => r.pass),
   })),
 };
 await output.record({ summary });
