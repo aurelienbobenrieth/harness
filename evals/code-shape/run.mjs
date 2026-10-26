@@ -10,14 +10,22 @@ import { tasks } from "./tasks.mjs";
 import { createFixture, sources, git } from "./fixture.mjs";
 import { deterministic, rubric, validateJudgment } from "./grade.mjs";
 import { summarize } from "./report.mjs";
+import { regrade } from "./regrade.mjs";
+import { writeReport } from "./write-report.mjs";
 
 const opts = options();
+if (opts.regrade) {
+  await regrade(opts.regrade, opts["prior-usd"]);
+  process.exit(0);
+}
+if (opts.report) {
+  await writeReport(opts.report, opts.raw);
+  process.exit(0);
+}
 if (!opts.scripted) throw Error("--scripted <candidate commit> is required");
 if (budget.limit > 15) throw Error("This experiment has a hard $15 ceiling");
 const refs = { none: "none", prose: opts.prose ?? "9bd621e", scripted: opts.scripted };
-const revisions = Object.fromEntries(
-  Object.entries(refs).map(([key, ref]) => [key, skillsRevision(ref)]),
-);
+const revisions = Object.fromEntries(Object.entries(refs).map(([key, ref]) => [key, skillsRevision(ref)]));
 const rows = opts.resume
   ? (await readFile(opts.resume, "utf8")).trim().split("\n").filter(Boolean).map(JSON.parse)
   : [];
@@ -42,8 +50,7 @@ for (const task of [...tasks, ...economy, ...quality]) {
     }
   }
 }
-const key = (row) =>
-  `${row.suite}/${row.provider}/${row.id ?? row.task.id}/${row.condition}/${row.seed}`;
+const key = (row) => `${row.suite}/${row.provider}/${row.id ?? row.task.id}/${row.condition}/${row.seed}`;
 const done = new Set(rows.map(key));
 let failure;
 let recording = Promise.resolve();
@@ -54,12 +61,8 @@ async function executeTrial(trial) {
   let row;
   try {
     // Reserve enough for a full case before starting it. Judge calls also use the same guard.
-    const allowance =
-      suite === "shape" ? Number(opts["shape-usd"] ?? 0.32) : Number(opts["case-usd"] ?? 0.12);
-    if (
-      budget.spent + budget.reserved + allowance + (suite === "shape" ? 0.055 : 0.08) >
-      budget.limit
-    )
+    const allowance = suite === "shape" ? Number(opts["shape-usd"] ?? 0.32) : Number(opts["case-usd"] ?? 0.12);
+    if (budget.spent + budget.reserved + allowance + (suite === "shape" ? 0.055 : 0.08) > budget.limit)
       throw Error("Insufficient remaining shared budget for the next case");
     if (suite !== "shape") {
       const result = await runTask(task, {
@@ -138,9 +141,7 @@ async function executeTrial(trial) {
     rows.push(row);
     recording = recording.then(() => output.record(row));
     await recording;
-    console.log(
-      `${key(row)} ${row.grade.pass ? "PASS" : "FAIL"} ${row.run.status} $${budget.spent.toFixed(4)}`,
-    );
+    console.log(`${key(row)} ${row.grade.pass ? "PASS" : "FAIL"} ${row.run.status} $${budget.spent.toFixed(4)}`);
     if (row.run.status === "error")
       throw Error(
         `Provider error: ${row.run.stderr || JSON.stringify(row.run.events.filter((event) => event.type === "error" || event.type === "turn.failed" || event.is_error))}`,
@@ -153,8 +154,7 @@ const pending = plan
   .filter((trial) => !done.has(key(trial)))
   .slice(0, opts.limit ? Math.max(0, Number(opts.limit) - rows.length) : undefined);
 const concurrency = Number(opts.concurrency ?? 3);
-if (!Number.isInteger(concurrency) || concurrency < 1 || concurrency > 4)
-  throw Error("Concurrency must be 1-4");
+if (!Number.isInteger(concurrency) || concurrency < 1 || concurrency > 8) throw Error("Concurrency must be 1-8");
 for (let index = 0; index < pending.length; index += concurrency) {
   if (failure) break;
   await Promise.all(pending.slice(index, index + concurrency).map(executeTrial));
@@ -166,10 +166,7 @@ summary.spent = budget.spent;
 summary.incomplete = failure ?? null;
 summary.revisions = revisions;
 await mkdir(path.join(root, "evals/code-shape"), { recursive: true });
-await writeFile(
-  path.join(root, "evals/code-shape/measurements.json"),
-  JSON.stringify(summary, null, 2) + "\n",
-);
+await writeFile(path.join(root, "evals/code-shape/measurements.json"), JSON.stringify(summary, null, 2) + "\n");
 await writeFile(
   path.join(root, "evals/code-shape/evidence.json"),
   JSON.stringify(
@@ -183,7 +180,9 @@ await writeFile(
       pass: row.grade.pass,
       usd: row.usd,
       tokens: row.run.tokens,
+      metered: row.run.usages.length > 0 || row.run.events.some((event) => event.type === "result" && event.usage),
       calls: row.run.toolCalls.length,
+      durationMs: row.run.durationMs,
       helperCalls: row.run.toolCalls.filter((call) =>
         /scripts[\\/]+(?:draft|affected|check)\.mjs/u.test(JSON.stringify(call.arguments)),
       ),

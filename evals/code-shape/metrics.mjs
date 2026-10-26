@@ -13,9 +13,7 @@ function requireResult(result, label, allowed = [0, 1]) {
 export async function metrics(cwd, base = "HEAD") {
   const folder = path.join(cwd, ".metrics");
   await mkdir(folder, { recursive: true });
-  const { strictOxlintConfig } = await import(
-    pathToFileURL(path.join(root, "packages/oxlint-config/dist/index.mjs"))
-  );
+  const { strictOxlintConfig } = await import(pathToFileURL(path.join(root, "packages/oxlint-config/dist/index.mjs")));
   const plugins = [];
   const rules = {};
   for (const pkg of ["core", "effect"]) {
@@ -44,9 +42,7 @@ export async function metrics(cwd, base = "HEAD") {
   const findings = JSON.parse(lint.stdout).diagnostics;
   if (
     !Array.isArray(findings) ||
-    findings.some((finding) =>
-      /Error running JS plugin|Failed to load|panic/u.test(finding.message),
-    )
+    findings.some((finding) => /Error running JS plugin|Failed to load|panic/u.test(finding.message))
   )
     throw Error("Oxlint failed to produce trustworthy findings");
   const tool = path.join(root, "node_modules/jscpd/run-jscpd.js");
@@ -104,16 +100,12 @@ export async function metrics(cwd, base = "HEAD") {
   const tests = command(cwd, process.execPath, ["check.mjs", "full"]);
   return {
     findings: findings.length,
-    harnessFindings: findings.filter((finding) => /^(core|effect)\(/u.test(finding.code ?? ""))
-      .length,
+    harnessFindings: findings.filter((finding) => /^(core|effect)\(/u.test(finding.code ?? "")).length,
     duplicatedLines: duplicates.duplicatedLines,
     duplicationPercent: duplicates.percentage,
     cyclomaticTotal: complexities.reduce((a, b) => a + b, 0),
     cyclomaticMax: Math.max(0, ...complexities),
-    deadExports: issues.reduce(
-      (sum, issue) => sum + (issue.exports?.length ?? 0) + (issue.types?.length ?? 0),
-      0,
-    ),
+    deadExports: issues.reduce((sum, issue) => sum + (issue.exports?.length ?? 0) + (issue.types?.length ?? 0), 0),
     testsPass:
       tests.status === 0 &&
       /# tests [1-9]/u.test(tests.stdout) &&

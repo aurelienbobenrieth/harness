@@ -48,17 +48,7 @@ export async function createFixture(ref) {
     git(workspace.cwd, "init", "-q");
     git(workspace.cwd, "config", "user.name", "Shape Eval");
     git(workspace.cwd, "config", "user.email", "shape@example.invalid");
-    git(
-      workspace.cwd,
-      "add",
-      "--",
-      "src",
-      "tests",
-      "README.md",
-      "package.json",
-      "check.mjs",
-      ".gitignore",
-    );
+    git(workspace.cwd, "add", "--", "src", "tests", "README.md", "package.json", "check.mjs", ".gitignore");
     git(workspace.cwd, "commit", "-qm", "feat: parcel desk fixture");
     return workspace;
   } catch (error) {

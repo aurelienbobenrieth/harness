@@ -26,7 +26,5 @@ Start from the failure feared; pick whatever catches it with an independent orac
 
 ## Determinism and claims
 
-For node:test, run `node <this-skill>/scripts/affected.mjs <changed-files...>` to select transitive affected tests and summarize failures. No selection is not a pass; retain project-specific checks and the final full gate.
-
 - Unit: control clocks, randomness, IDs, ordering; restore globals, dispose on failure; isolated temp dirs, no fixed ports.
 - Report zero-selected, skips, retries apart from passes. Retries don't fix flakes. Rule/validator: firing cases + nearby silent cases. Autofix: exact rewrite, ambiguous input untouched.

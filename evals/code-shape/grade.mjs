@@ -4,18 +4,11 @@ import { command, git, sources } from "./fixture.mjs";
 import { metrics } from "./metrics.mjs";
 import { acceptance } from "./acceptance.mjs";
 
-export const ruleNames = [
-  "temporalCoupling",
-  "abstractionEarnsKeep",
-  "boundaries",
-  "naming",
-  "testing",
-];
+export const ruleNames = ["temporalCoupling", "abstractionEarnsKeep", "boundaries", "naming", "testing"];
 export const rubric = `Return {"rules":[{"rule":"temporalCoupling|abstractionEarnsKeep|boundaries|naming|testing","score":0,"file":"src/file.ts","line":1,"reason":"short evidence"}]} with exactly one entry for each of those five rule names. Score each 0-3: 0 violates the rule or no relevant implementation; 1 mixed/weak; 2 sound; 3 exemplary. Grade the changed code, using the task contract and original context. Temporal coupling: validity does not depend on undocumented call ordering or correlated state. Abstraction earns keep: hide a real decision, no pass-through or speculative abstraction; duplication may be better than premature generality. Boundaries: pure decisions, thin I/O shell, dependencies inward, typed expected failures, bounded selective retries and stable idempotency identity. Naming: domain-specific, exposes intent and units. Testing: independent literal oracles, observable outcomes, regression/edge cases, deterministic dependencies, no weak assertions or tests mirroring implementation. Every entry must cite a real line in the supplied final files. The score is for the resulting diff, not skill usage, verbosity, or following a process.`;
 
 export function validateJudgment(value, final) {
-  if (!Array.isArray(value?.rules) || value.rules.length !== ruleNames.length)
-    throw Error("Missing judge rules");
+  if (!Array.isArray(value?.rules) || value.rules.length !== ruleNames.length) throw Error("Missing judge rules");
   const seen = new Set();
   for (const rule of value.rules) {
     if (
@@ -50,15 +43,9 @@ export async function deterministic(cwd, task, original, base) {
     (await readFile(path.join(cwd, "check.mjs"), "utf8")) === original.check &&
     (await readFile(path.join(cwd, "package.json"), "utf8")) === original.package;
   await writeFile(path.join(cwd, ".acceptance.test.ts"), acceptance[task.id]);
-  const hidden = command(
-    cwd,
-    process.execPath,
-    ["--test", "--test-reporter=tap", ".acceptance.test.ts"],
-    15000,
-  );
+  const hidden = command(cwd, process.execPath, ["--test", "--test-reporter=tap", ".acceptance.test.ts"], 15000);
   return {
-    pass:
-      measured.testsPass && addedTests && preservedTests && configUnchanged && hidden.status === 0,
+    pass: measured.testsPass && addedTests && preservedTests && configUnchanged && hidden.status === 0,
     measured,
     addedTests,
     preservedTests,

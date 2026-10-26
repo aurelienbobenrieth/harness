@@ -21,8 +21,6 @@ Design: module hides one decision; interface much smaller than what it hides; de
 
 ## Verify
 
-For a Node-based scoped check, run `node <this-skill>/scripts/check.mjs <check-script> <scope>`; it preserves failure status and prints compact diagnostics. Use the project command when it is not a Node script.
-
 - Runtime limits, retry identity, cancellation, partial failure: design in when needed. Stale generated code: run the generator (check external sync); never hand-write/widen substitute types. Prove at the failure boundary: real filesystem (writer), consumer install (exports), browser (focus); a fake/static render/compile proves only itself.
 - Parallel workers: bounded scope, file ownership, verification task each, brief/budget per [economy](../economy/SKILL.md); serialize shared mutable state.
 - Worktree servers: `worktree-hygiene ports`, strict port; handoff requires `worktree-hygiene done` exits 0 (`--reap` stops yours). Never stop a process by name/port alone.
