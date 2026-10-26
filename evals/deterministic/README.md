@@ -47,3 +47,5 @@ that the rule is dead. Noisy means at least 100 findings in any consumer. `timin
 
 `node --test evals/deterministic/common.test.mjs` checks seed path containment, invalid lint
 configuration handling, escaped fixture normalization, and budget reservations without model calls.
+
+Statement padding (including the deprecated padding-before-exit rule) is formatting, excluded from reported lint findings. Run `harness-format-padding` after oxfmt instead. Function runtime checks require a declaring extension manifest; seeded cases include it.

@@ -278,6 +278,8 @@ Also closing-brace labels and placeholder scaffolding; narration counts only whe
 
 ## ↕️ Blocks, declaration runs and exits stand apart
 
+Statement spacing is formatting. Disable `core/padding-line-between-statements` and the deprecated `core/padding-before-exit` in reported lint. Install this package and oxlint, then set `"fmt": "oxfmt && harness-format-padding"` (or pass file paths to both commands in your format hook). The CLI runs only the spacing rule with `--fix`, ignores the consumer's lint config, respects oxlint's default ignores and .gitignore, and propagates failures. Build this package first when using a workspace checkout. Oxfmt has no statement-padding option in its [configuration reference](https://oxc.rs/docs/guide/usage/formatter/config-file-reference.html).
+
 `padding-line-between-statements` takes ESLint's options (a list of `{ blankLine, prev, next }`, the last match wins) and its statement types. **A comment block above a statement belongs to it:** the blank line goes above the comments, and a comment on the line a statement ends on stays with that statement. **Autofix inserts or removes the blank lines.**
 
 ```ts

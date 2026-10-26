@@ -185,7 +185,7 @@ Keep `require-fetch-abort-signal` off admin UI extensions: a relative `fetch("/a
 
 ## Other opt-ins
 
-`functions-no-unavailable-runtime-apis` on **JS Function source only**. `s-known-components` on App Home source, beside the recipe. 🧪 `no-session-or-token-logging` is a candidate, off by default.
+`functions-no-unavailable-runtime-apis` on **JS Function source only**. The nearest `shopify.extension.toml` must declare `type = "function"`, either at the top level (legacy) or in `[[extensions]]`. Missing, invalid, or non-Function manifests skip the rule. `s-known-components` on App Home source, beside the recipe. 🧪 `no-session-or-token-logging` is a candidate, off by default.
 
 ```tsx
 <s-stak gap="base" />                           // ❌ unknown element
@@ -242,7 +242,7 @@ Generated from package exports by `pnpm catalog`. Rule-specific options and limi
 
 | Rule/check                              | Trigger or review scope                                                                                                                                                                                                                  |
 | --------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `functions-no-unavailable-runtime-apis` | Disallow async code, timers, fetch, crypto, URL, process, Buffer, require, node: imports, and clock or random reads in Shopify Function source; scope it to Function directories with overrides.                                         |
+| `functions-no-unavailable-runtime-apis` | Disallow async code, timers, fetch, crypto, URL, process, Buffer, require, node: imports, and clock or random reads in Shopify Function source; only runs under a manifest declaring type = function.                                    |
 | `no-admin-rest-api`                     | Disallow Shopify REST Admin resource imports and unshadowed fetch calls to recognizable REST Admin endpoints; enable for new public apps.                                                                                                |
 | `no-asset-api-theme-writes`             | Disallow theme file writes through the Asset API or theme file mutations.                                                                                                                                                                |
 | `no-draft-order-custom-discounts`       | Disallow draft order mutations that apply custom discounts.                                                                                                                                                                              |

@@ -3,6 +3,7 @@ import { assertRuleDoesNotReport, assertRuleReports } from "../test-support.js";
 
 const ruleName = "shopify-app/functions-no-unavailable-runtime-apis";
 const filename = "extensions/discount/src/run.ts";
+const files = { "extensions/discount/shopify.extension.toml": '[[extensions]]\ntype = "function"\n' };
 
 it.each([
   [
@@ -26,7 +27,7 @@ it.each([
   ["Date.now", "export function run() { return Date.now(); }\n"],
   ["Math.random", "export function run() { return Math.random() > 0.5; }\n"],
 ])("reports %s", async (_label, code) => {
-  await expect(assertRuleReports(ruleName, code, { filename })).resolves.toBeUndefined();
+  await expect(assertRuleReports(ruleName, code, { filename, files })).resolves.toBeUndefined();
 });
 
 it("accepts synchronous, deterministic Function code and near misses", async () => {
@@ -45,7 +46,48 @@ export function cartLinesDiscountsGenerateRun(input: Input & Record<string, any>
   return { operations: [input.thing.then, input.crypto, input.list.then(1)] };
 }
 `,
-      { filename },
+      { filename, files },
     ),
+  ).resolves.toBeUndefined();
+});
+
+it.each(["app/routes/api.billing.ts", "extensions/admin/src/action.ts", "extensions/unconfigured/src/run.ts"])(
+  "accepts server APIs outside a declared Function: %s",
+  async (sourceFilename) => {
+    await expect(
+      assertRuleDoesNotReport(
+        ruleName,
+        'import { randomUUID } from "node:crypto";\nexport async function action() { return fetch("https://billing.example/" + randomUUID()); }\n',
+        {
+          filename: sourceFilename,
+          files: {
+            "extensions/admin/shopify.extension.toml": '[[extensions]]\ntype = "ui_extension"\n# type = "function"\n',
+          },
+        },
+      ),
+    ).resolves.toBeUndefined();
+  },
+);
+
+it("accepts the observed KeepCart agentlint hook process exit", async () => {
+  await expect(
+    assertRuleDoesNotReport(
+      ruleName,
+      "const input = readInput();\nif (input.stop_hook_active === true) process.exit(0);\nconst files = turnFiles(input.transcript_path);\nif (files?.length === 0) process.exit(0);\n",
+      { filename: ".agentlint/hooks/agentlint-gate.mjs" },
+    ),
+  ).resolves.toBeUndefined();
+});
+
+it.each([
+  ['type = "function"\n', true],
+  ["invalid = [\n", false],
+])("handles legacy and malformed manifests: %s", async (manifest, reports) => {
+  const assertion = reports ? assertRuleReports : assertRuleDoesNotReport;
+  await expect(
+    assertion(ruleName, "export const run = () => process.env.MODE;\n", {
+      filename,
+      files: { "extensions/discount/shopify.extension.toml": manifest },
+    }),
   ).resolves.toBeUndefined();
 });

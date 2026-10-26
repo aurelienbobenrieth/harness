@@ -17,7 +17,7 @@
     "build": "pnpm --recursive --if-present build",
     "check": "node scripts/check.mjs",
     "lint": "vp lint",
-    "fmt": "vp fmt",
+    "fmt": "node scripts/format.mjs",
     "fmt:check": "vp fmt --check",
     "test": "pnpm build && pnpm test:unit",
     "changeset": "changeset",
@@ -50,7 +50,8 @@
     "evals:quality": "node evals/quality/run.mjs",
     "evals:ab": "node evals/ab/run.mjs",
     "evals:deterministic": "node evals/deterministic/run.mjs",
-    "test:evals:deterministic": "node --test evals/deterministic/*.test.mjs"
+    "test:evals:deterministic": "node --test evals/deterministic/*.test.mjs",
+    "test:format": "node --test scripts/format.test.mjs"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "0.18.5",

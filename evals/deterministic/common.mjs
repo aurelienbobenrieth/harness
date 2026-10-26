@@ -112,10 +112,12 @@ export function lint(config, target, cwd = root) {
     rmSync(dir, { recursive: true, force: true });
   }
 }
+export const reportingRules = (entries) =>
+  entries.filter((entry) => !["core/padding-line-between-statements", "core/padding-before-exit"].includes(entry.id));
 export const pluginConfig = (entries) => ({
   categories: { correctness: "off" },
   jsPlugins: [...new Set(entries.map((e) => pathToFileURL(path.join(root, "packages", e.pkg, "dist/index.mjs")).href))],
-  rules: Object.fromEntries(entries.map((e) => [e.id, "error"])),
+  rules: Object.fromEntries(reportingRules(entries).map((e) => [e.id, "error"])),
 });
 export function excerpt(cwd, finding) {
   const file = finding.filename ?? finding.path ?? finding.file;

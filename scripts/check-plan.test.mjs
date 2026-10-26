@@ -62,6 +62,7 @@ test("the full plan runs every validation script once, after one build", () => {
     "test:consumer-results",
     "test:evals",
     "test:evals:deterministic",
+    "test:format",
     "test:release",
     "test:shopify-policy",
     "test:skills",

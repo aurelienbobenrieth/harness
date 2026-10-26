@@ -1,10 +1,22 @@
 /* eslint-disable no-await-in-loop -- Sequential scans and judge calls bound memory and share one cost ledger. */
 import { testRuleOnChange } from "@aurelienbbn/agentlint/testing";
-import { root, out, save, git, repos, sourceFiles, catalog, command, lint, pluginConfig } from "./common.mjs";
+import {
+  root,
+  out,
+  save,
+  git,
+  repos,
+  sourceFiles,
+  catalog,
+  command,
+  lint,
+  pluginConfig,
+  reportingRules,
+} from "./common.mjs";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { stateFindings } from "./agentlint.mjs";
-const entries = await catalog();
+const entries = reportingRules(await catalog());
 const rows = [],
   runs = [];
 for (const [repo, cwd] of Object.entries(repos)) {

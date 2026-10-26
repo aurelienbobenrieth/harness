@@ -2534,7 +2534,9 @@
     "seed": {
       "file": "extensions/discount/src/run.ts",
       "source": "export function run(input) { return fetch(\"https://example.com\"); }\nconst evalSeed25102026a = Date.now();\n",
-      "files": {},
+      "files": {
+        "extensions/discount/shopify.extension.toml": "[[extensions]]\ntype = \"function\"\n"
+      },
       "options": {}
     }
   },
@@ -2545,7 +2547,9 @@
     "seed": {
       "file": "extensions/shipping/src/run.ts",
       "source": "export const run = () => Math.random();\nconst evalSeed25102026b = process.env.MODE;\n",
-      "files": {},
+      "files": {
+        "extensions/shipping/shopify.extension.toml": "[[extensions]]\ntype = \"function\"\n"
+      },
       "options": {}
     }
   },

@@ -24,6 +24,7 @@ const validationScripts = [
   "test:check-plan",
   "test:evals",
   "test:evals:deterministic",
+  "test:format",
 ];
 
 const packageScoped = /^(?:packages|internal)\/[^/]+\//u;

@@ -1,3 +1,6 @@
+import { existsSync, readFileSync } from "node:fs";
+import path from "node:path";
+import { parse } from "smol-toml";
 import type { Context, ESTree, Rule } from "@oxlint/plugins";
 import { enclosingFunction, memberPath, unshadowed } from "../ast-support.js";
 
@@ -24,6 +27,35 @@ const nonReferenceParents = new Set([
   "BreakStatement",
   "ContinueStatement",
 ]);
+
+/** The nearest extension manifest owns the source, including nested non-Function extensions. */
+function isFunctionSource(filename: string): boolean {
+  let directory = path.dirname(path.resolve(filename));
+  while (true) {
+    const manifest = path.join(directory, "shopify.extension.toml");
+    if (existsSync(manifest)) {
+      try {
+        const config = parse(readFileSync(manifest, "utf8"));
+        return (
+          config.type === "function" ||
+          (Array.isArray(config.extensions) &&
+            config.extensions.some(
+              (extension) =>
+                typeof extension === "object" &&
+                extension !== null &&
+                "type" in extension &&
+                extension.type === "function",
+            ))
+        );
+      } catch {
+        return false;
+      }
+    }
+    const parent = path.dirname(directory);
+    if (parent === directory) return false;
+    directory = parent;
+  }
+}
 
 type Identifier = Extract<ESTree.Node, { type: "Identifier" }>;
 
@@ -52,7 +84,7 @@ export const functionsNoUnavailableRuntimeApis: Rule = {
     type: "problem",
     docs: {
       description:
-        "Disallow async code, timers, fetch, crypto, URL, process, Buffer, require, node: imports, and clock or random reads in Shopify Function source; scope it to Function directories with overrides.",
+        "Disallow async code, timers, fetch, crypto, URL, process, Buffer, require, node: imports, and clock or random reads in Shopify Function source; only runs under a manifest declaring type = function.",
     },
     messages: {
       asyncUnavailable:
@@ -75,6 +107,9 @@ export const functionsNoUnavailableRuntimeApis: Rule = {
         });
     };
     return {
+      before() {
+        return isFunctionSource(context.filename);
+      },
       FunctionDeclaration: reportFunction,
       FunctionExpression: reportFunction,
       ArrowFunctionExpression: reportFunction,
@@ -121,9 +156,9 @@ export const functionsNoUnavailableRuntimeApis: Rule = {
           });
           return;
         }
-        const path = memberPath(callee);
-        if (path === undefined) return;
-        const api = path.join(".");
+        const members = memberPath(callee);
+        if (members === undefined) return;
+        const api = members.join(".");
         if (nondeterministicCalls.has(api) && rootedAtGlobal(context, node.callee)) {
           context.report({ node, messageId: "nondeterministic", data: { api: `${api}()` } });
           return;
