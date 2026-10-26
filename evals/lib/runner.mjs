@@ -18,6 +18,7 @@ export class CostGuard {
       throw new Error(`Cost guard: $${this.spent.toFixed(4)} spent; $${amount} reservation exceeds $${this.limit}`);
     this.reserved += amount;
     let finished = false;
+
     return (cost) => {
       if (finished) return;
       finished = true;
@@ -30,12 +31,15 @@ export const budget = new CostGuard();
 
 function executable(provider) {
   const override = process.env[`EVALS_${provider.toUpperCase()}_BIN`];
+
   if (override) return { file: override, prefix: [] };
   if (process.platform !== "win32") return { file: provider, prefix: [] };
   const candidates = execFileSync("where.exe", [provider], { encoding: "utf8" }).trim().split(/\r?\n/);
   const exe = candidates.find((p) => /\.exe$/i.test(p));
+
   if (exe) return { file: exe, prefix: [] };
   const shim = candidates.find((p) => /\.cmd$/i.test(p));
+
   if (!shim) throw new Error(`Cannot resolve ${provider}; set EVALS_${provider.toUpperCase()}_BIN to its executable`);
   const dir = path.dirname(shim);
   const source = readFileSync(shim, "utf8");
@@ -43,7 +47,9 @@ function executable(provider) {
     .match(/"([^"\r\n]+\.(?:exe|js))"/gi)
     ?.map((s) => s.slice(1, -1).replace(/%~?dp0%?/gi, dir + path.sep))
     .find((p) => !p.endsWith("node.exe") && existsSync(p));
+
   if (!target) throw new Error(`Unsupported ${provider} shim: ${shim}; set EVALS_${provider.toUpperCase()}_BIN`);
+
   return target.endsWith(".js") ? { file: process.execPath, prefix: [target] } : { file: target, prefix: [] };
 }
 
@@ -61,8 +67,10 @@ export async function runAgent({
   mcpServer,
   maxUsd = 0.25,
   guard = budget,
+  reasoningEffort = "low",
 }) {
   if (!["claude", "codex"].includes(provider)) throw new Error("Unknown provider");
+  if (!["low", "medium", "high"].includes(reasoningEffort)) throw new Error("Invalid reasoning effort");
   if (!Number.isInteger(maxTurns) || maxTurns < 1 || !Number.isFinite(timeoutMs) || timeoutMs <= 0)
     throw new Error("Invalid run limits");
   const { file, prefix } = executable(provider);
@@ -116,10 +124,11 @@ export async function runAgent({
           "-s",
           writable ? "danger-full-access" : "read-only",
           "-c",
-          'model_reasoning_effort="low"',
+          `model_reasoning_effort=${JSON.stringify(reasoningEffort)}`,
           "-",
         ];
   const started = Date.now();
+
   return await new Promise((resolve, reject) => {
     const child = spawn(file, [...prefix, ...args], {
       cwd,
@@ -138,6 +147,7 @@ export async function runAgent({
     const stop = (reason) => {
       if (!stopped) {
         stopped = reason;
+
         if (process.platform === "win32") {
           termination = new Promise((done) =>
             execFile("taskkill.exe", ["/PID", String(child.pid), "/T", "/F"], { windowsHide: true }, () => done()),
@@ -152,26 +162,34 @@ export async function runAgent({
       }
     };
     const timer = setTimeout(() => stop("timeout"), timeoutMs);
+
     child.stderr.on("data", (chunk) => {
       stderr = (stderr + chunk).slice(-8000);
     });
+
     child.stdin.on("error", () => {
       /* A failed CLI may close stdin before accepting the prompt. */
     });
+
     child.stdout.on("data", (chunk) => {
       pending += chunk;
       const lines = pending.split(/\r?\n/);
+
       pending = lines.pop();
+
       for (const line of lines) {
         let e;
+
         try {
           e = JSON.parse(line);
         } catch {
           continue;
         }
+
         if (observe) e.observation = observe(e);
         events.push(e);
         const transcript = normalize(events);
+
         if (stopOnSkill && transcript.skillLoads.length) stop("skill");
         if (
           e.type === "assistant" ||
@@ -182,15 +200,18 @@ export async function runAgent({
           turns++;
         if (provider === "codex" && turns >= maxTurns) stop("maxTurns");
         const cost = transcript.reportedCostUsd ?? estimateCost(transcript.tokens, model);
+
         if (cost >= maxUsd || guard.spent + cost >= guard.limit) stop("budget");
       }
     });
+
     child.once("error", (error) => {
       clearTimeout(timer);
       settled = true;
       finishCost(0);
       reject(error);
     });
+
     child.once("close", async (code) => {
       clearTimeout(timer);
       await termination;
@@ -206,8 +227,10 @@ export async function runAgent({
       const costEstimateUsd =
         transcript.reportedCostUsd ??
         (costSource === "reserved-unmetered" ? maxUsd : estimateCost(transcript.tokens, model));
+
       finishCost(costEstimateUsd);
       const turnLimited = events.some((e) => e.type === "result" && e.subtype === "error_max_turns");
+
       resolve({
         provider,
         model,
@@ -222,6 +245,7 @@ export async function runAgent({
         events,
       });
     });
+
     child.stdin.end(prompt);
   });
 }
@@ -231,6 +255,7 @@ export async function judge({ rubric, input, cwd: _cwd, ...limits }) {
   // Judge context must not inherit repository AGENTS.md or discoverable task skills.
   const judgeCwd = await mkdtemp(path.join(tmpdir(), "harness-judge-"));
   let run;
+
   try {
     run = await runAgent({
       provider: "codex",
@@ -243,10 +268,12 @@ export async function judge({ rubric, input, cwd: _cwd, ...limits }) {
   } finally {
     await rm(judgeCwd, { recursive: true, force: true });
   }
+
   if (run.status !== "completed")
     throw Object.assign(new Error(`Judge ${run.status}: ${run.stderr.slice(-1000)}`), { run });
   if (run.toolCalls.length) throw Object.assign(new Error("Judge used tools; judgment rejected"), { run });
   const last = run.messages.findLast((m) => m.role === "assistant")?.content;
+
   try {
     return { value: JSON.parse(last), run };
   } catch {
