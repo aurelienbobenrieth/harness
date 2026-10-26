@@ -44,7 +44,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "oxc-parser": "0.154.0"
+    "oxc-parser": "0.155.0"
   },
   "devDependencies": {
     "@aurelienbbn/agentlint": "0.3.0"
