@@ -11,6 +11,7 @@ description: Settle open requirements and domain language before building, by re
 
 - Map the open decisions as a tree: a decision is askable only once the ones it depends on are settled.
 - Look facts up yourself (code, docs, config, history). Ask the user only for decisions and preferences.
+- Treat settled decisions and existing authorization as inputs, including on slow layers. Reopen only when new evidence changes the outcome; show that evidence and its consequence.
 - Ask in small batches, each question with your recommended answer and the consequence of each option. The user can accept all with one word, except on a slow layer (below).
 - Stated behavior contradicts the code → show both, ask which is intended.
 - Done when every branch is decided or explicitly deferred; then summarize the decisions in one table and hand off to [build](../build/SKILL.md).

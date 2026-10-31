@@ -23,7 +23,7 @@ Discovery never authorizes an action: commits, pushes, and publishing still need
 | ----------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- | -------------- |
 | [communication](../skills/communication/SKILL.md)     | always on through `AGENTS.md`; the skill itself loads for READMEs, ADRs/PDRs, PR text                                        | all            |
 | [align](../skills/align/SKILL.md)                     | several open decisions, ambiguous domain terms, spec contradicts code                                                        | build          |
-| [build](../skills/build/SKILL.md)                     | feature, fix, refactor: test-first loop, design rules backed by lint                                                         | testing, align |
+| [build](../skills/build/SKILL.md)                     | feature, fix, refactor: verifiable behavior, task-appropriate work order, design rules backed by lint                        | testing, align |
 | [testing](../skills/testing/SKILL.md)                 | writing or judging tests; picking strategies by failure ([strategies](../skills/testing/references/strategies.md) on demand) | build          |
 | [code-review](../skills/code-review/SKILL.md)         | reviewing a change for what gates miss, and drift from the request                                                           | build, testing |
 | [git](../skills/git/SKILL.md)                         | commits, history, PRs (short descriptions, no model credits)                                                                 | communication  |

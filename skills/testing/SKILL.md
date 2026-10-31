@@ -13,10 +13,11 @@ description: Choose and write tests that fail for the right reason, with oracles
 ## Oracles
 
 - Expected values come from the spec, a hand-worked example, a reference, or a law. Never from running the code, calling the subject's own helpers, or recomputing with its algorithm (`expected-value-recomputed`).
-- Write the expectation from the requirement before reading the implementation; reading buggy code first makes you assert the bug.
+- Derive expectations from requirements independently of the implementation.
 - Never mock the subject (`no-stubbed-subject`). A test that imports nothing from the project tests nothing (`test-exercises-project-code`).
 - `toBeDefined`, `toBeTruthy`, bare `toHaveBeenCalled` prove almost nothing (`no-weak-test-assertions`). Exact values for closed data; targeted fields for extensible records and UI; assert absence (extra writes, events, fields) when that's the failure.
 - Observable results over call order, unless a boundary call's payload and count are the contract.
+- Correct equivalents must pass. Assert required behavior, not prototypes, object layout, or internal scheduling unless contractually required.
 
 ## Strategies: a menu, not a checklist
 
@@ -24,10 +25,10 @@ Start from the failure you fear and pick whatever catches it with an independent
 
 **Pick the double by dependency:** in-process → use the real thing · local stand-in exists (SQLite, temp dir, in-memory broker) → use it · remote you own → contract test · true external → fake at your adapter plus a contract. Captured responses test parsing, never live auth, pagination, or timing.
 
-## Red, green, keep honest
+## Keep tests discriminating
 
-- Red must fail on the assertion, not on an import, fixture, or type error.
-- While making it green, tests are read-only. Spec and test disagree → stop and report; never edit either to force agreement (`test-expectation-drift` flags loosened, skipped, or re-valued expectations for a human).
+- When reproducing a defect, failure must identify that defect, not an unrelated setup error.
+- Spec and test disagree → establish intended behavior; never weaken either just to pass (`test-expectation-drift` flags loosened, skipped, or re-valued expectations for a human).
 - Doubt a green test → break the code (revert the fix, flip a condition). Still green = tautology. Risky new logic → scoped mutation run on the changed lines.
 - Deepened or replaced a module → delete the old tests that pinned its internals; don't layer new tests over them.
 
