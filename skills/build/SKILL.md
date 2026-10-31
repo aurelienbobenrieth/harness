@@ -1,6 +1,6 @@
 ---
 name: build
-description: Implement an authorized feature, fix, or refactor test-first, with designs that stay deep, isolated, and small at their public surface. Use when changing code behavior, adding modules or exports, or reshaping boundaries. Not for explanation-only requests or unresolved requirements (see align).
+description: Implement an authorized feature, fix, or refactor with verifiable behavior and designs that stay deep, isolated, and small at their public surface. Use when changing code behavior, adding modules or exports, or reshaping boundaries. Not for explanation-only requests or unresolved requirements (see align).
 ---
 
 # Build
@@ -13,13 +13,11 @@ description: Implement an authorized feature, fix, or refactor test-first, with 
 - "Can you fix this?" → act. Ask only for an outcome-changing decision or an action outside authorization; several open, interdependent decisions → [align](../align/SKILL.md) first.
 - Unknown cause or unfamiliar boundary → a small probe before choosing the design.
 
-## Loop
+## Outcome and evidence
 
-1. **Contract:** trigger → expected outcome, from the request or spec, before reading the implementation.
-2. **Red:** one failing test per behavior slice, oracle per [testing](../testing/SKILL.md). Fails on the assertion, not a fixture.
-3. **Green:** minimal code; tests read-only. Spec and test disagree → stop and report.
-4. **Refactor** on green; structure and behavior changes in separate commits.
-5. **Prove it:** doubt a green test → break the code, it must go red. Pick extra strategies (property, state model, contract, packed install) by the failure you fear, not by habit.
+- Establish trigger → expected outcome from the request or spec, with independent expected examples and a verifying command, per [testing](../testing/SKILL.md).
+- Choose the implementation and test order for the task. TDD is an option, not a required sequence. Preserve the agreed behavior; a spec/test disagreement needs resolution, not weakened expectations to pass.
+- Doubt a green test → break the code, it must fail for the intended reason. Pick extra strategies (property, state model, contract, packed install) by the failure you fear, not by habit.
 
 Defect → reproduce the symptom at its boundary first, cheapest distinguishing observation first; no reproduction → name the missing condition and keep the cause provisional. Covered, low-impact, reversible edit → no new test, still the full gate.
 
