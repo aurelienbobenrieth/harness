@@ -37,9 +37,6 @@ Always on, every task. Each call re-reads the whole context; anything in it is p
 - **Stay out of vendored trees.** Targeted `rg` with a path in vendored/generated trees, never a listing/full read.
 - **Delegate only broad, independent work.** Under ~5 files or one question: inline. Delegated: brief + budget (load the economy skill). **Wait once, never poll:** block on the command or use the host's wait tool; no `sleep` loops.
 - **Read around the named source.** Asked to write from a file: list its folder and read its neighbours first. A fact there that changes the answer goes in the output, with its source.
-- **See a fix's test fail first.** Fixing a bug: write the test, run the scoped check and see it fail, then fix and see it pass.
-- **Control time in tests.** A test under real clocks, timers or randomness stays flaky: mock them.
-- **Find a field's readers first.** Renaming or removing a field, value or export: search the whole repository and its docs, not only the folder named. Keep what an outside reader still needs, and say so.
 
 <!-- harness:economy:end -->
 
