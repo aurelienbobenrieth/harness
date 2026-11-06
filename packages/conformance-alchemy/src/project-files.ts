@@ -33,10 +33,34 @@ export async function globProject(root: string, patterns: readonly string[], opt
   return [...found].toSorted();
 }
 
-/** The stack entrypoints under review, from `stackFiles` or the CLI default at any depth. */
-export function stackFiles(options: ConformanceRunOptions): Promise<string[]> {
+const sourceGlobs = ["**/*.{ts,mts,cts,js,mjs,cjs}"];
+const sourceExcludes = ["**/node_modules/**", "**/dist/**", "**/.alchemy/**"];
+const nonStackFile = /(?:\.d\.[cm]?ts|\.(?:test|spec)\.[cm]?[jt]s)$/u;
+const alchemyImport = /\bfrom\s*["']alchemy(?:\/[^"']*)?["']|\brequire\(["']alchemy["']\)/u;
+const stackFactoryCall = /\b(?:Alchemy\.)?Stack(?:\.make)?\s*\(|(?:^|[^\w.])alchemy\s*\(/mu;
+
+/** True when the source imports `alchemy` and calls the stack factory (`Alchemy.Stack(...)`, `alchemy("app")`). */
+function isStackSource(source: string): boolean {
+  return alchemyImport.test(source) && stackFactoryCall.test(source);
+}
+
+/**
+ * The stack entrypoints under review: `stackFiles` globs when set. Otherwise every `alchemy.run.ts` at any
+ * depth (the CLI default, a fast path that needs no read) plus any other source file that imports `alchemy`
+ * and calls its stack factory.
+ */
+export async function stackFiles(options: ConformanceRunOptions): Promise<string[]> {
   if (options.stackFiles?.length === 0) throw new Error("stackFiles must list at least one glob.");
-  return globProject(options.root, options.stackFiles ?? [`**/${defaultStackFile}`], "stackFiles");
+  if (options.stackFiles !== undefined) return globProject(options.root, options.stackFiles, "stackFiles");
+  const named = await globProject(options.root, [`**/${defaultStackFile}`], "stackFiles");
+  const found = new Set(named);
+  for await (const file of glob(sourceGlobs, { cwd: options.root, exclude: sourceExcludes })) {
+    const relative = file.split(path.sep).join("/");
+    if (found.has(relative) || nonStackFile.test(relative)) continue;
+    const source = await readText(path.join(options.root, file));
+    if (source !== undefined && isStackSource(source)) found.add(relative);
+  }
+  return [...found].toSorted();
 }
 
 /** The workflow directory, validated to stay inside the project. */

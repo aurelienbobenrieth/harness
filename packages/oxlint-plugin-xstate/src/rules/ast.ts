@@ -150,3 +150,54 @@ export function isEnqueuerParameter(context: Context, node: ESTree.Node): boolea
     return second?.type === "Identifier" && second.name === node.name && isHostedHandler(context, definition.node);
   });
 }
+
+const testFilePattern = /\.(?:test|spec)(?:-d)?\.[cm]?[jt]sx?$/;
+
+/** True when the linted file is a `*.test.*`, `*.spec.*` or `*.test-d.*` JavaScript or TypeScript file. */
+export function isTestFile(context: Context): boolean {
+  return testFilePattern.test((context.filename ?? "").replaceAll("\\", "/"));
+}
+
+/** Runtime exports of XState v5 that v6 removed; importing one marks the file as v5. */
+const v5OnlyExports: ReadonlySet<string> = new Set([
+  "and",
+  "assign",
+  "cancel",
+  "emit",
+  "enqueueActions",
+  "forwardTo",
+  "fromCallback",
+  "fromEventObservable",
+  "fromObservable",
+  "fromPromise",
+  "fromTransition",
+  "getInitialSnapshot",
+  "getNextSnapshot",
+  "interpret",
+  "log",
+  "not",
+  "or",
+  "raise",
+  "sendParent",
+  "sendTo",
+  "spawnChild",
+  "stateIn",
+  "stop",
+  "stopChild",
+]);
+
+/** True when the file imports a runtime export XState v6 removed, which marks it as XState v5. */
+export function importsV5Only(program: ESTree.Program): boolean {
+  return program.body.some(
+    (statement) =>
+      statement.type === "ImportDeclaration" &&
+      statement.source.value === "xstate" &&
+      statement.specifiers.some(
+        (specifier) =>
+          specifier.type === "ImportSpecifier" &&
+          v5OnlyExports.has(
+            specifier.imported.type === "Identifier" ? specifier.imported.name : String(specifier.imported.value),
+          ),
+      ),
+  );
+}

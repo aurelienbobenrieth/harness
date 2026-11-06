@@ -85,3 +85,37 @@ it("keeps shadowed block bindings separate", async () => {
     "const data: unknown = { id: 1 }; { const data = external; consume(data); } consume(data as User);",
   );
 });
+
+it("allows a generic builder that asserts to its own type parameter", async () => {
+  await expect(
+    assertRuleDoesNotReport(
+      ruleName,
+      "function build<T>(keys: string[]): T {\n  const out: Record<string, unknown> = {};\n  for (const key of keys) out[key] = 1;\n  return out as T;\n}\n",
+    ),
+  ).resolves.toBeUndefined();
+});
+
+it("still reports an assertion to a non-generic type after a broad record", async () => {
+  await expect(
+    assertRuleReports(
+      ruleName,
+      "function build<T>(keys: string[]) {\n  const out: Record<string, unknown> = {};\n  out.a = 1;\n  return out as User;\n}\n",
+    ),
+  ).resolves.toBeUndefined();
+});
+
+it("stays silent in test files", async () => {
+  await expect(
+    assertRuleReports(ruleName, "const data: unknown = { id: 1 };\nconst user = data as User;\n"),
+  ).resolves.toBeUndefined();
+  await expect(
+    assertRuleDoesNotReport(ruleName, "const data: unknown = { id: 1 };\nconst user = data as User;\n", {
+      filename: "src/sample.test.ts",
+    }),
+  ).resolves.toBeUndefined();
+  await expect(
+    assertRuleDoesNotReport(ruleName, "const data: unknown = { id: 1 };\nconst user = data as User;\n", {
+      filename: "__tests__/sample.ts",
+    }),
+  ).resolves.toBeUndefined();
+});

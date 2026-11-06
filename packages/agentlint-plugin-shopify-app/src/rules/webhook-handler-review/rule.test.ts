@@ -71,3 +71,50 @@ it("uses a replacement topic pattern", async () => {
     }),
   ).toEqual([]);
 });
+
+it("stays silent on a handler that only authenticates, logs, and returns", async () => {
+  const findings = await testRuleOnSource({
+    rule: webhookHandlerReview,
+    source: `
+export const action = async ({ request }) => {
+  const { shop, topic, payload } = await authenticate.webhook(request);
+  console.log("Received", topic, "Event for", shop);
+  console.log(JSON.stringify(payload, null, 2));
+  return new Response(null, { status: 200 });
+};
+`,
+    file: "app/routes/webhooks.products.update.tsx",
+  });
+  expect(findings).toEqual([]);
+});
+
+it("still reports a handler that writes to a database or branches on session", async () => {
+  const findings = await testRuleOnSource({
+    rule: webhookHandlerReview,
+    source: `
+export const action = async ({ request }) => {
+  const { shop, session, topic } = await authenticate.webhook(request);
+  console.log(topic);
+  if (session) await db.session.deleteMany({ where: { shop } });
+  return new Response();
+};
+`,
+    file: "app/routes/webhooks.app.uninstalled.tsx",
+  });
+  expect(findings).toHaveLength(1);
+});
+
+it("never treats a compliance-topic handler as trivial", async () => {
+  const findings = await testRuleOnSource({
+    rule: webhookHandlerReview,
+    source: `
+export const action = async ({ request }) => {
+  const { topic } = await authenticate.webhook(request); // customers/redact
+  console.log(topic);
+  return new Response();
+};
+`,
+    file: "app/routes/webhooks.customers.redact.tsx",
+  });
+  expect(findings).toHaveLength(1);
+});

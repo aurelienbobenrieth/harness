@@ -82,7 +82,7 @@ function parseExpectation(line: string): Expectation | undefined {
       const tail = matcherTailPattern.exec(line.slice(index + 1));
       if (!tail) return undefined;
       return {
-        prefix: line.slice(0, index + 1) + (tail[1] ?? "").replace(/\s+/g, ""),
+        prefix: line.slice(start, index + 1) + (tail[1] ?? "").replace(/\s+/g, ""),
         matcher: tail[2] ?? "",
         args: line.slice(index + 1 + tail[0].length),
       };
@@ -126,6 +126,18 @@ function pooled(lines: readonly string[]): Map<string, number> {
   return pool;
 }
 
+function snapshotSignals(signals: FileSignals, sourceTouched: boolean): void {
+  if (!sourceTouched || signals.file.status === "deleted") return;
+  for (const hunk of signals.file.hunks) {
+    const deleted = linesOf(hunk, "deletion").filter((line) => line !== "");
+    if (deleted.length === 0) continue;
+    signals.kinds.add("snapshot-rewritten");
+    signals.removed.push(...deleted);
+    signals.added.push(...linesOf(hunk, "addition").filter((line) => line !== ""));
+    signals.firstLine ??= hunk.newStart;
+  }
+}
+
 export function defineTestExpectationDrift(options: TestExpectationDriftOptions = {}): ChangeRule {
   options = structuredClone(options);
   const testFilePattern = options.testFilePattern ?? defaultTestFilePattern;
@@ -134,23 +146,8 @@ export function defineTestExpectationDrift(options: TestExpectationDriftOptions 
   if (!Number.isSafeInteger(maxEvidenceLines) || maxEvidenceLines < 1)
     throw new Error("test-expectation-drift: maxEvidenceLines must be a positive integer.");
 
-  const isSnapshot = (path: string): boolean => snapshotFilePattern.test(path);
   const isTest = (path: string): boolean => isSnapshot(path) || matches(testFilePattern, path);
   const isTracked = (line: string): boolean => matches(assertionPattern, line) || testLinePattern.test(line);
-  const linesOf = (hunk: ChangeHunk, kind: "addition" | "deletion"): string[] =>
-    hunk.lines.filter((line) => line.kind === kind).map((line) => normalize(line.content));
-
-  function snapshotSignals(signals: FileSignals, sourceTouched: boolean): void {
-    if (!sourceTouched || signals.file.status === "deleted") return;
-    for (const hunk of signals.file.hunks) {
-      const deleted = linesOf(hunk, "deletion").filter((line) => line !== "");
-      if (deleted.length === 0) continue;
-      signals.kinds.add("snapshot-rewritten");
-      signals.removed.push(...deleted);
-      signals.added.push(...linesOf(hunk, "addition").filter((line) => line !== ""));
-      signals.firstLine ??= hunk.newStart;
-    }
-  }
 
   function testSignals(signals: FileSignals, sourceTouched: boolean, moves: Moves): void {
     const { file } = signals;
@@ -169,10 +166,7 @@ export function defineTestExpectationDrift(options: TestExpectationDriftOptions 
       let offending = false;
 
       for (const line of deleted) {
-        if (testLinePattern.test(line)) {
-          removedTests++;
-          continue;
-        }
+        if (testLinePattern.test(line)) removedTests++;
         if (!matches(assertionPattern, line)) continue;
         removedAssertions++;
         const before = parseExpectation(line);
@@ -196,7 +190,7 @@ export function defineTestExpectationDrift(options: TestExpectationDriftOptions 
 
       for (const line of added) {
         if (testLinePattern.test(line)) addedTests++;
-        else if (matches(assertionPattern, line)) addedAssertions++;
+        if (matches(assertionPattern, line)) addedAssertions++;
       }
       const newlyDisabled = added.filter((line) => disabledPattern.test(line));
       disabled += newlyDisabled.length - deleted.filter((line) => disabledPattern.test(line)).length;
@@ -399,3 +393,8 @@ export function defineTestExpectationDrift(options: TestExpectationDriftOptions 
 }
 
 export const testExpectationDrift = defineTestExpectationDrift();
+
+const isSnapshot = (path: string): boolean => snapshotFilePattern.test(path);
+
+const linesOf = (hunk: ChangeHunk, kind: "addition" | "deletion"): string[] =>
+  hunk.lines.filter((line) => line.kind === kind).map((line) => normalize(line.content));

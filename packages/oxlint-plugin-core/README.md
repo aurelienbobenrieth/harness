@@ -24,28 +24,33 @@ pnpm add -D @aurelienbbn/oxlint-plugin-core oxlint   # oxlint >=1.82.0 <2.0.0
 <details>
 <summary>Rules by job, options, and the decision each fix needs</summary>
 
-| Job          | Rules                                                                                                                                                                              |
-| ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 🧯 errors    | `no-discarded-caught-error`, `no-error-message-matching`                                                                                                                           |
-| 🧪 tests     | `no-weak-test-assertions`, `no-test-sleeps`, `no-stubbed-subject`, `no-ambient-nondeterminism-in-tests`, `no-vitest-mocking`, `no-vitest-in-source`, `no-test-logic-in-production` |
-| 📜 contracts | `no-exported-anonymous-object-return`, `no-multi-positional-parameters`, `no-mutable-exported-state`, `no-reexport-only-modules`, `no-let`                                         |
-| 🧱 workspace | `workspace-boundaries`                                                                                                                                                             |
-| 💬 comments  | `no-dead-comments`                                                                                                                                                                 |
-| ↕️ layout    | `padding-line-between-statements` (autofix), `padding-before-exit` (autofix, deprecated)                                                                                           |
+| Job          | Rules                                                                                                                                                        |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 🧯 errors    | `no-discarded-caught-error`, `no-error-message-matching`                                                                                                     |
+| 🧪 tests     | `no-weak-test-assertions`, `no-test-sleeps`, `no-ambient-nondeterminism-in-tests`, `no-vitest-mocking`, `no-vitest-in-source`, `no-test-logic-in-production` |
+| 📜 contracts | `no-exported-anonymous-object-return`, `no-multi-positional-parameters`, `no-mutable-exported-state`, `no-reexport-only-modules`, `no-let`                   |
+| 🧱 workspace | `workspace-boundaries`                                                                                                                                       |
+| 🌐 network   | `require-fetch-abort-signal`                                                                                                                                 |
+| 💬 comments  | `no-dead-comments`                                                                                                                                           |
+| ↕️ layout    | `padding-line-between-statements` (autofix)                                                                                                                  |
 
-| Rule                                 | Option                                                        | Default                                 |
-| ------------------------------------ | ------------------------------------------------------------- | --------------------------------------- |
-| `no-discarded-caught-error`          | `logOnlyCallees`                                              | `["console", "logger", "log"]`          |
-|                                      | `reasonMarker`                                                | `"REASON"`                              |
-|                                      | `includeTestFiles`                                            | `false` (test files exempt)             |
-| `no-ambient-nondeterminism-in-tests` | `allowClock`                                                  | `false`; `true` waives clock reads only |
-| `no-weak-test-assertions`            | `assertionHelpers`                                            | `[]`                                    |
-| `no-vitest-mocking`                  | `forbidSpies`                                                 | `false` (`vi.fn`, `vi.spyOn` allowed)   |
-| `no-reexport-only-modules`           | `allow`                                                       | `["index.ts"]`                          |
-| `no-multi-positional-parameters`     | `exemptFunctionNames`, `exemptFileBasenames`                  | `[]`, `[]`                              |
-| `padding-line-between-statements`    | ESLint's `{ blankLine, prev, next }` list                     | the configuration shown under ↕️ below  |
-| `workspace-boundaries`               | `apps` (member directories that are deployables)              | `["apps/**"]`                           |
-|                                      | `forbidden` (`{ from, to, message? }` member directory pairs) | `[]`                                    |
+| Rule                                 | Option                                                                   | Default                                     |
+| ------------------------------------ | ------------------------------------------------------------------------ | ------------------------------------------- |
+| `no-discarded-caught-error`          | `logOnlyCallees`                                                         | `["console", "logger", "log"]`              |
+|                                      | `reasonMarker`                                                           | `"REASON"`                                  |
+|                                      | `includeTestFiles`                                                       | `false` (test files exempt)                 |
+| `no-ambient-nondeterminism-in-tests` | `allowClock`                                                             | `false`; `true` waives clock reads only     |
+| `no-weak-test-assertions`            | `assertionHelpers`                                                       | `[]`                                        |
+| `no-vitest-mocking`                  | `forbidSpies`                                                            | `false` (`vi.fn`, `vi.spyOn` allowed)       |
+| `no-reexport-only-modules`           | `allow`                                                                  | `index.*` (every JS/TS extension), `mod.ts` |
+| `no-multi-positional-parameters`     | `exemptFunctionNames`, `exemptFileBasenames`                             | `[]`, `[]`                                  |
+| `no-let`                             | `allowForLoopHeaders` (`let` in a `for` header)                          | `false`                                     |
+|                                      | `allowBranchInitialization` (`let x;` assigned once per branch)          | `false`                                     |
+| `padding-line-between-statements`    | ESLint's `{ blankLine, prev, next }` list                                | the configuration shown under ↕️ below      |
+| `workspace-boundaries`               | `apps` (member directories that are deployables)                         | `["apps/**"]`                               |
+|                                      | `forbidden` (`{ from, to, message? }` member directory pairs)            | `[]`                                        |
+|                                      | `includeTestFiles` (judge relative and unexported reaches in tests)      | `false` (test files exempt)                 |
+|                                      | `missingExports` (`"root"`: a manifest without `exports` opens only `.`) | `"open"` (every subpath open)               |
 
 | Rule                                  | The decision its fix needs                                              |
 | ------------------------------------- | ----------------------------------------------------------------------- |
@@ -58,13 +63,25 @@ pnpm add -D @aurelienbbn/oxlint-plugin-core oxlint   # oxlint >=1.82.0 <2.0.0
 | `no-multi-positional-parameters`      | update callers, pick property names                                     |
 | `no-mutable-exported-state`           | a factory, an immutable contract, or a dependency boundary              |
 | `no-reexport-only-modules`            | reroute every consumer to the owning module                             |
-| `no-stubbed-subject`                  | which collaborator to replace instead                                   |
 | `no-test-logic-in-production`         | an injected dependency or a public contract                             |
 | `no-test-sleeps`                      | a condition to poll or a fake-timer schedule                            |
 | `no-vitest-in-source`                 | the right test utility or dependency seam                               |
 | `no-vitest-mocking`                   | the dependency boundary and the fake                                    |
 | `no-weak-test-assertions`             | which observable outcome each test asserts                              |
+| `require-fetch-abort-signal`          | where the signal comes from: the caller's, or `AbortSignal.timeout(ms)` |
 | `workspace-boundaries`                | which member owns the shared code, and which subpath it exports         |
+
+`require-fetch-abort-signal` reports every global `fetch` (`fetch`, `window` / `globalThis` / `self` / `global` `.fetch`) in non-test files unless it carries a signal.
+
+| ✅ Satisfied by                                                                             | ❌ Reported                                                       |
+| ------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| `{ signal }` or `{ signal: AbortSignal.timeout(ms) }` as the init                           | no init, `undefined` init, `signal: undefined` / `null`           |
+| an init that is a function parameter, or `{ ...init }` of a parameter (the caller's signal) | an init variable, or a spread of a call or variable we cannot see |
+| `new Request(url, { signal })`, or a `request` parameter, as the only argument              | a `Request` without a signal                                      |
+| a literal spread without `signal` after the signal (`...(body ? { body } : {})`)            | a spread after `signal` that can override it                      |
+| `fetch("data:...")`, a locally defined or imported `fetch`, test and test-support files     |                                                                   |
+
+A signal is not a deadline: pass `AbortSignal.timeout(ms)` when the caller needs bounded duration. A parameterless `Effect.tryPromise` / `Effect.promise` thunk is left to `effect/require-abort-signal`, so one fetch is never reported by both.
 
 </details>
 
@@ -136,10 +153,6 @@ try {
 await new Promise((r) => setTimeout(r, 500)); // ❌ no-test-sleeps
 await vi.waitFor(() => expect(state()).toBe("done")); // ✅ poll the condition
 
-// cart.test.ts
-vi.spyOn(cart, "total").mockReturnValue(30); // ❌ no-stubbed-subject
-vi.spyOn(pricing, "rate").mockReturnValue(2); // ✅ another module
-
 export const send = (mail) => (process.env.NODE_ENV === "test" ? undefined : deliver(mail)); // ❌ no-test-logic-in-production
 ```
 
@@ -194,7 +207,7 @@ vi.spyOn(cart, "total"); // ✅ pass-through spy
 
 Namespace or default import of the same-stem relative module; canned behavior via `mockReturnValue`, `mockResolvedValue`, `mockRejectedValue`, `mockImplementation` (and `…Once`), chained or on the spy's `const`. Package imports stay silent.
 
-**Test logic in production** (concept: "Test Logic in Production", G. Meszaros, _xUnit Test Patterns_). Silent in test files, Vitest config and setup files, `/test-utils/`, `/testing/` (the paths `no-vitest-in-source` allows).
+**Test logic in production** (concept: "Test Logic in Production", G. Meszaros, _xUnit Test Patterns_). Silent in test files (`*.test.*`, `*.spec.*`, `*.test-d.*`), Vitest config and setup files, `test-setup.*` / `test-support.*` / `test-helpers.*` / `test-utils.*` files, and the `test-utils`, `testing`, `test`, `tests`, `__tests__`, `__mocks__`, `e2e` folders (the paths `no-vitest-in-source` allows).
 
 ```ts
 export const send = (mail) => (process.env.NODE_ENV === "test" ? undefined : deliver(mail)); // ❌ also import.meta.env.MODE === "test"
@@ -219,14 +232,30 @@ export const load: Load = () => ({ id: user.id }); // ✅ named contract
 const loadUser = (userId: UserId, includePosts: boolean) => userId; // ❌ no-multi-positional-parameters
 export function loadUser(input: { userId: UserId; includePosts: boolean }) {} // ✅ object input
 
+rows.sort((left, right) => left.id - right.id); // ✅ the caller owns this signature
+const onTick: EventListener = (event, extra) => extra; // ✅ typed by a DOM or package type
+const byId: Compare = (left, right) => left.id - right.id; // ❌ `Compare` is declared in this project
+
 export let currentUserId = undefined; // ❌ no-mutable-exported-state
+export const names: readonly string[] = []; // ✅ readonly annotation (`Readonly<…>`, `ReadonlyMap`, …)
 export * from "./user.js"; // (whole file)                    // ❌ no-reexport-only-modules, unless listed in `allow`
 let total = 0; // ❌ no-let (also `var`)
 ```
 
+**`no-multi-positional-parameters` accepts externally imposed signatures only,** without type information:
+
+- a callback, or an object holding callbacks, passed to a callee imported from a bare specifier (`xstate`, `defineConfig`), a builtin or global (`setTimeout`, `addEventListener`, `Promise`), or a method of a value that does not resolve in this file;
+- a binding, `satisfies` or `as` typed by an imported package type or a global such as `EventListener`;
+- an `override` method of a class imported from a bare specifier or a global (`HTMLElement`);
+- the members of a default-exported object (a Worker's `fetch(request, env, ctx)`).
+
+A callee declared in the same file or imported by a relative path, a locally declared type, and overload implementations stay reported: the signature is yours, so give it an object input. `exemptFunctionNames` and `exemptFileBasenames` remain the escape for named comparators and reducers.
+
+**`no-let` stays strict by default.** `allowForLoopHeaders` accepts `for (let i = 0; …)` and `for (let x of xs)`; `allowBranchInitialization` accepts `let x;` assigned exactly once in every branch of the next `if`/`else` chain or `switch` (with `default`), then only read.
+
 ## 🧱 Workspace members meet only through their exports
 
-`workspace-boundaries` reads the members of the nearest `pnpm-workspace.yaml` (or `package.json` `workspaces`) and judges every `import`, `export … from`, and `import()` between two members:
+`workspace-boundaries` reads the members of the nearest `pnpm-workspace.yaml` (or `package.json` `workspaces`) and judges every `import`, `export … from`, and `import()` between two members (test files are exempt from the relative-path and unexported-subpath checks unless `includeTestFiles` is set):
 
 ```ts
 // packages/kernel/src/tick.ts
@@ -242,8 +271,14 @@ import { body } from "@game/physics"; // ✅ an exported subpath
     "error",
     {
       "apps": ["apps/**", "infra/**"],
+      "includeTestFiles": true,
+      "missingExports": "root",
       "forbidden": [
-        { "from": "packages/features/*", "to": "packages/features/*", "message": "features meet through the kernel" },
+        {
+          "from": "packages/features/*",
+          "to": "packages/features/*",
+          "message": "features meet through the kernel"
+        },
         { "from": "packages/kernel", "to": "packages/adapters/**" }
       ]
     }
@@ -251,7 +286,7 @@ import { body } from "@game/physics"; // ✅ an exported subpath
 }
 ```
 
-A manifest without subpath `exports` opens only its root; a subpath mapped to `null` stays closed; `*` matches at least one character, as in Node. Type-only imports and re-exports are judged like value imports: a type dependency is still a dependency. `require()` and `import x = require()` are not read. Files outside every member (root configs, scripts) are never judged. Directory patterns: `*` within one segment, `**` across segments. Members are read once per lint process: restart an editor's language server after adding one. Cycles stay with `import/no-cycle`, dead files with Knip.
+A manifest whose `exports` has no subpath keys opens only its root; a manifest with no `exports` field at all declares no public surface, so its subpaths are not judged (`missingExports: "root"` closes them to the root); a subpath mapped to `null` stays closed; `*` matches at least one character, as in Node. Type-only imports and re-exports are judged like value imports: a type dependency is still a dependency. `require()` and `import x = require()` are not read. Files outside every member (root configs, scripts) are never judged. Directory patterns: `*` within one segment, `**` across segments. Members are read once per lint process: restart an editor's language server after adding one. Cycles stay with `import/no-cycle`, dead files with Knip.
 
 ## 💬 Comments describe code, not its history
 
@@ -277,6 +312,8 @@ Also closing-brace labels and placeholder scaffolding; narration counts only whe
 </details>
 
 ## ↕️ Blocks, declaration runs and exits stand apart
+
+Statement spacing is formatting. Disable `core/padding-line-between-statements` in reported lint. Install this package and oxlint, then set `"fmt": "oxfmt && harness-format-padding"` (or pass file paths to both commands in your format hook). The CLI runs only the spacing rule with `--fix`, ignores the consumer's lint config, respects oxlint's default ignores and .gitignore, and propagates failures. Build this package first when using a workspace checkout. Oxfmt has no statement-padding option in its [configuration reference](https://oxc.rs/docs/guide/usage/formatter/config-file-reference.html).
 
 `padding-line-between-statements` takes ESLint's options (a list of `{ blankLine, prev, next }`, the last match wins) and its statement types. **A comment block above a statement belongs to it:** the blank line goes above the comments, and a comment on the line a statement ends on stays with that statement. **Autofix inserts or removes the blank lines.**
 
@@ -317,10 +354,9 @@ function start(runtime) {
 }
 ```
 
-| Overlap                             | Status                                                                                                                                                                                                            |
-| ----------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `padding-before-exit`               | ⚠️ deprecated: the default configuration covers it, and `{ "blankLine": "always", "prev": "*", "next": ["return", "throw"] }` alone reproduces it. Turn it off when you enable `padding-line-between-statements`. |
-| `effect/padding-after-dependencies` | ✅ complementary: it also separates `yield*` service dependencies from a `const` of logic below them, which a declaration run leaves free. Both rules insert the same single blank line.                          |
+| Overlap                             | Status                                                                                                                                                                                   |
+| ----------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `effect/padding-after-dependencies` | ✅ complementary: it also separates `yield*` service dependencies from a `const` of logic below them, which a declaration run leaves free. Both rules insert the same single blank line. |
 
 ## ⚠️ Migration
 
@@ -351,35 +387,46 @@ function start(runtime) {
 
 Generated from package exports by `pnpm catalog`. Rule-specific options and limitations are described above and in the source tests.
 
-| Rule/check                            | Trigger or review scope                                                                                                                                                                                                                    |
-| ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `no-ambient-nondeterminism-in-tests`  | Disallow test files from depending on the host locale, the real clock, or `Math.random()`: locale-sensitive formatting without a locale, `new Date()` / `Date.now()` / `performance.now()` without fake timers, and unseeded randomness.   |
-| `no-dead-comments`                    | Disallow dead comments: closing-brace labels, placeholder scaffolding, untracked TODOs, and comments narrating a change instead of the code.                                                                                               |
-| `no-discarded-caught-error`           | Require a catch clause or inline promise rejection handler that never rethrows and ignores or only logs the error to carry a reasoned marker comment.                                                                                      |
-| `no-error-message-matching`           | Disallow branching on the text of an error message through string comparison, substring or regex matching, or a switch.                                                                                                                    |
-| `no-exported-anonymous-object-return` | Require named object return contracts for functions exported directly, by local alias, or as a default identifier.                                                                                                                         |
-| `no-let`                              | Disallow let and var declarations in favor of const and expression-oriented code.                                                                                                                                                          |
-| `no-multi-positional-parameters`      | Require object inputs instead of multiple positional parameters for functions.                                                                                                                                                             |
-| `no-mutable-exported-state`           | Disallow exporting mutable module state.                                                                                                                                                                                                   |
-| `no-reexport-only-modules`            | Disallow modules that only re-export other modules, except allowed entrypoint barrels.                                                                                                                                                     |
-| `no-stubbed-subject`                  | Disallow a `<stem>.test` file from replacing behavior of its own `<stem>` module through `vi.spyOn(...)` followed by a canned return value or implementation.                                                                              |
-| `no-test-logic-in-production`         | Disallow production files from branching on a test runner or test mode and from exporting members named or commented as existing only for tests.                                                                                           |
-| `no-test-sleeps`                      | Disallow wall-clock sleeps in test files: setTimeout-backed promises, node:timers/promises sleeps, and awaited sleep helpers with a fixed duration.                                                                                        |
-| `no-vitest-in-source`                 | Disallow importing vitest from non-test source files.                                                                                                                                                                                      |
-| `no-vitest-mocking`                   | Disallow Vitest mocking APIs in favor of deterministic test doubles.                                                                                                                                                                       |
-| `no-weak-test-assertions`             | Disallow individual tests whose only assertions check existence, a bare call, a `typeof` or `Object` instance, wildcard-only matcher arguments, a value against itself or a literal against a literal, or a local mock's own return value. |
-| `padding-before-exit`                 | Require a blank line before a return or throw statement that follows another statement in the same block, switch case, or program body.                                                                                                    |
-| `padding-line-between-statements`     | Require or disallow blank lines between statements, with ESLint's options and a comment block counted as part of the statement below it; defaults to padding blocks, multiline expressions, declaration runs, and exits.                   |
-| `workspace-boundaries`                | Keep workspace members apart: packages never import apps, members enter each other only through package.json exports and never by relative path, and configured member pairs never import each other.                                      |
+| Rule/check                            | Trigger or review scope                                                                                                                                                                                                                                                                             |
+| ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `fenced-doc-examples`                 | Fence every nonempty JSDoc @example so documentation tools render executable code correctly.                                                                                                                                                                                                        |
+| `no-ambient-nondeterminism-in-tests`  | Disallow test files from depending on the host locale, the real clock, or `Math.random()`: locale-sensitive formatting without a locale, `new Date()` / `Date.now()` / `performance.now()` without fake timers, and unseeded randomness.                                                            |
+| `no-dead-comments`                    | Disallow dead comments: closing-brace labels, placeholder scaffolding, untracked TODOs, and comments narrating a change instead of the code.                                                                                                                                                        |
+| `no-discarded-caught-error`           | Require a catch clause or inline promise rejection handler that never rethrows and ignores or only logs the error to carry a reasoned marker comment.                                                                                                                                               |
+| `no-error-message-matching`           | Disallow branching on the text of an error message through string comparison, substring or regex matching, or a switch.                                                                                                                                                                             |
+| `no-exported-anonymous-object-return` | Require named object return contracts for functions exported directly, by local alias, or as a default identifier.                                                                                                                                                                                  |
+| `no-let`                              | Disallow let and var declarations in favor of const and expression-oriented code.                                                                                                                                                                                                                   |
+| `no-multi-positional-parameters`      | Require object inputs instead of multiple positional parameters for functions you design; externally imposed signatures only: callbacks and objects handed to an imported or builtin callee, bindings typed by an imported or global type, and overrides of an imported or global class are exempt. |
+| `no-mutable-exported-state`           | Disallow exporting mutable module state.                                                                                                                                                                                                                                                            |
+| `no-reexport-only-modules`            | Disallow modules that only re-export other modules, except allowed entrypoint barrels.                                                                                                                                                                                                              |
+| `no-test-logic-in-production`         | Disallow production files from branching on a test runner or test mode and from exporting members named or commented as existing only for tests.                                                                                                                                                    |
+| `no-test-sleeps`                      | Disallow wall-clock sleeps in test files: setTimeout-backed promises, node:timers/promises sleeps, and awaited sleep helpers with a fixed duration.                                                                                                                                                 |
+| `no-vitest-in-source`                 | Disallow importing vitest from non-test source files.                                                                                                                                                                                                                                               |
+| `no-vitest-mocking`                   | Disallow Vitest mocking APIs in favor of deterministic test doubles.                                                                                                                                                                                                                                |
+| `no-weak-test-assertions`             | Disallow individual tests whose only assertions check existence, a bare call, a `typeof` or `Object` instance, wildcard-only matcher arguments, a value against itself or a literal against a literal, or a local mock's own return value.                                                          |
+| `padding-line-between-statements`     | Require or disallow blank lines between statements, with ESLint's options and a comment block counted as part of the statement below it; defaults to padding blocks, multiline expressions, declaration runs, and exits.                                                                            |
+| `require-fetch-abort-signal`          | Require every global fetch call (fetch, or window/globalThis/self/global.fetch) to pass an AbortSignal, so the request can be cancelled. Test and test-support files and the thunks of Effect.tryPromise / Effect.promise (owned by effect/require-abort-signal) are skipped.                       |
+| `workspace-boundaries`                | Keep workspace members apart: packages never import apps, members enter each other only through package.json exports and never by relative path, and configured member pairs never import each other.                                                                                               |
 
 ### Credited concepts
 
 - "Eradicating Non-Determinism in Tests" by Martin Fowler (concept)
 - "Test Logic in Production" (G. Meszaros, xUnit Test Patterns) (concept)
-- KeepCart/app tools/workspace-boundaries (same author; generalised with configurable apps and a forbidden-import matrix)
+- Author's private workspace-boundaries tool (same author; generalised with configurable apps and a forbidden-import matrix)
 - code-slop by asyrafhussin (MIT, concept re-implemented)
 - code-slop by asyrafhussin (MIT, concept re-implemented) — closing-brace labels and placeholder
-- https://eslint.org/docs/latest/rules/padding-line-between-statements (MIT; concept, independently implemented)
 - https://eslint.org/docs/latest/rules/padding-line-between-statements (MIT; option schema and statement types, independently implemented)
 
 <!-- harness-catalog:end -->
+
+Empty error-message presence checks, such as `error.message !== ""`, remain allowed for display fallbacks.
+
+## Advisory rules
+
+Merge the exported `advisoryRules` into your oxlint rules (or enable these names as `warn`): `core/fenced-doc-examples`. No autofix: each needs a domain decision.
+
+## Commit messages
+
+Add `harness-install-hooks` to the consumer `prepare` script after installing this package. It writes an executable Git `commit-msg` hook using Node and Git for Windows; no Unix-only checker is needed. Human coauthors and technical model names in subjects remain allowed. Model `Co-Authored-By` trailers and generated/assisted tool-credit lines fail with exit 1; unreadable/missing input fails with exit 2. An existing hook is preserved: chain `harness-check-commit "$1"` in it. Reinstall after moving the checkout or upgrading Node.
+
+`core/fenced-doc-examples` warns on nonempty JSDoc `@example` blocks without fenced code. Enable as `warn`; rendering prose and inline documentation outside `@example` are outside its scope.

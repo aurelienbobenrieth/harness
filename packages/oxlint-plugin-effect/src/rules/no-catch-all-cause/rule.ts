@@ -1,5 +1,7 @@
 import type { Context, ESTree, Rule } from "@oxlint/plugins";
+import { isFunctionNode, parentOf, walk } from "@aurelienbbn/oxlint-kit/ast";
 import { effectMethod, moduleMethod } from "../binding-support.js";
+import { allowOptionDefaults, allowOptionSchema, isExemptFile } from "../test-paths.js";
 
 const message =
   "Handle expected errors with Effect.catch (catchAll in Effect 3), catchTag, or mapError; cause-level handlers also catch defects and interruption.";
@@ -21,6 +23,28 @@ function causeHandlerMessageId(context: Context, node: ESTree.Node): MessageId |
   return moduleMethod(context, node, "Layer") === "catchCause" ? "catchAllCause" : undefined;
 }
 
+/**
+ * A cause handler that hands its cause back with `Effect.failCause(cause)` is selective: it inspects the cause and
+ * recovers from the part it owns, while defects and interruptions stay failed.
+ */
+function refailsCause(context: Context, call: ESTree.Node | undefined): boolean {
+  if (call?.type !== "CallExpression") return false;
+  const handler = call.arguments.at(-1);
+  if (!isFunctionNode(handler) || handler.body === null) return false;
+  const parameter = handler.params[0];
+  if (parameter?.type !== "Identifier") return false;
+
+  let refails = false;
+  walk(handler.body, (node) => {
+    if (refails) return false;
+    if (node.type !== "CallExpression" || effectMethod(context, node.callee) !== "failCause") return undefined;
+    const [cause] = node.arguments;
+    if (cause?.type === "Identifier" && cause.name === parameter.name) refails = true;
+    return undefined;
+  });
+  return refails;
+}
+
 export const noCatchAllCause: Rule = {
   meta: {
     type: "problem",
@@ -34,12 +58,20 @@ export const noCatchAllCause: Rule = {
       ignoreCause: ignoreCauseMessage,
       sandbox: sandboxMessage,
     },
+    schema: [allowOptionSchema],
+    defaultOptions: allowOptionDefaults,
   },
   createOnce(context) {
     return {
       MemberExpression(node) {
         const messageId = causeHandlerMessageId(context, node);
         if (messageId === undefined) return;
+        const parent = parentOf(node);
+        if (messageId === "catchAllCause" && parent?.type === "CallExpression" && parent.callee === node) {
+          if (refailsCause(context, parent)) return;
+        }
+
+        if (isExemptFile(context)) return;
 
         context.report({
           node,

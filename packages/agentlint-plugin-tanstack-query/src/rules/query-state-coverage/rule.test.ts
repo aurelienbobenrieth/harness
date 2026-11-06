@@ -144,3 +144,42 @@ it("reports each hook once through the real parser and records the review mode",
 
   expect(findings.map((finding) => finding.message)).toEqual([localMessage, lazyMessage, suspenseMessage]);
 });
+
+it.each([
+  ["isPending and isError", "if (q.isPending) return null; if (q.isError) return null;"],
+  ["isLoading and error", "if (q.isLoading) return null; if (q.error) return null;"],
+  ["status checks", 'if (q.status === "pending") return null; if (q.status === "error") return null;'],
+])("stays silent when the component already handles pending and error (%s)", async (_label, branches) => {
+  const findings = await testRuleOnSource({
+    rule: queryStateCoverage,
+    source: `function Todos() { const q = useQuery({ queryKey: ['todos'], queryFn }); ${branches} return q.data; }`,
+    file: "src/page.tsx",
+  });
+
+  expect(findings).toEqual([]);
+});
+
+it.each([
+  ["only pending", "if (q.isPending) return null;"],
+  ["only error", "if (q.isError) return null;"],
+  ["neither", ""],
+])("still reports a component that handles %s", async (_label, branches) => {
+  const findings = await testRuleOnSource({
+    rule: queryStateCoverage,
+    source: `function Todos() { const q = useQuery({ queryKey: ['todos'], queryFn }); ${branches} return q.data; }`,
+    file: "src/page.tsx",
+  });
+
+  expect(findings.map((finding) => finding.message)).toEqual([localMessage]);
+});
+
+it("keeps asking suspense hooks for boundaries even next to pending and error branches", async () => {
+  const findings = await testRuleOnSource({
+    rule: queryStateCoverage,
+    source:
+      "function Todos() { const q = useSuspenseQuery(opts); if (q.isPending || q.isError) return null; return q.data; }",
+    file: "src/page.tsx",
+  });
+
+  expect(findings.map((finding) => finding.message)).toEqual([suspenseMessage]);
+});

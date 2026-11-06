@@ -113,3 +113,43 @@ it("ignores non-Effect runForkWith calls", async () => {
     }),
   ).resolves.toBeUndefined();
 });
+
+it("allows Layer.launch handed to runMain, the process boundary", async () => {
+  await expect(
+    assertRuleDoesNotReport(
+      "effect/no-unscoped-runtime-launch",
+      [
+        "HttpLive.pipe(Layer.provide(TracingLive), Layer.launch, NodeRuntime.runMain);",
+        "Layer.launch(HttpLive).pipe(NodeRuntime.runMain);",
+        "NodeRuntime.runMain(Layer.launch(HttpLive));",
+        "",
+      ].join("\n"),
+    ),
+  ).resolves.toBeUndefined();
+});
+
+it("still reports Layer.launch that no runMain consumes and every Effect.runFork", async () => {
+  await expect(
+    assertRuleReports("effect/no-unscoped-runtime-launch", "const program = HttpLive.pipe(Layer.launch);\n"),
+  ).resolves.toBeUndefined();
+  await expect(
+    assertRuleReports("effect/no-unscoped-runtime-launch", "NodeRuntime.runMain(Effect.runFork(program));\n"),
+  ).resolves.toBeUndefined();
+});
+
+it("allows runSync inside a default-exported Worker handler", async () => {
+  await expect(
+    assertRuleDoesNotReport(
+      "effect/no-unscoped-runtime-launch",
+      "export default { fetch(request: Request) { return Response.json(Effect.runSync(describe(request))); } };\n",
+    ),
+  ).resolves.toBeUndefined();
+});
+
+it("allows runFork in a browser entry point, the composition root of a page", async () => {
+  await expect(
+    assertRuleDoesNotReport("effect/no-unscoped-runtime-launch", 'import "./style.css";\nEffect.runFork(program);\n', {
+      filename: "src/main.ts",
+    }),
+  ).resolves.toBeUndefined();
+});

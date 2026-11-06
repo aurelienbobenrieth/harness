@@ -97,3 +97,87 @@ it("reports a chained createActor(...).start() once", async () => {
 
   await expect(testRuleOnSource({ rule: actorCleanup, source: source, file: "src/cart.ts" })).resolves.toHaveLength(2);
 });
+
+it("stays silent when the file stops the stored actor on its teardown path", async () => {
+  const source = `
+class CartDrawer extends HTMLElement {
+  #actor?: Actor;
+  #pending = createActor(cartMachine);
+  connectedCallback() {
+    this.#actor = createActor(cartMachine);
+    this.#actor.start();
+  }
+  disconnectedCallback() {
+    this.#actor?.stop();
+    this.#pending.stop();
+  }
+}
+const local = createActor(cartMachine).start();
+local.stop();
+const typed = createActor(cartMachine) as CartActor;
+typed?.stop();
+`;
+
+  await expect(testRuleOnSource({ rule: actorCleanup, source: source, file: "src/cart.ts" })).resolves.toEqual([]);
+});
+
+it("still reports an actor whose stop belongs to a different binding", async () => {
+  const source = `
+class CartDrawer extends HTMLElement {
+  connectedCallback() {
+    this.actor = createActor(cartMachine);
+    const other = createActor(searchMachine);
+    other.stop();
+  }
+  disconnectedCallback() {
+    this.#actor.stop();
+  }
+}
+const actor = createActor(cartMachine).start();
+const unrelated = { actor: { stop() {} } };
+unrelated.actor.stop();
+createActor(cartMachine).start();
+`;
+  const findings = await testRuleOnSource({ rule: actorCleanup, source: source, file: "src/cart.ts" });
+
+  expect(findings).toHaveLength(3);
+});
+
+it("does not treat a stop as proof for effect actors", async () => {
+  const source = `
+const program = Effect.gen(function* () {
+  const actor = yield* createEffectActor(reviewMachine);
+  actor.stop();
+});
+`;
+
+  await expect(testRuleOnSource({ rule: actorCleanup, source: source, file: "src/review.ts" })).resolves.toHaveLength(
+    1,
+  );
+});
+
+it("follows the stored actor into the field it is copied to", async () => {
+  const source = `
+class Search extends HTMLElement {
+  #actor?: Actor;
+  connectedCallback() {
+    const actor = createActor(searchMachine);
+    this.#actor = actor;
+    actor.start();
+  }
+  disconnectedCallback() {
+    this.#actor?.stop();
+  }
+}
+class Leaky extends HTMLElement {
+  connectedCallback() {
+    const actor = createActor(searchMachine);
+    this.actor = actor;
+    actor.start();
+  }
+}
+`;
+  const findings = await testRuleOnSource({ rule: actorCleanup, source: source, file: "src/search.ts" });
+
+  expect(findings.map((finding) => finding.line)).toEqual([15]);
+});

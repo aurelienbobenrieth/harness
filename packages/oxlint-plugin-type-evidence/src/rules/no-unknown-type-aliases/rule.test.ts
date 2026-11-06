@@ -32,3 +32,13 @@ it("allows concrete aliases", async () => {
 it("allows circular aliases without hanging", async () => {
   await expect(assertRuleDoesNotReport(ruleName, "type A = B;\ntype B = A;\n")).resolves.toBeUndefined();
 });
+
+it("stays silent in test files", async () => {
+  await expect(assertRuleReports(ruleName, "type Data = unknown;\n")).resolves.toBeUndefined();
+  await expect(
+    assertRuleDoesNotReport(ruleName, "type Data = unknown;\n", { filename: "src/sample.test.ts" }),
+  ).resolves.toBeUndefined();
+  await expect(
+    assertRuleDoesNotReport(ruleName, "type Data = unknown;\n", { filename: "__tests__/sample.ts" }),
+  ).resolves.toBeUndefined();
+});

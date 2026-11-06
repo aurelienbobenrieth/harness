@@ -109,3 +109,31 @@ export const request = { timeout: "5m", after: { "1h": true } };
     ),
   ).resolves.toBeUndefined();
 });
+
+it("rejects ISO 8601 and unit-suffixed strings in XState v5 files", async () => {
+  const messages = await reportedMessages(
+    ruleName,
+    `import { assign, createMachine } from "xstate";
+export const machine = createMachine({
+  initial: "a",
+  states: { a: { after: { "PT5S": { target: "b" }, "5s": { target: "b" } } }, b: { entry: assign({}) } },
+});
+`,
+  );
+  expect(messages).toHaveLength(2);
+  expect(messages[0]).toContain("XState v5 delays are numbers in milliseconds");
+});
+
+it("accepts numeric and declared delays in XState v5 files", async () => {
+  await expect(
+    assertRuleDoesNotReport(
+      ruleName,
+      `import { assign, setup } from "xstate";
+export const machine = setup({ delays: { "5s": 5000 } }).createMachine({
+  initial: "a",
+  states: { a: { after: { 1000: { target: "b" }, "5s": { target: "b" } } }, b: { entry: assign({}) } },
+});
+`,
+    ),
+  ).resolves.toBeUndefined();
+});

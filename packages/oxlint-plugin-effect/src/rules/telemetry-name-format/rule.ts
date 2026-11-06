@@ -7,6 +7,7 @@ import {
   unwrapExpression,
 } from "@aurelienbbn/oxlint-kit/ast";
 import { effectMethod, moduleMethod } from "../binding-support.js";
+import { defaultAllow, getFilename, isAllowedFile, type RuleContextWithOptions } from "../runtime-support.js";
 
 const defaultPattern = String.raw`^[a-z][a-z0-9_]*(\.[a-z][a-z0-9_]*)*$`;
 const defaultMinSegments = 2;
@@ -45,6 +46,10 @@ type Options = {
   readonly expected: string;
   readonly expectedKey: string;
 };
+
+function stringList(value: unknown): readonly string[] | undefined {
+  return Array.isArray(value) && value.every((entry) => typeof entry === "string") ? value : undefined;
+}
 
 function readOptions(context: Context): Options {
   const options = optionsObject(context);
@@ -190,7 +195,7 @@ export const telemetryNameFormat: Rule = {
     type: "suggestion",
     docs: {
       description:
-        "Require literal span names, Rpc.make tags and (with logMessages) Effect log event names in lowercase dotted snake_case with at least two segments, and annotation keys in lowercase dotted snake_case.",
+        "Require literal span names, Rpc.make tags and (with logMessages) Effect log event names in lowercase dotted snake_case with at least two segments, and annotation keys in lowercase dotted snake_case. Test files are skipped by default (`allow`).",
     },
     messages: {
       name: 'Rename the {{kind}} name "{{name}}" to {{expected}}: tracing backends index it, and one shape keeps it searchable.',
@@ -208,12 +213,19 @@ export const telemetryNameFormat: Rule = {
           keyPattern: { type: "string" },
           minSegments: { type: "integer", minimum: 1 },
           logMessages: { type: "boolean" },
+          allow: { type: "array", items: { type: "string" } },
         },
         additionalProperties: false,
       },
     ],
     defaultOptions: [
-      { pattern: defaultPattern, keyPattern: defaultPattern, minSegments: defaultMinSegments, logMessages: false },
+      {
+        pattern: defaultPattern,
+        keyPattern: defaultPattern,
+        minSegments: defaultMinSegments,
+        logMessages: false,
+        allow: defaultAllow,
+      },
     ],
   },
   createOnce(context) {
@@ -241,6 +253,10 @@ export const telemetryNameFormat: Rule = {
     }
 
     return {
+      before() {
+        const allow = stringList(optionsObject(context)["allow"]) ?? defaultAllow;
+        return !isAllowedFile(getFilename(context as RuleContextWithOptions), allow);
+      },
       CallExpression(node) {
         const method = effectMethod(context, node.callee);
         if (method !== undefined && annotationMethods.has(method)) {

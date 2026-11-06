@@ -43,6 +43,11 @@ function onlyResolves(callback: ESTree.Node | undefined, resolveName: string): b
   return statement.type === "ReturnStatement" && isCallOf(statement.argument, resolveName);
 }
 
+/** `setTimeout(resolve, 0)` and `sleep(0)` yield one event-loop turn: no wall-clock time passes. */
+function isZeroDelay(delay: ESTree.Node | undefined): boolean {
+  return delay?.type === "Literal" && delay.value === 0;
+}
+
 function isTimeoutPromise(context: Context, node: ESTree.NewExpression): boolean {
   if (node.callee.type !== "Identifier" || node.callee.name !== "Promise") return false;
   const executor = node.arguments[0];
@@ -55,6 +60,7 @@ function isTimeoutPromise(context: Context, node: ESTree.NewExpression): boolean
     (candidate) =>
       candidate.type === "CallExpression" &&
       isGlobalSetTimeout(context, candidate.callee) &&
+      !isZeroDelay(candidate.arguments[1]) &&
       onlyResolves(candidate.arguments[0], resolve.name),
   );
 }
@@ -64,7 +70,7 @@ function isNumericSleepCall(node: ESTree.Node): boolean {
   if (call.type !== "CallExpression" || call.callee.type !== "Identifier") return false;
   if (!sleepHelperNames.has(call.callee.name)) return false;
   const duration = call.arguments[0];
-  return duration?.type === "Literal" && typeof duration.value === "number";
+  return duration?.type === "Literal" && typeof duration.value === "number" && !isZeroDelay(duration);
 }
 
 export const noTestSleeps: Rule = {

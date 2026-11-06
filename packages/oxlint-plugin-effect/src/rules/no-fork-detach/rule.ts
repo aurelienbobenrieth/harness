@@ -2,6 +2,7 @@ import type { Context, ESTree, Rule } from "@oxlint/plugins";
 import { type FunctionNode, nearestFunction, optionsObject, parentOf, walk } from "@aurelienbbn/oxlint-kit/ast";
 import { effectMethod } from "../binding-support.js";
 import { getFilename, isAllowedFile, type RuleContextWithOptions } from "../runtime-support.js";
+import { testSupportFiles } from "../test-paths.js";
 import { moduleMethod, stringArrayOption } from "../sota-support.js";
 
 const detachedForks: ReadonlySet<string> = new Set(["forkDetach", "forkDaemon"]);
@@ -91,7 +92,7 @@ export const noForkDetach: Rule = {
         additionalProperties: false,
       },
     ],
-    defaultOptions: [{ allow: [] }],
+    defaultOptions: [{ allow: [...testSupportFiles] }],
   },
   createOnce(context) {
     return {
@@ -100,7 +101,7 @@ export const noForkDetach: Rule = {
         if (method === undefined) return;
 
         if (detachedForks.has(method)) {
-          const allow = stringArrayOption(optionsObject(context), "allow", []);
+          const allow = stringArrayOption(optionsObject(context), "allow", testSupportFiles);
           if (isAllowedFile(getFilename(context as RuleContextWithOptions), allow)) return;
           context.report({ node, messageId: "detach" });
           return;

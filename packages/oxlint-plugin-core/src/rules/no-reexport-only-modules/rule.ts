@@ -1,7 +1,11 @@
 import type { ESTree, Rule } from "@oxlint/plugins";
 import { getFilename, type RuleContextWithFilename } from "../filename-support.js";
 
-const defaultAllow: readonly string[] = ["index.ts"];
+/** Package entrypoints by convention: `index.*` in every JavaScript and TypeScript flavor, and Deno's `mod.ts`. */
+const defaultAllow: readonly string[] = [
+  ...["ts", "tsx", "mts", "cts", "d.ts", "js", "jsx", "mjs", "cjs"].map((extension) => `index.${extension}`),
+  "mod.ts",
+];
 
 type RuleOptions = {
   readonly allow?: readonly string[];

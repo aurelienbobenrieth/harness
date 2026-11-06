@@ -145,3 +145,34 @@ describe("stays silent", () => {
     ).resolves.toBeUndefined();
   });
 });
+
+describe("namespaced tags", () => {
+  it.each([
+    ["a slash namespace", 'class GitError extends Data.TaggedError("git/GitError") {}\n'],
+    ["a dotted namespace", 'class GitError extends Schema.TaggedError<GitError>()("app.git.GitError", {}) {}\n'],
+    ["a concatenated prefix", 'class PendingError extends Data.TaggedError("NeonPendingError") {}\n'],
+  ])("allows %s that ends with the class name", async (_label, code) => {
+    await expect(assertRuleDoesNotReport(ruleName, rootImport + code)).resolves.toBeUndefined();
+  });
+
+  it("reports a tag that only resembles the class name", async () => {
+    await expect(
+      reportedMessages(ruleName, `${rootImport}class GitError extends Data.TaggedError("git/GitFailure") {}\n`),
+    ).resolves.toEqual([tagMismatch("git/GitFailure", "GitError")]);
+    await expect(
+      reportedMessages(ruleName, `${rootImport}class GitError extends Data.TaggedError("GitErrors") {}\n`),
+    ).resolves.toEqual([tagMismatch("GitErrors", "GitError")]);
+  });
+
+  it("keeps only the tag check when the suffix option is empty", async () => {
+    await expect(
+      assertRuleDoesNotReport(
+        ruleName,
+        `${rootImport}class UserNotFound extends Data.TaggedError("UserNotFound") {}\n`,
+        {
+          ruleOptions: { suffix: "" },
+        },
+      ),
+    ).resolves.toBeUndefined();
+  });
+});

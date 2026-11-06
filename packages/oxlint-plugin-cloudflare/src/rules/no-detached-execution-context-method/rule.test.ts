@@ -53,3 +53,28 @@ it("accepts the standalone waitUntil export of cloudflare:workers", async () => 
     ),
   ).resolves.toBeUndefined();
 });
+
+it("stays silent when the members come from the cloudflare:workers module namespace", async () => {
+  await expect(
+    assertRuleDoesNotReport(
+      ruleName,
+      'export async function run(app: { fetch: Function }, req: Request) {\n  const workers = await import("cloudflare:workers");\n  const { env, waitUntil, passThroughOnException } = workers;\n  return app.fetch(req, env, { waitUntil, passThroughOnException });\n}\n',
+    ),
+  ).resolves.toBeUndefined();
+  await expect(
+    assertRuleDoesNotReport(
+      ruleName,
+      'import * as workers from "cloudflare:workers";\nconst { waitUntil } = workers;\nexport const run = (promise: Promise<unknown>) => waitUntil(promise);\n',
+    ),
+  ).resolves.toBeUndefined();
+});
+
+it("still reports a context object that came from a plain identifier", async () => {
+  await expect(
+    assertRuleReports(
+      ruleName,
+      'export default { fetch(request: Request, env: Env, ctx: ExecutionContext) { const { waitUntil } = ctx; waitUntil(Promise.resolve()); return new Response("ok"); } };\n',
+      { message: /Illegal invocation/ },
+    ),
+  ).resolves.toBeUndefined();
+});

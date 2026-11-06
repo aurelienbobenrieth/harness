@@ -36,7 +36,7 @@ export default defineConfig({ extends: [strictPreset], rules: [queryFreshnessInt
 
 ✅ in preset · 🧪 opinionated, add `queryFreshnessIntent` to `rules`. Presets ignore `**/*.d.ts`.
 
-**⚠️ `query-state-coverage` rev 2: UI hooks own the review.** Shared `queryOptions` / `infiniteQueryOptions` no longer get duplicate prompts; Suspense hooks are included, with pending and error handling allowed in surrounding Suspense/error boundaries.
+**⚠️ `query-state-coverage` rev 2: UI hooks own the review.** Shared `queryOptions` / `infiniteQueryOptions` no longer get duplicate prompts; Suspense hooks are included, with pending and error handling allowed in surrounding Suspense/error boundaries. Detector v3: a state-owning hook (`useQuery`, `useQueries`, `useInfiniteQuery`) stays silent when its enclosing function already mentions both pending (`isPending`, `isLoading`, `status === "pending"`) and error (`isError`, `error`, `status === "error"`) state.
 
 ```ts
 trpc.todo.list.useQuery(undefined); // ❌ query-state-coverage

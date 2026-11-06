@@ -1,12 +1,18 @@
 import type { Context, ESTree, Rule } from "@oxlint/plugins";
-import { binding } from "@aurelienbbn/oxlint-kit/ast";
+import { binding, unwrapExpression } from "@aurelienbbn/oxlint-kit/ast";
 import { effectMethod } from "../binding-support.js";
+import { allowOptionDefaults, allowOptionSchema, isExemptFile } from "../test-paths.js";
 
 const message =
   "Fail Effects with a tagged domain error (Schema.TaggedError, Data.TaggedError, or an object with a literal _tag) instead of an untagged literal or a native Error subclass.";
 const disallowedArgumentTypes = new Set(["ArrayExpression", "Literal", "ObjectExpression", "TemplateLiteral"]);
 
-function hasRawFailureValue(node: ESTree.Node | undefined): boolean {
+function isNonEmptyStringLiteral(node: ESTree.Node): boolean {
+  return node.type === "Literal" && typeof node.value === "string" && node.value.trim() !== "";
+}
+
+function hasRawFailureValue(input: ESTree.Node | undefined): boolean {
+  const node = input === undefined ? undefined : unwrapExpression(input);
   if (
     node?.type === "ObjectExpression" &&
     node.properties.some(
@@ -15,9 +21,7 @@ function hasRawFailureValue(node: ESTree.Node | undefined): boolean {
         !property.computed &&
         property.key.type === "Identifier" &&
         property.key.name === "_tag" &&
-        property.value.type === "Literal" &&
-        typeof property.value.value === "string" &&
-        property.value.value.trim() !== "",
+        isNonEmptyStringLiteral(unwrapExpression(property.value)),
     )
   )
     return false;
@@ -79,6 +83,8 @@ export const requireTaggedEffectFail: Rule = {
     messages: {
       typedFailure: message,
     },
+    schema: [allowOptionSchema],
+    defaultOptions: allowOptionDefaults,
   },
   createOnce(context) {
     return {
@@ -96,8 +102,11 @@ export const requireTaggedEffectFail: Rule = {
           if (declaration?.type !== "VariableDeclarator" || declaration.init === null) break;
           value = declaration.init;
         }
+        value = value === undefined ? undefined : unwrapExpression(value);
         const genericError = value?.type === "NewExpression" && isUntaggedNativeError(context, value.callee);
         if (!genericError && !hasRawFailureValue(value)) return;
+
+        if (isExemptFile(context)) return;
 
         context.report({
           node,

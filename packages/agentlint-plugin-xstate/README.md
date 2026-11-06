@@ -85,7 +85,7 @@ Options: `machineDefinitionPattern`, `invokeMarkerPattern`, `errorHandlingMarker
 <details>
 <summary><code>actor-cleanup</code>: whoever creates an actor stops it</summary>
 
-Fires on `createActor(...)` and `system.createActor(...)`; `createEffectActor(...)` (owned by its Effect Scope) and `createActorAtoms(...)` (owned by its atom registry) get their own message. Injected or parent-owned actors need not stop themselves.
+Fires on `createActor(...)` and `system.createActor(...)`; `createEffectActor(...)` (owned by its Effect Scope) and `createActorAtoms(...)` (owned by its atom registry) get their own message. Injected or parent-owned actors need not stop themselves. Silent when the file calls `.stop()` on the stored actor (`actor.stop()`, `this.#actor?.stop()`, or a field the same function copies it into); `createEffectActor` / `createActorAtoms` never count a `stop()` as proof.
 
 - [ ] exit actions don't run on an external `stop()` (v5 and v6); cleanup lives in `fromCallback` / `createCallbackLogic` or the async abort signal
 - [ ] React ownership goes through `useActorRef` / `useMachine` / `createActorContext`
@@ -214,7 +214,7 @@ Generated from package exports by `pnpm catalog`. Rule-specific options and limi
 
 | Rule/check                  | Trigger or review scope                                                                                                                                              |
 | --------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `actor-cleanup`             | Flags actor creation sites that need lifecycle-cleanup review.                                                                                                       |
+| `actor-cleanup`             | Flags actor creation sites whose stored actor the file never stops, for lifecycle-cleanup review.                                                                    |
 | `derived-boolean-context`   | Flags context writes (v5 assign(), v6 returned context patches) and context declarations that cache availability booleans or string-enum copies of the finite state. |
 | `effect-actor-observed`     | Flags @xstate/effect actors bound by createEffectActor(...) whose outcome the file never reads with join, waitFor, snapshots or subscribe.                           |
 | `machine-failure-coverage`  | Flags invoked actors without a real onError transition and spawned actors without actor-error handling for failure-path review.                                      |

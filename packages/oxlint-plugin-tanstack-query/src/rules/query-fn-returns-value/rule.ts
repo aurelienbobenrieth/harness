@@ -33,6 +33,9 @@ export const queryFnReturnsValue: Rule = {
   },
   createOnce(context) {
     return {
+      before() {
+        return !/\.test-d\.[cm]?[jt]sx?$/.test((context.filename ?? "").replaceAll("\\", "/"));
+      },
       Property(node) {
         const fn = queryFunction(context, node, queryFunctionNames);
         if (fn === undefined || fn.body?.type !== "BlockStatement") return;

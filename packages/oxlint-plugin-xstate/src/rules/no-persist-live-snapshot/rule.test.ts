@@ -65,3 +65,12 @@ export function withLocalJson(JSON: { stringify(value: unknown): string }) { ret
     ),
   ).resolves.toBeUndefined();
 });
+
+it("exempts test files", async () => {
+  const source = `import { createActor, createMachine } from "xstate";
+${machine}const actor = createActor(checkoutMachine).start();
+export const text = JSON.stringify(actor.getSnapshot());
+`;
+  await expect(assertRuleDoesNotReport(ruleName, source, { filename: "checkout.test.ts" })).resolves.toBeUndefined();
+  await expect(assertRuleReports(ruleName, source, { filename: "checkout.ts" })).resolves.toBeUndefined();
+});

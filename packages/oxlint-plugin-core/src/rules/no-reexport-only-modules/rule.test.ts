@@ -51,3 +51,10 @@ it("reports index.ts when the allow option replaces the default", async () => {
     }),
   ).resolves.toBeUndefined();
 });
+
+it.each(["index.tsx", "index.js", "index.mjs", "index.d.ts", "src/mod.ts"])(
+  "allows the conventional entrypoint %s by default",
+  async (filename) => {
+    await assertRuleDoesNotReport(ruleName, reexportOnly, { filename });
+  },
+);

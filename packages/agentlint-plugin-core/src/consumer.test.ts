@@ -20,7 +20,7 @@ import { shopifyAppPreset as app } from ${JSON.stringify(packageUrl("agentlint-p
 export default { rules: [...core.rules, ...effect.rules, ...query.rules, ...xstate.rules, ...app.rules] };`,
     "locales/en.json": '{"button":"CLICK HERE"}',
     "sample.ts":
-      'export interface IUser { id: string }\nexport type Order = { id: string };\nfetch("/unbounded"); class Card extends LitElement {} useQuery({}); createActor(machine); const copy = "Hurry!";',
+      'export interface IUser { id: string }\nexport type Order = { id: string };\nfetch("/unbounded"); class Card extends LitElement {} useQuery({}); createActor(machine); const copy = "Hurry!"; export const place = (sql) => sql.withTransaction(fetch("/hook"));',
     "blocks/card.liquid": "<oio-card><button>Show</button></oio-card>",
     "snippets/card.liquid": "{% doc %}A card.{% enddoc %}<div>CLICK HERE</div>",
     "valid.ts": "interface Local { id: string }; export const id = 1;",
@@ -101,7 +101,7 @@ export default { rules: [...core.rules, ...effect.rules, ...query.rules, ...xsta
         "tanstack-query/query-state-coverage",
         "xstate/actor-cleanup",
         "shopify-app/no-pressure-copy",
-        "effect/prefer-schema-contracts",
+        "effect/transaction-no-network",
       ]),
     );
     expect(findings.filter((finding) => finding.location.file.includes("valid."))).toEqual([]);

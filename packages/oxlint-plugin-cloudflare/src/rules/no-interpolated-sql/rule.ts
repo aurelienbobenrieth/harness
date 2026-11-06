@@ -51,7 +51,7 @@ function isSqlCall(context: Context, node: ESTree.CallExpression): boolean {
   return false;
 }
 
-/** A literal, or a `const` bound to a literal: text fixed at author time, not runtime input. */
+/** A literal, a `const` bound to a literal, or an imported SCREAMING_CASE constant: text fixed at author time, not runtime input. */
 function isStaticValue(context: Context, node: ESTree.Node, depth = 0): boolean {
   if (depth > 8) return false;
   const value = unwrapExpression(node);
@@ -62,6 +62,8 @@ function isStaticValue(context: Context, node: ESTree.Node, depth = 0): boolean 
     return isStaticValue(context, value.left, depth + 1) && isStaticValue(context, value.right, depth + 1);
   if (value.type !== "Identifier") return false;
   return (binding(context, value, value.name)?.defs ?? []).some((definition) => {
+    // An imported SCREAMING_CASE binding is a table-name constant fixed at author time.
+    if (definition.type === "ImportBinding") return /^[A-Z][A-Z\d_]*$/u.test(value.name);
     if (definition.node.type !== "VariableDeclarator" || definition.parent?.type !== "VariableDeclaration")
       return false;
     const initial = definition.node.init;

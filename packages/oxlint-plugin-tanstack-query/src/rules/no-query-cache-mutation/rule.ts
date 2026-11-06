@@ -52,7 +52,13 @@ function mutation(identifier: ESTree.Node): ESTree.Node | undefined {
   for (;;) {
     const parent = parentOf(current);
     if (parent === undefined) return undefined;
-    if (parent.type === "TSNonNullExpression" || parent.type === "ParenthesizedExpression") {
+    if (
+      parent.type === "TSNonNullExpression" ||
+      parent.type === "ParenthesizedExpression" ||
+      parent.type === "TSAsExpression" ||
+      parent.type === "TSSatisfiesExpression" ||
+      parent.type === "TSTypeAssertion"
+    ) {
       current = parent;
       continue;
     }

@@ -23,16 +23,27 @@ function effectMember(context: Context, callee: ESTree.Node, moduleName: "Data" 
  * `Schema.TaggedErrorClass<Self>()(tag, ...)` or `Data.TaggedError(tag)`. `undefined` when the superclass is not one
  * of them; `{ tag: undefined }` when it is, but without a tag argument.
  */
-function taggedErrorSuperclass(
+export function taggedErrorSuperclass(
   context: Context,
   superClass: ESTree.Node,
-): { readonly tag: ESTree.Node | undefined } | undefined {
+): { readonly tag: ESTree.Node | undefined; readonly call: ESTree.CallExpression } | undefined {
   const call = unwrapExpression(superClass);
   if (call.type !== "CallExpression") return undefined;
   const [tag] = call.arguments;
   const curried = call.callee.type === "CallExpression" ? call.callee.callee : undefined;
-  if (curried !== undefined && schemaConstructors.has(effectMember(context, curried, "Schema") ?? "")) return { tag };
-  return effectMember(context, call.callee, "Data") === "TaggedError" ? { tag } : undefined;
+  if (curried !== undefined && schemaConstructors.has(effectMember(context, curried, "Schema") ?? ""))
+    return { tag, call };
+  return effectMember(context, call.callee, "Data") === "TaggedError" ? { tag, call } : undefined;
+}
+
+/**
+ * A tag equals the class name, or qualifies it with a namespace so tags stay unique across packages
+ * (`"git/GitError"`, `"GCP.SQL.InstanceFailed"`, `"NeonOperationPending"`): the class name still ends the tag.
+ */
+function tagNamesClass(tag: string, name: string): boolean {
+  if (!tag.endsWith(name)) return false;
+  const prefix = tag.slice(0, tag.length - name.length);
+  return prefix === "" || !/[A-Za-z0-9]$/u.test(prefix) || /^[A-Z]/u.test(name);
 }
 
 function suffixOption(context: Context): string {
@@ -42,7 +53,7 @@ function suffixOption(context: Context): string {
 
 /**
  * Keep tagged error classes recognizable: the class name carries the error suffix and its `_tag` repeats the class
- * name, so `catchTag("NotFoundError")` greps straight to `class NotFoundError`.
+ * name (or ends with it after a namespace prefix), so `catchTag("NotFoundError")` greps straight to `class NotFoundError`. Set `suffix` to an empty string to keep only the tag check.
  */
 export const taggedErrorName: Rule = {
   meta: {
@@ -77,7 +88,7 @@ export const taggedErrorName: Rule = {
       if (!name.endsWith(suffix)) context.report({ node: node.id, messageId: "missingSuffix", data: { name, suffix } });
 
       const tag = stringLiteralValue(superclass.tag);
-      if (superclass.tag !== undefined && tag !== undefined && tag !== name)
+      if (superclass.tag !== undefined && tag !== undefined && !tagNamesClass(tag, name))
         context.report({ node: superclass.tag, messageId: "tagMismatch", data: { tag, name } });
     }
 

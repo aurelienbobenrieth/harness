@@ -24,9 +24,15 @@
     "url": "git+https://github.com/aurelienbobenrieth/harness.git",
     "directory": "packages/oxlint-plugin-core"
   },
+  "bin": {
+    "harness-check-commit": "bin/check-commit.mjs",
+    "harness-format-padding": "bin/format-padding.mjs",
+    "harness-install-hooks": "bin/install-hooks.mjs"
+  },
   "files": [
     "dist",
-    "CHANGELOG.md"
+    "CHANGELOG.md",
+    "bin"
   ],
   "type": "module",
   "exports": {

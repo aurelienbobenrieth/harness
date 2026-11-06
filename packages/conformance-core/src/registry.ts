@@ -1,18 +1,20 @@
+import { migrationSnapshotAncestry } from "./checks/migration-snapshot-ancestry.js";
 import { closedDesignSystemProbe } from "./checks/closed-design-system-probe.js";
-import { deadExports } from "./checks/dead-exports.js";
 import { dependencyOverlap } from "./checks/dependency-overlap.js";
 import { duplicationBudget } from "./checks/duplication-budget.js";
 import { instructionBlocks } from "./checks/instruction-blocks.js";
 import { tsconfigStrictness } from "./checks/tsconfig-strictness.js";
+import { undeclaredDependencies } from "./checks/undeclared-dependencies.js";
 import type { ConformanceCheck, ConformanceRunOptions } from "./finding.js";
 
 export const coreChecks: readonly ConformanceCheck[] = [
   dependencyOverlap,
   duplicationBudget,
-  deadExports,
+  undeclaredDependencies,
   closedDesignSystemProbe,
   tsconfigStrictness,
   instructionBlocks,
+  migrationSnapshotAncestry,
 ];
 
 export function activeChecks(options: ConformanceRunOptions): readonly ConformanceCheck[] {

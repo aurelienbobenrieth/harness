@@ -2,7 +2,13 @@
  * @attribution anti-slop by Dillon Mulroy (MIT, concept re-implemented)
  */
 import type { ESTree, Rule } from "@oxlint/plugins";
-import { isAssertionExpression, isConstAssertion, unwrapExpressionParens, type ParentedNode } from "../ast.js";
+import {
+  isAssertionExpression,
+  isConstAssertion,
+  isTestFile,
+  unwrapExpressionParens,
+  type ParentedNode,
+} from "../ast.js";
 
 const message =
   "This assertion chain discards type evidence. Keep the original precise type, or parse untrusted input at its boundary before narrowing it.";
@@ -41,6 +47,9 @@ export const noChainedTypeAssertions: Rule = {
   },
   createOnce(context) {
     return {
+      before() {
+        if (isTestFile(context.filename)) return false;
+      },
       TSAsExpression(node) {
         if (!shouldReport(node)) return;
         context.report({ node, messageId: "chainedAssertion" });

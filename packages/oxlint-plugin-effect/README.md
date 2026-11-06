@@ -2,7 +2,7 @@
 
 [![npm](https://img.shields.io/npm/v/@aurelienbbn/oxlint-plugin-effect)](https://www.npmjs.com/package/@aurelienbbn/oxlint-plugin-effect) [![downloads](https://img.shields.io/npm/dm/@aurelienbbn/oxlint-plugin-effect)](https://www.npmjs.com/package/@aurelienbbn/oxlint-plugin-effect) [![CI](https://github.com/aurelienbobenrieth/harness/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/aurelienbobenrieth/harness/actions/workflows/ci.yml) [![license](https://img.shields.io/npm/l/@aurelienbbn/oxlint-plugin-effect)](https://github.com/aurelienbobenrieth/harness/blob/main/packages/oxlint-plugin-effect/LICENSE) [![node](https://img.shields.io/node/v/@aurelienbbn/oxlint-plugin-effect)](https://github.com/aurelienbobenrieth/harness/blob/main/packages/oxlint-plugin-effect/package.json)
 
-**42 oxlint rules for Effect code: runtime boundaries, failure channels, concurrency, services, Schema. Only what `@effect/tsgo` doesn't own.**
+**44 oxlint rules for Effect code: runtime boundaries, failure channels, concurrency, services, Schema. Only what `@effect/tsgo` doesn't own.**
 
 ```sh
 pnpm add -D @aurelienbbn/oxlint-plugin-effect oxlint   # oxlint >=1.82.0 <2.0.0
@@ -61,6 +61,19 @@ const load = Effect.fn("users.load")(body); // ✅ ids go in span attributes
 class NotFound extends Schema.TaggedError<NotFound>()("Missing", {}) {} // ❌ tagged-error-name, twice
 class NotFoundError extends Schema.TaggedError<NotFoundError>()("NotFoundError", {}) {} // ✅ catchTag greps to the class
 
+class QueueNotFoundError extends Schema.TaggedError<QueueNotFoundError>()("QueueNotFoundError", {
+  name: Schema.String,
+}) {} // ❌ no-tagged-error-name-field: shadows Error.name
+class QueueNotFoundError extends Schema.TaggedError<QueueNotFoundError>()("QueueNotFoundError", {
+  queueName: Schema.String,
+}) {} // ✅ domain-specific field
+
+export const parse = (text: string) => {
+  throw new Error(text);
+}; // ❌ no-native-failure (in a file importing effect)
+export const parse = (text: string) =>
+  Effect.try({ try: () => JSON.parse(text), catch: (cause) => new ParseError({ cause }) }); // ✅ a throw inside Effect.try is captured
+
 const Status = Schema.Literals(["Pending", "partially-refunded"]); // ❌ schema-literal-case, twice
 const Status = Schema.Literals(["pending", "partially_refunded"]); // ✅ one case on the wire
 
@@ -84,6 +97,8 @@ Effect.tryPromise({
 ```
 
 - **Concurrency rules demand an explicit choice**; they don't claim omitted concurrency is unbounded.
+- **`no-native-failure` is self-scoped to files importing `effect`, `effect/*` or `@effect/*`.** It reports `try`/`catch` and `throw` there. Legal: anything inside the callback of `Effect.try` / `Effect.tryPromise` (Effect captures the thrown value), `try`/`finally` without `catch`, and `throw redirect()` / `throw notFound()` imported from a router framework (`@tanstack/*`, `next/*`, `react-router*`, `@remix-run/*`, `@sveltejs/kit`). A `throw` directly in an `Effect.gen`/`Effect.fn` body is `no-unsafe-effect-body`'s, and a `try`/`catch` there is `effecttsgo/try-catch-in-effect-gen`'s, so none reports twice. Test-support files are exempt through `allow`; a project convention such as `*.boundary.ts` goes in `allow` too.
+- **`no-tagged-error-name-field` credits [crosshatch/traits](https://github.com/crosshatch/traits) by Harry Solovay (Apache-2.0)** for the idea that an error's identifier field is domain-specific (`queueName`, not `name`); the rule is implemented independently.
 - **Same `allow` paths on `no-run-promise-in-runtime` and `no-unscoped-runtime-launch`:** shared boundary matching.
 - **`tagged-error-name` clashes with tsgo `deterministic-keys` only when tsgo's `keyPatterns` gain an `error` target**: that target wants a package-qualified tag (`pkg/file/NotFoundError`). Keep errors out of `keyPatterns`, or turn this rule off.
 - **`schema-literal-case` keeps `Schema.Literals([...])` values in one case, snake_case by default:** they travel as data (URLs, SQL, logs, wire contracts), and snake_case is what Postgres, Shopify REST (`partially_refunded`) and Stripe (`requires_payment_method`) use. `Schema.Literal("...")`, `_tag`s and non-string literals are out of scope. No fix: renaming a wire value needs a coordinated change.
@@ -91,22 +106,23 @@ Effect.tryPromise({
 - **`schema-check-branded` puts a domain check in the type:** a check runs only when a value is decoded, encoded or built with `make`, so without a brand code can still write `{ concurrency: 0 }`. In `**/domain/**` (option `files`), a `Schema.check(...)` or `.check(...)` whose chain has no `Schema.brand` is reported. A wire DTO needs no brand (decoding and encoding both check it), so the rule stays out of other folders by default; built-in schemas used as they are (`Schema.Int`, `Schema.NonEmptyString`) are not checks it sees. A counter that only grows (`attempts + 1`) is the usual exception: suppress it there.
 - **`telemetry-name-format` wants indexed names as `<area>.<operation>` in lowercase dotted snake_case** (`mcp.auth.verify_api_key`): span names, `Rpc.make` tags, and the keys of `annotateLogs`, `annotateSpans`, `annotateCurrentSpan` and `withSpan`'s `attributes` (one segment allowed: `event`). String literals only; `no-dynamic-span-name` owns runtime names.
 - **`telemetry-name-format` with `logMessages: true` treats a log message as an event name:** the first argument of `Effect.log`, `logTrace`, `logDebug`, `logInfo`, `logWarning`, `logError` and `logFatal` (through `Effect`, an alias, or a named import from `effect/Effect`) must be a literal in the name format, like `Effect.logInfo("webhook.rejected", { attempt })`, so log backends can search and count by it. A variable, a template with values or a concatenation is reported too: values go in later arguments or `Effect.annotateLogs`.
-- **Enable `telemetry-name-format` or `effect-fn-name-matches-binding`, not both:** the binding rule ties the last span segment to the binding (`const syncAll = Effect.fn("orders.syncAll")`), which snake_case rejects.
+- **`telemetry-name-format` and `effect-fn-name-matches-binding` agree:** the binding rule accepts the span's last segment spelled as the binding (`orders.syncAll`) or as its snake_case words (`orders.sync_all`), and as the trailing words of a longer binding (`view_run` for `leaksViewRun`). Name the span in snake_case and both rules pass. `telemetry-name-format` skips tests (`allow`).
+- **`prefer-effect-array-helpers`, `no-switch` and `no-service-constructor-imports` read only files that import Effect;** `no-array-for-each`, `no-array-sort`, `no-array-callback-reference` and `no-array-method-this-argument` are Effect-aware replacements of the `unicorn` rules of the same names, so they read every file.
 - 🎨 `dependencies-first`, `padding-after-dependencies`, `no-switch`, `prefer-match`, `prefer-effect-array-helpers`, `schema-type-adjacent`, `schema-literal-case`, `schema-domain-types`, `schema-check-branded`, `tagged-error-name`, `telemetry-name-format` are opinionated. **Suppress at the exceptional call site**, not in the shared config.
 
 <details>
-<summary>44 rules by job</summary>
+<summary>45 rules by job</summary>
 
-| Job                       | Rules                                                                                                                                                                                                                                          |
-| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 🚨 failures (10)          | `no-catch-all-cause`, `no-effect-ordie`, `no-swallowed-failure`, `no-untyped-try-promise-catch`, `preserve-thrown-cause`, `no-unsafe-error-mapper`, `require-tagged-effect-fail`, `no-effect-promise`, `bounded-retry`, `tagged-error-name` 🎨 |
-| 🚪 runtime boundaries (7) | `no-run-promise-in-runtime`, `no-unscoped-runtime-launch`, `prefer-run-main`, `no-fork-detach`, `no-managed-runtime-per-call`, `prefer-it-effect` (opt-in, needs `@effect/vitest`), `no-fake-timers-in-effect-tests`                           |
-| 🧬 bodies & tracing (7)   | `no-unsafe-effect-body`, `require-named-effect-fn`, `effect-fn-name-matches-binding`, `no-dynamic-span-name`, `telemetry-name-format` 🎨, `dependencies-first` 🎨, `padding-after-dependencies` 🎨                                             |
-| 🧩 services & layers (4)  | `no-service-constructor-imports`, `no-service-dependency-parameters`, `no-service-option`, `no-static-service-forwarders`                                                                                                                      |
-| 📐 Schema & config (6)    | `no-schema-any`, `schema-type-adjacent` 🎨, `schema-literal-case` 🎨, `schema-domain-types` 🎨, `schema-check-branded` 🎨, `require-redacted-secret-config`                                                                                    |
-| ⚡ concurrency (3)        | `require-all-concurrency`, `require-for-each-concurrency`, `require-abort-signal`                                                                                                                                                              |
-| 🎨 style (3)              | `no-switch`, `prefer-match`, `prefer-effect-array-helpers`                                                                                                                                                                                     |
-| 🔁 arrays (4)             | `no-array-callback-reference`, `no-array-for-each`, `no-array-method-this-argument`, `no-array-sort`: unicorn's array checks, skipping Effect modules (`Option.some`, `Effect.forEach`, `Arr.sort`)                                            |
+| Job                       | Rules                                                                                                                                                                                                                                                                   |
+| ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 🚨 failures (11)          | `no-catch-all-cause`, `no-effect-ordie`, `no-swallowed-failure`, `no-untyped-try-promise-catch`, `preserve-thrown-cause`, `require-tagged-effect-fail`, `no-effect-promise`, `bounded-retry`, `no-native-failure`, `no-tagged-error-name-field`, `tagged-error-name` 🎨 |
+| 🚪 runtime boundaries (7) | `no-run-promise-in-runtime`, `no-unscoped-runtime-launch`, `prefer-run-main`, `no-fork-detach`, `no-managed-runtime-per-call`, `prefer-it-effect` (opt-in), `no-fake-timers-in-effect-tests`                                                                            |
+| 🧬 bodies & tracing (7)   | `no-unsafe-effect-body`, `require-named-effect-fn`, `effect-fn-name-matches-binding`, `no-dynamic-span-name`, `telemetry-name-format` 🎨, `dependencies-first` 🎨, `padding-after-dependencies` 🎨                                                                      |
+| 🧩 services & layers (4)  | `no-service-constructor-imports`, `no-service-dependency-parameters`, `no-service-option`, `no-static-service-forwarders`                                                                                                                                               |
+| 📐 Schema & config (6)    | `no-schema-any`, `schema-type-adjacent` 🎨, `schema-literal-case` 🎨, `schema-domain-types` 🎨, `schema-check-branded` 🎨, `require-redacted-secret-config`                                                                                                             |
+| ⚡ concurrency (3)        | `require-all-concurrency`, `require-for-each-concurrency`, `require-abort-signal`                                                                                                                                                                                       |
+| 🎨 style (3)              | `no-switch`, `prefer-match`, `prefer-effect-array-helpers`                                                                                                                                                                                                              |
+| 🔁 arrays (4)             | `no-array-callback-reference`, `no-array-for-each`, `no-array-method-this-argument`, `no-array-sort`: unicorn's array checks, skipping Effect modules (`Option.some`, `Effect.forEach`, `Arr.sort`)                                                                     |
 
 </details>
 
@@ -115,35 +131,44 @@ Effect.tryPromise({
 
 `tests` = `**/*.{test,spec}.{ts,tsx}`.
 
-| Rule                               | Option                  | Default                                                                                                     |
-| ---------------------------------- | ----------------------- | ----------------------------------------------------------------------------------------------------------- |
-| `no-run-promise-in-runtime`        | `allow`                 | tests, `**/scripts/**`                                                                                      |
-| `no-unscoped-runtime-launch`       | `allow`                 | tests, `**/scripts/**`                                                                                      |
-| `prefer-run-main`                  | `allow`                 | tests, `**/scripts/**`                                                                                      |
-| `no-managed-runtime-per-call`      | `allow`                 | tests, `**/scripts/**`                                                                                      |
-| `prefer-effect-array-helpers`      | `allow`                 | tests, `**/scripts/**`                                                                                      |
-|                                    | `ignoredObjects`        | `Array`, `Arr`, `Effect`, `HashMap`, `HashSet`, `Match`, `Option`, `Record`, `Schedule`, `Schema`, `Stream` |
-| `no-schema-any`                    | `allow`                 | tests, `**/fixtures/**`, `**/scripts/**`, `tools/**`                                                        |
-| `no-effect-ordie`                  | `allow`, `allowedCalls` | `[]`, `[]`                                                                                                  |
-| `no-effect-promise`                | `allow`                 | `[]`                                                                                                        |
-|                                    | `mode`                  | `"all"` · or `"rejectable-only"`                                                                            |
-| `no-fork-detach`                   | `allow`                 | `[]`                                                                                                        |
-| `no-swallowed-failure`             | `allowInFinalizers`     | `true`                                                                                                      |
-| `prefer-it-effect`                 | `testFiles`             | tests                                                                                                       |
-| `require-abort-signal`             | `abortableCalls`        | `["fetch"]`                                                                                                 |
-| `require-redacted-secret-config`   | `secretPattern`         | `(SECRET\|PASSWORD\|PASSWD\|TOKEN\|API_?KEY\|PRIVATE_?KEY\|CREDENTIAL\|DATABASE_URL\|_DSN$)`                |
-|                                    | `benignPattern`         | `_(TTL\|LENGTH\|NAME\|HEADER\|URL_PREFIX\|COUNT\|ENABLED)$`                                                 |
-| `effect-fn-name-matches-binding`   | `ignorePattern`         | none                                                                                                        |
-| `no-service-constructor-imports`   | `serviceModules`        | none (project-local sources always count)                                                                   |
-| `no-service-dependency-parameters` | `serviceTypeNames`      | `[]`                                                                                                        |
-| `tagged-error-name`                | `suffix`                | `"Error"`                                                                                                   |
-| `schema-check-branded`             | `files`, `allow`        | `["**/domain/**"]`, tests and `**/scripts/**`                                                               |
-| `schema-domain-types`              | `files`, `allow`        | `["**/domain/**"]`, tests and `**/scripts/**`                                                               |
-| `schema-literal-case`              | `case`                  | `"snake"` · or `"kebab"`, `"camel"`, `"pascal"`                                                             |
-| `telemetry-name-format`            | `pattern`               | `^[a-z][a-z0-9_]*(\.[a-z][a-z0-9_]*)*$` (names)                                                             |
-|                                    | `minSegments`           | `2` (dot-separated segments a name needs)                                                                   |
-|                                    | `keyPattern`            | `^[a-z][a-z0-9_]*(\.[a-z][a-z0-9_]*)*$` (annotation and attribute keys)                                     |
-|                                    | `logMessages`           | `false`; `true` holds the first argument of `Effect.log*` to the name format                                |
+`support` = `tests`, `*.bench.*`, `*.tst.*` and the folders `test/`, `tests/`, `__tests__/`, `testing/`, `fixtures/`, `e2e/`, `typetest/`, `benchmark/`, `scripts/`: a failure there is a bug in the test or tool. `no-catch-all-cause`, `no-unsafe-effect-body`, `no-untyped-try-promise-catch`, `preserve-thrown-cause`, `bounded-retry`, `require-all-concurrency`, `require-for-each-concurrency`, `require-tagged-effect-fail`, `require-abort-signal` and `no-swallowed-failure` take an `allow` option that defaults to `support`.
+
+| Rule                               | Option                      | Default                                                                                                           |
+| ---------------------------------- | --------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `no-run-promise-in-runtime`        | `allow`                     | support, Worker handler, browser entry                                                                            |
+| `no-unscoped-runtime-launch`       | `allow`                     | support, Worker handler, browser entry, `Layer.launch` into `runMain`                                             |
+| `prefer-run-main`                  | `allow`                     | support, browser entry                                                                                            |
+| `no-managed-runtime-per-call`      | `allow`                     | support                                                                                                           |
+| `prefer-effect-array-helpers`      | `allow`                     | tests, `**/scripts/**`                                                                                            |
+|                                    | `ignoredObjects`            | `Array`, `Arr`, `Effect`, `HashMap`, `HashSet`, `Match`, `Option`, `Record`, `Schedule`, `Schema`, `Stream`       |
+| `no-schema-any`                    | `allow`                     | support, `tools/**`                                                                                               |
+| `no-effect-ordie`                  | `allow`, `allowedCalls`     | support · `[]`                                                                                                    |
+| `no-effect-promise`                | `allow`                     | support, finalizers                                                                                               |
+|                                    | `mode`                      | `"all"` · or `"rejectable-only"`                                                                                  |
+| `no-native-failure`                | `allow`                     | support                                                                                                           |
+| `no-fork-detach`                   | `allow`                     | support                                                                                                           |
+| `no-swallowed-failure`             | `allowInFinalizers`         | `true`                                                                                                            |
+| `prefer-it-effect`                 | `testFiles`                 | tests                                                                                                             |
+| `prefer-it-effect`                 | `requireEffectVitestImport` | `false`: any test file importing Effect                                                                           |
+| `require-abort-signal`             | `abortableCalls`            | `["fetch"]`                                                                                                       |
+| `require-redacted-secret-config`   | `secretPattern`             | `(SECRET\|PASSWORD\|PASSWD\|TOKEN\|API_?KEY\|PRIVATE_?KEY\|CREDENTIAL\|DATABASE_URL\|_DSN$)`                      |
+|                                    | `benignPattern`             | `_(TTL\|LENGTH\|NAME\|HEADER\|URL_PREFIX\|COUNT\|ENABLED)$\|(^\|_)PUBLIC_`                                        |
+| `effect-fn-name-matches-binding`   | `ignorePattern`             | none                                                                                                              |
+| `no-service-constructor-imports`   | `serviceModules`            | none (project-local sources always count)                                                                         |
+| `no-service-dependency-parameters` | `serviceTypeNames`          | `[]`                                                                                                              |
+| `no-service-option`                | `allowedServices`           | `[]`; `ParentSpan` is always allowed                                                                              |
+| `prefer-match`                     | `allow`                     | tests, `**/scripts/**`                                                                                            |
+| `require-named-effect-fn`          | `allow`                     | tests, `**/scripts/**`                                                                                            |
+| `telemetry-name-format`            | `allow`                     | tests, `**/scripts/**`                                                                                            |
+| `tagged-error-name`                | `suffix`                    | `"Error"` (`""` keeps only the tag check; a tag may add a namespace prefix: `"git/GitError"`)                     |
+| `schema-check-branded`             | `files`, `allow`            | `["**/domain/**"]`, tests and `**/scripts/**`                                                                     |
+| `schema-domain-types`              | `files`, `allow`            | `["**/domain/**"]`, tests and `**/scripts/**`                                                                     |
+| `schema-literal-case`              | `case`                      | `"snake"` · or `"kebab"`, `"camel"`, `"pascal"`                                                                   |
+|                                    | `allowedValues`             | `[]`; regex strings for wire values you do not own (generated files, flags, paths and symbols are always skipped) |
+| `telemetry-name-format`            | `pattern`                   | `^[a-z][a-z0-9_]*(\.[a-z][a-z0-9_]*)*$` (names)                                                                   |
+|                                    | `minSegments`               | `2` (dot-separated segments a name needs)                                                                         |
+|                                    | `keyPattern`                | `^[a-z][a-z0-9_]*(\.[a-z][a-z0-9_]*)*$` (annotation and attribute keys)                                           |
+|                                    | `logMessages`               | `false`; `true` holds the first argument of `Effect.log*` to the name format                                      |
 
 </details>
 
@@ -179,11 +204,11 @@ Effect.gen(function* () {
 
 ## Migration
 
-| Change                                               | Why                                                                                                                                                                                                         | Now                                                                                                                                             |
-| ---------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
-| `prefer-schema-decode-unknown` removed               | Effect 4's typed decoders (`decodeSync`, `decodeEffect`, …) take `S["Encoded"]`, so `as unknown` input fails typecheck; `decodeEither` no longer exists                                                     | `effecttsgo/prefer-schema-over-json` reports `JSON.parse`, `typescript/no-explicit-any` reports `as any`. Drop the rule from your config        |
-| `no-unsafe-effect-body` keeps only `throw`           | try/catch and global timers in generators are `effecttsgo/try-catch-in-effect-gen` and `effecttsgo/global-timers-in-effect` (both in `recommended`); `Effect.gen` rejects an `async function*` at typecheck | same rule name, no config change. ⚠️ `try`/`finally` around `yield*` without `catch` has no verified tsgo owner                                 |
-| `no-catch-all-cause`, `no-swallowed-failure` widened | tsgo's `catch-to-ignore` / `catch-to-or-else-succeed` rewrites led to `Effect.ignoreCause` and `Effect.orElseSucceed(() => placeholder)`, which passed silently                                             | `Effect.ignoreCause`, `Effect.catchDefect` report under `no-catch-all-cause`; a placeholder `Effect.orElseSucceed` under `no-swallowed-failure` |
+| Change                                               | Why                                                                                                                                                                                                         | Now                                                                                                                                                                                                                |
+| ---------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `prefer-schema-decode-unknown` removed               | Effect 4's typed decoders (`decodeSync`, `decodeEffect`, …) take `S["Encoded"]`, so `as unknown` input fails typecheck; `decodeEither` no longer exists                                                     | `effecttsgo/prefer-schema-over-json` reports `JSON.parse`, `typescript/no-explicit-any` reports `as any`. Drop the rule from your config                                                                           |
+| `no-unsafe-effect-body` keeps only `throw`           | try/catch and global timers in generators are `effecttsgo/try-catch-in-effect-gen` and `effecttsgo/global-timers-in-effect` (both in `recommended`); `Effect.gen` rejects an `async function*` at typecheck | same rule name, no config change. ⚠️ `try`/`finally` around `yield*` without `catch` has no verified tsgo owner                                                                                                    |
+| `no-catch-all-cause`, `no-swallowed-failure` widened | tsgo's `catch-to-ignore` / `catch-to-or-else-succeed` rewrites led to `Effect.ignoreCause` which passed silently                                                                                            | `Effect.ignoreCause`, `Effect.catchDefect` report under `no-catch-all-cause`; a placeholder `Effect.catch` handler under `no-swallowed-failure` (`Effect.orElseSucceed` is an explicit fallback and stays allowed) |
 
 ## Contract
 
@@ -199,55 +224,59 @@ Effect.gen(function* () {
 
 Generated from package exports by `pnpm catalog`. Rule-specific options and limitations are described above and in the source tests.
 
-| Rule/check                         | Trigger or review scope                                                                                                                                                                                      |
-| ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `bounded-retry`                    | Require Effect.retry policies visible in the same file to carry a bound such as Schedule.recurs, Schedule.upTo, Schedule.during, times, while, or until.                                                     |
-| `dependencies-first`               | Yield service dependencies before runtime logic in Effect bodies.                                                                                                                                            |
-| `effect-fn-name-matches-binding`   | Require the last dot-segment of an Effect.fn span name to equal the variable or property the function is bound to.                                                                                           |
-| `no-array-callback-reference`      | Disallow passing a function reference to an array method's callback, skipping calls on Effect modules that are not arrays.                                                                                   |
-| `no-array-for-each`                | Disallow Array#forEach in favor of for…of, skipping Effect's forEach helpers (`Effect.forEach`).                                                                                                             |
-| `no-array-method-this-argument`    | Disallow the `thisArg` of array methods, skipping Effect's data-first helpers (`Arr.filter(xs, f)`), whose second argument is the callback.                                                                  |
-| `no-array-sort`                    | Disallow Array#sort, which mutates, in favor of toSorted, skipping Effect's sort helpers (`Arr.sort`), which do not.                                                                                         |
-| `no-catch-all-cause`               | Disallow Effect.catchCause, catchCauseIf, catchCauseFilter, catchDefect, ignoreCause, sandbox, Layer.catchCause, and Effect 3 catchAllCause because they catch defects.                                      |
-| `no-dynamic-span-name`             | Disallow template literals with runtime values and string concatenation as span names in Effect.fn, Effect.withSpan, withSpanScoped, useSpan, makeSpan, makeSpanScoped, Layer.withSpan, and Stream.withSpan. |
-| `no-effect-ordie`                  | Disallow Effect.orDie, Effect.orDieWith, Layer.orDie, and Effect.catch handlers that only die outside configured escape hatches.                                                                             |
-| `no-effect-promise`                | Disallow Effect.promise outside configured files unless the thunk is a syntactically total promise such as Promise.resolve or a resolve-only timer.                                                          |
-| `no-fake-timers-in-effect-tests`   | Disallow vi.useFakeTimers, vi.advanceTimers*, vi.run*Timers, and vi.setSystemTime in files importing @effect/vitest; use TestClock.                                                                          |
-| `no-fork-detach`                   | Disallow Effect.forkDetach outside configured files and Effect.forkChild directly inside Layer constructors, where Effect.forkScoped ties the fiber to the layer scope.                                      |
-| `no-managed-runtime-per-call`      | Disallow ManagedRuntime.make inside function bodies outside configured files; build the runtime once at module scope.                                                                                        |
-| `no-run-promise-in-runtime`        | Disallow Effect.runPromise, runPromiseExit, and their run*With variants outside configured runtime boundaries.                                                                                               |
-| `no-schema-any`                    | Disallow Schema.Any outside configured escape-hatch files.                                                                                                                                                   |
-| `no-service-constructor-imports`   | Disallow make-prefixed imports from project service directories into runtime code.                                                                                                                           |
-| `no-service-dependency-parameters` | Disallow service projection types and configured service names in parameters.                                                                                                                                |
-| `no-service-option`                | Disallow Effect.serviceOption in favor of required services provided by layers.                                                                                                                              |
-| `no-static-service-forwarders`     | Disallow static class properties that only forward to an Effect service method.                                                                                                                              |
-| `no-swallowed-failure`             | Disallow Effect.ignore without a log option, and Effect.catch handlers or Effect.orElseSucceed fallbacks that discard the error for a placeholder.                                                           |
-| `no-switch`                        | Disallow switch statements in Effect code in favor of Match.                                                                                                                                                 |
-| `no-unsafe-effect-body`            | Disallow throw inside Effect.gen, Effect.fn, and Effect.fnUntraced bodies.                                                                                                                                   |
-| `no-unsafe-error-mapper`           | Disallow unknown and any in Effect error mapper parameters.                                                                                                                                                  |
-| `no-unscoped-runtime-launch`       | Disallow Effect.runFork, runSync, runSyncExit, runCallback, their run*With variants, and Layer.launch outside configured runtime boundaries.                                                                 |
-| `no-untyped-try-promise-catch`     | Require Effect.try and Effect.tryPromise to map thrown or rejected values with a catch handler.                                                                                                              |
-| `padding-after-dependencies`       | Require a blank line after the leading service dependencies of an Effect.gen, Effect.fn, or Effect.fnUntraced generator body when logic follows them.                                                        |
-| `prefer-effect-array-helpers`      | Prefer Effect array helpers over native array helper methods.                                                                                                                                                |
-| `prefer-it-effect`                 | Prefer it.effect from @effect/vitest over Effect.runPromise or Effect.runSync inside plain it/test callbacks in test files (opt-in; requires @effect/vitest).                                                |
-| `prefer-match`                     | Prefer Match from effect over chained literal ternaries.                                                                                                                                                     |
-| `prefer-run-main`                  | Prefer NodeRuntime.runMain or BunRuntime.runMain over a module top-level Effect.runPromise or Effect.runFork statement.                                                                                      |
-| `preserve-thrown-cause`            | Require Effect.try and Effect.tryPromise catch mappers to use the thrown value they receive.                                                                                                                 |
-| `require-abort-signal`             | Require Effect.tryPromise and Effect.promise thunks that call fetch (or configured abortable calls) to accept the AbortSignal parameter and pass it on.                                                      |
-| `require-all-concurrency`          | Require explicit concurrency for Effect.all.                                                                                                                                                                 |
-| `require-for-each-concurrency`     | Require explicit concurrency for Effect.forEach.                                                                                                                                                             |
-| `require-named-effect-fn`          | Require Effect.fn calls to include a non-empty name.                                                                                                                                                         |
-| `require-redacted-secret-config`   | Require Config.Redacted instead of Config.String or Config.NonEmptyString for configuration keys whose name looks like a secret.                                                                             |
-| `require-tagged-effect-fail`       | Require tagged error values for Effect.fail and Effect.failSync, rejecting literals, native Errors, and same-file untagged Error subclasses.                                                                 |
-| `schema-check-branded`             | Require a schema that adds a check in a domain folder to be branded, so code builds its values through make, which runs the check.                                                                           |
-| `schema-domain-types`              | Require domain types to be declared as Schemas, with the TypeScript type derived from them, instead of interfaces, object types, literal unions or enums.                                                    |
-| `schema-literal-case`              | Require the string values of Schema.Literals([...]) to follow one case: snake_case by default, or kebab, camel, or pascal.                                                                                   |
-| `schema-type-adjacent`             | Keep a Schema's matching type alias adjacent, allowing whitespace and JSDoc.                                                                                                                                 |
-| `tagged-error-name`                | Require classes extending Schema.TaggedError, Schema.TaggedErrorClass, or Data.TaggedError to end with the error suffix and to use their class name as the literal _tag.                                     |
-| `telemetry-name-format`            | Require literal span names, Rpc.make tags and (with logMessages) Effect log event names in lowercase dotted snake_case with at least two segments, and annotation keys in lowercase dotted snake_case.       |
+| Rule/check                         | Trigger or review scope                                                                                                                                                                                                                               |
+| ---------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `bounded-retry`                    | Require Effect.retry policies visible in the same file to carry a bound such as Schedule.recurs, Schedule.upTo, Schedule.during, times, while, or until.                                                                                              |
+| `calendar-date-round-trip`         | Pair a YYYY-MM-DD Effect Schema pattern with an explicit calendar-date refinement.                                                                                                                                                                    |
+| `dependencies-first`               | Yield service dependencies before runtime logic in Effect bodies.                                                                                                                                                                                     |
+| `destructive-reason-required`      | Require a nonoptional refined reason in Delete, Destroy, Purge, Drop and Remove command Schema.Struct declarations.                                                                                                                                   |
+| `effect-fn-name-matches-binding`   | Require the last dot-segment of an Effect.fn span name to name the variable or property the function is bound to, in camelCase or snake_case, or as its trailing words.                                                                               |
+| `no-array-callback-reference`      | Disallow passing a function reference to an array method's callback unless it ignores the index, skipping calls on Effect modules that are not arrays.                                                                                                |
+| `no-array-for-each`                | Disallow Array#forEach in favor of for…of, skipping Effect's forEach helpers (`Effect.forEach`).                                                                                                                                                      |
+| `no-array-method-this-argument`    | Disallow the `thisArg` of array methods, skipping Effect's data-first helpers (`Arr.filter(xs, f)`), capitalized receivers such as module namespaces, and calls whose first argument cannot be a callback.                                            |
+| `no-array-sort`                    | Disallow Array#sort, which mutates, in favor of toSorted, skipping Effect's sort helpers (`Arr.sort`), which do not.                                                                                                                                  |
+| `no-catch-all-cause`               | Disallow Effect.catchCause, catchCauseIf, catchCauseFilter, catchDefect, ignoreCause, sandbox, Layer.catchCause, and Effect 3 catchAllCause because they catch defects.                                                                               |
+| `no-dynamic-span-name`             | Disallow template literals with runtime values and string concatenation as span names in Effect.fn, Effect.withSpan, withSpanScoped, useSpan, makeSpan, makeSpanScoped, Layer.withSpan, and Stream.withSpan.                                          |
+| `no-effect-ordie`                  | Disallow Effect.orDie, Effect.orDieWith, Layer.orDie, and Effect.catch handlers that only die outside configured escape hatches.                                                                                                                      |
+| `no-effect-promise`                | Disallow Effect.promise outside configured files unless the thunk is a syntactically total promise such as Promise.resolve or a resolve-only timer.                                                                                                   |
+| `no-fake-timers-in-effect-tests`   | Disallow vi.useFakeTimers, vi.advanceTimers*, vi.run*Timers, and vi.setSystemTime, including imported aliases and namespace members, in files importing @effect/vitest; use TestClock.                                                                |
+| `no-fork-detach`                   | Disallow Effect.forkDetach outside configured files and Effect.forkChild directly inside Layer constructors, where Effect.forkScoped ties the fiber to the layer scope.                                                                               |
+| `no-managed-runtime-per-call`      | Disallow ManagedRuntime.make inside function bodies outside configured files; build the runtime once at module scope.                                                                                                                                 |
+| `no-native-failure`                | Disallow try/catch and throw in files that import Effect, outside Effect.try callbacks and Effect generator bodies.                                                                                                                                   |
+| `no-run-promise-in-runtime`        | Disallow Effect.runPromise, runPromiseExit, and their run*With variants outside configured runtime boundaries.                                                                                                                                        |
+| `no-schema-any`                    | Disallow Schema.Any outside configured escape-hatch files.                                                                                                                                                                                            |
+| `no-service-constructor-imports`   | Disallow make-prefixed imports from project service directories into runtime code of files that import Effect.                                                                                                                                        |
+| `no-service-dependency-parameters` | Disallow service projection types (`UserRepo["Service"]`, `UserRepo.Service`) and configured service names in parameters; `Context.Service` tag types and lowercase SDK namespaces are not projections.                                               |
+| `no-service-option`                | Disallow Effect.serviceOption in favor of required services provided by layers, except for `ParentSpan` and the ambient services named in `allowedServices`.                                                                                          |
+| `no-static-service-forwarders`     | Disallow static class properties that only forward to an Effect service method.                                                                                                                                                                       |
+| `no-swallowed-failure`             | Disallow Effect.ignore without a log option, and Effect.catch handlers that discard the error for a placeholder. Effect.orElseSucceed is an explicit fallback and stays allowed.                                                                      |
+| `no-switch`                        | Disallow switch statements in Effect code in favor of Match.                                                                                                                                                                                          |
+| `no-tagged-error-name-field`       | Disallow a field named name in the payload of a Schema.TaggedError, Schema.TaggedErrorClass, or Data.TaggedError class, which shadows Error.name.                                                                                                     |
+| `no-unsafe-effect-body`            | Disallow throw inside Effect.gen, Effect.fn, and Effect.fnUntraced bodies.                                                                                                                                                                            |
+| `no-unscoped-runtime-launch`       | Disallow Effect.runFork, runSync, runSyncExit, runCallback, their run*With variants, and Layer.launch outside configured runtime boundaries.                                                                                                          |
+| `no-untyped-try-promise-catch`     | Require Effect.try and Effect.tryPromise to map thrown or rejected values with a catch handler.                                                                                                                                                       |
+| `padding-after-dependencies`       | Require a blank line after the leading service dependencies of an Effect.gen, Effect.fn, or Effect.fnUntraced generator body when logic follows them.                                                                                                 |
+| `prefer-effect-array-helpers`      | Prefer Effect array helpers for known arrays inside imported Effect runtime callbacks.                                                                                                                                                                |
+| `prefer-it-effect`                 | Prefer it.effect from @effect/vitest over Effect.runPromise or Effect.runSync inside plain it/test callbacks in test files in test files that import Effect (opt-in; set requireEffectVitestImport to report only in files importing @effect/vitest). |
+| `prefer-match`                     | Prefer Match from effect over chained literal ternaries, skipping test files where fixtures pick data by id.                                                                                                                                          |
+| `prefer-run-main`                  | Prefer NodeRuntime.runMain or BunRuntime.runMain over a module top-level Effect.runPromise or Effect.runFork statement.                                                                                                                               |
+| `preserve-thrown-cause`            | Require Effect.try and Effect.tryPromise catch mappers to use the thrown value they receive.                                                                                                                                                          |
+| `require-abort-signal`             | Require Effect.tryPromise and Effect.promise thunks that call fetch (or configured abortable calls) to accept the AbortSignal parameter and pass it on.                                                                                               |
+| `require-all-concurrency`          | Require explicit concurrency for Effect.all.                                                                                                                                                                                                          |
+| `require-for-each-concurrency`     | Require explicit concurrency for Effect.forEach.                                                                                                                                                                                                      |
+| `require-named-effect-fn`          | Require Effect.fn calls to include a non-empty name, except in test files and `allow` globs.                                                                                                                                                          |
+| `require-redacted-secret-config`   | Require Config.Redacted instead of Config.String or Config.NonEmptyString for configuration keys whose name looks like a secret.                                                                                                                      |
+| `require-tagged-effect-fail`       | Require tagged error values for Effect.fail and Effect.failSync, rejecting literals, native Errors, and same-file untagged Error subclasses.                                                                                                          |
+| `schema-check-branded`             | Require a schema that adds a check in a domain folder to be branded, so code builds its values through make, which runs the check.                                                                                                                    |
+| `schema-domain-types`              | Require domain types to be declared as Schemas, with the TypeScript type derived from them, instead of interfaces, object types, literal unions or enums.                                                                                             |
+| `schema-literal-case`              | Require the string values of Schema.Literals([...]) to follow one case: snake_case by default, or kebab, camel, or pascal. Generated files, flags, paths, symbols and values matching `allowedValues` are skipped.                                    |
+| `schema-type-adjacent`             | Keep a Schema's matching type alias adjacent, allowing whitespace and JSDoc.                                                                                                                                                                          |
+| `tagged-error-name`                | Require classes extending Schema.TaggedError, Schema.TaggedErrorClass, or Data.TaggedError to end with the error suffix and to use their class name as the literal _tag.                                                                              |
+| `telemetry-name-format`            | Require literal span names, Rpc.make tags and (with logMessages) Effect log event names in lowercase dotted snake_case with at least two segments, and annotation keys in lowercase dotted snake_case. Test files are skipped by default (`allow`).   |
 
 ### Credited concepts
 
+- Author's private effect-first rail (owner's own rule; re-implemented generically)
 - Effect bundled AGENTS.md "The name string should match the function name" (concept)
 - Effect bundled ai-docs "capped exponential backoff with jitter and max attempts" pattern (concept)
 - Effect bundled ai-docs `04_integration/10_managed-runtime.ts` module-level runtime (concept)
@@ -256,6 +285,7 @@ Generated from package exports by `pnpm catalog`. Rule-specific options and limi
 - OpenTelemetry Tracing API specification, span name guidance "most general string ... low cardinality" (Apache-2.0, concept)
 - ai-automation by Sandro Maglione (inspiration, independently re-implemented)
 - anti-slop by Dillon Mulroy (MIT, concept re-implemented)
+- crosshatch/traits by Harry Solovay (Apache-2.0; idea only, independently implemented)
 - eslint-plugin-unicorn `no-array-callback-reference` (MIT; rule concept, independently re-implemented)
 - eslint-plugin-unicorn `no-array-for-each` (MIT; rule concept, independently re-implemented)
 - eslint-plugin-unicorn `no-array-method-this-argument` (MIT; rule concept, independently re-implemented)
@@ -263,3 +293,16 @@ Generated from package exports by `pnpm catalog`. Rule-specific options and limi
 - executor by Rhys Sullivan, dotted snake_case span and attribute names such as `mcp.auth.verify_api_key` (MIT, naming-style inspiration)
 
 <!-- harness-catalog:end -->
+
+## Advisory rules
+
+Merge the exported `advisoryRules` into your oxlint rules (or enable these names as `warn`): `effect/calendar-date-round-trip`, `effect/destructive-reason-required`. No autofix: each needs a domain decision.
+
+`prefer-effect-array-helpers` is enabled as `error` by consumers. It is excluded from `advisoryRules` after restricting it to imported Effect runtime callbacks: all ten scoped consumer samples were true positives. The plugin itself has no implicit severity.
+
+- `calendar-date-round-trip` (`warn`) flags an imported Effect Schema YYYY-MM-DD regex without a filter/check in the same fluent expression. Add a date round-trip predicate and tests for impossible dates and leap days. A refinement is a review boundary, not proof it validates calendars; alternate regexes and external helpers require review.
+- `destructive-reason-required` (`warn`) checks direct Schema.Struct declarations named Delete/Destroy/Purge/Drop/Remove followed by a capital letter or underscore. A reason must exist, be nonoptional and use an inline trimmed-length check (>= 10) or a referenced schema. Verify referenced/refined schemas reject trimmed reasons shorter than ten characters; the rule cannot prove a predicate or a remote delete validates input. Spread fields and arbitrary command names require review.
+
+### Array rule scope
+
+`prefer-effect-array-helpers`, `no-array-for-each` and `no-array-callback-reference` require a value import from `effect`, `effect/*` or `@effect/*`, and the nearest enclosing function resolved to an imported `effect/Effect` constructor or combinator. This includes `gen`, `fn`, `sync`, `suspend`, `promise`, `try`, `tryPromise`, `async`, `map`, `flatMap`, `tap`, `forEach`, `catchAll`, `catchTag`, `match` and `matchEffect`. Import aliases and generators passed by reference are recognized; shadowed names and unrelated utilities in the same file and deferred functions nested inside runtime bodies are excluded. Pure helpers called indirectly by an Effect program are outside this syntactic scope.

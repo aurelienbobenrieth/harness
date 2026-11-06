@@ -79,3 +79,25 @@ it("does nothing when unconfigured", async () => {
 
   expect(await instructionBlocks.run({ root })).toEqual([]);
 });
+
+it("ignores marker syntax quoted in prose or a code fence, and still finds the real block", async () => {
+  const documented =
+    "# AGENTS.md\n\nWrap the text in `<!-- harness:communication:start -->` and `<!-- harness:communication:end -->`.\n\n" +
+    "```md\n<!-- harness:communication:start -->\n<!-- harness:communication:end -->\n```\n\n";
+  const root = await createFixture({
+    "skills/communication/core.md": source,
+    "AGENTS.md": `${documented}${agents(source).replace("# AGENTS.md\n\n", "")}`,
+  });
+
+  expect(await instructionBlocks.run({ root, instructionBlocks: options })).toEqual([]);
+});
+
+it("still reports a real second block next to a fenced example", async () => {
+  const root = await createFixture({
+    "skills/communication/core.md": source,
+    "AGENTS.md": `${agents(source)}${agents(source)}`,
+  });
+
+  const findings = await instructionBlocks.run({ root, instructionBlocks: options });
+  expect(findings.map((finding) => finding.message)).toEqual([expect.stringContaining("repeats")]);
+});

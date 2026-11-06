@@ -7,6 +7,10 @@
  * v6); `send(actor, event)` and `send(event)` from `@xstate/effect`; `.send` on
  * actor refs; and the `send` slot of the `useMachine` / `useActor` tuple.
  *
+ * Without options only binding-proven senders match, including `.send` on actor
+ * refs. Options switch to name matching against `sendCalleeNames`, whose default
+ * leaves out the generic bare `send`; list it explicitly to include it.
+ *
  * @attribution ai-automation by Sandro Maglione (inspiration, independently re-implemented)
  */
 import { isEnqueuerParameter } from "../ast.js";
@@ -19,7 +23,7 @@ type RuleOptions = { readonly sendCalleeNames?: readonly string[] };
 
 type Sender = { readonly name: string; readonly eventIndex: number };
 
-const defaultSendCalleeNames = ["send", "raise", "sendTo", "sendParent", "emit", "sendBack"] as const;
+const defaultSendCalleeNames = ["raise", "sendTo", "sendParent", "emit", "sendBack"] as const;
 
 const enqueueSenders: ReadonlySet<string> = new Set(["raise", "sendTo", "sendParent", "emit"]);
 
@@ -100,7 +104,8 @@ export const requireEventSatisfies: Rule = {
       CallExpression(node) {
         const configured = context.options[0] !== undefined;
         const sender = configured ? byName(calleeName(node.callee)) : resolvedSender(context, node);
-        if (sender === undefined || !sendCalleeNames(context).includes(sender.name)) return;
+        if (sender === undefined) return;
+        if (configured && !sendCalleeNames(context).includes(sender.name)) return;
         let eventArgument = node.arguments[sender.eventIndex];
         while (eventArgument?.type === "TSAsExpression" || eventArgument?.type === "TSTypeAssertion")
           eventArgument = eventArgument.expression;

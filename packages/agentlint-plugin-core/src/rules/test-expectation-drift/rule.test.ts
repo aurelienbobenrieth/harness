@@ -251,3 +251,48 @@ it("honours custom patterns, caps evidence and rejects an invalid cap", async ()
     "maxEvidenceLines must be a positive integer",
   );
 });
+
+const oneLine = (assertion: string): string =>
+  `it("shape", () => { ${assertion} });\nit("other", () => expect(g()).toBe(1));\n`;
+
+it("reports a loosened matcher inside a single-line test", async () => {
+  expect(
+    await kinds(
+      { "src/f.test.ts": oneLine("expect(f()).toStrictEqual({ a: 1, b: 2 });") },
+      { "src/f.test.ts": oneLine("expect(f()).toMatchObject({ a: 1 });") },
+    ),
+  ).toEqual([["src/f.test.ts", "matcher-downgraded"]]);
+  expect(
+    await kinds(
+      { "src/f.test.ts": 'it("shape", () => expect(f()).toStrictEqual({ a: 1 }));\n' },
+      { "src/f.test.ts": 'it("shape renamed", () => expect(f()).toBeDefined());\n' },
+    ),
+  ).toEqual([["src/f.test.ts", "matcher-downgraded"]]);
+});
+
+const addsTest = (n: number): string => `it("adds", () => expect(f(1)).toBe(${n}));\n`;
+
+it("reports a re-valued single-line expectation with source changed, and stays silent without", async () => {
+  expect(
+    await kinds(
+      { "src/f.ts": "export const f = (n) => n + 1;\n", "src/f.test.ts": addsTest(2) },
+      { "src/f.ts": "export const f = (n) => n + 2;\n", "src/f.test.ts": addsTest(3) },
+    ),
+  ).toEqual([["src/f.test.ts", "expectation-revalued"]]);
+  expect(await kinds({ "src/f.test.ts": addsTest(2) }, { "src/f.test.ts": addsTest(3) })).toEqual([]);
+});
+
+it("stays silent when a single-line test is only reformatted into a block or strengthened", async () => {
+  expect(
+    await kinds(
+      { "src/f.test.ts": 'it("shape", () => expect(f()).toMatchObject({ a: 1 }));\n' },
+      { "src/f.test.ts": 'it("shape", () => expect(f()).toStrictEqual({ a: 1 }));\n' },
+    ),
+  ).toEqual([]);
+  expect(
+    await kinds(
+      { "src/f.test.ts": 'it("shape", () => expect(f()).toBe(1));\n' },
+      { "src/f.test.ts": 'it("shape", () => {\n  expect(f()).toBe(1);\n});\n' },
+    ),
+  ).toEqual([]);
+});

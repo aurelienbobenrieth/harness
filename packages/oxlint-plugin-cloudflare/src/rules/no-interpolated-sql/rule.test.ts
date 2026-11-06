@@ -62,3 +62,19 @@ it("accepts tagged sql templates and prepare() on unrelated receivers", async ()
     ),
   ).resolves.toBeUndefined();
 });
+
+it("accepts an imported SCREAMING_CASE table constant and reports a lowercase imported value", async () => {
+  await expect(
+    assertRuleDoesNotReport(
+      ruleName,
+      'import { STEP_CHUNKS_TABLE } from "./schema";\nexport default { async fetch(request: Request, env: Env) { await env.DB.prepare(`SELECT * FROM ${STEP_CHUNKS_TABLE} WHERE id = ?`).bind(1).first(); return new Response("ok"); } };\n',
+    ),
+  ).resolves.toBeUndefined();
+  await expect(
+    assertRuleReports(
+      ruleName,
+      'import { userId } from "./schema";\nexport default { async fetch(request: Request, env: Env) { await env.DB.prepare(`SELECT * FROM t WHERE id = ${userId}`).first(); return new Response("ok"); } };\n',
+      { message: /placeholders/ },
+    ),
+  ).resolves.toBeUndefined();
+});

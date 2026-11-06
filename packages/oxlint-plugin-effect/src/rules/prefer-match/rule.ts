@@ -4,6 +4,13 @@
 import type { ESTree, Rule } from "@oxlint/plugins";
 import { getSourceText, type SourceContext } from "../ast.js";
 import { hasEffectImport } from "../effect-modules.js";
+import {
+  defaultAllow,
+  getFilename,
+  getOptions,
+  isAllowedFile,
+  type RuleContextWithOptions,
+} from "../runtime-support.js";
 
 const message = "Use Match from effect instead of a chained literal ternary.";
 const comparisonOperators = new Set(["==", "===", "!=", "!=="]);
@@ -54,16 +61,29 @@ export const preferMatch: Rule = {
   meta: {
     type: "problem",
     docs: {
-      description: "Prefer Match from effect over chained literal ternaries.",
+      description:
+        "Prefer Match from effect over chained literal ternaries, skipping test files where fixtures pick data by id.",
     },
     messages: {
       preferMatch: message,
     },
+    schema: [
+      {
+        type: "object",
+        properties: { allow: { type: "array", items: { type: "string" } } },
+        additionalProperties: false,
+      },
+    ],
+    defaultOptions: [{ allow: defaultAllow }],
   },
   createOnce(context) {
     let fileImportsEffect = false;
 
     return {
+      before() {
+        const allow = getOptions(context as RuleContextWithOptions).allow ?? defaultAllow;
+        return !isAllowedFile(getFilename(context as RuleContextWithOptions), allow);
+      },
       Program(node: ESTree.Program) {
         fileImportsEffect = hasEffectImport(node);
       },

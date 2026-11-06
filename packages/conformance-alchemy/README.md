@@ -97,12 +97,12 @@ The stage is `--stage`, else `ALCHEMY_STAGE`, with `${{ env.X }}`, `$X`, `${X}` 
 
 ## Options
 
-| Option         | Default                                  | Used by                                   |
-| -------------- | ---------------------------------------- | ----------------------------------------- |
-| `root`         | required: the repository root            | all                                       |
-| `skipChecks`   | `[]` (unknown ids throw)                 | all                                       |
-| `stackFiles`   | `["**/alchemy.run.ts"]`, no node_modules | `alchemy-state-gitignored`                |
-| `workflowsDir` | `.github/workflows`                      | `ci-uses-remote-state`, `preview-cleanup` |
+| Option         | Default                                                                                                     | Used by                                   |
+| -------------- | ----------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
+| `root`         | required: the repository root                                                                               | all                                       |
+| `skipChecks`   | `[]` (unknown ids throw)                                                                                    | all                                       |
+| `stackFiles`   | every `alchemy.run.ts`, plus source files that import `alchemy` and call its stack factory; no node_modules | `alchemy-state-gitignored`                |
+| `workflowsDir` | `.github/workflows`                                                                                         | `ci-uses-remote-state`, `preview-cleanup` |
 
 Not checked, owned elsewhere: whether a deploy succeeds (`alchemy plan`), provider credentials in CI (`alchemy provider check-env`), `CI=true` for `Cloudflare.state()`, stages set via `$GITHUB_ENV`, reusable workflows and composite actions, CI systems other than GitHub Actions.
 

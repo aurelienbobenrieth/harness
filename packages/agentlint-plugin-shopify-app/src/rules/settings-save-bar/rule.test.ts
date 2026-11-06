@@ -66,3 +66,25 @@ it("supports explicit trusted form wiring without stateful pattern leaks", () =>
     visitors.jsx_opening_element?.(createNode("jsx_opening_element", "<SettingsForm onChange={useSaveBar}>"));
   expect(context.messages).toEqual([]);
 });
+
+it.each([
+  "app/routes/_index/route.tsx",
+  "app/routes/auth.login/route.tsx",
+  "app/routes/login.tsx",
+  "src/landing/hero.tsx",
+])("ignores forms on public route %s", (filename) => {
+  const context = createContext({ filename });
+  const visitors = createVisitors(settingsSaveBar, context);
+  visitors.jsx_opening_element?.(createNode("jsx_opening_element", "<form method='post'>"));
+  expect(context.messages).toEqual([]);
+});
+
+it.each(["app/routes/app._index.tsx", "app/routes/app.settings.tsx", "app/routes/authors.tsx"])(
+  "still reviews forms on embedded admin route %s",
+  (filename) => {
+    const context = createContext({ filename });
+    const visitors = createVisitors(settingsSaveBar, context);
+    visitors.jsx_opening_element?.(createNode("jsx_opening_element", "<form method='post'>"));
+    expect(context.messages).toHaveLength(1);
+  },
+);

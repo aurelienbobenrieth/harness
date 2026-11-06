@@ -47,3 +47,18 @@ it("allows scripts by default and configured entry files", async () => {
     }),
   ).resolves.toBeUndefined();
 });
+
+it("skips browser entry points: no process to launch", async () => {
+  await expect(
+    assertRuleDoesNotReport("effect/prefer-run-main", 'import "./style.css";\nEffect.runFork(program);\n', {
+      filename: "src/main.ts",
+    }),
+  ).resolves.toBeUndefined();
+  await expect(
+    assertRuleDoesNotReport(
+      "effect/prefer-run-main",
+      'const root = document.querySelector("#app");\nEffect.runFork(program(root));\n',
+      { filename: "src/main.ts" },
+    ),
+  ).resolves.toBeUndefined();
+});

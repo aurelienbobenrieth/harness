@@ -1,3 +1,5 @@
+import { readFile } from "node:fs/promises";
+import path from "node:path";
 import { expect, it } from "vitest";
 import { duplicationBudget } from "./duplication-budget.js";
 import { createFixture } from "./test-support.js";
@@ -13,6 +15,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 const args = process.argv.slice(2);
 const output = args[args.indexOf("--output") + 1];
+fs.writeFileSync(path.join(process.cwd(), "args.json"), JSON.stringify(args));
 const report = {
   duplicates: [
     { firstFile: { name: "src/a.ts", start: 1, end: 12 }, secondFile: { name: "src/b.ts", start: 4, end: 15 } },
@@ -94,4 +97,49 @@ it.each([NaN, Infinity, -1, 0.5])("rejects an invalid clone budget %s before too
   expect(await duplicationBudget.run({ root, duplication: { maxClones } })).toEqual([
     expect.objectContaining({ severity: "error", evaluation: "failed" }),
   ]);
+});
+
+const recordedArgs = async (root: string): Promise<readonly string[]> =>
+  JSON.parse(await readFile(path.join(root, "args.json"), "utf8")) as string[];
+
+const valueOf = (args: readonly string[], flag: string): string => args[args.indexOf(flag) + 1] ?? "";
+
+it("scans code formats only and leaves test files out by default", async () => {
+  const root = await createFixture({
+    "package.json": JSON.stringify({ name: "fixture" }),
+    "node_modules/jscpd/package.json": fakeJscpdManifest,
+    "node_modules/jscpd/bin/jscpd.js": fakeJscpdBin,
+  });
+
+  await duplicationBudget.run({ root });
+  const args = await recordedArgs(root);
+  expect(valueOf(args, "--format")).toBe("typescript,tsx,javascript,jsx");
+  expect(valueOf(args, "--ignore")).toContain("**/*.test.*,**/*.spec.*,**/__tests__/**");
+});
+
+it("honours custom formats and includeTests", async () => {
+  const root = await createFixture({
+    "package.json": JSON.stringify({ name: "fixture" }),
+    "node_modules/jscpd/package.json": fakeJscpdManifest,
+    "node_modules/jscpd/bin/jscpd.js": fakeJscpdBin,
+  });
+
+  await duplicationBudget.run({ root, duplication: { formats: ["python"], includeTests: true } });
+  const args = await recordedArgs(root);
+  expect(valueOf(args, "--format")).toBe("python");
+  expect(valueOf(args, "--ignore")).not.toContain("*.test.*");
+});
+
+it("reports a jscpd run that outlives the configured timeout, naming the option to raise", async () => {
+  const root = await createFixture({
+    "package.json": JSON.stringify({ name: "fixture" }),
+    "node_modules/jscpd/package.json": fakeJscpdManifest,
+    "node_modules/jscpd/bin/jscpd.js": "setInterval(() => {}, 1000);",
+  });
+
+  const findings = await duplicationBudget.run({ root, duplication: { timeoutMs: 300 } });
+  expect(findings).toEqual([
+    expect.objectContaining({ evaluation: "failed", message: expect.stringContaining("timed out after 0.3s") }),
+  ]);
+  expect(findings[0]?.message).toContain("duplication.timeoutMs");
 });

@@ -1,7 +1,6 @@
 import { testRuleOnSource } from "@aurelienbbn/agentlint/testing";
 import { expect, it } from "vitest";
 import {
-  abstractionEarnsKeep,
   boundedWork,
   commentSignal,
   defineBoundaryResilience,
@@ -10,11 +9,7 @@ import {
 } from "./index.js";
 
 it("reserves architectural tradeoff decisions for human authority", () => {
-  expect([abstractionEarnsKeep, flagForkedFunction, isomorphicMapping].map((rule) => rule.binding.authority)).toEqual([
-    "human",
-    "human",
-    "human",
-  ]);
+  expect([flagForkedFunction, isomorphicMapping].map((rule) => rule.binding.authority)).toEqual(["human", "human"]);
 });
 
 it("repeated checks with global patterns produce the same findings", async () => {

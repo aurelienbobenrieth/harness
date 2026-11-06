@@ -44,3 +44,22 @@ it("accepts timingSafeEqual and Node process.env comparisons", async () => {
     ),
   ).resolves.toBeUndefined();
 });
+
+it("stays silent for secret-named env values that describe a secret instead of holding one", async () => {
+  await expect(
+    assertRuleDoesNotReport(
+      ruleName,
+      'export default {\n  fetch(request: Request, env: Env) {\n    if (env.tokenKind === "project") return new Response("a");\n    if (env.TOKEN_TYPE === "bearer") return new Response("b");\n    if (env.AUTH_TOKEN_HEADER === "x-token") return new Response("c");\n    return new Response("d");\n  },\n};\n',
+    ),
+  ).resolves.toBeUndefined();
+});
+
+it("still reports a secret whose name merely contains a descriptor word", async () => {
+  await expect(
+    assertRuleReports(
+      ruleName,
+      'export default { fetch(request: Request, env: Env) { return new Response(String(request.headers.get("x") === env.HOSTED_API_KEY)); } };\n',
+      { message: /timingSafeEqual/ },
+    ),
+  ).resolves.toBeUndefined();
+});

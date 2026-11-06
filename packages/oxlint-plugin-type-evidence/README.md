@@ -21,22 +21,24 @@ export default defineConfig({
 
 Exports: `default` (the plugin, `type-evidence/*`), `strictRules` (every rule at `"error"`).
 
+**Test files are exempt** (`*.test.*`, `*.spec.*`, `__tests__`, `__mocks__`, `test(s)/`, `e2e/`): doubles built with `as unknown as Port` and deliberately invalid inputs are how a test states its subject.
+
 **Report-only, 0 autofix:** restoring evidence (named contract, parser, inference) is a choice no tool makes.
 
 ## ❌ vs ✅
 
-| Rule                                        | ❌ Fires                                                      | ✅ Passes                                            |
-| ------------------------------------------- | ------------------------------------------------------------- | ---------------------------------------------------- |
-| `no-chained-type-assertions`                | `input as unknown as User`                                    | `[1, 2] as const` (all-`as const` chains)            |
-| `no-object-parameters`                      | `function handle(payload: object)`                            | `function handle<T extends object>(payload: T)`      |
-| `no-unknown-parameters`                     | `function parse(value: unknown)`                              | `function isUser(value: unknown): value is User`     |
-| `no-unknown-returns`                        | `async function load(): Promise<unknown>`                     | `function load() { return compute(); }`              |
-| `no-unknown-type-aliases`                   | `type Data = unknown`                                         | `type Payload = Box<unknown>`                        |
-| `no-unsafe-dictionary-type`                 | `type Dict = Record<string, unknown>`                         | `type Events = Record<string, { payload: unknown }>` |
-| `no-known-value-widening`                   | `const state: unknown = { status: "idle" }`                   | `const acc: Record<string, number> = {}`             |
-| `no-widen-then-assert`                      | `const data: unknown = { id: 1 }; const user = data as User;` | assert a precisely typed binding                     |
-| `require-safety-comment-for-type-assertion` | `const user = input as User;`                                 | `// SAFETY: input validated upstream` above it       |
-| `no-runtime-typeof`                         | `const kind = typeof value`                                   | `typeof window !== "undefined"`                      |
+| Rule                                        | ❌ Fires                                                      | ✅ Passes                                                                                        |
+| ------------------------------------------- | ------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| `no-chained-type-assertions`                | `input as unknown as User`                                    | `[1, 2] as const` (all-`as const` chains)                                                        |
+| `no-object-parameters`                      | `function handle(payload: object)`                            | `function handle<T extends object>(payload: T)`                                                  |
+| `no-unknown-parameters`                     | `function parse(value: unknown)`                              | `function isUser(value: unknown): value is User`                                                 |
+| `no-unknown-returns`                        | `async function load(): Promise<unknown>`                     | `function load() { return compute(); }`                                                          |
+| `no-unknown-type-aliases`                   | `type Data = unknown`                                         | `type Payload = Box<unknown>`                                                                    |
+| `no-unsafe-dictionary-type`                 | `type Dict = Record<string, unknown>`                         | `type Events = Record<string, { payload: unknown }>`                                             |
+| `no-known-value-widening`                   | `const state: unknown = { status: "idle" }`                   | `const acc: Record<string, number> = {}`                                                         |
+| `no-widen-then-assert`                      | `const data: unknown = { id: 1 }; const user = data as User;` | assert a precisely typed binding; `return out as T` where `T` is the enclosing generic parameter |
+| `require-safety-comment-for-type-assertion` | `const user = input as User;`                                 | `// SAFETY: input validated upstream` above it                                                   |
+| `no-runtime-typeof`                         | `const kind = typeof value`                                   | `typeof window !== "undefined"`                                                                  |
 
 <details>
 <summary>Exact scope per rule</summary>
@@ -45,7 +47,7 @@ Exports: `default` (the plugin, `type-evidence/*`), `strictRules` (every rule at
 | ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------- |
 | `no-chained-type-assertions`                | any chain of ≥ 2 assertions: it launders through `unknown` / `any`                                                                                                                         | chains made only of `as const`                                                                                                              |
 | `no-object-parameters`                      | `object` reached through a same-file alias or a union member                                                                                                                               | generic constraints (`T extends object`)                                                                                                    |
-| `no-unknown-parameters`                     | —                                                                                                                                                                                          | a parameter named `cause`; the subject of a type predicate (`value is T` / `asserts value`)                                                 |
+| `no-unknown-parameters`                     | —                                                                                                                                                                                          | a parameter named `cause`; the subject of a type predicate (`value is T` / `asserts value`); test files                                     |
 | `no-unknown-returns`                        | `unknown` directly, in a union, in `Promise<unknown>` / `PromiseLike<unknown>`, via a same-file alias                                                                                      | omitted annotation; `unknown` nested in a named object shape (`{ cause: unknown }`)                                                         |
 | `no-unknown-type-aliases`                   | `unknown` through parens, a union, or transitive same-file aliases                                                                                                                         | `unknown` nested in a generic argument                                                                                                      |
 | `no-unsafe-dictionary-type`                 | broad keys (`string`, `number`, `symbol`, `PropertyKey`, or unions containing one) × contract-free values (`unknown`, `any`, `object`, `{}`), as `Record`, index signature, or mapped type | finite-key records, exhaustive mapped types, nested `unknown` inside a value shape, `Map` / `WeakMap`, type-parameter constraints           |

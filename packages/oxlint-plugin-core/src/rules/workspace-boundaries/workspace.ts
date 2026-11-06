@@ -14,6 +14,8 @@ export type Manifest = {
   readonly dir: string;
   readonly name: string;
   readonly exports: readonly ExportKey[];
+  /** False when the manifest has no `exports` field at all, so `exports` is the permissive default. */
+  readonly declaresExports: boolean;
 };
 
 /** A workspace root and the member globs it declares. */
@@ -25,10 +27,17 @@ export type Workspace = {
 const skippedDirectories = new Set(["node_modules", ".git"]);
 
 /**
- * The `exports` keys a manifest declares. No field, a string, an array, or a conditions object opens only `.`;
- * a subpath mapped to `null` is kept, closed, so it can shadow a wider pattern.
+ * The `exports` keys a manifest declares. A string, an array, or a conditions object opens only `.`; a subpath
+ * mapped to `null` is kept, closed, so it can shadow a wider pattern. No field at all means the member declares no
+ * public surface (legacy `main`/`module` or a build step that generates the map), so every subpath stays open: the
+ * rule cannot tell which ones are internal.
  */
 export function exportKeys(exportsField: unknown): readonly ExportKey[] {
+  if (exportsField === undefined)
+    return [
+      { key: ".", open: true },
+      { key: "./*", open: true },
+    ];
   if (typeof exportsField !== "object" || exportsField === null || Array.isArray(exportsField))
     return [{ key: ".", open: true }];
 
@@ -126,7 +135,7 @@ function readManifest(root: string, dir: string): Manifest | undefined {
   if (!existsSync(file)) return undefined;
   const manifest = readJson(file) ?? {};
   const name = typeof manifest["name"] === "string" ? manifest["name"] : dir;
-  return { dir, name, exports: exportKeys(manifest["exports"]) };
+  return { dir, name, exports: exportKeys(manifest["exports"]), declaresExports: manifest["exports"] !== undefined };
 }
 
 function segmentsOf(glob: string): readonly string[] {

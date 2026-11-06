@@ -6,7 +6,14 @@ import { exportKeys, findWorkspace, readManifests, workspaceGlobs } from "./work
 
 describe("export keys", () => {
   it.each([
-    { label: "no exports field", field: undefined, expected: [{ key: ".", open: true }] },
+    {
+      label: "no exports field, which declares no public surface",
+      field: undefined,
+      expected: [
+        { key: ".", open: true },
+        { key: "./*", open: true },
+      ],
+    },
     { label: "a string export", field: "./src/index.ts", expected: [{ key: ".", open: true }] },
     {
       label: "a conditions object",

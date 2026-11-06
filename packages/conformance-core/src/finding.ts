@@ -37,6 +37,12 @@ export type DuplicationOptions = {
   readonly requireTool?: boolean;
   /** Additional generated/vendor glob exclusions passed to jscpd. */
   readonly ignorePatterns?: readonly string[];
+  /** jscpd formats to scan. Default: typescript, tsx, javascript, jsx; prose, config and markup clones are not code duplication. */
+  readonly formats?: readonly string[];
+  /** Count clones in test files. Default: false; repeated arrange blocks in tests are normal and dominate the count. */
+  readonly includeTests?: boolean;
+  /** Milliseconds jscpd may run before the check reports "not evaluated". Default: 120000 */
+  readonly timeoutMs?: number;
   /** Minimum clone size in lines before jscpd reports it. Default: 8 */
   readonly minLines?: number;
   /** Minimum clone size in tokens before jscpd reports it. Default: 60 */
@@ -45,9 +51,11 @@ export type DuplicationOptions = {
   readonly maxClones?: number;
 };
 
-export type DeadExportsOptions = {
-  /** When true, a missing knip config is reported even if knip itself is not installed. Default: false */
-  readonly requireKnipConfig?: boolean;
+export type UndeclaredDependenciesOptions = {
+  /** Package names never reported, e.g. a bundler alias that looks like a scoped package. */
+  readonly ignorePackages?: readonly string[];
+  /** Root-relative files or directories left unscanned, e.g. generated sources. Build output, node_modules and fixture directories are always skipped. */
+  readonly excludePaths?: readonly string[];
 };
 
 export type ClosedDesignSystemOptions = {
@@ -92,17 +100,19 @@ export type InstructionBlocksOptions = {
 
 export type ConformanceRunOptions = {
   readonly root: string;
+  /** Opt-in Drizzle metadata directory, relative to root; warns on non-linear snapshot ancestry. */
+  readonly migrationSnapshots?: { readonly directory: string };
   /** Check ids to skip, e.g. duplication-budget on repos that accept clones. */
   readonly skipChecks?: readonly string[];
   /** Known-duplicate dependency families. Providing this REPLACES the built-in defaults. */
   readonly dependencyOverlapGroups?: readonly (readonly string[])[];
   /** Duplication budget knobs passed to jscpd. */
   readonly duplication?: DuplicationOptions;
-  /** Dead-export (knip) knobs. */
-  readonly deadExports?: DeadExportsOptions;
+  /** Undeclared-dependency scan. Runs by default; pass options to ignore aliases or exclude generated sources. */
+  readonly undeclaredDependencies?: UndeclaredDependenciesOptions;
   /** Explicit CSS build/selector probe. Unset: check skipped. */
   readonly closedDesignSystem?: ClosedDesignSystemOptions;
-  /** Compiler strictness gate over resolved tsconfig files. Unset: check skipped; `{}` enables the defaults. */
+  /** Compiler strictness gate over resolved tsconfig files. Unset: the default baseline runs; pass options to extend it, or add `tsconfig-strictness` to `skipChecks` to turn it off. */
   readonly tsconfigStrictness?: TsconfigStrictnessOptions;
   /** Instruction blocks copied into AGENTS.md (or another file). Unset: check skipped. */
   readonly instructionBlocks?: InstructionBlocksOptions;

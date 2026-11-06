@@ -111,3 +111,9 @@ it("ignores queryFn properties in files that do not import TanStack Query", asyn
     assertRuleDoesNotReport(ruleName, "export const config = { queryFn: async () => { await work(); } };\n"),
   ).resolves.toBeUndefined();
 });
+
+it("skips *.test-d.* type-test files", async () => {
+  const source = `${imports}export const options = queryOptions({ queryKey: ["a"], queryFn: async () => { await work(); } });\n`;
+  await expect(assertRuleDoesNotReport(ruleName, source, { filename: "options.test-d.ts" })).resolves.toBeUndefined();
+  await expect(assertRuleReports(ruleName, source, { filename: "options.ts" })).resolves.toBeUndefined();
+});

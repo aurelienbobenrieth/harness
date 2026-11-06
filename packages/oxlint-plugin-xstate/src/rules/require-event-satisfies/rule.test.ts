@@ -262,3 +262,11 @@ it("ignores a second parameter of functions outside XState v6 handler hosts", as
     ),
   ).resolves.toBeUndefined();
 });
+
+it("leaves bare send out of the default callee names when options are given", async () => {
+  const source = 'send({ type: "ADD_ITEM" });\n';
+  await expect(assertRuleDoesNotReport(ruleName, source, { ruleOptions: {} })).resolves.toBeUndefined();
+  await expect(
+    assertRuleReports(ruleName, source, { ruleOptions: { sendCalleeNames: ["send"] } }),
+  ).resolves.toBeUndefined();
+});

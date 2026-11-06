@@ -99,3 +99,25 @@ it("ignores orDie on a local object shadowing Layer", async () => {
     ),
   ).resolves.toBeUndefined();
 });
+
+it("skips test files and test-support folders by default: a failing seed is a bug in the test", async () => {
+  await Promise.all(
+    ["src/store.integration.test.ts", "src/features/testing/seed.ts", "scripts/seed.ts"].map(async (filename) => {
+      await expect(
+        assertRuleDoesNotReport(ruleName, "const seed = insertRows.pipe(Effect.orDie);\n", { filename }),
+      ).resolves.toBeUndefined();
+    }),
+  );
+});
+
+it("keeps reporting production files, and test files once allow is replaced", async () => {
+  await expect(
+    assertRuleReports(ruleName, "const seed = insertRows.pipe(Effect.orDie);\n", { filename: "src/features/store.ts" }),
+  ).resolves.toBeUndefined();
+  await expect(
+    assertRuleReports(ruleName, "const seed = insertRows.pipe(Effect.orDie);\n", {
+      filename: "src/features/testing/seed.ts",
+      ruleOptions: { allow: ["**/other/**"] },
+    }),
+  ).resolves.toBeUndefined();
+});

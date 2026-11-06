@@ -79,3 +79,11 @@ it("suggests forkScoped for layer constructors", async () => {
     layerWith("Effect.forkScoped"),
   );
 });
+
+it("skips test files by default: a test drives fibers it owns for the test's length", async () => {
+  await expect(
+    assertRuleDoesNotReport(ruleName, "const p = heartbeat.pipe(Effect.forkDetach);\n", {
+      filename: "src/heartbeat.test.ts",
+    }),
+  ).resolves.toBeUndefined();
+});

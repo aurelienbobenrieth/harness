@@ -21,30 +21,15 @@ it("reports Effect.catch handlers that discard the error for a placeholder", asy
   ).resolves.toBeUndefined();
 });
 
-it("reports Effect.orElseSucceed fallbacks that replace every error with a placeholder", async () => {
-  await expect(
-    assertRuleReports(ruleName, "const a = load.pipe(Effect.orElseSucceed(() => null));\n"),
-  ).resolves.toBeUndefined();
-  await expect(
-    assertRuleReports(ruleName, "const b = Effect.orElseSucceed(load, () => []);\n"),
-  ).resolves.toBeUndefined();
-  await expect(
-    assertRuleReports(ruleName, "const c = load.pipe(Effect.orElseSucceed(() => {}));\n"),
-  ).resolves.toBeUndefined();
-  await expect(
-    assertRuleReports(ruleName, "const d = load.pipe(Effect.orElseSucceed(() => { return undefined; }));\n"),
-  ).resolves.toBeUndefined();
-});
-
-it("allows Effect.orElseSucceed with a computed fallback", async () => {
+it("allows Effect.orElseSucceed: an explicit fallback is a decision, not a swallow", async () => {
   await expect(
     assertRuleDoesNotReport(
       ruleName,
       [
-        "const a = load.pipe(Effect.orElseSucceed(() => cachedUser));",
-        "const b = Effect.orElseSucceed(load, () => defaultSettings(tenant));",
-        "const c = load.pipe(Effect.orElseSucceed(() => { audit(); return null; }));",
-        "const d = Other.orElseSucceed(() => null);",
+        "const a = load.pipe(Effect.orElseSucceed(() => null));",
+        "const b = Effect.orElseSucceed(load, () => []);",
+        "const c = load.pipe(Effect.orElseSucceed(() => {}));",
+        "const d = load.pipe(Effect.orElseSucceed(() => cachedUser));",
         "",
       ].join("\n"),
     ),
@@ -105,4 +90,17 @@ it("suggests the log option", async () => {
   await expect(fixCode(ruleName, "const warm = Effect.ignore(warmCache);\n", "suggestions")).resolves.toBe(
     "const warm = Effect.ignore(warmCache, { log: true });\n",
   );
+});
+
+it("skips test files by default and reports once allow is replaced", async () => {
+  const code = "const p = work.pipe(Effect.ignore);\n";
+  await expect(
+    assertRuleDoesNotReport("effect/no-swallowed-failure", code, { filename: "src/store.test.ts" }),
+  ).resolves.toBeUndefined();
+  await expect(
+    assertRuleReports("effect/no-swallowed-failure", code, {
+      filename: "src/store.test.ts",
+      ruleOptions: { allow: ["**/nothing/**"] },
+    }),
+  ).resolves.toBeUndefined();
 });
