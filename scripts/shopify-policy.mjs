@@ -70,7 +70,10 @@ export function validateShopifyPolicy(policy) {
     assert.ok(["rule", "check", "export", "upstream"].includes(tool.kind), `${id}: invalid tool kind`);
     assert.ok(nonempty(tool.boundary), `${id}: state the partial coverage boundary`);
     if (tool.kind !== "upstream") {
-      assert.match(tool.package, /^(?:oxlint|agentlint)-plugin-shopify-app$|^conformance-shopify-app$/u);
+      assert.match(
+        tool.package,
+        /^(?:oxlint|agentlint)-plugin-shopify-app$|^conformance-shopify-app$|^oxlint-plugin-core$/u,
+      );
       assert.ok(nonempty(tool.member), `${id}: identify a registered member`);
     } else assert.ok(nonempty(tool.reference), `${id}: identify the upstream configuration`);
   }

@@ -1,0 +1,1 @@
+{"timestamp":"2026-10-19T10:00:00Z","type":"assistant","message":{"id":"a","usage":{"input_tokens":200000,"cache_creation_input_tokens":15},"content":[{"type":"tool_use","name":"wait","input":{}},{"type":"tool_use","name":"Read","input":{"file_path":"status.md"}},{"type":"tool_use","name":"status","input":{}},{"type":"tool_use","name":"Agent","input":{}}]}}

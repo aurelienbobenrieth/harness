@@ -13,7 +13,7 @@ export default defineConfig({
       node: true,
     },
     plugins: ["typescript", "node", "unicorn", "vitest", "import"],
-    ignorePatterns: ["packages/*/dist/**", ".tmp/**", ".stryker-tmp/**"],
+    ignorePatterns: ["packages/*/dist/**", ".tmp/**", ".stryker-tmp/**", "evals/results/**"],
     rules: {
       "typescript/no-explicit-any": "error",
       "typescript/no-non-null-assertion": "error",
@@ -29,6 +29,11 @@ export default defineConfig({
       ],
     },
     overrides: [
+      {
+        // Eval calls share a cost budget; filesystem replay streams one transcript at a time.
+        files: ["evals/**/*.mjs"],
+        rules: { "eslint/no-await-in-loop": "off" },
+      },
       {
         // Conformance checks are ordered filesystem walks with early exits;
         // sequential awaits are intentional there.
@@ -47,7 +52,7 @@ export default defineConfig({
     tabWidth: 2,
     arrowParens: "always",
     sortPackageJson: true,
-    ignorePatterns: ["package-lock.json", ".tmp/**"],
+    ignorePatterns: ["package-lock.json", ".tmp/**", "evals/results/**"],
   },
   test: {
     include: ["packages/*/src/**/*.test.ts", "internal/*/src/**/*.test.ts"],

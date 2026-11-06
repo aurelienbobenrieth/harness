@@ -43,7 +43,8 @@ it("executes a combined oxlint policy using every packed oxlint plugin", async (
   const rules = [
     "core/no-exported-anonymous-object-return",
     "effect/no-schema-any",
-    "shopify-app/require-fetch-abort-signal",
+    "core/require-fetch-abort-signal",
+    "shopify-app/no-session-or-token-logging",
     "type-evidence/no-unknown-parameters",
     "xstate/require-setup-create-machine",
   ];
@@ -57,7 +58,7 @@ it("executes a combined oxlint policy using every packed oxlint plugin", async (
   );
   await writeFixture(
     "combined-broken.ts",
-    'import { Schema } from "effect"; import { createMachine } from "xstate"; export const read = () => ({ id: 1 }); export const payload = Schema.Any; fetch("/cart"); export function consume(value: unknown) { return value; } export const machine = createMachine({});',
+    'import { Schema } from "effect"; import { createMachine } from "xstate"; export const read = () => ({ id: 1 }); export const payload = Schema.Any; fetch("/cart"); console.log(session); export function consume(value: unknown) { return value; } export const machine = createMachine({});',
   );
   await writeFixture(
     "combined-clean.ts",
