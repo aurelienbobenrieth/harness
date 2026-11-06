@@ -1,40 +1,28 @@
 ---
 name: build
-description: Implement an authorized feature, fix, or refactor test-first, with designs that stay deep, isolated, and small at their public surface. Use when changing code behavior, adding modules or exports, or reshaping boundaries. Not for explanation-only requests or unresolved requirements (see align).
+description: Writes and changes code and tests for the most value from the least code. Use when implementing a feature, fixing a bug, refactoring, or writing tests.
 ---
 
 # Build
 
-**Smallest change that proves itself, in code that's easy to change next time.** A small edit stays a small edit.
+Judge the result, not the steps. Done: everything asked works, nothing unasked exists, and no line could go without losing behavior. There is no required order.
 
-## Before editing
+## Code
 
-- Inspect the working tree; existing work survives. Read the real validation commands and their side effects from config.
-- "Can you fix this?" → act. Ask only for an outcome-changing decision or an action outside authorization; several open, interdependent decisions → [align](../align/SKILL.md) first.
-- Unknown cause or unfamiliar boundary → a small probe before choosing the design.
+- Smallest code that fully does the job. A need that is not here today gets nothing: no option, layer, factory or generic for one caller.
+- Before writing, look for what already does this. Use it when both will evolve together; duplicate when coupling them makes no sense. KISS and YAGNI outrank DRY.
+- Existing code is evidence, not a standard. Match its conventions, never copy its defects (swallowed errors, null for failure, float money), and leave unrelated legacy alone.
+- Nothing implicit: no silent default, fallback, coercion or swallowed error. A failure stays explicit and reaches someone who can act. Check what the spec refuses and what arrives from outside the system. A caller breaking a stated contract gets no guard and no test.
+- Spend care where change is slow. Internals may stay plain. Exports, stored data, wire formats and anything many callers share: expose the least a caller needs, name it for that caller, think through failure and evolution first.
 
-## Loop
+## Tests
 
-1. **Contract:** trigger → expected outcome, from the request or spec, before reading the implementation.
-2. **Red:** one failing test per behavior slice, oracle per [testing](../testing/SKILL.md). Fails on the assertion, not a fixture.
-3. **Green:** minimal code; tests read-only. Spec and test disagree → stop and report.
-4. **Refactor** on green; structure and behavior changes in separate commits.
-5. **Prove it:** doubt a green test → break the code, it must go red. Pick extra strategies (property, state model, contract, packed install) by the failure you fear, not by habit.
+- A test reads top to bottom as a short story in the words of the spec: a state, one use of the public entry, an observable outcome, one named step per line. No loop, condition, computed name, mutation or data table. A project's story API is that form where it exists; plain tests are enough elsewhere. No framework is invented for form's sake.
+- A reader who knows the spec, not the code, follows a story without leaving it. What makes this story differ, and its expected outcome as a literal from the spec, stay visible in it, never behind a positional argument or a recomputation. Setup repeated across stories goes in a small builder that defaults what the story ignores and takes what differs by name, so each step stays one short line.
+- One behavior per story, named for it: the success path, each refusal, each boundary, each named defect the spec promises. Nothing unpromised: helpers, call order, wording, unspecified inputs.
+- Every story catches a defect no other catches, or it is absent.
+- Plain examples are the default. A wider means appears only for the failure it fits: a property for a wide input space, a contract at a module boundary, a model for state over time, end to end for real wiring, mutation or proof for money or security.
 
-Defect → reproduce the symptom at its boundary first, cheapest distinguishing observation first; no reproduction → name the missing condition and keep the cause provisional. Covered, low-impact, reversible edit → no new test, still the full gate.
+## Finish
 
-## Design
-
-A module hides one decision, its interface stays much smaller than what it hides, and dependencies point inward. Before shaping a module, an export, or a package boundary, load [design](references/design.md): each rule there names the lint that backs it.
-
-## Implement and verify
-
-- Runtime limits, retry identity, cancellation, partial failure: design them in when the workload needs them.
-- Stale generated code → run the generator (check whether it syncs externally). Never hand-write or widen substitute types.
-- Parallel workers: bounded scope, file ownership, a verification task each; trust their evidence, not their confidence. Serialize shared mutable state.
-- In a worktree, servers take their ports from `worktree-hygiene ports` with a strict port; before handoff `worktree-hygiene done` exits 0 (`--reap` stops what you started). Never stop a process by name or port alone.
-- Prove at the failure boundary: real filesystem for a writer, consumer install for exports, browser for focus. A fake, static render, or compile proves only itself.
-- Skipped, empty, stale, or unavailable ≠ pass. Rerun checks a later change invalidated; full gate on the final state.
-- Final diff: no debug output, temp files, formatter churn, or scope creep.
-
-**Handoff:** resulting behavior, checks run and results, material limits; readable without earlier progress messages. Never "done" with a failing gate.
+Reread the diff once, as a reviewer paid to delete. Remove what carries no behavior. Then stop.
