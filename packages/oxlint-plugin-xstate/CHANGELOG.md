@@ -1,5 +1,11 @@
 # @aurelienbbn/oxlint-plugin-xstate
 
+## 0.3.0
+
+### Minor Changes
+
+- [#92](https://github.com/aurelienbobenrieth/harness/pull/92) [`0621814`](https://github.com/aurelienbobenrieth/harness/commit/0621814cb10243be6f770408b4fd114498c75a41) Thanks [@aurelienbobenrieth](https://github.com/aurelienbobenrieth)! - `xstate/machine-naming` has no default naming convention: it requires an explicitly configured `pattern`, and without one reports once per file that defines a machine. `xstate/require-event-satisfies` no longer lists bare `send` in the default `sendCalleeNames` (still opt-in); binding-proven senders such as `actorRef.send` are unchanged without options. `xstate/valid-duration` rejects every duration string (`"PT5S"`, `"5s"`) in XState v5 files, where delays are numbers or declared names. `xstate/no-persist-live-snapshot` skips test files.
+
 ## 0.2.0
 
 ### Minor Changes

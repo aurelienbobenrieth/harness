@@ -1,5 +1,11 @@
 # @aurelienbbn/oxlint-plugin-cloudflare
 
+## 0.1.3
+
+### Patch Changes
+
+- [#92](https://github.com/aurelienbobenrieth/harness/pull/92) [`0621814`](https://github.com/aurelienbobenrieth/harness/commit/0621814cb10243be6f770408b4fd114498c75a41) Thanks [@aurelienbobenrieth](https://github.com/aurelienbobenrieth)! - Worker detection no longer treats Bun, Deno or one-parameter `fetch(request)` default exports as Workers, so `no-module-scope-request-state` and `mysql2-disable-eval` stay silent on long-lived Node-style servers. `mysql2-disable-eval` reads `env` only when it is a parameter, `no-detached-execution-context-method` accepts members of a `cloudflare:workers` namespace held in a variable, `no-interpolated-sql` accepts imported SCREAMING_CASE table constants, `no-module-scope-request-state` accepts `WeakMap`/`WeakSet` caches, and `timing-safe-secret-compare` skips env names that describe a secret (`TOKEN_TYPE`, `AUTH_TOKEN_HEADER`).
+
 ## 0.1.2
 
 ### Patch Changes

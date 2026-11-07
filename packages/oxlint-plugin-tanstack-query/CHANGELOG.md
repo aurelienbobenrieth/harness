@@ -1,5 +1,13 @@
 # @aurelienbbn/oxlint-plugin-tanstack-query
 
+## 0.1.3
+
+### Patch Changes
+
+- [#92](https://github.com/aurelienbobenrieth/harness/pull/92) [`0621814`](https://github.com/aurelienbobenrieth/harness/commit/0621814cb10243be6f770408b4fd114498c75a41) Thanks [@aurelienbobenrieth](https://github.com/aurelienbobenrieth)! - `tanstack-query/no-query-cache-mutation` sees an in-place mutation of cached data through a `as`, `satisfies` or `<T>` cast (`(data as Todo[]).sort(...)`), which the rule used to miss.
+
+  `tanstack-query/query-fn-returns-value` skips `*.test-d.*` type-test files, where a void `queryFn` is the fixture under test.
+
 ## 0.1.2
 
 ### Patch Changes

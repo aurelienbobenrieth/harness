@@ -1,5 +1,23 @@
 # @aurelienbbn/agentlint-plugin-core
 
+## 0.3.0
+
+### Minor Changes
+
+- [#92](https://github.com/aurelienbobenrieth/harness/pull/92) [`0621814`](https://github.com/aurelienbobenrieth/harness/commit/0621814cb10243be6f770408b4fd114498c75a41) Thanks [@aurelienbobenrieth](https://github.com/aurelienbobenrieth)! - Tighten core reviews that were noisy or lossy on real repositories, and move one out of the strict preset.
+
+  - `bounded-work` no longer scans test files, `testing.*` helpers or `*.e2e.*` suites: the test runner owns their timeout, and tests were 48% of its findings on two consumers. Its binding digest changes, so existing acceptances of test-file findings are pruned.
+  - `bounded-data-access` reports the call whose callee is the unbounded method (not every enclosing call that contains one), accepts only a caller-supplied bound (a SQL placeholder or interpolation such as `LIMIT ?`, `LIMIT $1`, `LIMIT :limit`, `LIMIT ${n}`, or a non-literal `.limit(x)` / `take: x`; a hard-coded `LIMIT 100` or `take: 10` no longer satisfies the rule, and the message asks to expose limit and cursor in the function contract), treats `.query(` as data access only with a SQL string (not an RPC, tRPC or DOM `query`), skips `store.select(fn)` selector calls, and skips test files. It fired 611 times on one consumer (wrappers, SQL with a `LIMIT`, RPC client atoms) and 1444 times on tRPC, nearly all test calls of `client.x.query()`.
+  - `test-expectation-drift` now sees an expectation written on the same line as `it(...)`. Loosening `toStrictEqual` to `toMatchObject`, or re-valuing an expectation, inside `it("x", () => expect(...))` was invisible.
+  - `single-use-extraction-review` and `precision-boundary-review` give repeated finding keys an ordinal suffix. Two same-named helpers (or two same-unit expressions on one line, as in minified bundles) made the engine abort the whole `agentlint check` with `reported a duplicate finding key`.
+  - `boundary-resilience` no longer reads a variable named `got` (the got/want test idiom, `got.fill(0)`) as the `got` HTTP client; the default pattern matches `fetch(`, `axios|got|ky(` and their HTTP verb methods.
+  - `expected-value-recomputed` leaves `strictPreset` and stays exported as opt-in: all 13 accepted findings on two consumers were deliberate law tests (copy equals original, sorted order, differential, determinism), none a mirrored formula.
+  - Remove `abstraction-earns-keep`: across two applications, hono and tRPC, 43 findings held about 5 plausible needless aliases (about 12%); the rest were named predicates over a builtin, test helpers, zero-parameter thunks, typed facades and consumer-owned ports (all 6 header-interface findings), and all 21 ledger entries were kept with no code change. Drop it from `strictPreset` and the exports (`abstractionEarnsKeep`, `defineAbstractionEarnsKeep`).
+  - `bounded-work` looped-I/O detection is now structural: an `await` or I/O call must sit inside a loop body or an iteration callback (`map`, `forEach`, `flatMap`, `reduce`), not merely share a function with a loop. Its detector version moves to 2.
+  - Remove `operations-stay-with-owner` (exports `operationsStayWithOwner`, `defineOperationsStayWithOwner`, `strictPreset` entry). Its module entry was one project's `api.ts` convention; generalised to directory indexes and workspace packages it found no needless orchestration on one application (0), hono (3 barrel re-exports) or tRPC (8 example client configs, 1 adapter), and the other application's 21 `api.ts` hits were all layer or RPC composition roots, which the rule's own standard passes.
+
+  The package no longer depends on `oxc-parser`: only the removed `abstraction-earns-keep` used it.
+
 ## 0.2.3
 
 ### Patch Changes

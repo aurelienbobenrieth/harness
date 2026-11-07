@@ -1,5 +1,11 @@
 # @aurelienbbn/agentlint-plugin-shopify-app
 
+## 0.2.0
+
+### Minor Changes
+
+- [#92](https://github.com/aurelienbobenrieth/harness/pull/92) [`0621814`](https://github.com/aurelienbobenrieth/harness/commit/0621814cb10243be6f770408b4fd114498c75a41) Thanks [@aurelienbobenrieth](https://github.com/aurelienbobenrieth)! - `settings-save-bar` (detector version 2) ignores forms on public routes (`_index`, `auth*`, `login*`, `signin`, `landing*`, `unauthenticated` path segments): the official template's landing and login forms are not embedded settings. `webhook-handler-review` (detector version 2) no longer fires on a trivial handler whose body only authenticates with `authenticate.webhook`, logs, and returns; any other statement, or a file naming a compliance topic, still reports.
+
 ## 0.1.5
 
 ### Patch Changes
