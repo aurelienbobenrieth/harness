@@ -26,6 +26,6 @@ Cut false positives in the style and array rules after auditing them on Effect l
 - `effect-fn-name-matches-binding` accepts the snake_case spelling of the binding, so it no longer conflicts with `telemetry-name-format`; `telemetry-name-format`, `prefer-match` and `require-named-effect-fn` skip tests by default (`allow`).
 - `tagged-error-name` accepts a namespaced `_tag` that ends with the class name; `schema-literal-case` skips generated files, flags, paths and symbols and takes `allowedValues`; `schema-domain-types` skips recursive types and interfaces extending runtime handles; `no-service-option` allows `ParentSpan` and `allowedServices`; `no-service-dependency-parameters` no longer reports `Context.Service` tag types or lowercase SDK namespaces such as `ecs.Service`.
 
-Scope the three array rules to imported Effect runtime callbacks, excluding non-Effect assets and utilities in mixed files. Remove the array-helper advisory override after a 10/10 consumer precision check.
+Scope `prefer-effect-array-helpers` to imported Effect runtime callbacks, excluding non-Effect assets and utilities in mixed files. Remove the array-helper advisory override after a 10/10 consumer precision check.
 
 Resolve Vitest fake-timer utilities by import identity, including aliases and namespace members, while ignoring other exports renamed `vi`.

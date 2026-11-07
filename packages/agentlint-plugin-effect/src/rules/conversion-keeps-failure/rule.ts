@@ -193,17 +193,17 @@ export const conversionKeepsFailure: StateRule = defineRule({
         {
           label: "FAIL",
           description: "A Postgres outage leaves no trace: the client gets an empty error and nothing is logged.",
-          code: "store.revisionOf(merchantId).pipe(\n  Effect.mapError(() => AdminUnavailableError.make({})),\n);",
+          code: "store.read(accountId).pipe(\n  Effect.mapError(() => UpstreamUnavailableError.make({})),\n);",
         },
         {
           label: "PASS",
           description: "The client still gets the empty error, and the failure is on record.",
-          code: 'store.revisionOf(merchantId).pipe(\n  Effect.tapError((failure) => Effect.logError("admin.unavailable", failure)),\n  Effect.mapError(() => AdminUnavailableError.make({})),\n);',
+          code: 'store.read(accountId).pipe(\n  Effect.tapError((failure) => Effect.logError("admin.unavailable", failure)),\n  Effect.mapError(() => UpstreamUnavailableError.make({})),\n);',
         },
         {
           label: "PASS",
           description: "An absent value has nothing to keep.",
-          code: 'Effect.fromOption(found).pipe(\n  Effect.mapError(() => NotInstalledError.make({ message: "the merchant is not installed" })),\n);',
+          code: 'Effect.fromOption(found).pipe(\n  Effect.mapError(() => NotFoundError.make({ message: "the record is missing" })),\n);',
         },
       ],
       refs: [{ type: "url", href: "https://effect.website/docs/error-management/error-channel-operations/" }],

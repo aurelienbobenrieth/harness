@@ -88,6 +88,35 @@ export const action = async ({ request }) => {
   expect(findings).toEqual([]);
 });
 
+it("still reports a handler whose return does the work", async () => {
+  const findings = await testRuleOnSource({
+    rule: webhookHandlerReview,
+    source: `
+export const action = async ({ request }) => {
+  const { shop } = await authenticate.webhook(request);
+  return db.session.deleteMany({ where: { shop } });
+};
+`,
+    file: "app/routes/webhooks.app.uninstalled.tsx",
+  });
+  expect(findings).toHaveLength(1);
+});
+
+it("still reports a handler whose log line does the work", async () => {
+  const findings = await testRuleOnSource({
+    rule: webhookHandlerReview,
+    source: `
+export const action = async ({ request }) => {
+  await authenticate.webhook(request);
+  console.log(await db.session.deleteMany());
+  return new Response();
+};
+`,
+    file: "app/routes/webhooks.app.uninstalled.tsx",
+  });
+  expect(findings).toHaveLength(1);
+});
+
 it("still reports a handler that writes to a database or branches on session", async () => {
   const findings = await testRuleOnSource({
     rule: webhookHandlerReview,

@@ -7,13 +7,9 @@ try {
   const message = readFileSync(process.argv[2], "utf8");
   const model =
     /\b(?:claude|anthropic|codex|openai|chatgpt|gpt(?:-?\d[\w.-]*)?|gemini|copilot|cursor|aider|windsurf|cline|llama|deepseek|qwen|mistral|[a-z]+\[bot\])\b/i;
-  const attribution = message
-    .split(/\r?\n/)
-    .some((line) =>
-      /^\s*(?:co-authored|assisted|generated|written|created|powered)-by\s*:/i.test(line)
-        ? model.test(line)
-        : /^\s*(?:🤖\s*)?(?:generated\s+(?:with|by)|(?:written|created|assisted)\s+(?:with|by))\b/i.test(line),
-    );
+  const credit =
+    /^\s*(?:🤖\s*)?(?:(?:co-authored|assisted|generated|written|created|powered)-by\s*:|(?:generated|written|created|assisted)\s+(?:with|by)\b)/i;
+  const attribution = message.split(/\r?\n/).some((line) => credit.test(line) && model.test(line));
   if (attribution) {
     console.error("Model or tool attribution is forbidden in commit messages; remove the credit line.");
     process.exitCode = 1;

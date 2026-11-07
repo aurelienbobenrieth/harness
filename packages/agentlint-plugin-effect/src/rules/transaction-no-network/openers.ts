@@ -4,7 +4,7 @@ import { type AstNode, calleeName, identifierName, isFunction, listField, nodeFi
 export interface OpenerNames {
   /** Names called with the transaction's work as their first argument (`atomically(work)`, `db.atomically(work)`). */
   readonly direct: readonly string[];
-  /** Names called as `name(scope)(work)` (`ledger.inMerchant(id)(work)`). */
+  /** Names called as `name(scope)(work)` (`ledger.inTenant(id)(work)`). */
   readonly curried: readonly string[];
 }
 

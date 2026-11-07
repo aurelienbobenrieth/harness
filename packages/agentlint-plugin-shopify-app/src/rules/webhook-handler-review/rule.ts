@@ -44,6 +44,7 @@ const functionTypes = new Set([
   "method_definition",
 ]);
 const logCallPattern = /^(?:console|logger|log)(?:\.[A-Za-z]+)+$/;
+const responseCallPattern = /^(?:Response\.\w+|JSON\.stringify|json|data|redirect)$/;
 const complianceTopicPattern =
   /(?:customers[/_]|shop[/_]|CUSTOMERS_|SHOP_)(?:data_request|redact|DATA_REQUEST|REDACT)/i;
 
@@ -51,6 +52,14 @@ function isAuthenticateWebhookStatement(node: AgentlintNode): boolean {
   return node.descendantsOfType("call_expression").some((call) => {
     const callee = call.childByFieldName("function");
     return callee !== null && authenticateWebhookPattern.test(callee.text);
+  });
+}
+
+/** A return does no work when it only builds a response: nothing awaited, no call but response construction. */
+function onlyBuildsResponse(statement: AgentlintNode): boolean {
+  if (statement.descendantsOfType("await_expression").length > 0) return false;
+  return statement.descendantsOfType("call_expression").every((call) => {
+    return responseCallPattern.test(call.childByFieldName("function")?.text ?? "");
   });
 }
 
@@ -67,14 +76,15 @@ function isTrivialHandler(authenticateCall: AgentlintNode, source: string): bool
   return body.children
     .filter((statement) => statement.isNamed && statement.type !== "comment")
     .every((statement) => {
-      if (statement.type === "return_statement") return true;
+      if (statement.type === "return_statement") return onlyBuildsResponse(statement);
       if (statement.type === "lexical_declaration") return isAuthenticateWebhookStatement(statement);
       if (statement.type !== "expression_statement") return false;
       const expression = statement.children.find((child) => child.isNamed);
       const call = expression?.type === "await_expression" ? expression.children.find((c) => c.isNamed) : expression;
       if (call?.type !== "call_expression") return false;
       const callee = call.childByFieldName("function")?.text ?? "";
-      return authenticateWebhookPattern.test(callee) || logCallPattern.test(callee);
+      if (authenticateWebhookPattern.test(callee)) return true;
+      return logCallPattern.test(callee) && call.descendantsOfType("await_expression").length === 0;
     });
 }
 

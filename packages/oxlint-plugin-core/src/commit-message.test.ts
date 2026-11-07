@@ -36,6 +36,10 @@ it("keeps human coauthors and ordinary technical mentions", () => {
     const file = path.join(directory, "message.txt");
     writeFileSync(file, "fix: support Claude API errors\n\nCo-Authored-By: Jane Doe <jane@example.com>");
     expect(spawnSync(process.execPath, [cli, file], { windowsHide: true }).status).toBe(0);
+    writeFileSync(file, "docs: add guide\n\nWritten by Jane Doe <jane@example.com>");
+    expect(spawnSync(process.execPath, [cli, file], { windowsHide: true }).status).toBe(0);
+    writeFileSync(file, "chore: scaffold\n\nGenerated with pnpm create vite");
+    expect(spawnSync(process.execPath, [cli, file], { windowsHide: true }).status).toBe(0);
     expect(spawnSync(process.execPath, [cli], { windowsHide: true }).status).toBe(2);
   } finally {
     rmSync(directory, { recursive: true, force: true });
@@ -67,6 +71,9 @@ it("installs an idempotent Git hook that rejects commits on Windows and preserve
       }).status,
     ).toBe(0);
     const hook = path.join(directory, ".git/hooks/commit-msg");
+    writeFileSync(hook, readFileSync(hook, "utf8").replace(/exec .*/u, "exec /moved/node /moved/check.mjs"));
+    expect(spawnSync(process.execPath, [installer], { cwd: directory, windowsHide: true }).status).toBe(0);
+    expect(readFileSync(hook, "utf8")).not.toContain("/moved/");
     writeFileSync(hook, "#!/bin/sh\nexit 7\n");
     expect(spawnSync(process.execPath, [installer], { cwd: directory, windowsHide: true }).status).toBe(2);
     expect(readFileSync(hook, "utf8")).toBe("#!/bin/sh\nexit 7\n");

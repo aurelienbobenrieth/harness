@@ -250,11 +250,11 @@ it("stays inside the workspace member and ignores test code", async () => {
 
 it("is configured with project openers and network names", async () => {
   const files = {
-    "src/z.ts": "export const a = (ledger) => ledger.inMerchant(id)(Slack.use((s) => s.post()));\n",
+    "src/z.ts": "export const a = (ledger) => ledger.inTenant(id)(Slack.use((s) => s.post()));\n",
   };
   expect(await fires(files)).toBe(false);
-  expect(await fires(files, { curriedOpeners: ["inMerchant"] })).toBe(false);
-  expect(await fires(files, { curriedOpeners: ["inMerchant"], networkServices: ["Slack"] })).toBe(true);
+  expect(await fires(files, { curriedOpeners: ["inTenant"] })).toBe(false);
+  expect(await fires(files, { curriedOpeners: ["inTenant"], networkServices: ["Slack"] })).toBe(true);
   expect(
     await fires(
       { "src/z.ts": "export const a = (t) => t.atomically(Mailer.send());\n" },
@@ -282,8 +282,8 @@ it("is configured with project openers and network names", async () => {
 it("reads curried openers piped into an effect", async () => {
   expect(
     await fires(
-      { "src/z.ts": "export const a = (ledger) => work().pipe(Effect.tap(() => fetch(u)), ledger.inMerchant(id));\n" },
-      { curriedOpeners: ["inMerchant"] },
+      { "src/z.ts": "export const a = (ledger) => work().pipe(Effect.tap(() => fetch(u)), ledger.inTenant(id));\n" },
+      { curriedOpeners: ["inTenant"] },
     ),
   ).toBe(true);
 });

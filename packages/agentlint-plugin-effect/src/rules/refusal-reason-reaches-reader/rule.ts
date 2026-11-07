@@ -10,12 +10,12 @@ const contract = {
   "packages/api/rpcs.ts": [
     'import { Rpc, Schema } from "effect";',
     'export class PlanRefusedError extends Schema.TaggedError<PlanRefusedError>()("PlanRefusedError", {',
-    '  reason: Schema.Literals(["inactive", "plan_not_offered"]),',
+    '  reason: Schema.Literals(["inactive", "not_offered"]),',
     "}) {}",
     'export class SaveRefusedError extends Schema.TaggedError<SaveRefusedError>()("SaveRefusedError", {',
-    '  reason: Schema.Literals(["stale_revision"]),',
+    '  reason: Schema.Literals(["stale"]),',
     "}) {}",
-    'export const change = Rpc.make("plan.change", { error: Schema.Union([PlanRefusedError, SaveRefusedError]) });',
+    'export const change = Rpc.make("item.update", { error: Schema.Union([PlanRefusedError, SaveRefusedError]) });',
     "",
   ].join("\n"),
 };
@@ -55,12 +55,12 @@ export const refusalReasonReachesReader: StateRule = defineRule({
         {
           label: "FAIL",
           description: "The server refuses with `inactive`; the page says to retry.",
-          code: 'class SetupRefusedError extends Schema.TaggedError<SetupRefusedError>()("SetupRefusedError", {\n  reason: Schema.Literals(["inactive", "no_policy"]),\n}) {}\n\n// page: every failure shows the same line\n{AsyncResult.isFailure(save) ? <p role="alert">Could not save. Retry.</p> : undefined}',
+          code: 'class SetupRefusedError extends Schema.TaggedError<SetupRefusedError>()("SetupRefusedError", {\n  reason: Schema.Literals(["inactive", "not_allowed"]),\n}) {}\n\n// page: every failure shows the same line\n{AsyncResult.isFailure(save) ? <p role="alert">Could not save. Retry.</p> : undefined}',
         },
         {
           label: "PASS",
           description: "Each reason has a text, and TypeScript keeps the map complete.",
-          code: 'const REFUSALS: Record<SetupRefusedError["reason"], () => string> = {\n  inactive: m.setup_refused_inactive,\n  no_policy: m.setup_refused_no_policy,\n};',
+          code: 'const REFUSALS: Record<SetupRefusedError["reason"], () => string> = {\n  inactive: m.setup_refused_inactive,\n  not_allowed: m.setup_refused_not_allowed,\n};',
         },
       ],
       refs: [{ type: "url", href: "https://www.nngroup.com/articles/error-message-guidelines/" }],
@@ -87,7 +87,7 @@ export const refusalReasonReachesReader: StateRule = defineRule({
           label: "a client that tells one refusal apart and not the other",
           files: {
             "apps/web/page.tsx":
-              'const REFUSALS: Record<SaveRefusedError["reason"], () => string> = { stale_revision: reload };\n',
+              'const REFUSALS: Record<SaveRefusedError["reason"], () => string> = { stale: reload };\n',
             ...contract,
           },
         },
@@ -97,7 +97,7 @@ export const refusalReasonReachesReader: StateRule = defineRule({
           label: "a client that reads both refusals",
           files: {
             "apps/web/page.tsx": [
-              'const save: Record<SaveRefusedError["reason"], () => string> = { stale_revision: reload };',
+              'const save: Record<SaveRefusedError["reason"], () => string> = { stale: reload };',
               "export const text = (error) => (Schema.is(PlanRefusedError)(error) ? plans[error.reason]() : failed());",
               "",
             ].join("\n"),

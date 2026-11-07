@@ -92,6 +92,11 @@ it("ignores a Request that carries a signal", async () => {
 
 it("ignores a Request object received as a parameter", async () => {
   await expect(silent("export const proxy = (request: Request) => fetch(request);")).resolves.toBeUndefined();
+  await expect(silent("export const proxy = (input: Request) => fetch(input);")).resolves.toBeUndefined();
+  await expect(
+    silent("export const clone = (request: Request) => fetch(new Request(request));"),
+  ).resolves.toBeUndefined();
+  await expect(reports("export const load = (url: string) => fetch(new Request(url));")).resolves.toBeUndefined();
 });
 
 it("ignores a locally defined or imported fetch", async () => {

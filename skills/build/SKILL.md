@@ -18,7 +18,7 @@ Judge the result, not the steps. Done: everything asked works, nothing unasked e
 
 ## Tests
 
-- A test reads top to bottom as a short story in the words of the spec: a state, one use of the public entry, an observable outcome, one named step per line. No loop, condition, computed name, mutation or data table. A project's story API is that form where it exists; elsewhere plain tests, no invented framework. Clocks, timers and randomness are mocked.
+- A test reads top to bottom as a short story in the words of the spec: a state, one use of the public entry, an observable outcome, one named step per line. No loop, condition, computed name, mutation or data table. A project's story API is that form where it exists; elsewhere plain tests, no invented framework. Clocks, timers and randomness are controlled.
 - A reader who knows the spec, not the code, follows a story without leaving it. What makes this story differ, and its expected outcome as a literal from the spec, stay visible in it, never behind a positional argument or a recomputation. Setup repeated across stories goes in a small builder that defaults what the story ignores and takes what differs by name.
 - One behavior per story, named for it: the success path, each refusal, each boundary, each defect the spec promises. Nothing unpromised: helpers, call order, wording, unspecified inputs.
 - Every story catches a defect no other catches, or it is absent.

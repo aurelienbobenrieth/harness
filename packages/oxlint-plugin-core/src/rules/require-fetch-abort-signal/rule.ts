@@ -89,18 +89,23 @@ function initCarriesSignal(context: Context, init: ESTree.Node | undefined): boo
   return false;
 }
 
+/** A parameter named as a `Request`, `input` being the name `fetch` itself gives it, brings the caller's signal. */
+function isRequestParameter(context: Context, node: ESTree.Node | undefined): boolean {
+  if (node === undefined) return false;
+  const value = unwrapExpression(node);
+  return isParameter(context, value) && value.type === "Identifier" && /request|req$|^input$/iu.test(value.name);
+}
+
 /** A `new Request(url, { signal })` first argument carries the signal for a `fetch` call without init. */
 function requestCarriesSignal(context: Context, request: ESTree.Node | undefined): boolean {
   if (request === undefined) return false;
   const value = unwrapExpression(request);
-  if (value.type === "NewExpression") {
-    return (
-      value.callee.type === "Identifier" &&
-      value.callee.name === "Request" &&
-      (initCarriesSignal(context, value.arguments[1]) || isParameter(context, value.arguments[0] ?? value))
-    );
-  }
-  return isParameter(context, value) && value.type === "Identifier" && /request|req$/iu.test(value.name);
+  if (value.type !== "NewExpression") return isRequestParameter(context, value);
+  return (
+    value.callee.type === "Identifier" &&
+    value.callee.name === "Request" &&
+    (initCarriesSignal(context, value.arguments[1]) || isRequestParameter(context, value.arguments[0]))
+  );
 }
 
 /** `fetch("data:,")` never touches the network, so there is nothing to cancel. */

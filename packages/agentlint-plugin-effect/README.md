@@ -56,7 +56,7 @@ export default defineConfig({
   rules: [
     defineTransactionNoNetwork({
       openers: ["atomically"],
-      curriedOpeners: ["inMerchant", "withMerchant"],
+      curriedOpeners: ["inTenant", "withTenant"],
       networkServices: ["Slack"],
     }),
   ],
@@ -67,7 +67,7 @@ Limits: names, not types. A callback passed in as a parameter, a method on an ob
 
 ### `conversion-keeps-failure`
 
-`Effect.mapError(() => AdminUnavailableError.make({}))` is often exactly right for the client and fatal for whoever debugs the outage: the store's failure is gone, and nothing says why the empty error happened. The rule points at handlers that replace a failure without reading it, so an agent can decide whether something worth keeping was lost.
+`Effect.mapError(() => UpstreamUnavailableError.make({}))` is often exactly right for the client and fatal for whoever debugs the outage: the store's failure is gone, and nothing says why the empty error happened. The rule points at handlers that replace a failure without reading it, so an agent can decide whether something worth keeping was lost.
 
 ```ts
 store.read().pipe(Effect.mapError(() => UnavailableError.make({}))); // ❌ the outage leaves no trace
@@ -85,16 +85,16 @@ Limits: one file, names, not types. `Effect.catchTag` and `catchTags` handlers a
 
 ### `refusal-reason-reaches-reader`
 
-A server that answers `reason: "inactive"` has done the work. If the page then shows "Could not save. Retry." for every failure, the merchant retries a refusal that will refuse again. This rule looks for reasons sent over the wire that nothing reads.
+A server that answers `reason: "inactive"` has done the work. If the page then shows "Could not save. Retry." for every failure, the user retries a refusal that will refuse again. This rule looks for reasons sent over the wire that nothing reads.
 
 ```ts
 class SetupRefusedError extends Schema.TaggedError<SetupRefusedError>()("SetupRefusedError", {
-  reason: Schema.Literals(["inactive", "no_policy"]),
+  reason: Schema.Literals(["inactive", "not_allowed"]),
 }) {} // ❌ on an Rpc, and no file tells it apart
 
 const REFUSALS: Record<SetupRefusedError["reason"], () => string> = {
   inactive: m.setup_refused_inactive, // ✅ one text per reason, kept complete by TypeScript
-  no_policy: m.setup_refused_no_policy,
+  not_allowed: m.setup_refused_not_allowed,
 };
 ```
 

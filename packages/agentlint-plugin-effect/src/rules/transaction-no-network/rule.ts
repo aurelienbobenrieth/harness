@@ -6,7 +6,7 @@ import { digestOf, reachNetwork, type Sink } from "./reach.js";
 export type TransactionNoNetworkOptions = {
   /** Extra names called with a transaction's work as the first argument (`atomically`): `atomically(work)`. */
   readonly openers?: readonly string[];
-  /** Extra names called as `name(scope)(work)`, for openers that take a scope first (`inMerchant`). */
+  /** Extra names called as `name(scope)(work)`, for openers that take a scope first (`inTenant`). */
   readonly curriedOpeners?: readonly string[];
   /** Import specifiers (`@acme/mailer`) or repository path prefixes (`src/clients`) that talk to the network. */
   readonly networkModules?: readonly string[];

@@ -67,7 +67,7 @@ it("accepts an imported SCREAMING_CASE table constant and reports a lowercase im
   await expect(
     assertRuleDoesNotReport(
       ruleName,
-      'import { STEP_CHUNKS_TABLE } from "./schema";\nexport default { async fetch(request: Request, env: Env) { await env.DB.prepare(`SELECT * FROM ${STEP_CHUNKS_TABLE} WHERE id = ?`).bind(1).first(); return new Response("ok"); } };\n',
+      'import { ITEMS_TABLE } from "./schema";\nexport default { async fetch(request: Request, env: Env) { await env.DB.prepare(`SELECT * FROM ${ITEMS_TABLE} WHERE id = ?`).bind(1).first(); return new Response("ok"); } };\n',
     ),
   ).resolves.toBeUndefined();
   await expect(
