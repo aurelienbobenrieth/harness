@@ -1,5 +1,11 @@
 # @aurelienbbn/agentlint-plugin-xstate
 
+## 0.2.1
+
+### Patch Changes
+
+- [#92](https://github.com/aurelienbobenrieth/harness/pull/92) [`0621814`](https://github.com/aurelienbobenrieth/harness/commit/0621814cb10243be6f770408b4fd114498c75a41) Thanks [@aurelienbobenrieth](https://github.com/aurelienbobenrieth)! - `xstate/actor-cleanup` stays silent when the file already stops the stored actor (`actor.stop()`, `this.#actor?.stop()`, or a field copied from the creation binding). All 7 findings on one application were accepted with exactly that reason; the rule now reports only creations with no `stop()` on their binding.
+
 ## 0.2.0
 
 ### Minor Changes

@@ -1,5 +1,11 @@
 # @aurelienbbn/conformance-alchemy
 
+## 0.2.0
+
+### Minor Changes
+
+- [#92](https://github.com/aurelienbobenrieth/harness/pull/92) [`0621814`](https://github.com/aurelienbobenrieth/harness/commit/0621814cb10243be6f770408b4fd114498c75a41) Thanks [@aurelienbobenrieth](https://github.com/aurelienbobenrieth)! - `alchemy-state-gitignored` finds stack files by content when `stackFiles` is unset: every `alchemy.run.ts` (fast path) plus any other source file that imports `alchemy` and calls its stack factory (`Alchemy.Stack(...)`, `Stack.make(...)`, `alchemy("app")`), so a stack in `infra/stack.ts` is checked instead of failing with "no stack file". Test, declaration, `dist` and `node_modules` files are skipped. An explicit `stackFiles` still wins. A project whose `.alchemy/` is not ignored next to such a file now reports an error it did not before.
+
 ## 0.1.1
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @aurelienbbn/oxfmt-config
 
+## 0.2.1
+
+### Patch Changes
+
+- [#92](https://github.com/aurelienbobenrieth/harness/pull/92) [`0621814`](https://github.com/aurelienbobenrieth/harness/commit/0621814cb10243be6f770408b4fd114498c75a41) Thanks [@aurelienbobenrieth](https://github.com/aurelienbobenrieth)! - Support oxfmt 0.74 alongside the existing 0.67 and 0.68 releases. Consumers can update to oxfmt 0.74 without changing their formatter configuration.
+
 ## 0.2.0
 
 ### Minor Changes

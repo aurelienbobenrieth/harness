@@ -1,6 +1,6 @@
 {
   "name": "@aurelienbbn/conformance-alchemy",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Structural conformance checks for Alchemy v2 projects: state, CI, previews, pinning. Packaged as a Vitest suite.",
   "keywords": [
     "alchemy",

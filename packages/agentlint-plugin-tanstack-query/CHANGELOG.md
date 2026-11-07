@@ -1,5 +1,11 @@
 # @aurelienbbn/agentlint-plugin-tanstack-query
 
+## 0.2.0
+
+### Minor Changes
+
+- [#92](https://github.com/aurelienbobenrieth/harness/pull/92) [`0621814`](https://github.com/aurelienbobenrieth/harness/commit/0621814cb10243be6f770408b4fd114498c75a41) Thanks [@aurelienbobenrieth](https://github.com/aurelienbobenrieth)! - `tanstack-query/query-state-coverage` stays silent when the function around a `useQuery`, `useQueries`, or `useInfiniteQuery` call already handles both states (`isPending` / `isLoading` / `status === "pending"` and `isError` / `error` / `status === "error"`). Of 162 hook calls in the TanStack examples, 119 sat in such a function. Suspense hooks still report. Detector version 3.
+
 ## 0.1.5
 
 ### Patch Changes

@@ -1,5 +1,13 @@
 # @aurelienbbn/oxlint-plugin-drizzle
 
+## 0.2.0
+
+### Minor Changes
+
+- [#92](https://github.com/aurelienbobenrieth/harness/pull/92) [`0621814`](https://github.com/aurelienbobenrieth/harness/commit/0621814cb10243be6f770408b4fd114498c75a41) Thanks [@aurelienbobenrieth](https://github.com/aurelienbobenrieth)! - Remove the duplicate Knip wrapper; run Knip directly for unused files, exports and dependencies. Add advisory snapshot ancestry, migration SQL, retention metadata, calendar schema, destructive reason and fenced JSDoc checks. Publish Windows-compatible commit-message attribution hooks. Keep statement spacing in post-oxfmt formatting.
+
+- [#92](https://github.com/aurelienbobenrieth/harness/pull/92) [`0621814`](https://github.com/aurelienbobenrieth/harness/commit/0621814cb10243be6f770408b4fd114498c75a41) Thanks [@aurelienbobenrieth](https://github.com/aurelienbobenrieth)! - `fk-column-indexed` now also checks `sqliteTable` (D1 and SQLite do not index the referencing column either). `mysqlTable` stays out of scope because InnoDB creates that index itself.
+
 ## 0.1.2
 
 ### Patch Changes

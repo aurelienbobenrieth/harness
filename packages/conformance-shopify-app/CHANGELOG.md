@@ -1,5 +1,11 @@
 # @aurelienbbn/conformance-shopify-app
 
+## 0.2.0
+
+### Minor Changes
+
+- [#92](https://github.com/aurelienbobenrieth/harness/pull/92) [`0621814`](https://github.com/aurelienbobenrieth/harness/commit/0621814cb10243be6f770408b4fd114498c75a41) Thanks [@aurelienbobenrieth](https://github.com/aurelienbobenrieth)! - `compliance-webhooks` gains a `distribution: "public" | "custom"` option (default `"public"`, the previous behavior): `"custom"` skips the check, since only App Store apps must register the privacy compliance topics. `app-bridge-script` accepts a Shopify `AppProvider` import (`@shopify/shopify-app-react-router/react`, `@shopify/shopify-app-remix/react`, `@shopify/app-bridge-react`) as the App Bridge injector, and with no `shopify.app.toml` it reports a warning and skips instead of assuming an embedded app.
+
 ## 0.1.3
 
 ### Patch Changes
