@@ -14,10 +14,14 @@ function tsconfig(compilerOptions: Record<string, unknown>, rest: Record<string,
   return JSON.stringify({ ...rest, compilerOptions });
 }
 
-it("stays silent until the consumer opts in", async () => {
-  const root = await createFixture({ "tsconfig.json": tsconfig({ strict: false }) });
-
-  expect(await tsconfigStrictness.run({ root })).toEqual([]);
+it("applies the default baseline when no options are given", async () => {
+  const loose = await createFixture({ "tsconfig.json": tsconfig({ strict: false }) });
+  expect(await tsconfigStrictness.run({ root: loose })).toEqual(
+    await tsconfigStrictness.run({ root: loose, tsconfigStrictness: {} }),
+  );
+  expect(await tsconfigStrictness.run({ root: loose })).not.toEqual([]);
+  const strict = await createFixture({ "tsconfig.json": tsconfig(strictBaseline) });
+  expect(await tsconfigStrictness.run({ root: strict })).toEqual([]);
 });
 
 it("passes a config that carries the whole baseline", async () => {
@@ -257,5 +261,21 @@ it("enforces additional required flags", async () => {
   });
   expect(findings.map((finding) => finding.message)).toEqual([
     "tsconfig.json: `noImplicitOverride` is unset; set it to true in compilerOptions.",
+  ]);
+});
+
+it("does not require verbatimModuleSyntax of a CommonJS-emitting config, which TypeScript rejects with it", async () => {
+  const { verbatimModuleSyntax: _dropped, ...withoutVerbatim } = strictBaseline;
+  const root = await createFixture({
+    "tsconfig.json": tsconfig({ ...withoutVerbatim, module: "CommonJS" }),
+    "esm/tsconfig.json": tsconfig({ ...withoutVerbatim, module: "esnext" }),
+  });
+
+  const findings = await tsconfigStrictness.run({
+    root,
+    tsconfigStrictness: { files: ["tsconfig.json", "esm/tsconfig.json"] },
+  });
+  expect(findings.map((finding) => finding.message)).toEqual([
+    "esm/tsconfig.json: `verbatimModuleSyntax` is unset; set it to true in compilerOptions.",
   ]);
 });

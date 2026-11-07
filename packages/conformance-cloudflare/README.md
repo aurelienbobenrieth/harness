@@ -13,6 +13,9 @@
 > [!WARNING]
 > **A static preflight.** `wrangler deploy --dry-run`, the config schema, and `tsc` against generated types stay authoritative for config validity and binding existence.
 
+> [!NOTE]
+> **Wrangler-config projects only.** Workers declared in Alchemy (`alchemy.run.ts`) have no `wrangler.*` to read, so every check fails with "No wrangler.json" there. Install it where a committed wrangler config exists, or point `wranglerConfigs` at the generated one.
+
 ## One file, six tests
 
 ```ts
@@ -46,7 +49,7 @@ Findings carry `check`, `severity`, `message`, `path`, the Cloudflare `docs` URL
 | `wrangler-types-current`          | the project's own `wrangler types --check` exits non-zero                                                                                     |
 | `no-secrets-in-vars`              | a `vars` name marks a secret (`API_KEY`, `dbPassword`, `SIGNING_KEY`) or a value looks like a credential (JWT, PEM, Stripe, GitHub…)          |
 | `environment-bindings-redeclared` | a top-level non-inheritable key (bindings, `vars`, `define`, `secrets`) or one of its names is missing in an `env.<name>`                     |
-| `compatibility-date-current`      | the date is missing, invalid, in the future, or too old; `nodejs_compat` is missing before 2026-08-04 (⚠️ redundant from it on)               |
+| `compatibility-date-current`      | the date is missing, invalid, or in the future; ⚠️ too old, `nodejs_compat` missing before 2026-08-04, or redundant from it on                |
 | `observability-enabled`           | `observability.enabled` isn't `true` at the top level or in an environment that overrides it                                                  |
 | `hyperdrive-contract`             | a `pg` / `postgres` / `mysql2` Worker lacks a binding, a supported driver, or Node.js compat; a committed password; PlanetScale's HTTP driver |
 
@@ -70,7 +73,7 @@ Keys follow Wrangler's own validator (checked 2026-09-24), a superset of the [do
 
 ### compatibility-date-current
 
-`YYYY-MM-DD`, a real calendar day, not after today (UTC), at most `compatibilityDateMaxAgeDays` old (default 180). Environments are checked only when they override `compatibility_date` or `compatibility_flags`. `no_nodejs_compat` is an explicit opt-out and stays silent. Never bumps the date: a bump changes runtime behavior.
+`YYYY-MM-DD`, a real calendar day, not after today (UTC), at most `compatibilityDateMaxAgeDays` old (default 180; an older date is a warning). Environments are checked only when they override `compatibility_date` or `compatibility_flags`. `no_nodejs_compat` is an explicit opt-out and stays silent. Never bumps the date: a bump changes runtime behavior.
 
 ### observability-enabled
 

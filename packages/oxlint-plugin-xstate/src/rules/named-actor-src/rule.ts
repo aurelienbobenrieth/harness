@@ -16,7 +16,7 @@ import {
   stringLiteralValue,
   unwrapExpressionKeepingChain,
 } from "@aurelienbbn/oxlint-kit/ast";
-import { findProperty, importsFrom, isEnqueuerParameter, isInsideMachineConfig } from "../ast.js";
+import { findProperty, importsFrom, importsV5Only, isEnqueuerParameter, isInsideMachineConfig } from "../ast.js";
 import { importedName } from "../binding-support.js";
 import type { Context, ESTree, Rule } from "@oxlint/plugins";
 
@@ -28,54 +28,11 @@ const guardMessage =
 
 type RuleOptions = { readonly checkSpawn?: boolean; readonly guards?: boolean };
 
-/** Runtime exports of XState v5 that v6 removed; importing one marks the file as v5. */
-const v5OnlyExports: ReadonlySet<string> = new Set([
-  "and",
-  "assign",
-  "cancel",
-  "emit",
-  "enqueueActions",
-  "forwardTo",
-  "fromCallback",
-  "fromEventObservable",
-  "fromObservable",
-  "fromPromise",
-  "fromTransition",
-  "getInitialSnapshot",
-  "getNextSnapshot",
-  "interpret",
-  "log",
-  "not",
-  "or",
-  "raise",
-  "sendParent",
-  "sendTo",
-  "spawnChild",
-  "stateIn",
-  "stop",
-  "stopChild",
-]);
-
 const typedConfigCallees: ReadonlySet<string> = new Set(["setup", "createMachine"]);
 
 function option(context: Context, name: keyof RuleOptions): boolean {
   const first = context.options[0];
   return typeof first === "object" && first !== null && (first as RuleOptions)[name] === true;
-}
-
-function importsV5Only(program: ESTree.Program): boolean {
-  return program.body.some(
-    (statement) =>
-      statement.type === "ImportDeclaration" &&
-      statement.source.value === "xstate" &&
-      statement.specifiers.some(
-        (specifier) =>
-          specifier.type === "ImportSpecifier" &&
-          v5OnlyExports.has(
-            specifier.imported.type === "Identifier" ? specifier.imported.name : String(specifier.imported.value),
-          ),
-      ),
-  );
 }
 
 /** `types` declared in the config of `setup(...)` or `createMachine(...)`: a v5-only key. */

@@ -19,6 +19,7 @@ export const noArrayForEach: Rule = {
     return {
       CallExpression(node) {
         const callee = node.callee;
+
         if (callee.type !== "MemberExpression" || callee.computed) return;
         if (callee.property.type !== "Identifier" || callee.property.name !== "forEach") return;
         if (effectModuleOf(context, callee.object) !== undefined) return;

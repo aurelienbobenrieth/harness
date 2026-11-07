@@ -1,6 +1,8 @@
 /**
  * Require duration strings in delayed transitions and timeouts to use a
- * format XState v6 parses, unless they name a delay declared in the file.
+ * format XState v6 parses, unless they name a delay declared in the file. In
+ * files that import a v5-only export (`assign`, `fromPromise`, ...) delays are
+ * numbers or declared names, so every duration string is reported.
  */
 import {
   parentOf,
@@ -8,12 +10,15 @@ import {
   stringLiteralValue,
   unwrapExpressionKeepingChain,
 } from "@aurelienbbn/oxlint-kit/ast";
-import { importsFrom } from "../ast.js";
+import { importsFrom, importsV5Only } from "../ast.js";
 import { isInsideConfigArgument, xstateImport } from "../v6-support.js";
 import type { ESTree, Rule } from "@oxlint/plugins";
 
 const message =
   '"{{duration}}" is neither a delay declared in delays nor a duration XState parses, so the timer {{failure}}. Write milliseconds (300000), "<n>ms", "<n>s", or ISO 8601 ("PT5M"), or declare the name in delays.';
+
+const v5Message =
+  '"{{duration}}" is a duration string, but XState v5 delays are numbers in milliseconds or names declared in delays, so it is treated as an undeclared delay name and the delayed transition is not scheduled. Write milliseconds (5000) or declare the name in delays.';
 
 const isoPart = String.raw`(\d+(?:[.,]\d+)?)`;
 
@@ -59,26 +64,29 @@ export const validDuration: Rule = {
     type: "problem",
     docs: {
       description:
-        "Require after keys, state timeouts, and createAsyncLogic timeouts written as duration strings to use a format XState parses, unless they name a declared delay.",
+        "Require after keys, state timeouts, and createAsyncLogic timeouts written as duration strings to use a format XState parses, unless they name a declared delay; in XState v5 files every duration string is rejected.",
     },
     messages: {
       validDuration: message,
+      validDurationV5: v5Message,
     },
     schema: [],
   },
   createOnce(context) {
     let enabled = false;
+    let v5File = false;
     let candidates: Candidate[] = [];
     let declared = new Set<string>();
 
     function consider(node: ESTree.Node, duration: string, failure: string, namesApply: boolean): void {
-      if (!looksLikeDuration(duration) || isParsableDuration(duration)) return;
+      if (!looksLikeDuration(duration) || (!v5File && isParsableDuration(duration))) return;
       candidates.push({ node, duration, failure, namesApply });
     }
 
     return {
       Program(node) {
         enabled = importsFrom(node, ["xstate", "@xstate/effect"]);
+        v5File = importsV5Only(node);
         candidates = [];
         declared = new Set();
       },
@@ -124,7 +132,7 @@ export const validDuration: Rule = {
           if (candidate.namesApply && declared.has(candidate.duration)) continue;
           context.report({
             node: candidate.node,
-            messageId: "validDuration",
+            messageId: v5File ? "validDurationV5" : "validDuration",
             data: { duration: candidate.duration, failure: candidate.failure },
           });
         }

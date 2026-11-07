@@ -1,4 +1,4 @@
-import { isBoundaryFile, readParameters } from "../ast.js";
+import { isBoundaryFile, isTestFile, readParameters } from "../ast.js";
 /**
  * @attribution anti-slop by Dillon Mulroy (MIT, concept re-implemented)
  */
@@ -69,7 +69,7 @@ export const noRuntimeTypeof: Rule = {
     return {
       UnaryExpression(node) {
         if (node.operator !== "typeof") return;
-        if (isBoundaryFile(context.filename)) return;
+        if (isBoundaryFile(context.filename) || isTestFile(context.filename)) return;
         const owner = nearestFunction(node);
         const subjectName = node.argument.type === "Identifier" ? node.argument.name : undefined;
         if (

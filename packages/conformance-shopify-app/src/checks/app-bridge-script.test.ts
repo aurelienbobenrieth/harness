@@ -54,6 +54,7 @@ it("skips non-embedded apps", async () => {
 
 it("does not accept an App Bridge script placed in the body", async () => {
   const root = await createFixture({
+    "shopify.app.toml": "embedded = true\n",
     "index.html":
       '<html><head></head><body><script src="https://cdn.shopify.com/shopifycloud/app-bridge.js"></script></body></html>',
   });
@@ -62,6 +63,7 @@ it("does not accept an App Bridge script placed in the body", async () => {
 
 it("requires App Bridge before every other script in each discovered document", async () => {
   const root = await createFixture({
+    "shopify.app.toml": "embedded = true\n",
     "index.html": '<head><script src="https://cdn.shopify.com/shopifycloud/app-bridge.js"></script></head>',
     "app/root.tsx":
       '<head><script src="/app.js"></script><script src="https://cdn.shopify.com/shopifycloud/app-bridge.js"></script></head>',
@@ -73,11 +75,44 @@ it("requires App Bridge before every other script in each discovered document", 
 });
 
 it("reports missing explicit documents and rejects empty or escaping scopes", async () => {
-  const root = await createFixture({});
+  const root = await createFixture({ "shopify.app.toml": "embedded = true" });
   expect(await appBridgeScript.run({ root, documentEntries: ["missing.html"] })).toEqual([
     expect.objectContaining({ severity: "error" }),
   ]);
   await expect(appBridgeScript.run({ root, documentEntries: [] })).rejects.toThrow("documentEntries");
   await expect(appBridgeScript.run({ root, documentEntries: ["../outside.html"] })).rejects.toThrow("documentEntries");
   await expect(appBridgeScript.run({ root, platformMarkers: [""] })).rejects.toThrow("platformMarkers");
+});
+
+it("accepts a Shopify AppProvider as the App Bridge injector", async () => {
+  const root = await createFixture({
+    "shopify.app.toml": "embedded = true\n",
+    "app/root.tsx": `import { AppProvider } from "@shopify/shopify-app-react-router/react";
+export default function Root() {
+  return <html><head /><body><AppProvider embedded apiKey="k"><Outlet /></AppProvider></body></html>;
+}
+`,
+  });
+  expect(await appBridgeScript.run({ root })).toEqual([]);
+});
+
+it("does not accept an AppProvider imported from an unrelated package", async () => {
+  const root = await createFixture({
+    "shopify.app.toml": "embedded = true\n",
+    "app/root.tsx": `import { AppProvider } from "some-ui-kit";
+export default function Root() {
+  return <html><head /><body><AppProvider /></body></html>;
+}
+`,
+  });
+  expect(await appBridgeScript.run({ root })).toEqual([expect.objectContaining({ severity: "error" })]);
+});
+
+it("skips with a warning when the project has no app manifest", async () => {
+  const root = await createFixture({
+    "app/root.tsx": "export default function Root() { return <html><head /></html>; }\n",
+  });
+  expect(await appBridgeScript.run({ root })).toEqual([
+    expect.objectContaining({ severity: "warning", message: expect.stringContaining("No shopify.app.toml") }),
+  ]);
 });

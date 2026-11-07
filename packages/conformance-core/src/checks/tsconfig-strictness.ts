@@ -35,6 +35,16 @@ const defaultRequiredFlags = [
 
 const forbiddenFlags = ["ignoreDeprecations"] as const;
 
+/** Module kinds that emit CommonJS-style output, where TypeScript rejects `verbatimModuleSyntax` (TS1286). */
+const scriptModuleKinds: ReadonlySet<string> = new Set(["commonjs", "amd", "umd", "system"]);
+
+/** A flag that the config cannot satisfy by its own module kind is not required of it. */
+function isImpossible(flag: string, resolved: ResolvedConfig): boolean {
+  if (flag !== "verbatimModuleSyntax") return false;
+  const module = resolved.options.get("module")?.value;
+  return typeof module === "string" && scriptModuleKinds.has(module.toLowerCase());
+}
+
 const tsconfigFilePattern = /^tsconfig(?:\.[\w-]+)*\.json$/;
 const minReasonWords = 3;
 
@@ -233,6 +243,7 @@ type Violation = { readonly flag: string; readonly message: string };
 function violations(resolved: ResolvedConfig, requiredFlags: readonly string[]): readonly Violation[] {
   const found: Violation[] = [];
   for (const flag of requiredFlags) {
+    if (isImpossible(flag, resolved)) continue;
     const option = resolved.options.get(flag);
     if (option?.value !== true)
       found.push({
@@ -263,8 +274,7 @@ export const tsconfigStrictness: ConformanceCheck = {
   id: checkId,
   description: "Resolved tsconfig files keep the strict compiler baseline with no strict-family flag switched off.",
   docs,
-  async run({ root, tsconfigStrictness: options }) {
-    if (options === undefined) return [];
+  async run({ root, tsconfigStrictness: options = {} }) {
     const requiredFlags = [...new Set([...defaultRequiredFlags, ...(options.additionalRequiredFlags ?? [])])];
     validateOptions(options, requiredFlags);
     const waivers = options.waivers ?? {};

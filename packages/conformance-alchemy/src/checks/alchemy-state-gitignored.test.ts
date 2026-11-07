@@ -51,11 +51,30 @@ describe("alchemy-state-gitignored, from .gitignore files", () => {
   });
 
   it("reads stackFiles globs and fails when none match", async () => {
-    const root = await createFixture({ ".gitignore": ".alchemy/\n", "stacks/github.ts": stack("localState()") });
+    const root = await createFixture({ ".gitignore": ".alchemy/\n", "stacks/github.ts": "export const x = 1;" });
     expect(await run(root, ["stacks/*.ts"])).toEqual([]);
     expect(await run(root)).toMatchObject([{ severity: "error", evaluation: "failed" }]);
     await expect(run(root, ["../outside/*.ts"])).rejects.toThrow("inside the project");
     await expect(run(root, [])).rejects.toThrow("at least one glob");
+  });
+});
+
+describe("alchemy-state-gitignored, stack discovery by content", () => {
+  it("finds a differently named stack file that imports alchemy and calls the stack factory", async () => {
+    const root = await createFixture({ "infra/stack.ts": stack("localState()") });
+    expect(await run(root)).toMatchObject([{ severity: "error", path: "infra/.gitignore" }]);
+    const ignored = await createFixture({ ".gitignore": ".alchemy/\n", "infra/stack.ts": stack("localState()") });
+    expect(await run(ignored)).toEqual([]);
+  });
+
+  it("finds the default-export app factory form and ignores resource modules, tests, and declarations", async () => {
+    const root = await createFixture({
+      "infra/app.ts": 'import alchemy from "alchemy";\nconst app = await alchemy("my-app");\nawait app.finalize();\n',
+      "lib/resource.ts": 'import { Resource } from "alchemy";\nexport const x = Resource;\n',
+      "other/stack.test.ts": stack("localState()"),
+      "src/types.d.ts": stack("localState()"),
+    });
+    expect(await run(root)).toMatchObject([{ severity: "error", path: "infra/.gitignore" }]);
   });
 });
 

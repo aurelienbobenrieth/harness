@@ -1,4 +1,4 @@
-import type { ESTree, Rule } from "@oxlint/plugins";
+import type { Context, ESTree, Rule } from "@oxlint/plugins";
 import { domainScopedMeta, isDomainScopedFile, type RuleContextWithOptions } from "../runtime-support.js";
 
 // Namespaces whose types are runtime handles (a codec, an effect, a service), not data a Schema describes.
@@ -74,6 +74,34 @@ function shapeOf(type: ESTree.TSType): Shape {
   return undefined;
 }
 
+/** The leftmost name of an `extends` clause expression: `Context` for `Context.Key<A, B>`. */
+function extendsRuntimeHandle(node: ESTree.TSInterfaceDeclaration): boolean {
+  return node.extends.some((heritage) => {
+    const expression = heritage.expression;
+    if (expression.type === "Identifier") return runtimeNamespaces.has(expression.name);
+    return (
+      expression.type === "MemberExpression" &&
+      expression.object.type === "Identifier" &&
+      runtimeNamespaces.has(expression.object.name)
+    );
+  });
+}
+
+/**
+ * A type that mentions its own name is recursive. `typeof X.Type` cannot refer to itself, so the type is written by
+ * hand next to a `Schema.suspend`; no derived declaration replaces it.
+ */
+function mentionsItself(
+  context: Context,
+  node: ESTree.TSInterfaceDeclaration | ESTree.TSTypeAliasDeclaration,
+): boolean {
+  const name = node.id.name;
+  const text = context.sourceCode.getText(node);
+  const body = text.slice(text.indexOf(name) + name.length);
+  const escaped = name.replaceAll("$", String.raw`\$`);
+  return new RegExp(String.raw`(?<![\w$])${escaped}(?![\w$])`, "u").test(body);
+}
+
 function isSchemaDerivedInterface(node: ESTree.TSInterfaceDeclaration): boolean {
   return node.body.body.length === 0 && node.extends.length > 0;
 }
@@ -101,7 +129,8 @@ export const schemaDomainTypes: Rule = {
     return {
       TSInterfaceDeclaration(node) {
         if (node.typeParameters !== null || node.declare || isSchemaDerivedInterface(node)) return;
-        if (holdsBehavior(node.body.body) || !inScope()) return;
+        if (holdsBehavior(node.body.body) || extendsRuntimeHandle(node) || !inScope()) return;
+        if (mentionsItself(context, node)) return;
         context.report({
           node: node.id,
           messageId: "schemaDomainObject",
@@ -111,7 +140,7 @@ export const schemaDomainTypes: Rule = {
       TSTypeAliasDeclaration(node) {
         if (node.typeParameters !== null || node.declare) return;
         const shape = shapeOf(node.typeAnnotation);
-        if (shape === undefined || !inScope()) return;
+        if (shape === undefined || !inScope() || mentionsItself(context, node)) return;
         context.report({
           node: node.id,
           messageId: shape === "object" ? "schemaDomainObject" : "schemaDomainLiterals",

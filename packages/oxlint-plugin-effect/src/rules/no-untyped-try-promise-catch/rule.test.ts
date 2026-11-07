@@ -96,3 +96,16 @@ it("ignores a local object shadowing Effect", async () => {
     ),
   ).resolves.toBeUndefined();
 });
+
+it("skips test-support files by default and reports once allow is replaced", async () => {
+  const code = "const p = Effect.tryPromise(() => load());\n";
+  await expect(
+    assertRuleDoesNotReport("effect/no-untyped-try-promise-catch", code, { filename: "src/testing/db.ts" }),
+  ).resolves.toBeUndefined();
+  await expect(
+    assertRuleReports("effect/no-untyped-try-promise-catch", code, {
+      filename: "src/testing/db.ts",
+      ruleOptions: { allow: ["**/nothing/**"] },
+    }),
+  ).resolves.toBeUndefined();
+});

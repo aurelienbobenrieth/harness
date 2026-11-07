@@ -2,7 +2,7 @@
  * @attribution anti-slop by Dillon Mulroy (MIT, concept re-implemented)
  */
 import type { Comment, Context, ESTree, Rule } from "@oxlint/plugins";
-import { escapeRegExp, findAncestor, isConstAssertion, type ParentedNode } from "../ast.js";
+import { escapeRegExp, findAncestor, isConstAssertion, isTestFile, type ParentedNode } from "../ast.js";
 
 const message =
   'Type assertion lacks a safety justification. Precede the owning statement with a "{{markers}}: <reason>" comment, or parse the value instead.';
@@ -101,6 +101,9 @@ export const requireSafetyCommentForTypeAssertion: Rule = {
     };
 
     return {
+      before() {
+        if (isTestFile(context.filename)) return false;
+      },
       TSAsExpression: check,
       TSTypeAssertion: check,
     };

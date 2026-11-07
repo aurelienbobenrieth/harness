@@ -44,3 +44,24 @@ it("ignores fn on a local object shadowing Effect", async () => {
     ),
   ).resolves.toBeUndefined();
 });
+
+it("allows unnamed Effect.fn in test files, which are not traced", async () => {
+  await expect(
+    assertRuleDoesNotReport(ruleName, "const run = Effect.fn(function* () { return 1; });\n", {
+      filename: "src/run.test.ts",
+    }),
+  ).resolves.toBeUndefined();
+});
+
+it("allows unnamed Effect.fn in configured globs and reports elsewhere", async () => {
+  const code = "const run = Effect.fn(function* () { return 1; });\n";
+  await expect(
+    assertRuleDoesNotReport(ruleName, code, {
+      filename: "src/lifecycle/run.ts",
+      ruleOptions: { allow: ["**/lifecycle/**"] },
+    }),
+  ).resolves.toBeUndefined();
+  await expect(
+    assertRuleReports(ruleName, code, { filename: "src/run.test.ts", ruleOptions: { allow: [] } }),
+  ).resolves.toBeUndefined();
+});

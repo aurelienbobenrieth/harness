@@ -26,7 +26,7 @@ it("reports a module-scope Drizzle postgres-js client and a postgres() call", as
   await expect(
     assertRuleReports(
       ruleName,
-      'import postgres from "postgres";\nconst sql = postgres("postgres://localhost/db");\nexport default { fetch: async () => new Response(String(await sql`select 1`)) };\n',
+      'import postgres from "postgres";\nconst sql = postgres("postgres://localhost/db");\nexport default { fetch: async (request: Request, env: Env) => new Response(String(await sql`select 1`)) };\n',
       { message: client },
     ),
   ).resolves.toBeUndefined();
@@ -36,7 +36,7 @@ it("reports a mysql2 pool created through a namespace-like default import", asyn
   await expect(
     assertRuleReports(
       ruleName,
-      'import mysql from "mysql2/promise";\nconst pool = mysql.createPool({ host: "db", disableEval: true });\nexport default { async fetch() { await pool.query("select 1"); return new Response("ok"); } };\n',
+      'import mysql from "mysql2/promise";\nconst pool = mysql.createPool({ host: "db", disableEval: true });\nexport default { async fetch(request: Request, env: Env) { await pool.query("select 1"); return new Response("ok"); } };\n',
       { message: client },
     ),
   ).resolves.toBeUndefined();
@@ -56,7 +56,7 @@ it("reports request data stored on or pushed into a module-scope object", async 
   await expect(
     assertRuleReports(
       ruleName,
-      'const seen: string[] = [];\nconst current = { user: "" };\nexport default {\n  async fetch(request: Request) {\n    seen.push(request.url);\n    current.user = request.headers.get("x-user") ?? "";\n    return new Response("ok");\n  },\n};\n',
+      'const seen: string[] = [];\nconst current = { user: "" };\nexport default {\n  async fetch(request: Request, env: Env) {\n    seen.push(request.url);\n    current.user = request.headers.get("x-user") ?? "";\n    return new Response("ok");\n  },\n};\n',
       { message: state },
     ),
   ).resolves.toBeUndefined();
@@ -85,6 +85,53 @@ it("ignores module-scope clients and writes in files that are not Workers", asyn
     assertRuleDoesNotReport(
       ruleName,
       'import { Pool } from "pg";\nexport const pool = new Pool();\nlet calls = 0;\nexport function count() { calls += 1; return calls; }\n',
+    ),
+  ).resolves.toBeUndefined();
+});
+
+it("reports a Worker whose handler object has a queue handler or passes fetch by reference", async () => {
+  await expect(
+    assertRuleReports(
+      ruleName,
+      'import { Pool } from "pg";\nconst pool = new Pool();\nexport default { queue: async (batch) => { await pool.query("select 1"); } };\n',
+      { message: client },
+    ),
+  ).resolves.toBeUndefined();
+  await expect(
+    assertRuleReports(
+      ruleName,
+      'import { Pool } from "pg";\nimport { app } from "./app";\nconst pool = new Pool();\nexport default { fetch: app.fetch };\n',
+      { message: client },
+    ),
+  ).resolves.toBeUndefined();
+});
+
+it("stays silent for Bun, Deno and Neon style default exports that are not Worker handlers", async () => {
+  await expect(
+    assertRuleDoesNotReport(
+      ruleName,
+      'import { Pool } from "pg";\nconst pool = new Pool();\nlet hits = 0;\nexport default { port: 3000, fetch(req: Request, server: unknown) { hits++; return new Response(String(hits)); } };\n',
+    ),
+  ).resolves.toBeUndefined();
+  await expect(
+    assertRuleDoesNotReport(
+      ruleName,
+      'import { Pool } from "pg";\nconst pool = new Pool({ connectionString: process.env.DATABASE_URL });\nexport default { async fetch(request: Request) { return Response.json(await pool.query("select 1")); } };\n',
+    ),
+  ).resolves.toBeUndefined();
+  await expect(
+    assertRuleDoesNotReport(
+      ruleName,
+      "let seen = 0;\nexport default { test: { onConsoleLog() { seen++; return false; } } };\n",
+    ),
+  ).resolves.toBeUndefined();
+});
+
+it("stays silent for a WeakMap keyed by the request env", async () => {
+  await expect(
+    assertRuleDoesNotReport(
+      ruleName,
+      'const perEnv = new WeakMap<object, string>();\nexport default { async fetch(request: Request, env: Env) { perEnv.set(env, "x"); return new Response("ok"); } };\n',
     ),
   ).resolves.toBeUndefined();
 });

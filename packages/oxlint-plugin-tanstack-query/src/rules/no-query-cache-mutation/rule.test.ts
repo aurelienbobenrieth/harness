@@ -120,3 +120,31 @@ it("ignores unrelated select options and files without TanStack Query", async ()
     ),
   ).resolves.toBeUndefined();
 });
+
+it("reports a mutation through a type assertion or satisfies wrapper", async () => {
+  await expect(
+    assertRuleReports(
+      ruleName,
+      `${imports}export const useCast = () =>
+  useQuery({ queryKey: ["todos"], queryFn: fetchTodos, select: (data) => (data as Todo[]).sort(byDate) });\n`,
+    ),
+  ).resolves.toBeUndefined();
+  await expect(
+    assertRuleReports(
+      ruleName,
+      `${imports}queryClient.setQueryData(["todos"], (old) => { (old satisfies Todo[]).push(todo); return old; });\n`,
+    ),
+  ).resolves.toBeUndefined();
+});
+
+it("accepts a copy taken through a type assertion", async () => {
+  await expect(
+    assertRuleDoesNotReport(
+      ruleName,
+      `${imports}export const useCopy = () =>
+  useQuery({ queryKey: ["todos"], queryFn: fetchTodos, select: (data) => [...(data as Todo[])].sort(byDate) });
+export const useSliced = () =>
+  useQuery({ queryKey: ["todos"], queryFn: fetchTodos, select: (data) => (data as Todo[]).slice().sort(byDate) });\n`,
+    ),
+  ).resolves.toBeUndefined();
+});

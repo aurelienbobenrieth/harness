@@ -3,6 +3,8 @@ import { assertRuleDoesNotReport, assertRuleReports } from "../test-support.js";
 
 const ruleName = "shopify-app/functions-no-unavailable-runtime-apis";
 const filename = "extensions/discount/src/run.ts";
+const functionManifest = '[[extensions]]\nname = "t:name"\nhandle = "discount"\ntype = "function"\n';
+const files = { "extensions/discount/shopify.extension.toml": functionManifest };
 
 it.each([
   [
@@ -26,7 +28,7 @@ it.each([
   ["Date.now", "export function run() { return Date.now(); }\n"],
   ["Math.random", "export function run() { return Math.random() > 0.5; }\n"],
 ])("reports %s", async (_label, code) => {
-  await expect(assertRuleReports(ruleName, code, { filename })).resolves.toBeUndefined();
+  await expect(assertRuleReports(ruleName, code, { filename, files })).resolves.toBeUndefined();
 });
 
 it("accepts synchronous, deterministic Function code and near misses", async () => {
@@ -45,7 +47,49 @@ export function cartLinesDiscountsGenerateRun(input: Input & Record<string, any>
   return { operations: [input.thing.then, input.crypto, input.list.then(1)] };
 }
 `,
-      { filename },
+      { filename, files },
     ),
+  ).resolves.toBeUndefined();
+});
+
+const asyncCode = "export async function run(input) { return { operations: [] }; }\n";
+
+it("stays silent outside a Function extension", async () => {
+  await expect(
+    assertRuleDoesNotReport(ruleName, asyncCode, { filename: "app/routes/app._index.tsx" }),
+  ).resolves.toBeUndefined();
+  await expect(assertRuleDoesNotReport(ruleName, asyncCode, { filename })).resolves.toBeUndefined();
+});
+
+it("stays silent in a UI extension and in a Function extension's tests", async () => {
+  await expect(
+    assertRuleDoesNotReport(ruleName, asyncCode, {
+      filename: "extensions/block/src/Block.tsx",
+      files: { "extensions/block/shopify.extension.toml": '[[extensions]]\ntype = "ui_extension"\n' },
+    }),
+  ).resolves.toBeUndefined();
+  await expect(
+    assertRuleDoesNotReport(ruleName, asyncCode, { filename: "extensions/discount/src/run.test.ts", files }),
+  ).resolves.toBeUndefined();
+});
+
+it("scopes by the nearest manifest, found from a nested source directory", async () => {
+  await expect(
+    assertRuleReports(ruleName, asyncCode, { filename: "extensions/discount/src/lib/deep/helper.ts", files }),
+  ).resolves.toBeUndefined();
+});
+
+it("accepts a legacy-named manifest", async () => {
+  await expect(
+    assertRuleReports(ruleName, asyncCode, {
+      filename: "extensions/old/src/run.js",
+      files: { "extensions/old/legacy.extension.toml": 'type = "function"\n' },
+    }),
+  ).resolves.toBeUndefined();
+});
+
+it("lints any file when scope is all", async () => {
+  await expect(
+    assertRuleReports(ruleName, asyncCode, { filename: "src/anywhere.ts", ruleOptions: { scope: "all" } }),
   ).resolves.toBeUndefined();
 });

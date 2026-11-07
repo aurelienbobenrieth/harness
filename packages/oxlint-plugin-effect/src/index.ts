@@ -1,3 +1,5 @@
+import { calendarDateRoundTrip } from "./rules/calendar-date-round-trip/rule.js";
+import { destructiveReasonRequired } from "./rules/destructive-reason-required/rule.js";
 import { eslintCompatPlugin } from "@oxlint/plugins";
 import { dependenciesFirst } from "./rules/dependencies-first/rule.js";
 import { noArrayCallbackReference } from "./rules/no-array-callback-reference/rule.js";
@@ -7,6 +9,7 @@ import { noArraySort } from "./rules/no-array-sort/rule.js";
 import { noCatchAllCause } from "./rules/no-catch-all-cause/rule.js";
 import { noDynamicSpanName } from "./rules/no-dynamic-span-name/rule.js";
 import { noEffectOrDie } from "./rules/no-effect-ordie/rule.js";
+import { noNativeFailure } from "./rules/no-native-failure/rule.js";
 import { noFakeTimersInEffectTests } from "./rules/no-fake-timers-in-effect-tests/rule.js";
 import { noManagedRuntimePerCall } from "./rules/no-managed-runtime-per-call/rule.js";
 import { noRunPromiseInRuntime } from "./rules/no-run-promise-in-runtime/rule.js";
@@ -15,9 +18,9 @@ import { noServiceDependencyParameters } from "./rules/no-service-dependency-par
 import { noServiceOption } from "./rules/no-service-option/rule.js";
 import { noSchemaAny } from "./rules/no-schema-any/rule.js";
 import { noStaticServiceForwarders } from "./rules/no-static-service-forwarders/rule.js";
+import { noTaggedErrorNameField } from "./rules/no-tagged-error-name-field/rule.js";
 import { noSwitch } from "./rules/no-switch/rule.js";
 import { noUnsafeEffectBody } from "./rules/no-unsafe-effect-body/rule.js";
-import { noUnsafeErrorMapper } from "./rules/no-unsafe-error-mapper/rule.js";
 import { noUntypedTryPromiseCatch } from "./rules/no-untyped-try-promise-catch/rule.js";
 import { noUnscopedRuntimeLaunch } from "./rules/no-unscoped-runtime-launch/rule.js";
 import { paddingAfterDependencies } from "./rules/padding-after-dependencies/rule.js";
@@ -44,11 +47,20 @@ import { preserveThrownCause } from "./rules/preserve-thrown-cause/rule.js";
 import { requireAbortSignal } from "./rules/require-abort-signal/rule.js";
 import { requireRedactedSecretConfig } from "./rules/require-redacted-secret-config/rule.js";
 
+/** Advisory defaults for newly introduced or low-precision rules; merge into consumer rules. */
+export const advisoryRules = {
+  "effect/calendar-date-round-trip": "warn",
+  "effect/destructive-reason-required": "warn",
+} as const;
+
 export default eslintCompatPlugin({
   meta: {
     name: "effect",
   },
   rules: {
+    "calendar-date-round-trip": calendarDateRoundTrip,
+    "destructive-reason-required": destructiveReasonRequired,
+
     "dependencies-first": dependenciesFirst,
     "no-array-callback-reference": noArrayCallbackReference,
     "no-array-for-each": noArrayForEach,
@@ -59,6 +71,7 @@ export default eslintCompatPlugin({
     "no-effect-ordie": noEffectOrDie,
     "no-fake-timers-in-effect-tests": noFakeTimersInEffectTests,
     "no-managed-runtime-per-call": noManagedRuntimePerCall,
+    "no-native-failure": noNativeFailure,
     "no-run-promise-in-runtime": noRunPromiseInRuntime,
     "no-service-constructor-imports": noServiceConstructorImports,
     "no-service-dependency-parameters": noServiceDependencyParameters,
@@ -66,8 +79,8 @@ export default eslintCompatPlugin({
     "no-schema-any": noSchemaAny,
     "no-static-service-forwarders": noStaticServiceForwarders,
     "no-switch": noSwitch,
+    "no-tagged-error-name-field": noTaggedErrorNameField,
     "no-unsafe-effect-body": noUnsafeEffectBody,
-    "no-unsafe-error-mapper": noUnsafeErrorMapper,
     "no-untyped-try-promise-catch": noUntypedTryPromiseCatch,
     "no-unscoped-runtime-launch": noUnscopedRuntimeLaunch,
     "padding-after-dependencies": paddingAfterDependencies,

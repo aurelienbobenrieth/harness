@@ -31,7 +31,7 @@ const fingerprintVersion = new Map([
 ]).get(engineManifest.version);
 if (fingerprintVersion === undefined) throw new Error(`Unreviewed engine fingerprint: ${engineManifest.version}`);
 const brokenSource =
-  'export interface IUser { id: string }\nexport type Order = { id: string };\nfetch("/unbounded"); useQuery({}); createActor(machine); const copy = "Hurry!";';
+  'import { Effect } from "effect";\nexport interface IUser { id: string }\nexport type Order = { id: string };\nfetch("/unbounded"); useQuery({}); createActor(machine); const copy = "Hurry!";\nstore.read().pipe(Effect.mapError(() => new Unavailable()));';
 
 function commitBaseline(cwd: string): void {
   execFileSync("git", ["init", "--quiet"], { cwd, windowsHide: true });

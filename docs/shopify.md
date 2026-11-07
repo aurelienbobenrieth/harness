@@ -77,8 +77,8 @@ Oxlint + conformance: public-registry consumer validation. Agentlint: packed-con
 | server + API baseline (`userErrors`, idempotent mutations, thrown auth, billing test mode, webhook HMAC) | per the [plugin README](../packages/oxlint-plugin-shopify-app/README.md) |
 | `no-admin-rest-api`                                                                                      | new public-app GraphQL policy only                                       |
 | `no-asset-api-theme-writes`, `no-draft-order-custom-discounts`                                           | category + distribution apply                                            |
-| `functions-no-unavailable-runtime-apis`                                                                  | Function directories, via `overrides`                                    |
-| `require-fetch-abort-signal`                                                                             | relevant checkout extension paths                                        |
+| `functions-no-unavailable-runtime-apis`                                                                  | self-scoped to Function extensions (`scope: "all"` lints anything)       |
+| `require-fetch-abort-signal` (now `core/require-fetch-abort-signal`)                                     | generic: every `fetch` call, any project                                 |
 | `app-ux-review`, `scope-change-review` (agentlint)                                                       | ⚙️ opt-in, in no preset                                                  |
 | `extension-capability-contract`, `listing-inputs` (conformance)                                          | ⚙️ opt-in: pass `optionalShopifyAppChecks`                               |
 | `[events]` checks: `nextGenerationEvents: true` (conformance)                                            | ⚙️ opt-in while Events is a developer preview on `unstable`              |

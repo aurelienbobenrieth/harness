@@ -1,17 +1,10 @@
 import type { Rule } from "@oxlint/plugins";
 import { moduleMethod } from "../binding-support.js";
+import { testSupportFiles } from "../test-paths.js";
 import { getFilename, getOptions, isAllowedFile, type RuleContextWithOptions } from "../runtime-support.js";
 
 const message = "Use a concrete Schema or Schema.Unknown (only when relevant) instead of Schema.Any.";
-const defaultAllow = [
-  "**/*.test.ts",
-  "**/*.test.tsx",
-  "**/*.spec.ts",
-  "**/*.spec.tsx",
-  "**/fixtures/**",
-  "**/scripts/**",
-  "tools/**",
-];
+const defaultAllow = [...testSupportFiles, "tools/**"];
 
 export const noSchemaAny: Rule = {
   meta: {

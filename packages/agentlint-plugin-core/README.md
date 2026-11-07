@@ -2,15 +2,19 @@
 
 [![npm](https://img.shields.io/npm/v/@aurelienbbn/agentlint-plugin-core)](https://www.npmjs.com/package/@aurelienbbn/agentlint-plugin-core) [![downloads](https://img.shields.io/npm/dm/@aurelienbbn/agentlint-plugin-core)](https://www.npmjs.com/package/@aurelienbbn/agentlint-plugin-core) [![CI](https://github.com/aurelienbobenrieth/harness/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/aurelienbobenrieth/harness/actions/workflows/ci.yml) [![license](https://img.shields.io/npm/l/@aurelienbbn/agentlint-plugin-core)](https://github.com/aurelienbobenrieth/harness/blob/main/packages/agentlint-plugin-core/LICENSE) [![node](https://img.shields.io/node/v/@aurelienbbn/agentlint-plugin-core)](https://github.com/aurelienbobenrieth/harness/blob/main/packages/agentlint-plugin-core/package.json)
 
-**25 agentlint reviews for any TypeScript repo: a deterministic trigger finds the spot, an agent or a human settles it.**
+**23 agentlint reviews for any TypeScript repo: a deterministic trigger finds the spot, an agent or a human settles it.**
+
+Only `bounded-data-access` and `bounded-work` change detection here; their detector versions advance, so surviving findings require fresh acceptances.
+
+`bounded-data-access` inspects the immediate list/select callee and its complete fluent chain. It no longer treats arbitrary raw SQL commands as collection reads or reports the same nested query on each wrapping call. `bounded-work` reviews dynamic I/O loops and collection fan-out once at the operation; fixed call sequences, explicit finite timeouts and test files no longer trigger it. Neither detector proves cardinality through aliases, imported helpers or data flow.
 
 > [!WARNING]
 > Requires the engine `@aurelienbbn/agentlint` `>=0.3.0 <0.9.0` as a peer. [Evidence](../../docs/compatibility.md#agentlint-engine).
 
 ```text
-strictPreset   █████████████            13  settled rules
+strictPreset   ████████████             12  settled rules
 starterPreset  ██                        2  boundary-resilience, bounded-work
-opt-in         ████████████             12  exported, in no preset: calibrate first
+opt-in         █████████████            13  exported, in no preset: calibrate first
 ```
 
 ## Start with 2 rules, not 25
@@ -36,33 +40,31 @@ export default defineConfig({
 
 ## Rules
 
-| Rule                                 | Preset           | Authority | Lifecycle | Options (default)                                                                              |
-| ------------------------------------ | ---------------- | --------- | --------- | ---------------------------------------------------------------------------------------------- |
-| `abstraction-earns-keep`             | strict           | 🔒 human  | state     | `minForwardingMembers` (3), `forwardingRatio` (0.8), `interfacePattern`, `implementationFiles` |
-| `boundary-resilience`                | strict · starter | agent     | state     | `networkCallPattern`                                                                           |
-| `bounded-data-access`                | strict           | agent     | state     |                                                                                                |
-| `bounded-work`                       | strict · starter | agent     | state     |                                                                                                |
-| `comment-signal`                     | strict           | agent     | state     | `narrationPattern`, `minWordOverlapLength` (4)                                                 |
-| `correlated-optional-state`          | strict           | agent     | state     | `discriminantNames`, `minOptionalSiblings` (2), `skipNamePattern`                              |
-| `expected-value-recomputed`          | strict           | agent     | state     | `matcherPattern`, `derivationCallees`, `maxFindingsPerFile` (3)                                |
-| `integration-test-owns-its-boundary` | strict           | agent     | state     | `integrationPattern`, `doublePattern`                                                          |
-| `operations-stay-with-owner`         | strict           | agent     | state     | `minOperations` (4), `entryPattern` (`api.*` files), `packages`                                |
-| `temporal-coupling`                  | strict           | agent     | state     | `guardMessagePattern`, `initMethodPattern`                                                     |
-| `test-behavior-coverage`             | strict           | agent     | state     | `mockPattern`, `outcomePattern`, `minInteractionShare` (0.5), `maxInlineSnapshotLines` (12)    |
-| `test-exercises-project-code`        | strict           | agent     | state     | `projectImportPattern`, `workspacePackages`, `blackBoxModules`                                 |
-| `test-expectation-drift`             | strict           | 🔒 human  | change    | `authority`, `testFilePattern`, `assertionPattern`, `maxEvidenceLines`                         |
-| `change-scatter-review`              | 🧪               | 🔒 human  | change    | `minFiles` (3), `maxFindings` (3), `tokenPattern`                                              |
-| `fake-parity`                        | 🧪               | agent     | state     | `fakeNamePattern`, `portTypePattern`                                                           |
-| `fallback-masks-failure`             | 🧪               | agent     | state     | `minFallbacksPerScope` (2), `sensitiveNames`                                                   |
-| `flag-forked-function`               | 🧪               | 🔒 human  | state     | `minFlags` (2), `minSitesForSingleFlag` (3), `includeJsx` (false)                              |
-| `hotspot-change-review`              | 🧪               | 🔒 human  | change    | `hotspots` (empty: silent)                                                                     |
-| `isomorphic-mapping`                 | 🧪               | 🔒 human  | state     | `minProperties` (5), `identityRatio` (0.9)                                                     |
-| `pinned-suspect-output`              | 🧪               | agent     | state     | `suspectPattern`                                                                               |
-| `precision-boundary-review`          | 🧪               | 🔒 human  | state     | `conversionCalleePattern`                                                                      |
-| `property-test-opportunity`          | 🧪               | agent     | state     | `pairPatterns`, `idempotentPattern`, `propertyApiPattern`                                      |
-| `protected-invariant-change`         | 🧪               | 🔒 human  | change    | `invariants` (empty: silent)                                                                   |
-| `single-use-extraction-review`       | 🧪               | 🔒 human  | state     | `minParameters` (2), `minStatements` (3)                                                       |
-| `validation-discards-proof`          | 🧪               | agent     | state     | `namePattern`                                                                                  |
+| Rule                                 | Preset           | Authority | Lifecycle | Options (default)                                                                           |
+| ------------------------------------ | ---------------- | --------- | --------- | ------------------------------------------------------------------------------------------- |
+| `boundary-resilience`                | strict · starter | agent     | state     | `networkCallPattern`                                                                        |
+| `bounded-data-access`                | strict           | agent     | state     |                                                                                             |
+| `bounded-work`                       | strict · starter | agent     | state     |                                                                                             |
+| `comment-signal`                     | strict           | agent     | state     | `narrationPattern`, `minWordOverlapLength` (4)                                              |
+| `correlated-optional-state`          | strict           | agent     | state     | `discriminantNames`, `minOptionalSiblings` (2), `skipNamePattern`                           |
+| `expected-value-recomputed`          | 🧪               | agent     | state     | `matcherPattern`, `derivationCallees`, `maxFindingsPerFile` (3)                             |
+| `integration-test-owns-its-boundary` | strict           | agent     | state     | `integrationPattern`, `doublePattern`                                                       |
+| `temporal-coupling`                  | strict           | agent     | state     | `guardMessagePattern`, `initMethodPattern`                                                  |
+| `test-behavior-coverage`             | strict           | agent     | state     | `mockPattern`, `outcomePattern`, `minInteractionShare` (0.5), `maxInlineSnapshotLines` (12) |
+| `test-exercises-project-code`        | strict           | agent     | state     | `projectImportPattern`, `workspacePackages`, `blackBoxModules`                              |
+| `test-expectation-drift`             | strict           | 🔒 human  | change    | `authority`, `testFilePattern`, `assertionPattern`, `maxEvidenceLines`                      |
+| `change-scatter-review`              | 🧪               | 🔒 human  | change    | `minFiles` (3), `maxFindings` (3), `tokenPattern`                                           |
+| `fake-parity`                        | 🧪               | agent     | state     | `fakeNamePattern`, `portTypePattern`                                                        |
+| `fallback-masks-failure`             | 🧪               | agent     | state     | `minFallbacksPerScope` (2), `sensitiveNames`                                                |
+| `flag-forked-function`               | 🧪               | 🔒 human  | state     | `minFlags` (2), `minSitesForSingleFlag` (3), `includeJsx` (false)                           |
+| `hotspot-change-review`              | 🧪               | 🔒 human  | change    | `hotspots` (empty: silent)                                                                  |
+| `isomorphic-mapping`                 | 🧪               | 🔒 human  | state     | `minProperties` (5), `identityRatio` (0.9)                                                  |
+| `pinned-suspect-output`              | 🧪               | agent     | state     | `suspectPattern`                                                                            |
+| `precision-boundary-review`          | 🧪               | 🔒 human  | state     | `conversionCalleePattern`                                                                   |
+| `property-test-opportunity`          | 🧪               | agent     | state     | `pairPatterns`, `idempotentPattern`, `propertyApiPattern`                                   |
+| `protected-invariant-change`         | 🧪               | 🔒 human  | change    | `invariants` (empty: silent)                                                                |
+| `single-use-extraction-review`       | 🧪               | 🔒 human  | state     | `minParameters` (2), `minStatements` (3)                                                    |
+| `validation-discards-proof`          | 🧪               | agent     | state     | `namePattern`                                                                               |
 
 🧪 opt-in: exported, register it yourself · 🔒 only a human can accept a finding. Presets ignore `**/*.d.ts`.
 
@@ -85,14 +87,14 @@ const email = form.get("email") || "";                               // ❌ fall
 <details>
 <summary>Boundaries: <code>boundary-resilience</code>, <code>bounded-work</code>, <code>bounded-data-access</code></summary>
 
-| Rule                  | Fires on                                                                                                                                                   | Stays silent                                                                                                                                        |
-| --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `boundary-resilience` | `fetch(` / `axios` / `got` / `ky` call whose **argument list** has no `signal`, `timeout`, `timeoutMs`, `deadline` or `AbortSignal`                        | chained `fetch(url).then(...)` reports once, on the call owning the args; strings and comments are blanked (`fetch("/api/signal?timeout=1")` fires) |
-|                       | `catch` of a `try` around an outbound call, or `.catch(cb)` on one, that discards the failure (handing it only to `console.*` / `logger.*` still discards) | rethrow, branching on the error, passing it to another function, a `REASON:` comment of ≥ 3 words; catches around anything else                     |
-| `bounded-work`        | ≥ 3 sequential `await`s with I/O, looped I/O, `Promise.all(...map(...))` fan-out, `timeoutMs`/`durationMs`/`cpuMs` > 60 000                                | a pure `items.map(item => item.id)`                                                                                                                 |
-| `bounded-data-access` | `findMany`/`findAll`/`getMany`/`list`/`search`/`query`/`select` on a repo/store/dao/client/model/collection                                                | a non-zero `first`/`take`/`limit`/`pageSize`/`perPage`/`maxResults` or `.limit(n)`/`.take(n)`                                                       |
+| Rule                  | Fires on                                                                                                                                                   | Stays silent                                                                                                                                                                                                         |
+| --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `boundary-resilience` | `fetch(` / `axios` / `got` / `ky` call whose **argument list** has no `signal`, `timeout`, `timeoutMs`, `deadline` or `AbortSignal`                        | chained `fetch(url).then(...)` reports once, on the call owning the args; strings and comments are blanked (`fetch("/api/signal?timeout=1")` fires)                                                                  |
+|                       | `catch` of a `try` around an outbound call, or `.catch(cb)` on one, that discards the failure (handing it only to `console.*` / `logger.*` still discards) | rethrow, branching on the error, passing it to another function, a `REASON:` comment of ≥ 3 words; catches around anything else                                                                                      |
+| `bounded-work`        | dynamic I/O loops and `Promise.all(...map(...))` fan-out                                                                                                   | pure maps, fixed call sequences, literal batches, explicit finite budgets and test files                                                                                                                             |
+| `bounded-data-access` | `findMany`/`findAll`/`getMany`/`list`/`search`/`query`/`select` on a repo/store/dao/client/model/collection                                                | a non-literal `first`/`take`/`limit`/`pageSize`/`perPage`/`maxResults` or `.limit(x)`/`.take(x)`, or a SQL `LIMIT` placeholder (`?`, `$1`, `:limit`, `${...}`); a hard-coded literal limit does not satisfy the rule |
 
-Limits: `bounded-work` separates enclosing operations; a cursor alone is not a cardinality bound; cancellation is not a deadline.
+Limits: `bounded-work` skips test files, `testing.*` helpers and `*.e2e.*` suites (the runner owns their timeout) and separates enclosing operations; a cursor alone is not a cardinality bound; cancellation is not a deadline.
 
 </details>
 
@@ -117,27 +119,13 @@ snapshot-only     ≥ 2 tests whose only oracle is a whole-value snapshot,
 
 `toHaveBeenCalled*`, `toHaveBeenNthCalledWith`, `toHaveReturned*` and the `toBeCalled*` aliases never count as outcomes, even through a custom `outcomePattern`. The judge asks, per double, whether the mocked collaborator is an unmanaged process boundary. Choosing the double and oracle stays in the `testing` skill. Limit: measures mock/assertion density per file, not per-test coverage.
 
-**expected-value-recomputed.** Test files only. Matchers: `toBe`, `toEqual`, `toStrictEqual`, `toBeCloseTo`, `toContain`, `toMatchObject`. `expected` (or the local `const` it names, inside the same test callback) is computed when it is arithmetic with a non-literal operand, a `map`/`filter`/`reduce`/`join`/`replace`/`toLowerCase`/`toFixed`/`round`… call, or a template with ≥ 2 substitutions. Reports only when the expected expression shares an identifier with the subject call's arguments, or calls something imported from the subject's own module.
+**expected-value-recomputed.** Opt-in: on two consumers every accepted finding (13 of 13) was a deliberate law test (copy equals original, sorted order, differential or determinism check) rather than a mirrored formula. Test files only. Matchers: `toBe`, `toEqual`, `toStrictEqual`, `toBeCloseTo`, `toContain`, `toMatchObject`. `expected` (or the local `const` it names, inside the same test callback) is computed when it is arithmetic with a non-literal operand, a `map`/`filter`/`reduce`/`join`/`replace`/`toLowerCase`/`toFixed`/`round`… call, or a template with ≥ 2 substitutions. Reports only when the expected expression shares an identifier with the subject call's arguments, or calls something imported from the subject's own module.
 
 **integration-test-owns-its-boundary.** Path has an `integration` or `e2e` segment or name part (`orders.integration.test.ts`, `tests/integration/...`, `e2e/...`), or the first `describe` title contains "integration". Doubles: `vi.fn(`, `createMock(`, `mockX(`, `fakeX(`, or an `InMemoryX`/`FakeX`/`StubX` name. Strings and comments are ignored; the doubles are the evidence. One finding per file. A contract suite legitimately runs the fake next to the real thing.
 
 **test-exercises-project-code.** Project-reaching specifiers: relative, `@/`, `~/`, `#...`, or a name in `workspacePackages`, through `import`, `export ... from`, `import()`, `require()` or `vi.importActual()`. Black-box drivers that keep it silent: `node:child_process`, `execa`, `node:fs`, `node:fs/promises`, `@playwright/test`, `supertest`, `undici`, or a bare `fetch(` call. A monorepo importing itself by package name lists those names in `workspacePackages`.
 
 </details>
-
-## Ownership: operations stay with their module
-
-**`operations-stay-with-owner` reports a file that calls `minOperations` (4) or more operations of one other module through its public entry.** A module's entry is a relative import resolving to `api.ts` (`entryPattern`), or a bare specifier listed in `packages` (`@acme/*` for a scope). Operations are the value names starting lowercase; schemas, classes, constants in PascalCase and every `type` import are vocabulary and never count. Counted per file and per owner, so a read model calling two operations of each of three modules stays silent.
-
-```ts
-// src/qa/story.ts: ❌ replays takedown's own state moves, so the seed belongs to takedown
-import { requestComposed, requestSent, requestBounced, requestReplied } from "../takedown/api.ts";
-
-// src/ops/act.ts: ✅ one outcome the owner offers, plus its vocabulary
-import { merchantsStart, type TakedownSource } from "../takedown/api.ts";
-```
-
-The fix is ownership, not a wider entry: move the code into the owner, or let the owner contribute it through a declaration the composition collects (a seed, a handler, a migration). Exclude the composition root (`registry/`, `workers/`) in the binding when it legitimately assembles every module. Calibrated on one modular monolith (515 files): 1 finding, the seed that replayed another feature's moves.
 
 ## 🔒 Test drift: the author doesn't accept it
 
@@ -160,14 +148,13 @@ Silent: added test files, additions-only hunks, stronger matchers, a test delete
 </details>
 
 <details>
-<summary>Design: <code>abstraction-earns-keep</code>, <code>correlated-optional-state</code>, <code>temporal-coupling</code>, <code>comment-signal</code></summary>
+<summary>Design: <code>correlated-optional-state</code>, <code>temporal-coupling</code>, <code>comment-signal</code></summary>
 
-| Rule                        | Fires on                                                                                                                                                                                                                                                                                                                                                                                                          | Stays silent                                                                                                                                |
-| --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| `abstraction-earns-keep`    | behaviour-only interface/type equal to its only recognized implementer (class, `satisfies`, annotated object); `Impl`/`Default`/`Base`/`Concrete`/`Standard`/`Real` affix on an implementation of a relatively imported interface; a class forwarding verbatim to one collaborator; a module whose exports all forward (replaces its per-export findings); an export passing its parameters unchanged to one call | name-based matching unless `interfacePattern` is set; name matches when the file shows ≥ 2 implementers                                     |
-| `correlated-optional-state` | non-test interface/object type with a required `status`/`state`/`kind`/`type`/`phase`/`step`/`mode`/`variant` string-literal union + ≥ 2 optional or `\| null`/`\| undefined` fields                                                                                                                                                                                                                              | `*Props`, `*Options`, `*Config`, `*Params`, `*Args`, `*Input`, `*Query`, `*Filter`, `*Patch`, `*Update`; members of a union or intersection |
-| `temporal-coupling`         | a non-test class usable before setup, one finding per class (signals below)                                                                                                                                                                                                                                                                                                                                       | decorated framework fields (`@property() name!: string`), `!` fields the constructor assigns, "User not found"                              |
-| `comment-signal`            | a `//` comment starting with create/get/set/return/initialize/loop/check/call/update/send/add/remove that shares a word with the next line; docblocks restating the signature                                                                                                                                                                                                                                     | units, invariants, useful public-interface docs, even short; JS type-only JSDoc tags                                                        |
+| Rule                        | Fires on                                                                                                                                                                             | Stays silent                                                                                                                                |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| `correlated-optional-state` | non-test interface/object type with a required `status`/`state`/`kind`/`type`/`phase`/`step`/`mode`/`variant` string-literal union + ≥ 2 optional or `\| null`/`\| undefined` fields | `*Props`, `*Options`, `*Config`, `*Params`, `*Args`, `*Input`, `*Query`, `*Filter`, `*Patch`, `*Update`; members of a union or intersection |
+| `temporal-coupling`         | a non-test class usable before setup, one finding per class (signals below)                                                                                                          | decorated framework fields (`@property() name!: string`), `!` fields the constructor assigns, "User not found"                              |
+| `comment-signal`            | a `//` comment starting with create/get/set/return/initialize/loop/check/call/update/send/add/remove that shares a word with the next line; docblocks restating the signature        | units, invariants, useful public-interface docs, even short; JS type-only JSDoc tags                                                        |
 
 ```text
 temporal-coupling signals
@@ -179,12 +166,6 @@ nullable-init        `| null`/`| undefined` field set by exactly one init/initia
 ```
 
 Factory closures aren't inspected yet. Bags of lifecycle booleans belong to `no-impossible-state-bag` in the type-evidence oxlint plugin.
-
-**abstraction-earns-keep** counts implementers instead of reading names. Recommended `interfacePattern`: `/^I[A-Z][a-z]|Interface$/`, which keeps `IPAddress` silent. Factories returning fresh object literals (directly or through a local const), interface inheritance and direct/intersection type aliases count as implementation evidence. Reusing an existing instance, object spreads, abstract classes and ambient declarations do not prove another concrete implementation.
-
-For cross-file evidence, pass exact repository-relative source paths with `defineAbstractionEarnsKeep({ implementationFiles: ["src/clock.ts", "src/manual-clock.ts"] })`. The engine captures these declared dependencies; the detector resolves relative named/namespace imports and re-exports against those snapshots. Same-named unrelated interfaces and comments cannot supply implementation evidence. This mode scans the repository and dependency changes invalidate decisions. It performs no filesystem reads, package-alias resolution or full TypeScript type inference; uncaptured implementations still require human review.
-
-Exports are checked structurally, including expression arrows and async/await. Calls with transformed, reordered or defaulted arguments, and accessors over module-owned private collaborators stay silent. Factories supply evidence of an additional implementation; their own return interfaces do not become new header candidates. An abstraction that makes today's change easier passes even with one implementer.
 
 **comment-signal docblock bar**, from conventions observed in upstream `effect-ts/effect` sources (`Array.ts`, `Option.ts`, `Duration.ts`):
 
@@ -242,13 +223,11 @@ Measure its volume on your code before enforcing. One finding per function at mo
 
 **Review prompts, not correctness proofs.**
 
-| Rule                                                                   | Rev | Detector | Change                                                                                                        |
-| ---------------------------------------------------------------------- | :-: | :------: | ------------------------------------------------------------------------------------------------------------- |
-| `boundary-resilience` ⚠️                                               |  2  |    2     | reports discarding handlers around outbound calls; resilience words outside the argument list no longer count |
-| `test-behavior-coverage` ⚠️                                            |  3  |    3     | reports interaction-matcher-only files, interaction-only tests, snapshot-only tests                           |
-| `abstraction-earns-keep` ⚠️                                            |  2  |    2     | counts implementers and forwarding members; `IName` / `...Interface` names only with `interfacePattern`       |
-| `abstraction-earns-keep`, `flag-forked-function`, `isomorphic-mapping` |     |          | architectural tradeoffs: now 🔒 human authority                                                               |
-| `flag-forked-function`                                                 |     |          | skips JSX files unless `includeJsx`                                                                           |
+| Rule                        | Rev | Detector | Change                                                                                                        |
+| --------------------------- | :-: | :------: | ------------------------------------------------------------------------------------------------------------- |
+| `boundary-resilience` ⚠️    |  2  |    2     | reports discarding handlers around outbound calls; resilience words outside the argument list no longer count |
+| `test-behavior-coverage` ⚠️ |  3  |    3     | reports interaction-matcher-only files, interaction-only tests, snapshot-only tests                           |
+| `flag-forked-function`      |     |          | skips JSX files unless `includeJsx`                                                                           |
 
 ⚠️ existing acceptances need a fresh review.
 
@@ -271,33 +250,31 @@ Measure its volume on your code before enforcing. One finding per function at mo
 
 Generated from package exports by `pnpm catalog`. Rule-specific options and limitations are described above and in the source tests.
 
-| Rule/check                           | Trigger or review scope                                                                                                                                                                         |
-| ------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `abstraction-earns-keep`             | Flags interfaces that mirror their only implementer, classes and modules that forward verbatim to one collaborator, and exports that only delegate to a single call.                            |
-| `boundary-resilience`                | Flags outbound network calls that show no timeout or AbortSignal, and handlers around them that discard the failure.                                                                            |
-| `bounded-data-access`                | Flags repository-like list/search/query calls without obvious boundedness markers.                                                                                                              |
-| `bounded-work`                       | Flags execution paths with unbounded I/O, fan-out, or runtime budgets.                                                                                                                          |
-| `change-scatter-review`              | Flags a decision token added across several production files so a reader checks whether the change is legitimately cross-cutting or duplicates ownership.                                       |
-| `comment-signal`                     | Flags comments that narrate the next line or docblocks that restate the signature.                                                                                                              |
-| `correlated-optional-state`          | Flags object types that pair a literal-union status field with two or more optional fields, where a discriminated union would make illegal combinations unrepresentable.                        |
-| `expected-value-recomputed`          | Flags assertions whose expected value is computed from the same inputs as the call under test instead of being stated.                                                                          |
-| `fake-parity`                        | Flags hand-written stateful fakes of a port so a shared behaviour suite or contract test proves they still behave like the real implementation.                                                 |
-| `fallback-masks-failure`             | Flags empty-literal fallbacks on required-looking values, fallback-dense functions, and error handlers that return an empty literal.                                                            |
-| `flag-forked-function`               | Flags functions whose boolean or literal-union parameters are used only to choose between code paths, to check whether they are two functions sharing a name.                                   |
-| `hotspot-change-review`              | Flags changes to paths a repository has identified from real corrective history instead of treating generic complexity scores as defects.                                                       |
-| `integration-test-owns-its-boundary` | Flags test files named or titled as integration tests that also construct test doubles, so the claimed boundary is checked to be real.                                                          |
-| `isomorphic-mapping`                 | Flags functions that copy an object field by field into a same-shaped object, to check that a real boundary separates the two types.                                                            |
-| `operations-stay-with-owner`         | Flags a file that calls several operations of another module through its public entry, so a reviewer decides whether that code belongs to the owner or the owner's entry exposes its internals. |
-| `pinned-suspect-output`              | Flags expected strings and inline snapshots that contain `undefined`, `NaN`, `[object Object]`, `Invalid Date` or an embedded `null`, which usually certify a bug the test recorded.            |
-| `precision-boundary-review`          | Flags raw arithmetic across different unit-bearing identifiers so a reader checks units, tolerances, rounding and independent test evidence.                                                    |
-| `property-test-opportunity`          | Flags test files that cover an encode/decode-style inverse pair or an idempotent normaliser with examples only, where one property would cover the open input domain.                           |
-| `protected-invariant-change`         | Flags changes to repository-declared invariant surfaces and their supporting evidence so architectural guarantees cannot change silently.                                                       |
-| `single-use-extraction-review`       | Flags substantial file-local helpers with one caller and several forwarded values so a reader decides whether the extraction names a real concept or fragments one operation.                   |
-| `temporal-coupling`                  | Flags classes that can exist in an unusable state: 'not initialized' guards, definite-assignment fields set outside the constructor, and nullable fields filled by an init method.              |
-| `test-behavior-coverage`             | Flags mock-dense test files without an outcome assertion, tests that assert mock interactions only, and tests whose only oracle is a snapshot of a whole value.                                 |
-| `test-exercises-project-code`        | Flags test files that import nothing from the project, so the code they exercise is a copy or a third-party library.                                                                            |
-| `test-expectation-drift`             | Flags test files whose existing expectations were deleted, loosened, skipped or re-valued in the same change, so the behaviour change is declared rather than absorbed.                         |
-| `validation-discards-proof`          | Flags validate/check/ensure functions that return void or boolean without a type predicate, so what they proved is lost to the type system.                                                     |
+| Rule/check                           | Trigger or review scope                                                                                                                                                              |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `boundary-resilience`                | Flags outbound network calls that show no timeout or AbortSignal, and handlers around them that discard the failure.                                                                 |
+| `bounded-data-access`                | Flags repository-like list/search/query calls whose bound is not supplied by the caller.                                                                                             |
+| `bounded-work`                       | Flags dynamic I/O loops and Promise.all collection fan-out that need a cardinality or concurrency bound.                                                                             |
+| `change-scatter-review`              | Flags a decision token added across several production files so a reader checks whether the change is legitimately cross-cutting or duplicates ownership.                            |
+| `comment-signal`                     | Flags comments that narrate the next line or docblocks that restate the signature.                                                                                                   |
+| `correlated-optional-state`          | Flags object types that pair a literal-union status field with two or more optional fields, where a discriminated union would make illegal combinations unrepresentable.             |
+| `expected-value-recomputed`          | Flags assertions whose expected value is computed from the same inputs as the call under test instead of being stated.                                                               |
+| `fake-parity`                        | Flags hand-written stateful fakes of a port so a shared behaviour suite or contract test proves they still behave like the real implementation.                                      |
+| `fallback-masks-failure`             | Flags empty-literal fallbacks on required-looking values, fallback-dense functions, and error handlers that return an empty literal.                                                 |
+| `flag-forked-function`               | Flags functions whose boolean or literal-union parameters are used only to choose between code paths, to check whether they are two functions sharing a name.                        |
+| `hotspot-change-review`              | Flags changes to paths a repository has identified from real corrective history instead of treating generic complexity scores as defects.                                            |
+| `integration-test-owns-its-boundary` | Flags test files named or titled as integration tests that also construct test doubles, so the claimed boundary is checked to be real.                                               |
+| `isomorphic-mapping`                 | Flags functions that copy an object field by field into a same-shaped object, to check that a real boundary separates the two types.                                                 |
+| `pinned-suspect-output`              | Flags expected strings and inline snapshots that contain `undefined`, `NaN`, `[object Object]`, `Invalid Date` or an embedded `null`, which usually certify a bug the test recorded. |
+| `precision-boundary-review`          | Flags raw arithmetic across different unit-bearing identifiers so a reader checks units, tolerances, rounding and independent test evidence.                                         |
+| `property-test-opportunity`          | Flags test files that cover an encode/decode-style inverse pair or an idempotent normaliser with examples only, where one property would cover the open input domain.                |
+| `protected-invariant-change`         | Flags changes to repository-declared invariant surfaces and their supporting evidence so architectural guarantees cannot change silently.                                            |
+| `single-use-extraction-review`       | Flags substantial file-local helpers with one caller and several forwarded values so a reader decides whether the extraction names a real concept or fragments one operation.        |
+| `temporal-coupling`                  | Flags classes that can exist in an unusable state: 'not initialized' guards, definite-assignment fields set outside the constructor, and nullable fields filled by an init method.   |
+| `test-behavior-coverage`             | Flags mock-dense test files without an outcome assertion, tests that assert mock interactions only, and tests whose only oracle is a snapshot of a whole value.                      |
+| `test-exercises-project-code`        | Flags test files that import nothing from the project, so the code they exercise is a copy or a third-party library.                                                                 |
+| `test-expectation-drift`             | Flags test files whose existing expectations were deleted, loosened, skipped or re-valued in the same change, so the behaviour change is declared rather than absorbed.              |
+| `validation-discards-proof`          | Flags validate/check/ensure functions that return void or boolean without a type predicate, so what they proved is lost to the type system.                                          |
 
 ### Credited concepts
 
@@ -307,17 +284,14 @@ Generated from package exports by `pnpm catalog`. Rule-specific options and limi
 - "Design Smell: Temporal Coupling" by Mark Seemann (concept)
 - "Designing with types: Making illegal states unrepresentable" by Scott Wlaschin (concept)
 - "Don't Put Logic in Tests" (Google Testing Blog) (concept)
-- "Feature Envy" from Martin Fowler's Refactoring (concept, lifted from classes to modules)
 - "FlagArgument" by Martin Fowler (concept)
 - "Getting Started with Contract Tests" by J. B. Rainsberger (concept)
 - "IntegrationTest" by Martin Fowler (concept: narrow integration tests double the remote, not the adapter)
-- "Interfaces are not abstractions" by Mark Seemann (concept: header interfaces, Reused Abstractions Principle)
 - "Parse, don't validate" by Alexis King (concept)
 - "Parse, don't validate" by Alexis King (concept: absence is rejected once, at the boundary)
 - "The Wrong Abstraction" by Sandi Metz (concept)
 - "When to Mock" by Vladimir Khorikov (concept: interaction assertions belong to unmanaged process boundaries)
 - ImpossibleBench (arXiv 2510.20270) (concept: passing by editing the oracle)
-- code-slop by asyrafhussin (MIT) + thermos by Cursor (MIT), concepts re-implemented
 - code-slop by asyrafhussin (MIT, concept re-implemented)
 - code-slop by asyrafhussin (MIT, concept re-implemented; real-defenses checklist)
 - https://alexn.org/blog/2026/09/22/ai-has-no-wisdom-and-neither-will-you/ (inspiration; independently implemented)
@@ -339,8 +313,6 @@ Concepts only; every rule is independently implemented.
 | `expected-value-recomputed`                                                                                                                 | "Don't Put Logic in Tests", Google Testing Blog                                                                                                         |
 | `integration-test-owns-its-boundary`                                                                                                        | "IntegrationTest", Martin Fowler: narrow integration tests double the remote, not the adapter                                                           |
 | `correlated-optional-state`                                                                                                                 | "Designing with types: Making illegal states unrepresentable", Scott Wlaschin                                                                           |
-| `abstraction-earns-keep`                                                                                                                    | "Interfaces are not abstractions", Mark Seemann: header interfaces with one implementer                                                                 |
-| `operations-stay-with-owner`                                                                                                                | "Feature Envy" and "Move Function", Martin Fowler (Refactoring), lifted from classes to modules                                                         |
 | `temporal-coupling`                                                                                                                         | "Design Smell: Temporal Coupling", Mark Seemann                                                                                                         |
 | `flag-forked-function`                                                                                                                      | "The Wrong Abstraction", Sandi Metz; "FlagArgument", Martin Fowler                                                                                      |
 | `property-test-opportunity`                                                                                                                 | "Choosing properties for property-based testing", Scott Wlaschin: inverse and idempotence families                                                      |

@@ -11,8 +11,8 @@ GAME_PORT=24260
 WORKER_PORT=24261
 
 $ worktree-hygiene done
-Still running from C:\work\panache\.claude\worktrees\l6 (1)
-    39808  node.exe  [command line, orphaned, listening 24260]  node C:\work\panache\.claude\worktrees\l6\node_modules\vite\bin\vite.js
+Still running from C:\work\acme\.claude\worktrees\l6 (1)
+    39808  node.exe  [command line, orphaned, listening 24260]  node C:\work\acme\.claude\worktrees\l6\node_modules\vite\bin\vite.js
 Stop them before handing back, or run `worktree-hygiene done --reap`.
 $ echo $?
 1
@@ -58,7 +58,7 @@ Never stopped, whatever the evidence:
 
 Before each signal the target is re-read: same PID, start time, and command line, or it is left alone. `SIGTERM` first, `SIGKILL` after a 3 s grace (Windows terminates on the first signal).
 
-**Limits.** Windows exposes no working directory, so a process started with only relative paths is found through its ancestry, not by itself. An unquoted path with a space in a command line is read up to the space, so a worktree at `C:\work\panache` also claims a process started from `C:\work\panache 2` when that path is unquoted: keep worktree paths free of spaces. An orphan adopted by a session subreaper on Linux is not seen as orphaned: use `reap --all` or `done --reap`. An agent host whose executable name is not protected (for example a plain `node cli.js`) does not get its MCP servers shielded on Linux and macOS, where they inherit the worktree as working directory: add `--protect` for it.
+**Limits.** Windows exposes no working directory, so a process started with only relative paths is found through its ancestry, not by itself. An unquoted path with a space in a command line is read up to the space, so a worktree at `C:\work\acme` also claims a process started from `C:\work\acme 2` when that path is unquoted: keep worktree paths free of spaces. An orphan adopted by a session subreaper on Linux is not seen as orphaned: use `reap --all` or `done --reap`. An agent host whose executable name is not protected (for example a plain `node cli.js`) does not get its MCP servers shielded on Linux and macOS, where they inherit the worktree as working directory: add `--protect` for it.
 
 ## For agents
 

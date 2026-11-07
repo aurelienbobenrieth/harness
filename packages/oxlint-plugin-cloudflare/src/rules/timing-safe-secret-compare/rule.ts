@@ -12,11 +12,42 @@ const message =
 
 const secretName = /SECRET|TOKEN|PASSWORD|PASSPHRASE|API_?KEY|PRIVATE_?KEY|SIGNING_?KEY|SIGNATURE|CREDENTIAL/i;
 
+const descriptorWords: ReadonlySet<string> = new Set([
+  "kind",
+  "type",
+  "name",
+  "header",
+  "url",
+  "uri",
+  "endpoint",
+  "host",
+  "path",
+  "ttl",
+  "expiry",
+  "length",
+  "count",
+  "prefix",
+  "scope",
+  "scopes",
+  "issuer",
+  "audience",
+]);
+
+/** A trailing word that makes the name describe the secret rather than hold it: `tokenKind`, `TOKEN_TYPE`, `AUTH_TOKEN_HEADER`. */
+function describesSecret(name: string): boolean {
+  const words = name
+    .replaceAll(/([a-z\d])([A-Z])/gu, "$1 $2")
+    .toLowerCase()
+    .split(/[^a-z\d]+/u);
+  return descriptorWords.has(words.findLast((word) => word !== "") ?? "");
+}
+
 /** `env.<NAME>`, `this.env.<NAME>`, `c.env.<NAME>` where NAME looks like a secret; Node's `process.env` is out of scope. */
 function isSecretEnvRead(node: ESTree.Node): boolean {
   const value = unwrapExpression(node);
   const name = memberPropertyName(value);
-  if (name === undefined || value.type !== "MemberExpression" || !secretName.test(name)) return false;
+  if (name === undefined || value.type !== "MemberExpression" || !secretName.test(name) || describesSecret(name))
+    return false;
   const owner = unwrapExpression(value.object);
   if (owner.type === "Identifier") return owner.name === "env";
   if (owner.type !== "MemberExpression" || memberPropertyName(owner) !== "env") return false;

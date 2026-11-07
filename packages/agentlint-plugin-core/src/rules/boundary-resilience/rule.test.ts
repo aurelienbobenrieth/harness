@@ -140,3 +140,10 @@ it("rejects a REASON marker that carries no written reason", async () => {
     await messages("try { await fetch(url, { signal }); } catch {\n  // REASON: ok\n  return undefined;\n}"),
   ).toEqual([discardedFailure]);
 });
+
+it("does not read a variable named got (the got/want test idiom) as the got HTTP client", async () => {
+  expect(await messages("got.fill(0); want.fill(0); expect(got).toEqual(want);")).toEqual([]);
+  expect(await messages("const hit = raycast(grid, q.x, q.z, got);")).toEqual([]);
+  expect(await messages("await got.get(url);")).toHaveLength(1);
+  expect(await messages("await got(url);")).toHaveLength(1);
+});

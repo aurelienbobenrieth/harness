@@ -13,6 +13,9 @@ import { excerpt, resolveToolBin, runTool } from "../tool-support.js";
 
 const docs = "https://github.com/aurelienbobenrieth/harness/tree/main/packages/conformance-core#duplication-budget";
 
+const defaultFormats: readonly string[] = ["typescript", "tsx", "javascript", "jsx"];
+const testIgnoreGlobs: readonly string[] = ["**/*.test.*", "**/*.spec.*", "**/__tests__/**"];
+
 type CloneSide = { readonly name: string; readonly start?: number; readonly end?: number };
 
 function parseCloneSide(value: unknown): CloneSide | undefined {
@@ -96,16 +99,19 @@ export const duplicationBudget: ConformanceCheck = {
           "--min-tokens",
           String(minTokens),
           "--silent",
+          "--format",
+          (duplication?.formats ?? defaultFormats).join(","),
           "--ignore",
           [
             "**/node_modules/**",
             "**/dist/**",
             "**/coverage/**",
             "**/.git/**",
+            ...(duplication?.includeTests === true ? [] : testIgnoreGlobs),
             ...(duplication?.ignorePatterns ?? []),
           ].join(","),
         ],
-        { cwd: root },
+        { cwd: root, timeoutMs: duplication?.timeoutMs },
       );
 
       if (result.timedOut) {
@@ -114,7 +120,7 @@ export const duplicationBudget: ConformanceCheck = {
             check: "duplication-budget",
             severity: duplication?.requireTool === true ? "error" : "warning",
             evaluation: "failed",
-            message: "jscpd timed out after 120s — duplication budget not evaluated.",
+            message: `jscpd timed out after ${(duplication?.timeoutMs ?? 120_000) / 1000}s — duplication budget not evaluated; raise duplication.timeoutMs.`,
             docs,
           },
         ];

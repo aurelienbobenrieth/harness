@@ -1,12 +1,8 @@
 import type { Context, ESTree, Rule } from "@oxlint/plugins";
 import { effectMethod, moduleMethod } from "../binding-support.js";
-import {
-  defaultAllow,
-  getFilename,
-  getOptions,
-  isAllowedFile,
-  type RuleContextWithOptions,
-} from "../runtime-support.js";
+import { getFilename, getOptions, isAllowedFile, type RuleContextWithOptions } from "../runtime-support.js";
+import { isBrowserEntry, isConsumedByRunMain, isInsideWorkerHandler } from "../runtime-boundary.js";
+import { testSupportFiles as defaultAllow } from "../test-paths.js";
 
 const message = "Launch Effects and Layers only from configured runtime boundary files.";
 const launchers = new Set([
@@ -46,7 +42,7 @@ export const noUnscopedRuntimeLaunch: Rule = {
         additionalProperties: false,
       },
     ],
-    defaultOptions: [{ allow: defaultAllow }],
+    defaultOptions: [{ allow: [...defaultAllow] }],
   },
   createOnce(context) {
     return {
@@ -56,6 +52,9 @@ export const noUnscopedRuntimeLaunch: Rule = {
         const options = getOptions(context as RuleContextWithOptions);
         const allow = options.allow ?? defaultAllow;
         if (isAllowedFile(getFilename(context as RuleContextWithOptions), allow)) return;
+
+        if (moduleMethod(context, node, "Layer") === "launch" && isConsumedByRunMain(node)) return;
+        if (isInsideWorkerHandler(node) || isBrowserEntry(context)) return;
 
         context.report({
           node: node.parent.type === "CallExpression" && node.parent.callee === node ? node.parent : node,

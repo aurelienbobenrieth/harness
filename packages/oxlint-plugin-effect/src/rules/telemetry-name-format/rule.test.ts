@@ -296,3 +296,11 @@ describe("logMessages", () => {
     ]);
   });
 });
+
+it("skips test files by default and checks them when allow is emptied", async () => {
+  const code = 'const run = Effect.fn("test")(function* () {});\n';
+  await expect(assertRuleDoesNotReport(ruleName, code, { filename: "src/run.test.ts" })).resolves.toBeUndefined();
+  await expect(
+    assertRuleReports(ruleName, code, { filename: "src/run.test.ts", ruleOptions: { allow: [] } }),
+  ).resolves.toBeUndefined();
+});

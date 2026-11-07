@@ -111,6 +111,7 @@ export function defineSingleUseExtractionReview(options: SingleUseExtractionRevi
       createOnce({ context }) {
         return {
           program(root) {
+            const reported = new Map<string, number>();
             for (const fn of declaredFunctions(root)) {
               if (isExported(fn)) continue;
               const name = functionName(fn);
@@ -122,11 +123,13 @@ export function defineSingleUseExtractionReview(options: SingleUseExtractionRevi
                 (call) => !fn.descendantsOfType("call_expression").includes(call),
               );
               if (calls.length !== 1) continue;
+              const occurrence = (reported.get(name) ?? 0) + 1;
+              reported.set(name, occurrence);
               context.report({
                 node: fn.childByFieldName("name") ?? fn,
                 message: `File-local helper \`${name}\` has one caller, ${parametersOf(fn).length} parameters and ${statements} statements; keep it only when it names a concept or owns a contract that repays the extra navigation.`,
                 evidence: { name, parameters: parametersOf(fn).length, statements },
-                key: name,
+                key: occurrence === 1 ? name : `${name}#${occurrence}`,
               });
             }
           },

@@ -73,7 +73,7 @@ queryFn: async () => parseResponse(await fetch("/api/a")); // ✅ handed to anot
 | ---------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `no-swallowed-query-fn-error`            | a `queryFn` / `mutationFn` whose own `try` decides the result (returns, assigns an outer variable, or is the last statement) while `catch` never throws or returns `Promise.reject(...)`; a returned, awaited or chained `.catch(handler)` whose handler never throws | conditional rethrow; guards around side effects; detached `void promise.catch(...)`                                                                                                 |
 | `require-fetch-status-check-in-query-fn` | global `fetch` (also `window.`, `globalThis.`, `self.`) in a `queryFn` / `mutationFn` with no `.ok` / `.status` read, no `{ ok }` / `{ status }` destructuring, no `throw`                                                                                            | response handed on (`parse(await fetch(...))`, `.then(handleResponse)`, `decode(response)`); shadowed or imported `fetch`; clients that throw by default (`ky`, `axios`, `api.get`) |
-| `query-fn-returns-value`                 | a block-bodied `queryFn` with no `return <value>` not ending in `throw`; every `return;`, `return undefined`, `return void ...`                                                                                                                                       | expression-bodied arrows; `mutationFn`                                                                                                                                              |
+| `query-fn-returns-value`                 | a block-bodied `queryFn` with no `return <value>` not ending in `throw`; every `return;`, `return undefined`, `return void ...`                                                                                                                                       | expression-bodied arrows; `mutationFn`; `*.test-d.*` files                                                                                                                          |
 
 </details>
 
@@ -94,7 +94,7 @@ queryClient.setQueryData(["todos"], (old: Todo[] | undefined) => [...(old ?? [])
 
 Watched: first parameter of a `setQueryData` / `setQueriesData` updater, first parameter of a query `select`, a variable initialised from `getQueryData(...)`. `select` counts next to `queryKey` / `queryFn`, or as a direct option of an imported query hook or `queryOptions` / `infiniteQueryOptions`.
 
-Mutations: `push`, `pop`, `shift`, `unshift`, `splice`, `sort`, `reverse`, `fill`, `copyWithin`, member assignment, `++` / `--`, `delete`, `Object.assign(value, ...)`. Copies and immer drafts (different bindings) pass.
+Mutations: `push`, `pop`, `shift`, `unshift`, `splice`, `sort`, `reverse`, `fill`, `copyWithin`, member assignment, `++` / `--`, `delete`, `Object.assign(value, ...)`. Seen through `!`, `as`, `satisfies` and `<T>` casts. Copies and immer drafts (different bindings) pass.
 
 </details>
 

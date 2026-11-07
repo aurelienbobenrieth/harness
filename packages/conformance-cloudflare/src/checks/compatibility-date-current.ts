@@ -64,7 +64,7 @@ export const compatibilityDateCurrent: ConformanceCheck = {
         else if ((today - date.time) / dayMs > maxAgeDays)
           report(
             target.label,
-            "error",
+            "warning",
             `compatibility_date ${date.text} is older than ${maxAgeDays} days. Move it forward after reviewing the compatibility flags changelog.`,
           );
         const compat = nodeCompatibility(date, inherited(config, target, "compatibility_flags"));
@@ -73,7 +73,7 @@ export const compatibilityDateCurrent: ConformanceCheck = {
         else if (compat === "missing-flag")
           report(
             target.label,
-            "error",
+            "warning",
             `compatibility_date ${date.text} predates 2026-08-04 and nodejs_compat is not set. Add "nodejs_compat" to compatibility_flags or move the date to 2026-08-04 or later.`,
           );
         else if (compat === "redundant-flag")

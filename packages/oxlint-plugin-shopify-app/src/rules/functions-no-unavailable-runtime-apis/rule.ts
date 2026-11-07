@@ -1,5 +1,7 @@
 import type { Context, ESTree, Rule } from "@oxlint/plugins";
-import { enclosingFunction, memberPath, unshadowed } from "../ast-support.js";
+import { enclosingFunction, isTestFile, memberPath, unshadowed } from "../ast-support.js";
+import { firstOption } from "../option-support.js";
+import { isShopifyFunctionSource } from "../extension-source.js";
 
 const unavailableGlobals = new Set([
   "setTimeout",
@@ -52,8 +54,17 @@ export const functionsNoUnavailableRuntimeApis: Rule = {
     type: "problem",
     docs: {
       description:
-        "Disallow async code, timers, fetch, crypto, URL, process, Buffer, require, node: imports, and clock or random reads in Shopify Function source; scope it to Function directories with overrides.",
+        'Disallow async code, timers, fetch, crypto, URL, process, Buffer, require, node: imports, and clock or random reads in Shopify Function source. Applies only to files under an extension whose `*.extension.toml` declares `type = "function"`; option `scope: "all"` lints every file it is enabled for.',
     },
+    schema: [
+      {
+        type: "object",
+        properties: {
+          scope: { enum: ["function-extensions", "all"] },
+        },
+        additionalProperties: false,
+      },
+    ],
     messages: {
       asyncUnavailable:
         "Shopify Functions run without an event loop: {{construct}} compiles but throws when the Function executes. Make the run target synchronous.",
@@ -75,6 +86,10 @@ export const functionsNoUnavailableRuntimeApis: Rule = {
         });
     };
     return {
+      before() {
+        if (firstOption(context)["scope"] === "all") return true;
+        return !isTestFile(context) && isShopifyFunctionSource(context.filename);
+      },
       FunctionDeclaration: reportFunction,
       FunctionExpression: reportFunction,
       ArrowFunctionExpression: reportFunction,
@@ -121,9 +136,9 @@ export const functionsNoUnavailableRuntimeApis: Rule = {
           });
           return;
         }
-        const path = memberPath(callee);
-        if (path === undefined) return;
-        const api = path.join(".");
+        const members = memberPath(callee);
+        if (members === undefined) return;
+        const api = members.join(".");
         if (nondeterministicCalls.has(api) && rootedAtGlobal(context, node.callee)) {
           context.report({ node, messageId: "nondeterministic", data: { api: `${api}()` } });
           return;

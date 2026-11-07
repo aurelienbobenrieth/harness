@@ -15,12 +15,12 @@ flowchart LR
   U -- yes --> R
 ```
 
-**`pnpm catalog:check` enforces two-sided fixtures on all 196 rules and 28 checks.** A rule missing from its README's generated inventory can't ship.
+**`pnpm catalog:check` enforces two-sided fixtures on all 199 rules and 30 checks.** A rule missing from its README's generated inventory can't ship.
 
 ```text
- oxlint-plugin-effect            ████████████████████████████████████████████ 44
- oxlint-plugin-shopify-app       ███████████████████████████                27
- agentlint-plugin-core           █████████████████████████                  25
+ oxlint-plugin-effect            ███████████████████████████████████████████████ 47
+ oxlint-plugin-shopify-app       ██████████████████████████                 26
+ agentlint-plugin-core           ███████████████████████                    23
  oxlint-plugin-core              ██████████████████                         18
  oxlint-plugin-xstate            █████████████████                          17
  agentlint-plugin-shopify-app    ███████████████                            15
@@ -31,14 +31,14 @@ flowchart LR
  agentlint-plugin-alchemy        ██████                                      6
  agentlint-plugin-tanstack-query ████                                        4
  oxlint-plugin-alchemy           ████                                        4
+ oxlint-plugin-drizzle           ████                                        4
  agentlint-plugin-effect         ███                                         3
- oxlint-plugin-drizzle           █                                           1
-                                                                  rules  = 196
+                                                                  rules  = 199
  conformance-shopify-app         █████████████                              13
  conformance-cloudflare          ██████                                      6
- conformance-core                █████                                       5
+ conformance-core                ███████                                     7
  conformance-alchemy             ████                                        4
-                                                                  checks =  28
+                                                                  checks =  30
 ```
 
 ## Upstream owns the engine, Harness owns the delta
@@ -47,7 +47,7 @@ flowchart LR
 | -------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Oxlint built-ins + TypeScript                                                                | Conventions the strict preset can't express; the preset itself.                                                                                                                                                                                                                                                                         |
 | Oxlint `import/no-cycle`, `import/no-self-import`, `eslint/no-restricted-imports`            | `withImportGraphLayer` (cycles), `layerDirectionOverride` (real direction), `core/workspace-boundaries` (member identity: package names, `exports`, relative paths across members, a forbidden-member matrix). **No second graph engine:** dependency-cruiser and skott are not wrapped.                                                |
-| Knip                                                                                         | `dead-exports` runs it, validates the report. **No reachability analysis.**                                                                                                                                                                                                                                                             |
+| Knip                                                                                         | Run directly for unused files, exports, and dependencies; Harness does not rerun it.                                                                                                                                                                                                                                                    |
 | jscpd                                                                                        | `duplication-budget`: clone budget + evidence failure. **No clone detection.**                                                                                                                                                                                                                                                          |
 | TypeScript resolved config                                                                   | `tsconfig-strictness`: resolved flags, explicit waivers.                                                                                                                                                                                                                                                                                |
 | `@effect/tsgo`                                                                               | Only syntax and org policy it doesn't own; `withEffectTsgoLayer` wires and settles it.                                                                                                                                                                                                                                                  |
@@ -62,7 +62,6 @@ flowchart LR
 <details>
 <summary>Delta details</summary>
 
-- `dead-exports` also maps unavailable/malformed Knip evidence into the shared report model.
 - `tsconfig-strictness` checks resolved flags across a workspace.
 - TanStack Query local rules exist only where they review a different architecture or UI-state contract.
 - Agentlint prompts target architecture and semantic risks, deliberately not compiler-style certainty.

@@ -3,10 +3,31 @@
  *
  * @attribution TkDodo's blog, "Status Checks in React Query" by Dominik Dorfmeister (concept: data-first status ordering, independently worded)
  */
-import { defineRule } from "@aurelienbbn/agentlint";
+import { defineRule, type AgentlintNode } from "@aurelienbbn/agentlint";
 import { calleeName, stateOwningQueryHooks, suspenseQueryHooks } from "../query-calls.js";
 
 const lazyQueryPattern = /\benabled\b|\bskipToken\b/;
+
+const functionTypes: ReadonlySet<string> = new Set([
+  "function_declaration",
+  "function_expression",
+  "function",
+  "generator_function_declaration",
+  "generator_function",
+  "arrow_function",
+  "method_definition",
+]);
+
+const pendingEvidence = /\bisPending\b|\bisLoading\b|\bstatus\s*===?\s*["']pending["']/;
+const errorEvidence = /\bisError\b|\berror\b|\bstatus\s*===?\s*["']error["']/;
+
+/** Whether the function around the hook call already mentions both pending and error state. */
+function handlesPendingAndError(node: AgentlintNode): boolean {
+  let current = node.parent;
+  while (current !== null && !functionTypes.has(current.type)) current = current.parent;
+  if (current === null) return false;
+  return pendingEvidence.test(current.text) && errorEvidence.test(current.text);
+}
 
 const localStateMessage =
   "TanStack Query usage needs visible-state coverage for pending, error, empty, success, and retry states.";
@@ -77,6 +98,12 @@ export const queryStateCoverage = defineRule({
           file: "src/module.ts",
           source: 'useQuery<Array<Todo>, Error>({queryKey:["items"]})',
         },
+        {
+          label: "component handling pending only",
+          file: "src/page.tsx",
+          source:
+            'function Todos() { const q = useQuery({queryKey:["a"]}); if (q.isPending) return null; return q.data; }',
+        },
         { label: "parallel queries", file: "src/module.ts", source: "useQueries({queries:[]})" },
         {
           label: "suspense parallel queries",
@@ -100,6 +127,12 @@ export const queryStateCoverage = defineRule({
         },
       ],
       mustStaySilent: [
+        {
+          label: "component already branches on pending and error",
+          file: "src/page.tsx",
+          source:
+            'function Todos() { const q = useQuery({queryKey:["a"]}); if (q.isPending) return null; if (q.isError) return null; return q.data; }',
+        },
         { label: "prefetch", file: "src/module.ts", source: 'prefetchQuery({queryKey:["items"]})' },
         { label: "client accessor", file: "src/module.ts", source: "useQueryClient()" },
         {
@@ -122,7 +155,7 @@ export const queryStateCoverage = defineRule({
       ],
     },
     id: "tanstack-query/query-state-coverage",
-    version: 2,
+    version: 3,
     scan: "file",
     createOnce({ context }) {
       return {
@@ -131,6 +164,7 @@ export const queryStateCoverage = defineRule({
           if (hook === null) return;
           const mode = queryStateMode(hook, node.text);
           if (mode === null) return;
+          if (mode !== "suspense" && handlesPendingAndError(node)) return;
 
           context.report({ node, message: messages[mode], evidence: { hook, mode } });
         },

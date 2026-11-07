@@ -83,3 +83,19 @@ it("rejects placeholder safety reasons", async () => {
   await assertRuleReports(ruleName, "// SAFETY: x\nconst user = input as User;");
   await assertRuleReports(ruleName, "// SAFETY: TODO explain this later\nconst user = input as User;");
 });
+
+it("stays silent in test files", async () => {
+  await expect(
+    assertRuleReports(ruleName, "declare const input: string;\nconst id = input as UserId;\n"),
+  ).resolves.toBeUndefined();
+  await expect(
+    assertRuleDoesNotReport(ruleName, "declare const input: string;\nconst id = input as UserId;\n", {
+      filename: "src/sample.test.ts",
+    }),
+  ).resolves.toBeUndefined();
+  await expect(
+    assertRuleDoesNotReport(ruleName, "declare const input: string;\nconst id = input as UserId;\n", {
+      filename: "__tests__/sample.ts",
+    }),
+  ).resolves.toBeUndefined();
+});

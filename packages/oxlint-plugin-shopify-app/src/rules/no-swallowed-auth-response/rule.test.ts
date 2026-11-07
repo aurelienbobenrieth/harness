@@ -125,3 +125,16 @@ export async function run(request) {
     ),
   ).resolves.toBeUndefined();
 });
+
+it.each(["constructor", "toString", "hasOwnProperty", "__proto__", "valueOf"])(
+  "does not crash or report on the prototype-key owner %s",
+  async (owner) => {
+    await expect(
+      assertRuleDoesNotReport(
+        ruleName,
+        `async function run(${owner === "__proto__" ? "o" : owner}) { try { ${owner === "__proto__" ? "o.__proto__.require()" : `${owner}.require()`}; } catch (error) { console.error(error); } }
+`,
+      ),
+    ).resolves.toBeUndefined();
+  },
+);

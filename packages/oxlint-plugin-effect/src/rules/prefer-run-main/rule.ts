@@ -1,8 +1,10 @@
 import type { Context, ESTree, Rule } from "@oxlint/plugins";
 import { optionsObject, parentOf, unwrapExpressionKeepingChain } from "@aurelienbbn/oxlint-kit/ast";
 import { effectMethod } from "../binding-support.js";
-import { defaultAllow, getFilename, isAllowedFile, type RuleContextWithOptions } from "../runtime-support.js";
+import { getFilename, isAllowedFile, type RuleContextWithOptions } from "../runtime-support.js";
+import { isBrowserEntry } from "../runtime-boundary.js";
 import { stringArrayOption } from "../sota-support.js";
+import { testSupportFiles as defaultAllow } from "../test-paths.js";
 
 const message =
   "Launch the process with NodeRuntime.runMain or BunRuntime.runMain instead of a top-level Effect.{{method}}: runMain interrupts fibers on SIGINT/SIGTERM, runs finalizers, and sets the exit code.";
@@ -60,6 +62,7 @@ export const preferRunMain: Rule = {
         if (parentOf(node)?.type !== "Program") return;
         const method = launchedMethod(context, node.expression);
         if (method === undefined) return;
+        if (isBrowserEntry(context)) return;
 
         const allow = stringArrayOption(optionsObject(context), "allow", defaultAllow);
         if (isAllowedFile(getFilename(context as RuleContextWithOptions), allow)) return;

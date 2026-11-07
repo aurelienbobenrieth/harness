@@ -7,8 +7,8 @@ const root = path.resolve("consumer");
 const options = { root, expectedFiles: ["acceptance.test.ts"] };
 const result = (status = "passed") => ({
   ancestorTitles: ["core conformance"],
-  fullName: "core conformance dead-exports: checks unused exports",
-  title: "dead-exports: checks unused exports",
+  fullName: "core conformance duplication-budget: checks duplicate code",
+  title: "duplication-budget: checks duplicate code",
   status,
 });
 const report = () => ({
@@ -30,7 +30,13 @@ const skippedReport = () => {
 };
 const skipOptions = {
   ...options,
-  allowedSkips: [{ file: "acceptance.test.ts", ancestorTitles: ["core conformance"], check: "dead-exports" }],
+  allowedSkips: [
+    {
+      file: "acceptance.test.ts",
+      ancestorTitles: ["core conformance"],
+      check: "duplication-budget",
+    },
+  ],
 };
 
 test("accepts actual passing evidence without fixing the number of future cases", () => {

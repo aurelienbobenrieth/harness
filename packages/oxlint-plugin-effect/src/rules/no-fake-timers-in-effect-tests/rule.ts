@@ -1,5 +1,5 @@
 import type { Context, ESTree, Rule } from "@oxlint/plugins";
-import { binding } from "@aurelienbbn/oxlint-kit/ast";
+import { binding, importedSpecifierName } from "@aurelienbbn/oxlint-kit/ast";
 
 const message =
   "vi.{{method}} drives Vitest's fake timers, not Effect's clock: it.effect runs on TestClock. Advance virtual time with TestClock.adjust or TestClock.setTime from effect/testing.";
@@ -28,16 +28,12 @@ function importsEffectVitest(program: ESTree.Program): boolean {
   );
 }
 
-/** `vi` is either the Vitest global or an import from `vitest` / `@effect/vitest`; a local shadow never matches. */
+/** Resolve the imported utility by its exported name; local shadows never match. */
 function isVitestUtility(context: Context, node: ESTree.Node): boolean {
+  if (importedSpecifierName(context, node, (source) => vitestModules.has(source)) === "vi") return true;
   if (node.type !== "Identifier" || node.name !== "vi") return false;
-  const variable = binding(context, node, "vi");
-  if (variable === undefined || variable.defs.length === 0) return true;
-  return variable.defs.some((definition) => {
-    if (definition.parent?.type !== "ImportDeclaration") return false;
-    const source = definition.parent.source.value;
-    return typeof source === "string" && vitestModules.has(source);
-  });
+  const variable = binding(context, node, node.name);
+  return variable === undefined || variable.defs.length === 0;
 }
 
 function fakeTimerMethod(context: Context, callee: ESTree.Node): string | undefined {
@@ -57,7 +53,7 @@ export const noFakeTimersInEffectTests: Rule = {
     type: "problem",
     docs: {
       description:
-        "Disallow vi.useFakeTimers, vi.advanceTimers*, vi.run*Timers, and vi.setSystemTime in files importing @effect/vitest; use TestClock.",
+        "Disallow vi.useFakeTimers, vi.advanceTimers*, vi.run*Timers, and vi.setSystemTime, including imported aliases and namespace members, in files importing @effect/vitest; use TestClock.",
     },
     messages: { noFakeTimers: message },
   },

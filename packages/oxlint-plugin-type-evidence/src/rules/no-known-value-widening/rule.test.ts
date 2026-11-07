@@ -76,3 +76,17 @@ it("allows satisfies without an annotation", async () => {
 it("accepts regression: const point: { x: number; y: number } = { x: 1, y: 2 };", async () => {
   await assertRuleDoesNotReport(ruleName, "const point: { x: number; y: number } = { x: 1, y: 2 };");
 });
+
+it("stays silent in test files", async () => {
+  await expect(assertRuleReports(ruleName, 'const state: unknown = { status: "idle" };\n')).resolves.toBeUndefined();
+  await expect(
+    assertRuleDoesNotReport(ruleName, 'const state: unknown = { status: "idle" };\n', {
+      filename: "src/sample.test.ts",
+    }),
+  ).resolves.toBeUndefined();
+  await expect(
+    assertRuleDoesNotReport(ruleName, 'const state: unknown = { status: "idle" };\n', {
+      filename: "__tests__/sample.ts",
+    }),
+  ).resolves.toBeUndefined();
+});

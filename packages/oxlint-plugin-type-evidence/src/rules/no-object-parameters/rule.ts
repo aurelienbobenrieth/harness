@@ -2,7 +2,7 @@
  * @attribution anti-slop by Dillon Mulroy (MIT, concept re-implemented)
  */
 import type { ESTree, Rule } from "@oxlint/plugins";
-import { collectAlias, readParameters, typeMatches, type AliasMap, type ParameterInfo } from "../ast.js";
+import { collectAlias, isTestFile, readParameters, typeMatches, type AliasMap, type ParameterInfo } from "../ast.js";
 
 const message =
   'Parameter "{{name}}" is typed as object, which carries no usable shape. Declare the properties the function actually reads in a named contract.';
@@ -27,6 +27,7 @@ export const noObjectParameters: Rule = {
 
     return {
       before() {
+        if (isTestFile(context.filename)) return false;
         aliases.clear();
         pending = [];
       },

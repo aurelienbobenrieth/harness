@@ -9,6 +9,7 @@ import {
   parentOf,
   unwrapExpressionKeepingChain,
 } from "@aurelienbbn/oxlint-kit/ast";
+import { isTestFile } from "../ast.js";
 import { isActor } from "../binding-support.js";
 import { boundInitializer, reactIntegrationImport, xstateImport } from "../v6-support.js";
 import type { Context, ESTree, Rule } from "@oxlint/plugins";
@@ -103,6 +104,9 @@ export const noPersistLiveSnapshot: Rule = {
   },
   createOnce(context) {
     return {
+      before() {
+        return !isTestFile(context);
+      },
       CallExpression(node) {
         if (!isJsonStringify(context, node.callee)) return;
         const serialized = node.arguments[0];

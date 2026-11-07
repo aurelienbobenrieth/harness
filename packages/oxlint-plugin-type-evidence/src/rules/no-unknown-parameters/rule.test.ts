@@ -57,3 +57,42 @@ it("allows named domain types", async () => {
     assertRuleDoesNotReport(ruleName, "function parse(value: RawInput) { return value; }\n"),
   ).resolves.toBeUndefined();
 });
+
+it("stays silent in test files", async () => {
+  await expect(
+    assertRuleReports(ruleName, "function parse(value: unknown) { return value; }\n"),
+  ).resolves.toBeUndefined();
+  await expect(
+    assertRuleDoesNotReport(ruleName, "function parse(value: unknown) { return value; }\n", {
+      filename: "src/sample.test.ts",
+    }),
+  ).resolves.toBeUndefined();
+  await expect(
+    assertRuleDoesNotReport(ruleName, "function parse(value: unknown) { return value; }\n", {
+      filename: "__tests__/sample.ts",
+    }),
+  ).resolves.toBeUndefined();
+});
+
+it("reports unknown parameters that are validated, unused or narrowed: decode at the boundary", async () => {
+  await expect(
+    assertRuleReports(
+      ruleName,
+      'function decode(input: unknown) { return typeof input === "string" ? input : undefined; }\n',
+    ),
+  ).resolves.toBeUndefined();
+  await expect(
+    assertRuleReports(ruleName, "const decode = (input: unknown) => Schema.parse(input);\n"),
+  ).resolves.toBeUndefined();
+  await expect(assertRuleReports(ruleName, "const ignore = (_event: unknown) => 1;\n")).resolves.toBeUndefined();
+  await expect(
+    assertRuleReports(ruleName, "function isFailure(e: unknown) { return e instanceof Error || 'code' in e; }\n"),
+  ).resolves.toBeUndefined();
+});
+
+it("reports a body-less validator signature that returns a result", async () => {
+  await expect(
+    assertRuleReports(ruleName, "interface Schema<T> {\n  parse(value: unknown): T;\n}\n"),
+  ).resolves.toBeUndefined();
+  await expect(assertRuleReports(ruleName, "type Decode<In> = (body: unknown) => In;\n")).resolves.toBeUndefined();
+});

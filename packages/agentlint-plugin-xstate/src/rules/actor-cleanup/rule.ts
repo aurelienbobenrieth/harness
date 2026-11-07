@@ -1,4 +1,4 @@
-import { defineRule, type StateRule } from "@aurelienbbn/agentlint";
+import { defineRule, type AgentlintNode, type StateRule } from "@aurelienbbn/agentlint";
 
 // Bare or receiver-bound (v6 `system.createActor`) XState actors, `@xstate/effect` scoped actors and actor atoms.
 const defaultActorStartPattern = /^(?:[\w$]+\.)?(?:createActor|createEffectActor|createActorAtoms)\s*(?:<[^>]*>)?\s*\(/;
@@ -18,10 +18,77 @@ function matches(pattern: RegExp, text: string): boolean {
   return pattern.test(text);
 }
 
+function escapeRegExp(text: string): string {
+  return text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+/** Nearest function or method around the node, where a stored actor is copied into a field. */
+function enclosingFunction(node: AgentlintNode): AgentlintNode | undefined {
+  for (let ancestor = node.parent; ancestor; ancestor = ancestor.parent) {
+    if (/function|method_definition|arrow_function/.test(ancestor.type)) return ancestor;
+  }
+  return undefined;
+}
+
+function sameNode(a: AgentlintNode | null, b: AgentlintNode): boolean {
+  return (
+    a !== null &&
+    a.type === b.type &&
+    a.startPosition.row === b.startPosition.row &&
+    a.startPosition.column === b.startPosition.column
+  );
+}
+
+/**
+ * Text of the variable, assignment target or class field (as `this.<field>`) the created actor is stored in, through a chained
+ * `.start()`, parentheses and type assertions. `undefined` when the actor is not stored anywhere nameable.
+ */
+function storedAs(call: AgentlintNode): string | undefined {
+  let value: AgentlintNode = call;
+  for (;;) {
+    const parent = value.parent;
+    if (!parent) return undefined;
+    if (
+      ["parenthesized_expression", "as_expression", "non_null_expression", "satisfies_expression"].includes(parent.type)
+    ) {
+      value = parent;
+      continue;
+    }
+    const grand = parent.parent;
+    if (
+      parent.type === "member_expression" &&
+      sameNode(parent.childByFieldName("object"), value) &&
+      grand?.type === "call_expression"
+    ) {
+      value = grand;
+      continue;
+    }
+    if (parent.type === "variable_declarator") return parent.childByFieldName("name")?.text;
+    if (parent.type === "assignment_expression") return parent.childByFieldName("left")?.text;
+    if (parent.type === "public_field_definition" || parent.type === "field_definition") {
+      const field = parent.childByFieldName("name") ?? parent.childByFieldName("property");
+      return field === null ? undefined : `this.${field.text}`;
+    }
+    return undefined;
+  }
+}
+
 export type ActorCleanupOptions = {
   /** Pattern matching actor creation call expressions. */
   readonly actorStartPattern?: RegExp;
 };
+
+/**
+ * Whether the file stops the stored actor somewhere: `<stored>.stop()` or `<stored>?.stop()`, also through a
+ * field the enclosing function copies the stored actor into (`this.#actor = actor`).
+ */
+function stops(source: string, scope: string, stored: string): boolean {
+  const name = escapeRegExp(stored);
+  const copies = [...scope.matchAll(new RegExp(String.raw`([\w$.#]+)\s*=\s*${name}\s*[;,)\n]`, "g"))];
+  return [stored, ...copies.map((copy) => copy[1] ?? "")].some((target) =>
+    new RegExp(String.raw`(?<![\w$.#])${escapeRegExp(target)}\s*\??\.\s*stop\s*\(`).test(source),
+  );
+}
 
 export function defineActorCleanup(options: ActorCleanupOptions = {}): StateRule {
   options = structuredClone(options);
@@ -33,7 +100,7 @@ export function defineActorCleanup(options: ActorCleanupOptions = {}): StateRule
       id: "xstate/actor-cleanup",
       revision: 3,
       title: "Actor Cleanup",
-      summary: "Flags actor creation sites that need lifecycle-cleanup review.",
+      summary: "Flags actor creation sites whose stored actor the file never stops, for lifecycle-cleanup review.",
       guidance: {
         standard:
           "Started actors must be stopped when their host goes away: a web component stops its actor in disconnectedCallback, a React component lets @xstate/react own the actor, an @xstate/effect actor belongs to the Scope that created it; otherwise machines keep running against detached DOM. In XState v5 and v6 alike, stopping an actor completes all of its observers and stops its children, but it does not run the machine's exit actions.",
@@ -86,7 +153,7 @@ export function defineActorCleanup(options: ActorCleanupOptions = {}): StateRule
         ],
       },
       id: "xstate/actor-cleanup",
-      version: 2,
+      version: 3,
       scan: "file",
       createOnce({ context }) {
         return {
@@ -96,6 +163,14 @@ export function defineActorCleanup(options: ActorCleanupOptions = {}): StateRule
             const receiver = node.childByFieldName("function")?.childByFieldName("object");
             if (receiver?.type === "call_expression" && matches(actorStartPattern, receiver.text)) return;
             const callee = node.childByFieldName("function")?.text ?? "";
+            const stored = storedAs(node);
+            const plain = !effectActorCalleePattern.test(callee) && !actorAtomsCalleePattern.test(callee);
+            if (
+              plain &&
+              stored !== undefined &&
+              stops(context.source, enclosingFunction(node)?.text ?? context.source, stored)
+            )
+              return;
             const message = effectActorCalleePattern.test(callee)
               ? effectActorMessage
               : actorAtomsCalleePattern.test(callee)

@@ -10,18 +10,42 @@ const docs = "https://github.com/aurelienbobenrieth/harness/tree/main/packages/c
 
 const normalize = (text: string) => text.replaceAll("\r\n", "\n").trim();
 
-/** The text between a block's markers, or why it can't be read. */
+type MarkerLine = { readonly text: string; readonly start: number; readonly end: number };
+
+/** Lines outside fenced code blocks, with their character offsets; markers quoted in prose or examples never count. */
+function unfencedLines(instructions: string): readonly MarkerLine[] {
+  const lines: MarkerLine[] = [];
+  let fence: string | undefined;
+  let offset = 0;
+  for (const raw of instructions.split(/\n/u)) {
+    const trimmed = raw.trim();
+    const fenceMark = /^(`{3,}|~{3,})/u.exec(trimmed)?.[1];
+    if (fence === undefined && fenceMark !== undefined) fence = fenceMark[0];
+    else if (fence !== undefined && fenceMark?.[0] === fence) fence = undefined;
+    else if (fence === undefined) lines.push({ text: trimmed, start: offset, end: offset + raw.length });
+    offset += raw.length + 1;
+  }
+  return lines;
+}
+
+/**
+ * The text between a block's markers, or why it can't be read. A marker is a line holding only the comment
+ * outside any code fence, so documenting the marker syntax in the same file does not read as a repeat.
+ */
 function blockContent(instructions: string, name: string): { readonly text: string } | { readonly problem: string } {
   const start = `<!-- harness:${name}:start -->`;
   const end = `<!-- harness:${name}:end -->`;
-  const startIndex = instructions.indexOf(start);
-  const endIndex = instructions.indexOf(end);
-  if (startIndex === -1 && endIndex === -1) return { problem: "has no block" };
-  if (endIndex === -1) return { problem: "never closes the block" };
-  if (startIndex === -1 || endIndex < startIndex) return { problem: "has an end marker without a start before it" };
-  if (instructions.includes(start, startIndex + start.length) || instructions.includes(end, endIndex + end.length))
-    return { problem: "repeats the block markers" };
-  return { text: instructions.slice(startIndex + start.length, endIndex) };
+  const lines = unfencedLines(instructions);
+  const starts = lines.filter((line) => line.text === start);
+  const ends = lines.filter((line) => line.text === end);
+  const startLine = starts[0];
+  const endLine = ends[0];
+  if (startLine === undefined && endLine === undefined) return { problem: "has no block" };
+  if (endLine === undefined) return { problem: "never closes the block" };
+  if (startLine === undefined || endLine.start < startLine.start)
+    return { problem: "has an end marker without a start before it" };
+  if (starts.length > 1 || ends.length > 1) return { problem: "repeats the block markers" };
+  return { text: instructions.slice(startLine.end, endLine.start) };
 }
 
 export const instructionBlocks: ConformanceCheck = {

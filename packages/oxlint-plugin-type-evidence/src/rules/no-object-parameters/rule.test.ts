@@ -57,3 +57,19 @@ it("allows aliases that resolve to a concrete shape", async () => {
     ),
   ).resolves.toBeUndefined();
 });
+
+it("stays silent in test files", async () => {
+  await expect(
+    assertRuleReports(ruleName, "function handle(payload: object) { return payload; }\n"),
+  ).resolves.toBeUndefined();
+  await expect(
+    assertRuleDoesNotReport(ruleName, "function handle(payload: object) { return payload; }\n", {
+      filename: "src/sample.test.ts",
+    }),
+  ).resolves.toBeUndefined();
+  await expect(
+    assertRuleDoesNotReport(ruleName, "function handle(payload: object) { return payload; }\n", {
+      filename: "__tests__/sample.ts",
+    }),
+  ).resolves.toBeUndefined();
+});

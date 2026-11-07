@@ -80,13 +80,13 @@ shopifyAppConformance({ root: process.cwd() }, [...shopifyAppChecks, ...optional
 
 ### compliance-webhooks
 
-Checks the [App Store compliance-topic contract](https://shopify.dev/docs/apps/build/webhooks/subscribe) under `webhooks.subscriptions`, each with a nonempty `uri`. **Each deployment manifest holds its own topics: no pooling across environments.** Source mentions and unrelated tables register nothing. Also unproven: processing.
+Checks the [App Store compliance-topic contract](https://shopify.dev/docs/apps/build/webhooks/subscribe) under `webhooks.subscriptions`, each with a nonempty `uri`. **Each deployment manifest holds its own topics: no pooling across environments.** Source mentions and unrelated tables register nothing. Also unproven: processing. Set `distribution: "custom"` to skip the check: custom apps are not required to register the privacy topics (default `"public"`).
 
 With `nextGenerationEvents: true`, an `[[events.subscription]]` whose `topic` is a compliance topic ❌: [Events doesn't deliver them](https://shopify.dev/docs/apps/build/events/migrate-from-webhooks) (reviewed 2026-09-24).
 
 ### app-bridge-script
 
-Every selected embedded document loads `https://cdn.shopify.com/shopifycloud/app-bridge.js` as its first `<head>` script (comments ignored). Skipped when every selected manifest sets `embedded = false`.
+Every selected embedded document loads `https://cdn.shopify.com/shopifycloud/app-bridge.js` as its first `<head>` script (comments ignored), or renders the Shopify `AppProvider` imported from `@shopify/shopify-app-react-router/react`, `@shopify/shopify-app-remix/react` or `@shopify/app-bridge-react`. Skipped when every selected manifest sets `embedded = false`; with no `shopify.app.toml` it reports a warning and skips, since embedded status is unknown.
 
 | Option            | Default                                                                     | Rule                                                                                                                                |
 | ----------------- | --------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
@@ -258,6 +258,7 @@ selected manifest
 | `serverEntries`                           | `shopify.server.*`, `app/shopify.server.*`, `src/shopify.server.*` | `api-version-contract`         |
 | `builtForShopifyCategories`               | `[]`                                                               | `built-for-shopify-extensions` |
 | `nextGenerationEvents`                    | `false` (developer preview)                                        | webhook and compliance checks  |
+| `distribution`                            | `"public"`                                                         | `compliance-webhooks`          |
 | `listing`                                 | unset                                                              | `listing-inputs` (opt-in)      |
 
 ```ts
@@ -497,7 +498,7 @@ Generated from package exports by `pnpm catalog`. Rule-specific options and limi
 | `app-url-security`              | App and configured OAuth callback URLs must declare HTTPS transport without embedded credentials.                                                                                        |
 | `built-for-shopify-extensions`  | Explicit Built for Shopify categories require their declared extension types and insertion targets; presence is only a prerequisite.                                                     |
 | `checkout-bundle-size`          | Checkout and full-page customer account extension dist JavaScript totals stay within their raw-byte budgets; Shopify CLI remains the deployment authority.                               |
-| `compliance-webhooks`           | Apps must subscribe to the three mandatory privacy compliance webhook topics.                                                                                                            |
+| `compliance-webhooks`           | Public apps must subscribe to the three mandatory privacy compliance webhook topics.                                                                                                     |
 | `extension-capability-contract` | Checkout and customer account UI extension source that uses fetch, Storefront API queries, or buyer journey interception must declare the matching capability in its extension TOML.     |
 | `extension-framework-contract`  | UI extensions on API version 2025-10 or later must not depend on or import @shopify/ui-extensions-react; they use Polaris web components with Preact.                                    |
 | `flow-template-contract`        | Flow template extensions must declare a valid handle, documented categories, an existing workflow module, and default plus English locales resolving their t: keys.                      |

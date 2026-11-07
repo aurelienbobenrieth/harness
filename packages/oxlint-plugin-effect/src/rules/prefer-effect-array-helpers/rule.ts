@@ -1,4 +1,5 @@
 import type { ESTree, Rule, Context, Scope } from "@oxlint/plugins";
+import { isInEffectRuntime } from "../binding-support.js";
 import { isIdentifier } from "../ast.js";
 import { getFilename, isAllowedFile, type RuleContextWithOptions } from "../runtime-support.js";
 
@@ -23,8 +24,10 @@ type Options = { readonly allow?: readonly string[]; readonly ignoredObjects?: r
 
 function getOptions(context: RuleContextWithOptions): Options {
   const candidate = context.options?.[0];
+
   if (typeof candidate !== "object" || candidate === null) return {};
   const record = candidate as { readonly allow?: unknown; readonly ignoredObjects?: unknown };
+
   return {
     ...(Array.isArray(record.allow) && record.allow.every((entry) => typeof entry === "string")
       ? { allow: record.allow }
@@ -42,29 +45,35 @@ function isNativeArrayHelperCall(
 ): node is ESTree.CallExpression {
   if (node.type !== "CallExpression" || node.callee.type !== "MemberExpression") return false;
   const property = node.callee.property;
+
   if (!isIdentifier(property) || !helperNames.has(property.name)) return false;
   const object = node.callee.object;
+
   if (object.type === "ArrayExpression") return true;
   if (!isIdentifier(object) || ignoredObjects.includes(object.name)) return false;
   let scope: Scope | null = context.sourceCode.getScope(object);
+
   while (scope !== null) {
     const binding = scope.set.get(object.name);
+
     if (binding !== undefined)
       return binding.defs.some((definition) => {
         if (definition.node.type === "VariableDeclarator" && definition.node.init?.type === "ArrayExpression")
           return true;
         const annotation = "typeAnnotation" in definition.name ? definition.name.typeAnnotation : undefined;
+
         return annotation?.typeAnnotation.type === "TSArrayType";
       });
     scope = scope.upper;
   }
+
   return false;
 }
 
 export const preferEffectArrayHelpers: Rule = {
   meta: {
     type: "problem",
-    docs: { description: "Prefer Effect array helpers over native array helper methods." },
+    docs: { description: "Prefer Effect array helpers for known arrays inside imported Effect runtime callbacks." },
     messages: { preferEffectArray: message },
     schema: [
       {
@@ -82,10 +91,13 @@ export const preferEffectArrayHelpers: Rule = {
     return {
       before() {
         const allow = getOptions(context as RuleContextWithOptions).allow ?? defaultAllow;
+
         return !isAllowedFile(getFilename(context as RuleContextWithOptions), allow);
       },
       CallExpression(node) {
+        if (!isInEffectRuntime(context, node)) return;
         const options = getOptions(context as RuleContextWithOptions);
+
         if (!isNativeArrayHelperCall(node, options.ignoredObjects ?? defaultIgnoredObjects, context)) return;
         context.report({ node, messageId: "preferEffectArray" });
       },

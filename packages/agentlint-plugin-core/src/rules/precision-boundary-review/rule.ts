@@ -102,6 +102,7 @@ export function definePrecisionBoundaryReview(options: PrecisionBoundaryReviewOp
         ],
       },
       createOnce({ context }) {
+        const reported = new Map<string, number>();
         return {
           binary_expression(node) {
             if (hasBinaryParent(node)) return;
@@ -111,9 +112,12 @@ export function definePrecisionBoundaryReview(options: PrecisionBoundaryReviewOp
             const identifiers = node.descendantsOfType("identifier").map((identifier) => identifier.text);
             const units = [...new Set(identifiers.map(unit).filter((value): value is string => value !== undefined))];
             if (units.length < 2) return;
+            const base = `${units.toSorted().join("-")}:${node.startPosition.row}`;
+            const occurrence = (reported.get(base) ?? 0) + 1;
+            reported.set(base, occurrence);
             context.report({
               node,
-              key: `${units.toSorted().join("-")}:${node.startPosition.row}`,
+              key: occurrence === 1 ? base : `${base}#${occurrence}`,
               message: `Raw arithmetic combines ${units.toSorted().join(", ")}; move the conversion behind a named, tested unit boundary or document its precision contract.`,
               evidence: { identifiers: [...new Set(identifiers)].toSorted(), units: units.toSorted() },
             });
