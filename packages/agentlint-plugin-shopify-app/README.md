@@ -9,7 +9,7 @@
 
 **A finding is something to inspect, not a policy violation.** Resolutions in `.agentlint/acceptances.jsonl` keep review evidence; neither they nor a clean run prove App Store or Built for Shopify eligibility.
 
-## Quick start
+## Four commands reach the first review
 
 ```sh
 agentlint init --preset "@aurelienbbn/agentlint-plugin-shopify-app#starterPreset"
@@ -27,7 +27,7 @@ import { checkoutExtensionPreset, shopifyAppPreset } from "@aurelienbbn/agentlin
 export default defineConfig({ extends: [shopifyAppPreset, checkoutExtensionPreset] });
 ```
 
-## Rules
+## Fifteen reviews across four presets, three of them opt-in
 
 | Rule                            | `shopifyApp` | `appServer` | `checkoutExtension` | `starter` | Rev  | Options                                              |
 | ------------------------------- | :----------: | :---------: | :-----------------: | :-------: | :--: | ---------------------------------------------------- |
@@ -62,7 +62,7 @@ defineNoPressureCopy({ languages: ["en", "fr"], additionalPatterns: [/última op
 defineSettingsSaveBar({ saveBarMarkerPattern: /useSaveBar/ });
 ```
 
-## What fires
+## A mention of a save bar is not a save bar
 
 ```tsx
 <form data-save-bar>…</form>           // ✅ direct literal attribute
@@ -210,7 +210,7 @@ Requirement IDs and evidence boundaries: [`policy/shopify-requirements.json`](..
 
 </details>
 
-## Sources
+## Every review re-implements Shopify documentation
 
 Independently implemented from Shopify's official documentation; no Shopify code or templates vendored. Greppable `@attribution` tags mark source concepts in implementation files. `starterPreset` onboarding: conceptual inspiration from desloppify by Peter O'Malley; no code or guidance copied.
 

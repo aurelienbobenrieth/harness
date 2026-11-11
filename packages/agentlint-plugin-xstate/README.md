@@ -15,7 +15,7 @@ agentlint-plugin-xstate   review questions a linter can't decide   ◀── you
 eslint-plugin-xstate      doesn't analyse setup().createMachine() machines
 ```
 
-## Quick start
+## Four commands reach the first review
 
 ```sh
 agentlint init --preset "@aurelienbbn/agentlint-plugin-xstate#starterPreset"
@@ -33,7 +33,7 @@ import { xstatePreset } from "@aurelienbbn/agentlint-plugin-xstate";
 export default defineConfig({ extends: [xstatePreset] });
 ```
 
-## Rules
+## Seven reviews: two in starter, all seven in `xstatePreset`
 
 | Rule                        | `xstatePreset` | `starterPreset` | Authority | Standard rev | Detector | Skips tests |
 | --------------------------- | :------------: | :-------------: | --------- | :----------: | :------: | :---------: |

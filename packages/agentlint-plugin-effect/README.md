@@ -7,7 +7,7 @@
 > [!WARNING]
 > Requires the engine `@aurelienbbn/agentlint` `>=0.3.0 <0.10.0` as a peer. [Evidence](../../docs/compatibility.md#agentlint-engine).
 
-## Quick start
+## Four commands reach the first review
 
 ```sh
 agentlint init --preset "@aurelienbbn/agentlint-plugin-effect#starterPreset"
@@ -18,7 +18,7 @@ agentlint next --format json
 
 `init` keeps an existing config and prints the install command; never installs.
 
-## Rules
+## Both presets carry all three reviews
 
 | Rule                            | `strictPreset` | `starterPreset` | Authority | Standard rev | Detector |
 | ------------------------------- | :------------: | :-------------: | --------- | :----------: | :------: |
@@ -40,9 +40,9 @@ yield * sql.withTransaction(save(order)); // ✅ commit first
 yield * Mailer.use((m) => m.send(receipt)); //    then call
 ```
 
-### `transaction-no-network`
+### `transaction-no-network` follows references through the checkout
 
-A lexical rule cannot tell that `notify()` three files away ends in `fetch`. This one follows what a transaction's work references through the checkout: relative imports (`.js` suffixes, index files, `export *`, namespace members) inside the same workspace member (the nearest folder with a `package.json`), skipping test code. It reads at most 400 declarations per transaction and stops at the first four network sinks.
+A lexical rule cannot tell that `notify()` three files away ends in `fetch`. This one follows what a transaction's work references: relative imports (`.js` suffixes, index files, `export *`, namespace members) inside the same workspace member (the nearest folder with a `package.json`), skipping test code. At most 400 declarations per transaction; it stops at the first four network sinks.
 
 - **Transactions:** `withTransaction(effect)` and `effect.pipe(…, sql.withTransaction)` (Effect SQL), `db.transaction(fn)` (Drizzle, Knex, TypeORM), `prisma.$transaction(fn)`, `db.transaction().execute(fn)` (Kysely). Only the steps piped into the opener are inside it.
 - **Network sinks:** global `fetch` and `globalThis.fetch`; an Effect `HttpClient` (`effect/unstable/http`, `@effect/platform*`); `axios`, `got`, `ky`, `undici`, `node-fetch`, `node:http(s)`, `ofetch`, `superagent`; common provider SDKs (`stripe`, `resend`, `@slack/*`, `@aws-sdk/client-*`, …); and **services whose layer reaches one**. A reached service class (`Context.Service`, `Context.Tag`, `GenericTag`) counts when a non-test `Layer.*(Service, …)` call in its member reaches a sink, so an in-memory adapter stays silent and no folder convention is needed.
@@ -65,9 +65,9 @@ export default defineConfig({
 
 Limits: names, not types. A callback passed in as a parameter, a method on an object built elsewhere, a dynamic import and a service whose layer lives in another workspace member are not followed (name the service in `networkServices`). The finding's evidence carries a digest of every declaration on the path, so an acceptance reopens when a reached file changes while the path still ends at the network; if the path no longer reaches the network the finding disappears. Parsing uses `oxc-parser` (syntax only, no type checker), read lazily: a file is parsed only when its text names an opener.
 
-### `conversion-keeps-failure`
+### `conversion-keeps-failure` keeps the outage on record
 
-`Effect.mapError(() => UpstreamUnavailableError.make({}))` is often exactly right for the client and fatal for whoever debugs the outage: the store's failure is gone, and nothing says why the empty error happened. The rule points at handlers that replace a failure without reading it, so an agent can decide whether something worth keeping was lost.
+`Effect.mapError(() => UpstreamUnavailableError.make({}))` can be exactly right for the client and fatal for whoever debugs the outage: the store's failure is gone. The rule points at handlers that replace a failure without reading it, so an agent can decide whether something worth keeping was lost.
 
 ```ts
 store.read().pipe(Effect.mapError(() => UnavailableError.make({}))); // ❌ the outage leaves no trace
@@ -83,9 +83,9 @@ store.read().pipe(
 
 Limits: one file, names, not types. `Effect.catchTag` and `catchTags` handlers are not read: most translate one domain error into another. A log inside the converted effect is invisible here, which is why the agent checks before concluding.
 
-### `refusal-reason-reaches-reader`
+### `refusal-reason-reaches-reader` catches reasons nothing reads
 
-A server that answers `reason: "inactive"` has done the work. If the page then shows "Could not save. Retry." for every failure, the user retries a refusal that will refuse again. This rule looks for reasons sent over the wire that nothing reads.
+A server that answers `reason: "inactive"` has done the work. If the page then shows "Could not save. Retry." for every failure, the user retries a refusal that will refuse again.
 
 ```ts
 class SetupRefusedError extends Schema.TaggedError<SetupRefusedError>()("SetupRefusedError", {

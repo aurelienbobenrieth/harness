@@ -10,7 +10,7 @@
 > [!NOTE]
 > Checked against `alchemy@2.0.0-beta.79`. Release candidate: no consumer has calibrated these rules yet. Alchemy is in beta; replace triggers and defaults can move between betas.
 
-## Quick start
+## Four commands reach the first review
 
 ```sh
 agentlint init --preset "@aurelienbbn/agentlint-plugin-alchemy#starterPreset"
@@ -28,7 +28,7 @@ import { initConfigExposure, strictPreset } from "@aurelienbbn/agentlint-plugin-
 export default defineConfig({ extends: [strictPreset], rules: [initConfigExposure] });
 ```
 
-## Rules
+## Six reviews: two in starter, five in strict, one opt-in
 
 | Rule                          | strict | starter | Authority | Lifecycle | Fires on                                                                                           |
 | ----------------------------- | :----: | :-----: | --------- | --------- | -------------------------------------------------------------------------------------------------- |
@@ -99,7 +99,7 @@ Alchemy binds every config key a runtime's init loads onto the deployed runtime,
 
 </details>
 
-## Limits
+## `alchemy plan` stays the ground truth
 
 - **Lexical, not semantic.** Change rules read before/after text: computed logical IDs compare as expressions, props passed as variables or Effects are not compared, `Namespace.push` moves are invisible, a `state` option given as an identifier resolves only through a single same-file `const`, and regex literals in stack files can confuse the scanner.
 - **Named imports are missed.** Resources are recognized as `R2.Bucket(`, `D1.Database(`, `KV.Namespace(` behind any namespace; `import { Bucket }` then `Bucket(...)` is not.

@@ -6,6 +6,10 @@
 
 **Never re-implements an official rule.** Load the official plugin alongside via `jsPlugins`, or let `withTanstackQueryLayer` from `@aurelienbbn/oxlint-config` wire both via `companionPlugins`.
 
+```sh
+pnpm add -D @aurelienbbn/oxlint-plugin-tanstack-query oxlint   # oxlint >=1.82.0 <2.0.0
+```
+
 ```json
 {
   "jsPlugins": ["@aurelienbbn/oxlint-plugin-tanstack-query"],
@@ -26,7 +30,7 @@
 }
 ```
 
-Peer: oxlint >=1.82.0 <2.0.0. No preset. **No autofix:** each rewrite depends on the data and the component.
+No preset. **No autofix:** each rewrite depends on the data and the component.
 
 ```text
 everywhere  ██████   6
@@ -173,7 +177,7 @@ const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false 
 
 </details>
 
-## Contract
+## The analysis stops at one file
 
 | Topic           | Contract                                                                                                                                                                         |
 | --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

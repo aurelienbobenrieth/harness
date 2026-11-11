@@ -17,6 +17,10 @@
 
 ## One file, eleven tests
 
+```sh
+pnpm add -D @aurelienbbn/conformance-shopify-app vitest   # vitest >=4.1.11 <6.0.0 (optional peer)
+```
+
 ```ts
 // conformance.test.ts
 import { shopifyAppConformance } from "@aurelienbbn/conformance-shopify-app/vitest";
@@ -51,7 +55,7 @@ appManifests: [shopify.app.toml]          (minimumApiVersion: "2025-10", message
 ⚠️ api-version-contract  app/shopify.server.ts  apiVersion: The app server requests Admin API 2025-10 while shopify.app.toml delivers webhooks at 2025-07…
 ```
 
-## Checks
+## Eleven checks run by default; two wait for opt-in
 
 | Check                           | Missing evidence                                | Does not prove                      |
 | ------------------------------- | ----------------------------------------------- | ----------------------------------- |
@@ -156,7 +160,7 @@ Topic support, trigger paths, and query validity stay with `shopify app deploy`.
 
 | Bounds set                                     | `YYYY-01/04/07/10` | `unstable` | out of range |
 | ---------------------------------------------- | ------------------ | ---------- | ------------ |
-| neither                                        | ✅ syntax only     | ⚠️ warning | —            |
+| neither                                        | ✅ syntax only     | ⚠️ warning | nothing      |
 | `minimumApiVersion` and/or `maximumApiVersion` | ✅                 | ❌ error   | ❌ error     |
 
 - Bounds must be ordered quarterly versions, else throws.
@@ -245,7 +249,7 @@ selected manifest
 
 </details>
 
-## Options
+## Twelve options; `root` is the only required one
 
 | Option                                    | Default                                                            | Used by                        |
 | ----------------------------------------- | ------------------------------------------------------------------ | ------------------------------ |
@@ -466,7 +470,7 @@ Weights from [Shopify's storefront performance guide](https://shopify.dev/docs/a
 
 </details>
 
-## Migration
+## Upgrading closes four silent passes
 
 | Change                                                         | Migrate by                                                                                                    |
 | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
@@ -477,11 +481,11 @@ Weights from [Shopify's storefront performance guide](https://shopify.dev/docs/a
 | `listing-inputs` left the default checks                       | pass `optionalShopifyAppChecks` to keep it                                                                    |
 | 3 new default checks                                           | fix their findings; each stays silent without its trigger (Polaris CDN, Flow template, 2025-10+ UI extension) |
 
-## Shopify CLI overlap
+## The Shopify CLI is no offline preflight
 
 `shopify app config validate` checks app and extension TOML against Shopify's schemas, so parts of `app-url-security`, `webhook-subscription-contract`, and `functions-localization` may overlap it. **Overlap unmeasured:** with CLI 4.8.1 on 2026-09-24, validating a fixture app stopped at the App Management API (`Cannot find a valid organization`): it needs a registered app and network, so it is no offline preflight. Run both; drop a check only once the CLI is shown to catch its failing fixtures.
 
-## Sources
+## Every check re-implements Shopify documentation
 
 Independent implementations of Shopify's [App Store requirements](https://shopify.dev/docs/apps/launch/shopify-app-store/app-store-requirements), [Built for Shopify requirements](https://shopify.dev/docs/apps/launch/built-for-shopify/requirements), [app configuration](https://shopify.dev/docs/apps/build/cli-for-apps/app-configuration), [API versioning](https://shopify.dev/docs/api/usage/versioning), and [theme app extension configuration](https://shopify.dev/docs/apps/build/online-store/theme-app-extensions/configuration). Discovery defaults verified against the MIT-licensed Shopify CLI's [configuration selection](https://github.com/Shopify/cli/blob/614187e5204ca6c4bc3c8418b8c6fcb224ab5dae/packages/app/src/cli/models/project/config-selection.ts) and [extension loader](https://github.com/Shopify/cli/blob/614187e5204ca6c4bc3c8418b8c6fcb224ab5dae/packages/app/src/cli/models/app/loader.ts). Source carries greppable `@attribution` tags.
 

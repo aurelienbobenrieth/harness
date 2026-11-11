@@ -2,7 +2,7 @@
 
 [![npm](https://img.shields.io/npm/v/@aurelienbbn/oxlint-plugin-effect)](https://www.npmjs.com/package/@aurelienbbn/oxlint-plugin-effect) [![downloads](https://img.shields.io/npm/dm/@aurelienbbn/oxlint-plugin-effect)](https://www.npmjs.com/package/@aurelienbbn/oxlint-plugin-effect) [![CI](https://github.com/aurelienbobenrieth/harness/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/aurelienbobenrieth/harness/actions/workflows/ci.yml) [![license](https://img.shields.io/npm/l/@aurelienbbn/oxlint-plugin-effect)](https://github.com/aurelienbobenrieth/harness/blob/main/packages/oxlint-plugin-effect/LICENSE) [![node](https://img.shields.io/node/v/@aurelienbbn/oxlint-plugin-effect)](https://github.com/aurelienbobenrieth/harness/blob/main/packages/oxlint-plugin-effect/package.json)
 
-**44 oxlint rules for Effect code: runtime boundaries, failure channels, concurrency, services, Schema. Only what `@effect/tsgo` doesn't own.**
+**47 oxlint rules for Effect code: runtime boundaries, failure channels, concurrency, services, Schema. Only what `@effect/tsgo` doesn't own.**
 
 ```sh
 pnpm add -D @aurelienbbn/oxlint-plugin-effect oxlint   # oxlint >=1.82.0 <2.0.0
@@ -46,7 +46,7 @@ withEffectTsgoLayer extras               ← @aurelienbbn/oxlint-config; off in 
 
 **Type-dependent conclusions stay with `@effect/tsgo`.** Ownership: [`docs/rule-ownership.md`](../../docs/rule-ownership.md); the catalog gate enforces the inventory.
 
-## What fires
+## Implicit choices fail; explicit ones pass
 
 ```ts
 const values = Effect.all(programs); // ❌ require-all-concurrency
@@ -111,7 +111,7 @@ Effect.tryPromise({
 - 🎨 `dependencies-first`, `padding-after-dependencies`, `no-switch`, `prefer-match`, `prefer-effect-array-helpers`, `schema-type-adjacent`, `schema-literal-case`, `schema-domain-types`, `schema-check-branded`, `tagged-error-name`, `telemetry-name-format` are opinionated. **Suppress at the exceptional call site**, not in the shared config.
 
 <details>
-<summary>45 rules by job</summary>
+<summary>45 rules by job, plus 2 advisory rules below</summary>
 
 | Job                       | Rules                                                                                                                                                                                                                                                                   |
 | ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -202,7 +202,7 @@ Effect.gen(function* () {
 
 </details>
 
-## Migration
+## Removed rules have a named owner
 
 | Change                                               | Why                                                                                                                                                                                                         | Now                                                                                                                                                                                                                |
 | ---------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -210,7 +210,7 @@ Effect.gen(function* () {
 | `no-unsafe-effect-body` keeps only `throw`           | try/catch and global timers in generators are `effecttsgo/try-catch-in-effect-gen` and `effecttsgo/global-timers-in-effect` (both in `recommended`); `Effect.gen` rejects an `async function*` at typecheck | same rule name, no config change. ⚠️ `try`/`finally` around `yield*` without `catch` has no verified tsgo owner                                                                                                    |
 | `no-catch-all-cause`, `no-swallowed-failure` widened | tsgo's `catch-to-ignore` / `catch-to-or-else-succeed` rewrites led to `Effect.ignoreCause` which passed silently                                                                                            | `Effect.ignoreCause`, `Effect.catchDefect` report under `no-catch-all-cause`; a placeholder `Effect.catch` handler under `no-swallowed-failure` (`Effect.orElseSucceed` is an explicit fallback and stays allowed) |
 
-## Contract
+## Type-aware questions stay with tsgo
 
 | Topic          | Contract                                                                                                                                                                                  |
 | -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -294,7 +294,7 @@ Generated from package exports by `pnpm catalog`. Rule-specific options and limi
 
 <!-- harness-catalog:end -->
 
-## Advisory rules
+## Two rules stay advisory
 
 Merge the exported `advisoryRules` into your oxlint rules (or enable these names as `warn`): `effect/calendar-date-round-trip`, `effect/destructive-reason-required`. No autofix: each needs a domain decision.
 
@@ -303,6 +303,6 @@ Merge the exported `advisoryRules` into your oxlint rules (or enable these names
 - `calendar-date-round-trip` (`warn`) flags an imported Effect Schema YYYY-MM-DD regex without a filter/check in the same fluent expression. Add a date round-trip predicate and tests for impossible dates and leap days. A refinement is a review boundary, not proof it validates calendars; alternate regexes and external helpers require review.
 - `destructive-reason-required` (`warn`) checks direct Schema.Struct declarations named Delete/Destroy/Purge/Drop/Remove followed by a capital letter or underscore. A reason must exist, be nonoptional and use an inline trimmed-length check (>= 10) or a referenced schema. Verify referenced/refined schemas reject trimmed reasons shorter than ten characters; the rule cannot prove a predicate or a remote delete validates input. Spread fields and arbitrary command names require review.
 
-### Array rule scope
+### Array rules read only Effect runtime callbacks
 
 `prefer-effect-array-helpers`, `no-array-for-each` and `no-array-callback-reference` require a value import from `effect`, `effect/*` or `@effect/*`, and the nearest enclosing function resolved to an imported `effect/Effect` constructor or combinator. This includes `gen`, `fn`, `sync`, `suspend`, `promise`, `try`, `tryPromise`, `async`, `map`, `flatMap`, `tap`, `forEach`, `catchAll`, `catchTag`, `match` and `matchEffect`. Import aliases and generators passed by reference are recognized; shadowed names and unrelated utilities in the same file and deferred functions nested inside runtime bodies are excluded. Pure helpers called indirectly by an Effect program are outside this syntactic scope.

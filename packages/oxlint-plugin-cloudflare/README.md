@@ -28,7 +28,7 @@ pnpm add -D @aurelienbbn/oxlint-plugin-cloudflare oxlint   # oxlint >=1.82.0 <2.
 
 No preset. **One autofix:** `mysql2-disable-eval` adds `disableEval: true` to an options object literal; every other rule reports only.
 
-## What fires
+## Bugs that deploy fine fail here first
 
 ```ts
 const client = new Client(env.HYPERDRIVE.connectionString); // ❌ no-module-scope-request-state
@@ -76,7 +76,7 @@ class Sync extends WorkflowEntrypoint {
 
 </details>
 
-**Credit:** every rule independently implements guidance from Cloudflare's developer documentation (Workers best practices, Rules of Durable Objects, Rules of Workflows, D1, Durable Object SQLite storage, Hyperdrive driver pages); no documentation text or code copied.
+**Credit:** every rule independently implements guidance from Cloudflare's developer documentation: Workers best practices, Rules of Durable Objects, Rules of Workflows, D1, Durable Object SQLite storage, Hyperdrive driver pages. No documentation text or code copied.
 
 <!-- harness-catalog:start -->
 
