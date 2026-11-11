@@ -16,6 +16,10 @@
 
 ## One file, four tests
 
+```sh
+pnpm add -D @aurelienbbn/conformance-alchemy vitest   # vitest >=4.1.11 <6.0.0 (optional peer)
+```
+
 ```ts
 // conformance.test.ts
 import { alchemyConformance } from "@aurelienbbn/conformance-alchemy/vitest";
@@ -40,7 +44,7 @@ const report = await runAlchemyConformanceReport({ root: process.cwd() }); // { 
 
 Findings carry `check`, `severity`, `message`, `path`, a `docs` URL, and `evaluation` when evidence is missing.
 
-## Checks
+## Four checks, four ways to lose track of a stack
 
 | Check                      | Fails when                                                                                                                       |
 | -------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
@@ -95,7 +99,7 @@ The stage is `--stage`, else `ALCHEMY_STAGE`, with `${{ env.X }}`, `$X`, `${X}` 
 
 </details>
 
-## Options
+## Four options; `root` is the only required one
 
 | Option         | Default                                                                                                     | Used by                                   |
 | -------------- | ----------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
@@ -106,7 +110,7 @@ The stage is `--stage`, else `ALCHEMY_STAGE`, with `${{ env.X }}`, `$X`, `${X}` 
 
 Not checked, owned elsewhere: whether a deploy succeeds (`alchemy plan`), provider credentials in CI (`alchemy provider check-env`), `CI=true` for `Cloudflare.state()`, stages set via `$GITHUB_ENV`, reusable workflows and composite actions, CI systems other than GitHub Actions.
 
-## Sources
+## Every check re-implements an Alchemy guide
 
 Independent implementations of Alchemy's [State Store](https://alchemy.run/state-store/), [CI](https://alchemy.run/environments/ci/), and [Stages](https://alchemy.run/environments/stages/) guides and the [deploy](https://alchemy.run/cli/deploy/) / [destroy](https://alchemy.run/cli/destroy/) references, reviewed 2026-09-25 against `alchemy@2.0.0-beta.79` source (`State/LocalState.ts`, `Stack.ts`, `Cli/commands/flags.ts`), and of [alchemy#1689](https://github.com/alchemy-run/alchemy/issues/1689). Source carries greppable `@attribution` tags.
 

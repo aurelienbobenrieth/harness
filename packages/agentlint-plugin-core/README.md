@@ -4,20 +4,16 @@
 
 **23 agentlint reviews for any TypeScript repo: a deterministic trigger finds the spot, an agent or a human settles it.**
 
-Only `bounded-data-access` and `bounded-work` change detection here; their detector versions advance, so surviving findings require fresh acceptances.
-
-`bounded-data-access` inspects the immediate list/select callee and its complete fluent chain. It no longer treats arbitrary raw SQL commands as collection reads or reports the same nested query on each wrapping call. `bounded-work` reviews dynamic I/O loops and collection fan-out once at the operation; fixed call sequences, explicit finite timeouts and test files no longer trigger it. Neither detector proves cardinality through aliases, imported helpers or data flow.
-
 > [!WARNING]
 > Requires the engine `@aurelienbbn/agentlint` `>=0.3.0 <0.10.0` as a peer. [Evidence](../../docs/compatibility.md#agentlint-engine).
 
 ```text
-strictPreset   ████████████             12  settled rules
+strictPreset   ██████████               10  settled rules
 starterPreset  ██                        2  boundary-resilience, bounded-work
 opt-in         █████████████            13  exported, in no preset: calibrate first
 ```
 
-## Start with 2 rules, not 25
+## Start with 2 rules, not 23
 
 ```sh
 agentlint init --preset "@aurelienbbn/agentlint-plugin-core#starterPreset"
@@ -38,7 +34,7 @@ export default defineConfig({
 });
 ```
 
-## Rules
+## Ten settled rules, thirteen opt-in
 
 | Rule                                 | Preset           | Authority | Lifecycle | Options (default)                                                                           |
 | ------------------------------------ | ---------------- | --------- | --------- | ------------------------------------------------------------------------------------------- |
@@ -222,6 +218,8 @@ Measure its volume on your code before enforcing. One finding per function at mo
 ## Migration: re-review earlier acceptances
 
 **Review prompts, not correctness proofs.**
+
+Only `bounded-data-access` and `bounded-work` change detection here; their detector versions advance, so surviving findings require fresh acceptances. `bounded-data-access` inspects the immediate list/select callee and its complete fluent chain. It no longer treats arbitrary raw SQL commands as collection reads or reports the same nested query on each wrapping call. `bounded-work` reviews dynamic I/O loops and collection fan-out once at the operation; fixed call sequences, explicit finite timeouts and test files no longer trigger it. Neither detector proves cardinality through aliases, imported helpers or data flow.
 
 | Rule                        | Rev | Detector | Change                                                                                                        |
 | --------------------------- | :-: | :------: | ------------------------------------------------------------------------------------------------------------- |

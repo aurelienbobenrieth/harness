@@ -4,6 +4,10 @@
 
 **7 repo-hygiene checks for any TypeScript repo. Plain functions or one Vitest file.**
 
+```sh
+pnpm add -D @aurelienbbn/conformance-core vitest   # vitest >=4.1.11 <6.0.0 (optional peer)
+```
+
 ```ts
 // conformance.test.ts
 import { coreConformance } from "@aurelienbbn/conformance-core/vitest";
@@ -33,7 +37,7 @@ report.status   failed      any error finding or failed check
 | failed                                                       | ❌ fails, even with warning severity |
 | evaluated: errors · warnings only                            | ❌ fails · ✅ passes                 |
 
-## Three entry points
+## One test per check, or a plain report
 
 ```ts
 import { runCoreConformance, runCoreConformanceReport } from "@aurelienbbn/conformance-core";
@@ -109,11 +113,11 @@ coreConformance({
 }
 ```
 
-Also exported: `coreChecks`, `activeChecks`, and each check object (`dependencyOverlap`, `duplicationBudget`, `undeclaredDependencies`, `closedDesignSystemProbe`, `tsconfigStrictness`, `instructionBlocks`).
+Also exported: `coreChecks`, `activeChecks`, and each check object (`dependencyOverlap`, `duplicationBudget`, `undeclaredDependencies`, `closedDesignSystemProbe`, `tsconfigStrictness`, `instructionBlocks`, `migrationSnapshotAncestry`).
 
 </details>
 
-## Checks
+## Seven checks, three of them opt-in
 
 ### dependency-overlap
 
@@ -251,7 +255,11 @@ instructionBlocks: {
 | source missing, empty `blocks`, non-kebab block name     | throws (failed evaluation)    |
 | markers for a block you didn't configure                 | ignored                       |
 
-## Options
+### migration-snapshot-ancestry
+
+Opt in with `migrationSnapshots: { directory: "packages/persistence/drizzle/meta" }`. Warns when numbered `*_snapshot.json` files repeat an id or do not descend from the preceding filename. Missing/empty directories and malformed JSON fail evaluation. This checks ancestry, not the migration SQL or database state.
+
+## Defaults run four checks; the rest wait for configuration
 
 | Option                                               | Default                  | Notes                                                                                                         |
 | ---------------------------------------------------- | ------------------------ | ------------------------------------------------------------------------------------------------------------- |
@@ -267,7 +275,7 @@ instructionBlocks: {
 | `tsconfigStrictness`                                 | unset (default baseline) | `{}` = defaults; `files`, `additionalRequiredFlags`, `waivers`; off via `skipChecks: ["tsconfig-strictness"]` |
 | `instructionBlocks`                                  | unset (skipped)          | `blocks` (name → root-relative source), `file` (default `AGENTS.md`)                                          |
 
-## Migration
+## Upgrading turns silent skips into failures
 
 - Unknown `skipChecks` IDs throw instead of silently losing the exception: fix the misspelling.
 - Absent optional tools are skipped tests; bad output or failed runs fail. Both could pass as warning-only tests before.
@@ -297,7 +305,3 @@ Generated from package exports by `pnpm catalog`. Rule-specific options and limi
 - desloppify by Peter O'Malley (concept only, no code reuse)
 
 <!-- harness-catalog:end -->
-
-### migration-snapshot-ancestry
-
-Opt in with `migrationSnapshots: { directory: "packages/persistence/drizzle/meta" }`. Warns when numbered `*_snapshot.json` files repeat an id or do not descend from the preceding filename. Missing/empty directories and malformed JSON fail evaluation. This checks ancestry, not the migration SQL or database state.

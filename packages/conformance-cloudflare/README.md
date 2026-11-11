@@ -18,6 +18,10 @@
 
 ## One file, six tests
 
+```sh
+pnpm add -D @aurelienbbn/conformance-cloudflare vitest   # vitest >=4.1.11 <6.0.0 (optional peer)
+```
+
 ```ts
 // conformance.test.ts
 import { cloudflareConformance } from "@aurelienbbn/conformance-cloudflare/vitest";
@@ -42,7 +46,7 @@ const report = await runCloudflareConformanceReport({ root: process.cwd() }); //
 
 Findings carry `check`, `severity`, `message`, `path`, the Cloudflare `docs` URL, and `evaluation` when evidence is missing.
 
-## Checks
+## Six checks Wrangler does not run for you
 
 | Check                             | Fails when                                                                                                                                    |
 | --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -94,7 +98,7 @@ Unset `wranglerConfigs`: the first of `wrangler.json`, `wrangler.jsonc`, `wrangl
 
 </details>
 
-## Options
+## Seven options; `root` is the only required one
 
 | Option                        | Default                           | Used by                      |
 | ----------------------------- | --------------------------------- | ---------------------------- |
@@ -108,7 +112,7 @@ Unset `wranglerConfigs`: the first of `wrangler.json`, `wrangler.jsonc`, `wrangl
 
 Not checked, owned elsewhere: config schema and unknown keys (`$schema` + Wrangler), binding use in code (`tsc`), SQLite Durable Object classes (deploy fails), traces, pricing and limits.
 
-## Sources
+## Every check re-implements Cloudflare guidance
 
 Independent implementations of Cloudflare's [Workers best practices](https://developers.cloudflare.com/workers/best-practices/workers-best-practices/), [Wrangler configuration](https://developers.cloudflare.com/workers/wrangler/configuration/), [Workers Logs](https://developers.cloudflare.com/workers/observability/logs/workers-logs/), the [Node.js compatibility default](https://developers.cloudflare.com/changelog/post/2026-08-04-nodejs-compat-default/), and the Hyperdrive driver and local development guides, reviewed 2026-09-24. The non-inheritable key list follows the [workers-sdk validator](https://github.com/cloudflare/workers-sdk/blob/fc3cbaa4150a3cf30502286452153806bf8800d2/packages/workers-utils/src/config/validation.ts). Source carries greppable `@attribution` tags.
 

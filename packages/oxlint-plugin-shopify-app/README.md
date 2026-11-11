@@ -2,7 +2,7 @@
 
 [![npm](https://img.shields.io/npm/v/@aurelienbbn/oxlint-plugin-shopify-app)](https://www.npmjs.com/package/@aurelienbbn/oxlint-plugin-shopify-app) [![downloads](https://img.shields.io/npm/dm/@aurelienbbn/oxlint-plugin-shopify-app)](https://www.npmjs.com/package/@aurelienbbn/oxlint-plugin-shopify-app) [![CI](https://github.com/aurelienbobenrieth/harness/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/aurelienbobenrieth/harness/actions/workflows/ci.yml) [![license](https://img.shields.io/npm/l/@aurelienbbn/oxlint-plugin-shopify-app)](https://github.com/aurelienbobenrieth/harness/blob/main/packages/oxlint-plugin-shopify-app/LICENSE) [![node](https://img.shields.io/node/v/@aurelienbbn/oxlint-plugin-shopify-app)](https://github.com/aurelienbobenrieth/harness/blob/main/packages/oxlint-plugin-shopify-app/package.json)
 
-**27 oxlint rules for Shopify apps and extensions: the static slice of App Store, Built for Shopify, Admin API, and Polaris App Home requirements.**
+**26 oxlint rules for Shopify apps and extensions: the static slice of App Store, Built for Shopify, Admin API, and Polaris App Home requirements.**
 
 > [!WARNING]
 > **Passing lint doesn't make an app App Store or Built for Shopify eligible.** These rules implement the statically checkable parts only.
@@ -13,12 +13,12 @@ pnpm add -D @aurelienbbn/oxlint-plugin-shopify-app oxlint   # oxlint >=1.82.0 <2
 
 No preset, **no autofix**: every change means choosing an API, content, layout, or runtime policy.
 
-## 27 rules, 4 scopes
+## 26 rules, 4 scopes
 
 ```text
 server baseline   ███████          7   every app, server + route source
 App Home recipe   █████████████   13   + 14 jsx-a11y, App Home paths only
-category opt-in   ████             4   overrides on the paths the BFS category covers
+category opt-in   ███              3   overrides on the paths the BFS category covers
 other opt-in      ███              3   Function source · Polaris manifest · 1 candidate
 ```
 
@@ -83,8 +83,8 @@ await billing.require({ plans: [PRO], isTest: true, onFailure }); // ❌ never b
 | Rule                              | ⏭️ Silent on                                                                                              | Option (default)                                                                                                      |
 | --------------------------------- | --------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
 | `require-mutation-user-errors`    | unknown fragments, interpolations inside the field, unparsable text. Same-document fragments are followed | `ignoreMutations` (`[]`): payloads without the field. Exclude non-Shopify GraphQL clients via `overrides`             |
-| `require-idempotent-mutations`    | —                                                                                                         | `since` (unset): the Admin API version you pin, `YYYY-01/04/07/10`. Below `2026-04` silences `missingIdempotent` only |
-| `no-hardcoded-billing-test-mode`  | test and fixture files                                                                                    | —                                                                                                                     |
+| `require-idempotent-mutations`    | nothing                                                                                                   | `since` (unset): the Admin API version you pin, `YYYY-01/04/07/10`. Below `2026-04` silences `missingIdempotent` only |
+| `no-hardcoded-billing-test-mode`  | test and fixture files                                                                                    | nothing                                                                                                               |
 | `webhook-hmac-verification-shape` | verification delegated to another file; OAuth `hmac` query checks                                         | `safeCompareNames` (`["timingSafeEqual", "safeCompare"]`), replaced not merged                                        |
 
 The 17 mutations needing `@idempotent`: `refundCreate` · `inventoryShipmentReceive` · `inventoryAdjustQuantities` · `inventoryMoveQuantities` · `inventorySetQuantities` · `inventorySetOnHandQuantities` · `inventoryShipmentCreateInTransit` · `inventoryShipmentCreate` · `inventoryTransferCreate` · `inventoryTransferCreateAsReadyToShip` · `inventoryTransferDuplicate` · `inventoryTransferSetItems` · `inventorySetScheduledChanges` · `inventoryActivate` · `inventoryShipmentAddItems` · `locationActivate` · `locationDeactivate`
@@ -170,7 +170,7 @@ Cancelling checkout and customer-account `fetch` calls is the generic `core/requ
 | Rule                              | ✅ Allowed                                                      | ❌ Reported                                                              | ⚠️ Review input                   |
 | --------------------------------- | --------------------------------------------------------------- | ------------------------------------------------------------------------ | --------------------------------- |
 | `no-draft-order-custom-discounts` | response selections mentioning `appliedDiscount` (not an input) | draft-order mutations applying custom discounts (parsed mutation fields) | variable-supplied mutation inputs |
-| `no-asset-api-theme-writes`       | REST Asset API `GET`                                            | recognized write methods; theme file mutations                           | —                                 |
+| `no-asset-api-theme-writes`       | REST Asset API `GET`                                            | recognized write methods; theme file mutations                           | nothing                           |
 
 `no-admin-rest-api`:
 
@@ -181,7 +181,7 @@ Cancelling checkout and customer-account `fetch` calls is the generic `core/requ
 
 </details>
 
-## Other opt-ins
+## Three opt-ins scope themselves or stay candidates
 
 `functions-no-unavailable-runtime-apis` **scopes itself** to JS Function source: files under an extension whose `*.extension.toml` declares `type = "function"` (tests excluded); every other file is skipped. Option `{ "scope": "all" }` lints every file the rule is enabled for. `s-known-components` on App Home source, beside the recipe. 🧪 `no-session-or-token-logging` is a candidate, off by default.
 
@@ -198,7 +198,7 @@ Cancelling checkout and customer-account `fetch` calls is the generic `core/requ
 
 | Rule                                    | Status                                                                                                         | ❌ Fires on                                                                                                                                                                                                                                                                         | Options (default)                                                                                                                                 |
 | --------------------------------------- | -------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `functions-no-unavailable-runtime-apis` | opt-in, self-scoped to Function extensions (`type = "function"` manifest); `scope: "all"` disables the scoping | async functions, top-level `await`, `.then()` on call results, unshadowed `Promise`, `setTimeout`, `setInterval`, `fetch`, `crypto`, `URL`, `URLSearchParams`, `process`, `Buffer`, `require`, `node:` imports, `Date.now()`, zero-arg `Date`, `Math.random()`, `performance.now()` | —                                                                                                                                                 |
+| `functions-no-unavailable-runtime-apis` | opt-in, self-scoped to Function extensions (`type = "function"` manifest); `scope: "all"` disables the scoping | async functions, top-level `await`, `.then()` on call results, unshadowed `Promise`, `setTimeout`, `setInterval`, `fetch`, `crypto`, `URL`, `URLSearchParams`, `process`, `Buffer`, `require`, `node:` imports, `Date.now()`, zero-arg `Date`, `Math.random()`, `performance.now()` | nothing                                                                                                                                           |
 | `s-known-components`                    | opt-in, App Home source                                                                                        | `s-*` elements the manifest doesn't declare; attributes that aren't a declared attribute, public field or `on<event>` handler. Always allowed: `key`, `ref`, `slot`, `children`, `id`, `data-*`. Children of allowed elements (App Bridge nav links) keep their own contract        | `manifestPath` (discovered), `allowElements` (`["s-app-nav", "s-app-window"]`, replaced), `allowAttributes` (`[]`)                                |
 | `no-session-or-token-logging`           | 🧪 candidate, off by default                                                                                   | `console` / `logger` / `log` calls exposing `session`, `accessToken`, `access_token`, `sessionToken`, `idToken` (identifier, shorthand, terminal member, spread, template hole, `JSON.stringify`), or a `payload` destructured from `authenticate.webhook`                          | `loggerObjects` (`["console", "logger", "log"]`), `sensitiveNames` (the 5 above), `webhookPayloadNames` (`["payload"]`), each replaced not merged |
 

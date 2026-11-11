@@ -35,9 +35,9 @@ Returns a plain `OxlintConfig`: works with oxlint directly or as Vite+'s `lint` 
 | `layerDirectionOverride({ files, forbidden, message })` | 🔌 one `overrides` entry banning cross-layer imports |
 | `nurseryCandidateRules`                                 | 🔌 4 nursery rules to trial                          |
 
-Also: `testFileGlobs`, `vagueTestTitlePattern`, `tanstackQueryRules`, `tanstackQueryPluginSpecifier`, `effectTsgoPluginName`, `effectTsgoOwnerRules`, `effectTsgoSettledRules`, `effectIdiomRules`, `importGraphRules`, types `OxlintConfig`, `ImportGraphLayerOptions`.
+Also: `testFileGlobs`, `vagueTestTitlePattern`, `tanstackQueryRules`, `tanstackQueryPluginSpecifier`, `effectTsgoPluginName`, `effectTsgoOwnerRules`, `effectTsgoSettledRules`, `effectIdiomRules`, `importGraphRules`, types `OxlintConfig`, `ImportGraphLayerOptions`, `TanstackQueryLayerOptions`, `LayerDirectionOptions`, `EffectTsgoLayerOptions`.
 
-## What the preset sets
+## Six categories at `error`, nursery off
 
 ```text
 correctness  ██████  error      style       ██████  error
@@ -92,7 +92,7 @@ restriction  ██████  error
 | `vitest/no-importing-vitest-globals`                      | `vitest/prefer-importing-vitest-globals`             | imports stay visible to import-keyed rules                                                                     |
 | `vitest/prefer-to-be-truthy`, `vitest/prefer-to-be-falsy` | `vitest/prefer-strict-boolean-matchers`              | `toBe(true)` is stricter                                                                                       |
 | `eslint/no-undefined`                                     | `unicorn/no-null`, `unicorn/no-useless-undefined`    | banning both `null` and `undefined` leaves no way to express absence                                           |
-| `eslint/no-warning-comments`                              | —                                                    | rejects tracked `TODO(#123):`; `core/no-dead-comments` reports untracked only                                  |
+| `eslint/no-warning-comments`                              | nothing                                              | rejects tracked `TODO(#123):`; `core/no-dead-comments` reports untracked only                                  |
 | `eslint/max-lines-per-function`                           | `eslint/max-statements`                              | counts physical lines, so a narrower print width fails it; statements don't                                    |
 | `eslint/default-case`                                     | `typescript/switch-exhaustiveness-check`             | `default` hides new union members                                                                              |
 | `typescript/explicit-module-boundary-types`               | `typescript/explicit-function-return-type`           | 97% of its hits (3,293 of 3,384 across 15 projects) are the same functions; argument types are `noImplicitAny` |
@@ -142,7 +142,7 @@ So filler words share one pattern with `[^a-z]` word edges. **Overriding: keep o
 
 </details>
 
-## Opt-in layers
+## Layers compose; rules you set win
 
 ```ts
 import {
@@ -310,7 +310,7 @@ Here `src/index.test.ts` fails until the list matches the installed oxlint. Cons
 
 </details>
 
-## Contract & migration
+## Lists merge, objects merge key by key
 
 | Topic                   | Contract                                                                                                                        |
 | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------- |

@@ -25,7 +25,7 @@ pnpm add -D @aurelienbbn/oxlint-plugin-alchemy oxlint   # oxlint >=1.82.0 <2.0.0
 
 No preset. **No autofix:** every fix needs a choice (where the value is read, where the resource lives, what the step is called), so every rule reports only.
 
-## What fires
+## Wrong phase and wrong scope fail the lint
 
 ```ts
 export default Cloudflare.Worker(
@@ -69,7 +69,7 @@ Runtimes are recognized syntactically: `Cloudflare.Worker`, `Cloudflare.DurableO
 
 </details>
 
-## Limits
+## The view stops at one file
 
 - **Single-file view.** Inits built in another file, passed by identifier, or composed from Layers are invisible. A `Tag.make` on a tag imported from another file is not recognized.
 - **`config-in-init` false positive:** a key bound by a different declaration (a Layer, the host Worker of a Workflow) is reported. Suppress the line, or read the key in this init too.

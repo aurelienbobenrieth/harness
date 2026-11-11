@@ -27,7 +27,7 @@
 
 | Need                                                                                   | Tool                                                                          | A pass establishes                          |
 | -------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- | ------------------------------------------- |
-| Polaris components known to installed types, labels, action slots, modals, API calls   | [27 Oxlint rules](../packages/oxlint-plugin-shopify-app/README.md)            | source meets the configured static contract |
+| Polaris components known to installed types, labels, action slots, modals, API calls   | [26 Oxlint rules](../packages/oxlint-plugin-shopify-app/README.md)            | source meets the configured static contract |
 | native HTML accessibility                                                              | [App Home Oxlint recipe](../examples/shopify/app-home.oxlintrc.json)          | `jsx-a11y` on native elements               |
 | copy, recovery, destructive actions, onboarding, navigation, checkout UX, Flow actions | [15 agentlint reviews](../packages/agentlint-plugin-shopify-app/README.md) 🔒 | review work found, not a verdict            |
 | manifests, API versions, Polaris CDN major, Flow templates, Preact migration, bundles  | [13 conformance checks](../packages/conformance-shopify-app/README.md)        | local inputs meet their contract            |

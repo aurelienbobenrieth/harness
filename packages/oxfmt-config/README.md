@@ -16,9 +16,9 @@ import { defineConfig } from "oxfmt";
 export default defineConfig(defineOxfmtConfig({ ignorePatterns: ["dist/**"] }));
 ```
 
-Plain `OxfmtConfig`: works with oxfmt directly or as Vite+'s `fmt` config, no Vite+ dependency.
+The result is a plain `OxfmtConfig`: oxfmt reads it directly, or Vite+ reads it as its `fmt` config. No Vite+ dependency.
 
-## Exports
+## Three exports, one baseline
 
 | Export                                    | What                                   |
 | ----------------------------------------- | -------------------------------------- |
@@ -52,6 +52,6 @@ defineOxfmtConfig(o, { replaceLists: true }) ignorePatterns, overrides  →  you
 any other top-level key                                                  →  yours wins
 ```
 
-**Result is a `structuredClone`:** mutating it never touches `defaultOxfmtConfig`.
+**The result is a `structuredClone`:** mutating it never touches `defaultOxfmtConfig`.
 
 [Compatibility matrix](../../docs/compatibility.md): packed config vs baseline and current oxfmt, complete dependency-declaration checks, clean and badly formatted inputs.

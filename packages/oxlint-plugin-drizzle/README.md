@@ -22,7 +22,7 @@ pnpm add -D @aurelienbbn/oxlint-plugin-drizzle oxlint   # oxlint >=1.82.0 <2.0.0
 
 No preset, no autofix: index shape (single, composite, partial) is a design choice.
 
-## What fires
+## An unindexed foreign key fails the lint
 
 ```ts
 export const posts = pgTable("posts", {
@@ -36,7 +36,7 @@ export const indexedPosts = pgTable(
 );
 ```
 
-**Postgres only.** MySQL InnoDB creates an index for each foreign key when none exists, so `mysqlTable` is out of scope. Neither `drizzle-kit` (0.31.11, 1.0.0-rc.4) nor `eslint-plugin-drizzle` (0.2.3) checks this.
+**Postgres and SQLite, not MySQL.** MySQL InnoDB creates an index for each foreign key when none exists, so `mysqlTable` stays out of scope. Neither `drizzle-kit` (0.31.11, 1.0.0-rc.4) nor `eslint-plugin-drizzle` (0.2.3) checks this.
 
 <details>
 <summary>Exact trigger and scope</summary>
@@ -46,6 +46,16 @@ export const indexedPosts = pgTable(
 | a `.references(...)` column, or the first column of `foreignKey({ columns })`, that no covering builder starts with | `index` / `uniqueIndex` / `unique` `.on(t.col, ...)` or `.using(method, t.col, ...)`, `primaryKey({ columns: [t.col, ...] })`, column-level `.primaryKey()` / `.unique()`. Tables from `pgTable` or `pgSchema(...).table` imported from `drizzle-orm/pg-core`, and `sqliteTable` from `drizzle-orm/sqlite-core` (D1); `mysqlTable` is out of scope because InnoDB indexes foreign keys itself; object or callback columns; array or 0.x object extra config. ⏭️ extra config that isn't an inline arrow returning a literal, or that contains spreads |
 
 </details>
+
+## Three more rules stay advisory
+
+Merge the exported `advisoryRules` into your oxlint rules, or enable these names as `warn`: `drizzle/constraint-not-valid`, `drizzle/require-retention-comment`, `drizzle/role-membership-guard`. No autofix: each needs a domain decision.
+
+| New rule (`warn`)           | Trigger and limits                                                                                                                                                                             |
+| --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `constraint-not-valid`      | Complete static Drizzle `sql` templates adding a foreign-key or CHECK constraint without NOT VALID; no UNIQUE/PK rewrite, interpolated SQL and standalone .sql files require migration review. |
+| `require-retention-comment` | Imported `pgTable` declarations without adjacent JSDoc `@retention` text; records the decision, does not enforce deletion jobs.                                                                |
+| `role-membership-guard`     | A policy USING/WITH CHECK clause consisting solely of current_user equality; asks for inherited-role membership. Identity-specific policies may intentionally keep equality.                   |
 
 <!-- harness-catalog:start -->
 
@@ -67,13 +77,3 @@ Generated from package exports by `pnpm catalog`. Rule-specific options and limi
 - planetscale/database-skills skills/postgres/references/schema-design.md by PlanetScale (MIT, concept)
 
 <!-- harness-catalog:end -->
-
-## Advisory rules
-
-Merge the exported `advisoryRules` into your oxlint rules (or enable these names as `warn`): `drizzle/constraint-not-valid`, `drizzle/require-retention-comment`, `drizzle/role-membership-guard`. No autofix: each needs a domain decision.
-
-| New rule (`warn`)           | Trigger and limits                                                                                                                                                                             |
-| --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `constraint-not-valid`      | Complete static Drizzle `sql` templates adding a foreign-key or CHECK constraint without NOT VALID; no UNIQUE/PK rewrite, interpolated SQL and standalone .sql files require migration review. |
-| `require-retention-comment` | Imported `pgTable` declarations without adjacent JSDoc `@retention` text; records the decision, does not enforce deletion jobs.                                                                |
-| `role-membership-guard`     | A policy USING/WITH CHECK clause consisting solely of current_user equality; asks for inherited-role membership. Identity-specific policies may intentionally keep equality.                   |

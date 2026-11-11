@@ -135,7 +135,7 @@ try {
 | `Effect.catch(...)`                        | ⏭️ capitalized receivers are namespaces, skipped                                                                                                             |
 | schema builders with instance `.catch(fn)` | ⚠️ need a reason or a disable comment                                                                                                                        |
 
-`no-error-message-matching`: `.message` compared with a string literal, fed to `includes` / `startsWith` / `endsWith` / `match` / `search` / `indexOf` / `RegExp#test` (also after `toLowerCase()`-style calls), or used as a `switch` discriminant. `String(error)`, `error.toString()`, `` `${error}` `` on a caught binding count too. Test files exempt. Error-shaped = catch binding, rejection-handler parameter, or a name like `e`, `err`, `error`, `cause`, `reason`, `ex`, `exception`, `*Error`, `*Err`, `*Exception`.
+`no-error-message-matching`: `.message` compared with a string literal, fed to `includes` / `startsWith` / `endsWith` / `match` / `search` / `indexOf` / `RegExp#test` (also after `toLowerCase()`-style calls), or used as a `switch` discriminant. `String(error)`, `error.toString()`, `` `${error}` `` on a caught binding count too. Test files exempt. Error-shaped = catch binding, rejection-handler parameter, or a name like `e`, `err`, `error`, `cause`, `reason`, `ex`, `exception`, `*Error`, `*Err`, `*Exception`. Empty error-message presence checks, such as `error.message !== ""`, remain allowed for display fallbacks.
 
 </details>
 
@@ -190,10 +190,10 @@ Files calling `vi.useFakeTimers()` skip the first and last shape: their timers a
 
 | ❌ Fires on                                                                     | Unless                                                                    |
 | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
-| `toLocaleString` / `toLocaleDateString` / `toLocaleTimeString` without a locale | —                                                                         |
-| `localeCompare` without its 2nd argument                                        | —                                                                         |
-| `Intl.*Format` constructed without a locale                                     | —                                                                         |
-| `Math.random()`                                                                 | —                                                                         |
+| `toLocaleString` / `toLocaleDateString` / `toLocaleTimeString` without a locale | nothing                                                                   |
+| `localeCompare` without its 2nd argument                                        | nothing                                                                   |
+| `Intl.*Format` constructed without a locale                                     | nothing                                                                   |
+| `Math.random()`                                                                 | nothing                                                                   |
 | `new Date()` (no arg), `Date.now()`, `performance.now()`                        | file calls `vi.useFakeTimers` / `vi.setSystemTime`, or `allowClock: true` |
 
 Shadowed `Date` / `Math` / `Intl` stay silent.
@@ -358,7 +358,7 @@ function start(runtime) {
 | ----------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `effect/padding-after-dependencies` | ✅ complementary: it also separates `yield*` service dependencies from a `const` of logic below them, which a declaration run leaves free. Both rules insert the same single blank line. |
 
-## ⚠️ Migration
+## ⚠️ Aliases no longer hide a finding
 
 | Now reports    | Example                                                                                                    | Fix (no autofix)                                                 |
 | -------------- | ---------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
@@ -380,6 +380,16 @@ function start(runtime) {
 | `assertionHelpers`     | trusts calls with that local name: the helper's behavioral contract is on you. Cross-module wrapper inference unsupported                                                                                                                     |
 
 </details>
+
+## One rule stays advisory
+
+Merge the exported `advisoryRules` into your oxlint rules (or enable these names as `warn`): `core/fenced-doc-examples`. No autofix: each needs a domain decision.
+
+`core/fenced-doc-examples` warns on nonempty JSDoc `@example` blocks without fenced code. Enable as `warn`; rendering prose and inline documentation outside `@example` are outside its scope.
+
+## Model credit in a commit message fails the hook
+
+Add `harness-install-hooks` to the consumer `prepare` script after installing this package. It writes an executable Git `commit-msg` hook using Node and Git for Windows; no Unix-only checker is needed. Human coauthors and technical model names in subjects remain allowed. Model `Co-Authored-By` trailers and generated/assisted tool-credit lines fail with exit 1; unreadable/missing input fails with exit 2. An existing hook is preserved: chain `harness-check-commit "$1"` in it. Reinstall after moving the checkout or upgrading Node.
 
 <!-- harness-catalog:start -->
 
@@ -418,15 +428,3 @@ Generated from package exports by `pnpm catalog`. Rule-specific options and limi
 - https://eslint.org/docs/latest/rules/padding-line-between-statements (MIT; option schema and statement types, independently implemented)
 
 <!-- harness-catalog:end -->
-
-Empty error-message presence checks, such as `error.message !== ""`, remain allowed for display fallbacks.
-
-## Advisory rules
-
-Merge the exported `advisoryRules` into your oxlint rules (or enable these names as `warn`): `core/fenced-doc-examples`. No autofix: each needs a domain decision.
-
-## Commit messages
-
-Add `harness-install-hooks` to the consumer `prepare` script after installing this package. It writes an executable Git `commit-msg` hook using Node and Git for Windows; no Unix-only checker is needed. Human coauthors and technical model names in subjects remain allowed. Model `Co-Authored-By` trailers and generated/assisted tool-credit lines fail with exit 1; unreadable/missing input fails with exit 2. An existing hook is preserved: chain `harness-check-commit "$1"` in it. Reinstall after moving the checkout or upgrading Node.
-
-`core/fenced-doc-examples` warns on nonempty JSDoc `@example` blocks without fenced code. Enable as `warn`; rendering prose and inline documentation outside `@example` are outside its scope.

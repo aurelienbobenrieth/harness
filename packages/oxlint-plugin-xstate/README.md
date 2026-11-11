@@ -38,11 +38,11 @@ MAYBE       ██              2   off or warn: no-unreachable-transition · pr
 deprecated  ██              2   v5 only: no-imperative-action-creator · prefer-send-to
 ```
 
-**`no-imperative-action-creator` and `prefer-send-to` are deprecated since 0.2.0.** XState v6 removes the action creators and `sendParent` (importing one is a type error); both rules still work on v5 until you migrate.
+**Deprecated since 0.2.0:** `no-imperative-action-creator`, `prefer-send-to`. XState v6 removes the action creators and `sendParent` (importing one is a type error); both rules still work on v5.
 
 `no-direct-named-action` contradicts the upstream v6 docs, which show direct `actions.x(...)` calls. It reports them anyway: in alpha.64 a direct call ran twice for one `send`, and also ran during pure `transition()` and `snapshot.can()`.
 
-## What fires
+## Silent no-ops and erased events fail the lint
 
 ```ts
 setup({ types: {} }).createMachine({

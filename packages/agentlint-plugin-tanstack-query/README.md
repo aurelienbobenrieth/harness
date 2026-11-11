@@ -7,7 +7,7 @@
 > [!WARNING]
 > Requires the engine `@aurelienbbn/agentlint` `>=0.3.0 <0.10.0` as a peer. [Evidence](../../docs/compatibility.md#agentlint-engine).
 
-## Quick start
+## Four commands reach the first review
 
 ```sh
 agentlint init --preset "@aurelienbbn/agentlint-plugin-tanstack-query#starterPreset"
@@ -25,7 +25,7 @@ import { queryFreshnessIntent, strictPreset } from "@aurelienbbn/agentlint-plugi
 export default defineConfig({ extends: [strictPreset], rules: [queryFreshnessIntent] });
 ```
 
-## Rules
+## Four reviews, one of them opt-in
 
 | Rule                        | `strictPreset` | `starterPreset` | Authority | Standard rev | Detector | Skips             |
 | --------------------------- | :------------: | :-------------: | --------- | :----------: | :------: | ----------------- |
