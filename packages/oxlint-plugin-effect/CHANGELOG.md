@@ -1,5 +1,11 @@
 # @aurelienbbn/oxlint-plugin-effect
 
+## 0.9.3
+
+### Patch Changes
+
+- [#99](https://github.com/aurelienbobenrieth/harness/pull/99) [`d46650d`](https://github.com/aurelienbobenrieth/harness/commit/d46650d2662b4a849cb8530218640c09e2c8c0a4) Thanks [@aurelienbobenrieth](https://github.com/aurelienbobenrieth)! - Rewrite the README: claim headings in the promised order (install and first command before reference), install commands where they were missing, and rule and preset counts corrected against the registered exports.
+
 ## 0.9.2
 
 ### Patch Changes
