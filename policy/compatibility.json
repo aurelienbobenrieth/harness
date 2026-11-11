@@ -1,41 +1,41 @@
 {
   "schemaVersion": 1,
   "node": "^22.19.0 || ^24.11.0",
-  "registryCheckedAt": "2026-10-14",
+  "registryCheckedAt": "2026-11-11",
   "peerRanges": {
-    "@aurelienbbn/agentlint": ">=0.3.0 <0.9.0",
+    "@aurelienbbn/agentlint": ">=0.3.0 <0.10.0",
     "oxlint": ">=1.82.0 <2.0.0",
     "oxlint-tsgolint": "^7.0.2001",
-    "oxfmt": ">=0.67.0 <0.69.0 || ^0.74.0",
+    "oxfmt": ">=0.67.0 <0.69.0 || ^0.74.0 || ^0.78.0",
     "vite-plus": "^0.3.2 || ^1.4.0",
     "vitest": ">=4.1.11 <6.0.0",
     "stylelint": ">=17.15.0 <18.0.0"
   },
   "sharedDependencies": {
     "@types/node": "22.20.5",
-    "vite": "8.3.3",
+    "vite": "8.3.7",
     "typescript": "7.0.2",
     "lit": "3.3.3",
-    "xstate": "5.33.2",
-    "jsdom": "30.1.2"
+    "xstate": "5.33.4",
+    "jsdom": "31.0.0"
   },
   "profiles": {
     "baseline": {
       "@aurelienbbn/agentlint": "0.3.0",
-      "oxlint": "1.89.0",
-      "oxlint-tsgolint": "7.0.2005",
-      "oxfmt": "0.74.0",
-      "vite-plus": "1.4.0",
-      "vitest": "5.0.5",
+      "oxlint": "1.93.0",
+      "oxlint-tsgolint": "7.0.2006",
+      "oxfmt": "0.78.0",
+      "vite-plus": "1.5.1",
+      "vitest": "5.1.0",
       "stylelint": "17.15.0"
     },
     "current": {
-      "@aurelienbbn/agentlint": "0.8.0",
-      "oxlint": "1.89.0",
-      "oxlint-tsgolint": "7.0.2005",
-      "oxfmt": "0.74.0",
-      "vite-plus": "1.4.0",
-      "vitest": "5.0.5",
+      "@aurelienbbn/agentlint": "0.9.1",
+      "oxlint": "1.93.0",
+      "oxlint-tsgolint": "7.0.2006",
+      "oxfmt": "0.78.0",
+      "vite-plus": "1.5.1",
+      "vitest": "5.1.0",
       "stylelint": "17.16.0"
     }
   }

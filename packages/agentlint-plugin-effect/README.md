@@ -5,7 +5,7 @@
 **3 agentlint reviews for Effect: a database transaction never waits on the network, a conversion keeps the failure it replaces, and a refusal's reason reaches who was refused.**
 
 > [!WARNING]
-> Requires the engine `@aurelienbbn/agentlint` `>=0.3.0 <0.9.0` as a peer. [Evidence](../../docs/compatibility.md#agentlint-engine).
+> Requires the engine `@aurelienbbn/agentlint` `>=0.3.0 <0.10.0` as a peer. [Evidence](../../docs/compatibility.md#agentlint-engine).
 
 ## Quick start
 

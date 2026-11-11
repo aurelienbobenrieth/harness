@@ -9,7 +9,7 @@ Only `bounded-data-access` and `bounded-work` change detection here; their detec
 `bounded-data-access` inspects the immediate list/select callee and its complete fluent chain. It no longer treats arbitrary raw SQL commands as collection reads or reports the same nested query on each wrapping call. `bounded-work` reviews dynamic I/O loops and collection fan-out once at the operation; fixed call sequences, explicit finite timeouts and test files no longer trigger it. Neither detector proves cardinality through aliases, imported helpers or data flow.
 
 > [!WARNING]
-> Requires the engine `@aurelienbbn/agentlint` `>=0.3.0 <0.9.0` as a peer. [Evidence](../../docs/compatibility.md#agentlint-engine).
+> Requires the engine `@aurelienbbn/agentlint` `>=0.3.0 <0.10.0` as a peer. [Evidence](../../docs/compatibility.md#agentlint-engine).
 
 ```text
 strictPreset   ████████████             12  settled rules

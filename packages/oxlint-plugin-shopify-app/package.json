@@ -44,8 +44,8 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@oxlint/plugins": "1.91.0",
-    "graphql": "17.0.2"
+    "@oxlint/plugins": "1.93.0",
+    "graphql": "17.1.0"
   },
   "devDependencies": {
     "@aurelienbbn/oxlint-kit": "workspace:*"
