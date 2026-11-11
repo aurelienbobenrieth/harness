@@ -1,5 +1,11 @@
 # @aurelienbbn/oxlint-plugin-cloudflare
 
+## 0.1.4
+
+### Patch Changes
+
+- [#95](https://github.com/aurelienbobenrieth/harness/pull/95) [`c90c05c`](https://github.com/aurelienbobenrieth/harness/commit/c90c05c647072e0f3276d951635499cfcda4976a) Thanks [@aurelienbobenrieth](https://github.com/aurelienbobenrieth)! - Update runtime dependencies to `@oxlint/plugins` 1.91.0, `oxc-parser` 0.157.0 and `postcss` 8.5.32.
+
 ## 0.1.3
 
 ### Patch Changes
