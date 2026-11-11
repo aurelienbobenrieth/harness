@@ -1,6 +1,6 @@
 {
   "name": "@aurelienbbn/oxlint-plugin-type-evidence",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Strict oxlint rules preserving TypeScript type evidence at contracts and boundaries.",
   "keywords": [
     "lint",

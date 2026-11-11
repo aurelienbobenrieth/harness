@@ -1,6 +1,6 @@
 {
   "name": "@aurelienbbn/oxlint-plugin-alchemy",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Custom oxlint rules for Alchemy v2 (Infrastructure as Effects) stacks and runtimes.",
   "keywords": [
     "alchemy",
