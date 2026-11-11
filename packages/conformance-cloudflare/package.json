@@ -1,6 +1,6 @@
 {
   "name": "@aurelienbbn/conformance-cloudflare",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Structural conformance checks for Cloudflare Workers projects, packaged as a Vitest suite.",
   "keywords": [
     "cloudflare",

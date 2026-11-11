@@ -1,6 +1,6 @@
 {
   "name": "@aurelienbbn/agentlint-plugin-xstate",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Custom agentlint rules for XState machines and actors.",
   "keywords": [
     "agentlint",
