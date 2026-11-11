@@ -7,7 +7,7 @@
 > v6 support is checked against `xstate@6.0.0-alpha.64` and `@xstate/effect@0.1.0-alpha.6`; alpha APIs can move between releases.
 
 > [!WARNING]
-> Requires the engine `@aurelienbbn/agentlint` `>=0.3.0 <0.9.0` as a peer. [Evidence](../../docs/compatibility.md#agentlint-engine).
+> Requires the engine `@aurelienbbn/agentlint` `>=0.3.0 <0.10.0` as a peer. [Evidence](../../docs/compatibility.md#agentlint-engine).
 
 ```text
 oxlint-plugin-xstate      mechanical, setup-aware checks
