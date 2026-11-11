@@ -1,6 +1,6 @@
 {
   "name": "@aurelienbbn/oxlint-plugin-core",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "Custom oxlint rules for TypeScript projects.",
   "keywords": [
     "code-quality",
