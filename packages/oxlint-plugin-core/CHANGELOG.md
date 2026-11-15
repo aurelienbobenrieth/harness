@@ -1,5 +1,11 @@
 # @aurelienbbn/oxlint-plugin-core
 
+## 0.6.0
+
+### Minor Changes
+
+- [#101](https://github.com/aurelienbobenrieth/harness/pull/101) [`4edbe94`](https://github.com/aurelienbobenrieth/harness/commit/4edbe94eb333112abdd546aa678b450f20807bca) Thanks [@aurelienbobenrieth](https://github.com/aurelienbobenrieth)! - Add `core/module-boundaries`, off until enabled: inside one workspace member, it imports other units of the source root through a `#` subpath and the own unit by relative path (autofixed both ways from the package.json `imports` pattern, keeping `?query` suffixes), and reports configured forbidden edges and imports of another unit's private paths. Options: `sourceRoot`, `units`, `forbidden`, `private`, `includeTestFiles`.
+
 ## 0.5.3
 
 ### Patch Changes
