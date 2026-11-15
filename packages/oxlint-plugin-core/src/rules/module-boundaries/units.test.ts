@@ -104,6 +104,21 @@ describe("moduleViolation", () => {
     expect(moduleViolation(site("features/leaks/order/view.ts", "#features/leaks/index/events.ts"))).toBeUndefined();
   });
 
+  it("matches private patterns with a leading star against any folder of the unit", () => {
+    const starred = { ...policy, units: ["*/*"], forbidden: [], private: ["*/aggregate.ts", "*/ports/**"] };
+    const judge = (importer: string, specifier: string) =>
+      moduleViolation(site(importer, specifier, { policy: starred }));
+
+    expect(judge("leaks/index/view.ts", "#protection/exposure/_/aggregate.ts")?.message).toMatch(
+      /reaches into _\/aggregate\.ts, private to src\/protection\/exposure/u,
+    );
+    expect(judge("leaks/index/view.ts", "#protection/exposure/_/ports/store/codes.ts")?.message).toMatch(
+      /reaches into _\/ports\/store\/codes\.ts/u,
+    );
+    expect(judge("leaks/index/view.ts", "#protection/exposure/_/events.ts")).toBeUndefined();
+    expect(judge("protection/exposure/record/run.ts", "../_/aggregate.ts")).toBeUndefined();
+  });
+
   it("skips forbidden and private edges when dependencies are not judged, but still fixes the form", () => {
     const exempt = { judgeDependencies: false };
     expect(moduleViolation(site("features/leaks/index/view.ts", "#hosting/mock/store.ts", exempt))).toBeUndefined();
