@@ -1,4 +1,5 @@
 import { eslintCompatPlugin } from "@oxlint/plugins";
+import { moduleBoundaries } from "./rules/module-boundaries/rule.js";
 import { noAmbientNondeterminismInTests } from "./rules/no-ambient-nondeterminism-in-tests/rule.js";
 import { noDeadComments } from "./rules/no-dead-comments/rule.js";
 import { noDiscardedCaughtError } from "./rules/no-discarded-caught-error/rule.js";
@@ -23,6 +24,7 @@ export default eslintCompatPlugin({
     name: "core",
   },
   rules: {
+    "module-boundaries": moduleBoundaries,
     "no-ambient-nondeterminism-in-tests": noAmbientNondeterminismInTests,
     "no-dead-comments": noDeadComments,
     "no-discarded-caught-error": noDiscardedCaughtError,
