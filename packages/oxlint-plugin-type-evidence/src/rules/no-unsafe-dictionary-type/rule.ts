@@ -1,4 +1,4 @@
-import { isBoundaryFile } from "../ast.js";
+import { isBoundaryFile, isTestFile } from "../ast.js";
 /**
  * @attribution anti-slop by Dillon Mulroy (MIT, concept re-implemented)
  */
@@ -46,7 +46,7 @@ export const noUnsafeDictionaryType: Rule = {
 
     return {
       before() {
-        if (isBoundaryFile(context.filename)) return false;
+        if (isBoundaryFile(context.filename) || isTestFile(context.filename)) return false;
         aliases.clear();
         candidates = [];
       },

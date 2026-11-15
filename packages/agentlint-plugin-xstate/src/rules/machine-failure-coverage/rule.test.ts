@@ -144,8 +144,112 @@ const machine = createMachine({
   expect(findings[0]?.message).toContain("empty onError");
 });
 
-it("states that onError does not catch errors thrown in actions", () => {
-  expect(guidanceChecks(machineFailureCoverage).join("\n")).toContain(
-    "Errors thrown inside actions are not caught by onError",
+it("states the action-error contract per version: v5 bypasses onError, v6 recovers in the nearest state", () => {
+  const checks = guidanceChecks(machineFailureCoverage).join("\n");
+
+  expect(checks).toContain("v5: an error thrown inside an action is not caught by onError");
+  expect(checks).toContain(
+    "v6: an error thrown in a transition function or an enq(...) effect goes to the nearest active state's onError",
   );
+  expect(checks).not.toContain("onError never covers");
+});
+
+const v6UploadMachine = `
+import { createAsyncLogic, setup } from "xstate";
+
+const s = setup({ actors: { upload: createAsyncLogic({ run: async ({ input, signal }) => send(input, signal) }) } });
+
+export const uploadMachine = s.createMachine({
+  initial: "idle",
+  states: {
+    idle: { on: { pick: { target: "checking" } } },
+    checking: {
+      invoke: s.createInvoke({
+        src: async ({ signal }) => check(signal),
+        onDone: { target: "uploading" },
+      }),
+    },
+    uploading: {
+      onError: { target: "failed" },
+      invoke: { src: "upload", onDone: { target: "done" } },
+    },
+    failed: { on: { retry: { target: "uploading" } } },
+    done: { type: "final" },
+  },
+});
+`;
+
+it("reports a v6 createInvoke without onError and accepts an invoke covered by its state's onError", async () => {
+  const findings = await testRuleOnSource({
+    rule: machineFailureCoverage,
+    source: v6UploadMachine,
+    file: "src/upload-machine.ts",
+  });
+
+  expect(findings.map((finding) => [finding.line, finding.message])).toEqual([
+    [
+      11,
+      "Invoked actor has no onError (on the invoke, or in v6 on an enclosing state): verify its failure and recovery contract.",
+    ],
+  ]);
+});
+
+it("does not let an onError inside a sibling invoke or an empty state onError cover an invoke", async () => {
+  const source = `
+const machine = createMachine({
+  states: {
+    a: {
+      onError: {},
+      invoke: [{ src: "load", onError: { target: "failed" } }, { src: "track" }],
+    },
+  },
+});
+`;
+  const findings = await testRuleOnSource({ rule: machineFailureCoverage, source: source, file: "src/m.ts" });
+
+  expect(findings).toHaveLength(1);
+  expect(findings[0]?.message).toContain("no onError");
+});
+
+it("reports v6 spawns until a root onError, an xstate.error.actor transition or a subscribeTo error mapper covers them", async () => {
+  const uncovered = `
+const machine = createMachine({
+  actors: { upload },
+  context: ({ spawn, actors }) => ({ connection: spawn(actors.connection, { id: "connection" }) }),
+  on: {
+    "file.added": ({ context, event }, enq) => {
+      const ref = enq.spawn("upload", { id: \`upload-\${event.fileId}\` });
+      return { context: { ...context, uploads: [...context.uploads, ref] } };
+    },
+  },
+  states: { busy: { onError: { target: "failed" } } },
+});
+`;
+  const findings = await testRuleOnSource({ rule: machineFailureCoverage, source: uncovered, file: "src/m.ts" });
+  expect(findings.map((finding) => finding.line)).toEqual([4, 7]);
+
+  const covered = [
+    uncovered.replace("actors: { upload },", 'actors: { upload },\n  onError: { target: ".failed" },'),
+    uncovered.replace(
+      "on: {",
+      'on: {\n    "xstate.error.actor": { matches: { actorId: "connection" }, target: ".failed" },',
+    ),
+    uncovered.replace(
+      "return { context",
+      'enq.subscribeTo(ref, { error: (error) => ({ type: "upload.failed", error }) });\n      return { context',
+    ),
+  ];
+  const coveredFindings = await Promise.all(
+    covered.map((source) => testRuleOnSource({ rule: machineFailureCoverage, source: source, file: "src/m.ts" })),
+  );
+  expect(coveredFindings).toEqual([[], [], []]);
+});
+
+it("treats fromEffect logic as a failure-capable source", async () => {
+  const source =
+    'const machine = setupEffect({ actors: { deploy: fromEffect(deployEffect) } }).createMachine({ initial: "idle" });';
+
+  await expect(
+    testRuleOnSource({ rule: machineFailureCoverage, source: source, file: "src/deploy.ts" }),
+  ).resolves.toHaveLength(1);
 });

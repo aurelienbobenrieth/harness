@@ -1,5 +1,40 @@
 # @aurelienbbn/agentlint-plugin-xstate
 
+## 0.2.3
+
+### Patch Changes
+
+- [#99](https://github.com/aurelienbobenrieth/harness/pull/99) [`d46650d`](https://github.com/aurelienbobenrieth/harness/commit/d46650d2662b4a849cb8530218640c09e2c8c0a4) Thanks [@aurelienbobenrieth](https://github.com/aurelienbobenrieth)! - Rewrite the README: claim headings in the promised order (install and first command before reference), install commands where they were missing, and rule and preset counts corrected against the registered exports.
+
+## 0.2.2
+
+### Patch Changes
+
+- [#97](https://github.com/aurelienbobenrieth/harness/pull/97) [`754d98c`](https://github.com/aurelienbobenrieth/harness/commit/754d98c10480b77c654c88a412636d7ba80cffea) Thanks [@aurelienbobenrieth](https://github.com/aurelienbobenrieth)! - Accept agentlint 0.9 (`>=0.3.0 <0.10.0`) and oxfmt 0.78 (`>=0.67.0 <0.69.0 || ^0.74.0 || ^0.78.0`) as peers. Update runtime dependencies to `@oxlint/plugins` 1.93.0, `graphql` 17.1.0 and `parse5` 8.1.1. The current consumer profile is verified with agentlint 0.9.1, oxlint 1.93.0, oxlint-tsgolint 7.0.2006, oxfmt 0.78.0, Vite Plus 1.5.1 and Vitest 5.1.0.
+
+## 0.2.1
+
+### Patch Changes
+
+- [#92](https://github.com/aurelienbobenrieth/harness/pull/92) [`0621814`](https://github.com/aurelienbobenrieth/harness/commit/0621814cb10243be6f770408b4fd114498c75a41) Thanks [@aurelienbobenrieth](https://github.com/aurelienbobenrieth)! - `xstate/actor-cleanup` stays silent when the file already stops the stored actor (`actor.stop()`, `this.#actor?.stop()`, or a field copied from the creation binding). All 7 findings on one application were accepted with exactly that reason; the rule now reports only creations with no `stop()` on their binding.
+
+## 0.2.0
+
+### Minor Changes
+
+- [#75](https://github.com/aurelienbobenrieth/harness/pull/75) [`666c4cc`](https://github.com/aurelienbobenrieth/harness/commit/666c4cc20f6e9f350a1a0df7259521e988be9d4e) Thanks [@aurelienbobenrieth](https://github.com/aurelienbobenrieth)! - Support XState v6 alpha and `@xstate/effect` alpha beside v5, and add the `spawn-id-collision` and `effect-actor-observed` reviews to `xstatePreset`.
+
+  All five existing rules raise their standard revision, so earlier acceptances need a fresh review. Their guidance now states per version what differs, and corrects claims that were false:
+
+  - an incompatible snapshot gives an actor in status `'error'`; it doesn't throw;
+  - in v6, `onError` recovers action and spawned-child errors.
+
+  Detection adds `enq.spawn`, context-factory `spawn`, `createInvoke`, the v6 logic creators, `fromEffect*`, `system.createActor`, `createEffectActor`, `createActorAtoms`, v6 context patches, and `schemas.context`.
+
+### Patch Changes
+
+- [#75](https://github.com/aurelienbobenrieth/harness/pull/75) [`666c4cc`](https://github.com/aurelienbobenrieth/harness/commit/666c4cc20f6e9f350a1a0df7259521e988be9d4e) Thanks [@aurelienbobenrieth](https://github.com/aurelienbobenrieth)! - Update runtime dependencies to `@oxlint/plugins` 1.88.0, `oxc-parser` 0.154.0, `postcss` 8.5.30 and `smol-toml` 1.9.1. Accept agentlint 0.8 alongside the existing supported engine versions (`>=0.3.0 <0.9.0`). Keep baseline tools pinned and exercise the current consumer profile with agentlint 0.8.0, oxlint 1.88.0, oxlint-tsgolint 7.0.2004, Vitest 5.0.4 and Stylelint 17.16.0.
+
 ## 0.1.4
 
 ### Patch Changes

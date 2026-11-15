@@ -16,21 +16,71 @@ function importsFrom(program: ESTree.Node, sources: readonly string[]): boolean 
   );
 }
 
-const handlerNames: ReadonlySet<string> = new Set(["fetch", "queue", "scheduled", "email", "tail", "trace", "test"]);
+const workerOnlyHandlers: ReadonlySet<string> = new Set(["scheduled", "queue", "email", "tail", "trace"]);
+
+/** Configuration keys of `Bun.serve` / `Deno.serve` style default exports, which are not Worker handler objects. */
+const otherRuntimeKeys: ReadonlySet<string> = new Set([
+  "port",
+  "hostname",
+  "websocket",
+  "tls",
+  "development",
+  "routes",
+  "idleTimeout",
+  "reusePort",
+  "unix",
+]);
+
+function isFunctionValue(node: ESTree.Node): boolean {
+  const value = unwrapExpression(node);
+  return value.type === "ArrowFunctionExpression" || value.type === "FunctionExpression";
+}
+
+/**
+ * The Worker `fetch(request, env, ctx)` signature: a function taking an `env` (or further) parameter that is not
+ * the `server` handle of Bun and Deno, or a reference such as `app.fetch` handed over as the handler.
+ */
+function isWorkerFetch(value: ESTree.Node): boolean {
+  const handler = unwrapExpression(value);
+  if (handler.type !== "ArrowFunctionExpression" && handler.type !== "FunctionExpression") return true;
+  const second = handler.params[1];
+  if (second === undefined) return false;
+  return !(second.type === "Identifier" && /^_?(server|info|connInfo)$/u.test(second.name));
+}
+
+function handlerProperty(node: ESTree.ObjectExpression, name: string): ESTree.ObjectProperty | undefined {
+  for (const property of node.properties)
+    if (property.type === "Property" && propertyKeyName(property) === name) return property;
+  return undefined;
+}
 
 function isHandlerObject(node: ESTree.Node): boolean {
   const value = unwrapExpression(node);
   if (value.type !== "ObjectExpression") return false;
-  return value.properties.some((property) => {
-    const name = property.type === "Property" ? propertyKeyName(property) : undefined;
-    return name !== undefined && handlerNames.has(name);
-  });
+  const names = value.properties.flatMap((property) =>
+    property.type === "Property" ? [propertyKeyName(property)] : [],
+  );
+  if (names.some((name) => name !== undefined && otherRuntimeKeys.has(name))) return false;
+  if (
+    names.some((name) => {
+      if (name === undefined || !workerOnlyHandlers.has(name)) return false;
+      const property = handlerProperty(value, name);
+      return property !== undefined && isFunctionValue(property.value as ESTree.Node);
+    })
+  )
+    return true;
+  const fetch = handlerProperty(value, "fetch");
+  return fetch !== undefined && isWorkerFetch(fetch.value as ESTree.Node);
 }
 
 /**
  * True for a Worker module: it imports `cloudflare:workers`, or its default
- * export is a handler object (`fetch`, `queue`, `scheduled`, ...), directly or
- * through a module-level binding.
+ * export is a Worker handler object, directly or through a module-level
+ * binding. A handler object has a `scheduled` / `queue` / `email` / `tail` /
+ * `trace` function, or a `fetch` that takes `env` or is passed by reference
+ * (`fetch: app.fetch`). Bun and Deno serve configs (`port`, `websocket`, ...),
+ * a one-parameter `fetch(request)` and a `fetch(request, server)` are not
+ * recognised: other runtimes share that shape.
  */
 export function isWorkerModule(context: Context, program: ESTree.Node): boolean {
   if (program.type !== "Program") return false;

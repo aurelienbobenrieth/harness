@@ -88,3 +88,21 @@ it.each([
 ])("preserves named, nested, shadowed, or external contracts: %s", async (source) => {
   await assertRuleDoesNotReport(ruleName, source);
 });
+
+it("allows a named type extended with an inline member", async () => {
+  await expect(
+    assertRuleDoesNotReport(
+      ruleName,
+      "export function open(client: Client): Database & { $client: Client } { return Object.assign(database(client), { $client: client }); }\n",
+    ),
+  ).resolves.toBeUndefined();
+});
+
+it("still reports an intersection made only of inline shapes", async () => {
+  await expect(
+    assertRuleReports(
+      ruleName,
+      "export function open(): { readonly a: string } & { readonly b: number } { return { a: 'a', b: 1 }; }\n",
+    ),
+  ).resolves.toBeUndefined();
+});

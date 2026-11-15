@@ -41,3 +41,16 @@ it("allows quoted concurrency option keys", async () => {
 it("ignores non-Effect all calls", async () => {
   await expect(assertRuleDoesNotReport(ruleName, "const values = Promise.all(programs);\n")).resolves.toBeUndefined();
 });
+
+it("skips test files by default: sequential steps keep a test deterministic", async () => {
+  const code = "const p = Effect.all([a, b]);\n";
+  await expect(
+    assertRuleDoesNotReport("effect/require-all-concurrency", code, { filename: "src/store.test.ts" }),
+  ).resolves.toBeUndefined();
+  await expect(
+    assertRuleReports("effect/require-all-concurrency", code, {
+      filename: "src/store.test.ts",
+      ruleOptions: { allow: ["**/nothing/**"] },
+    }),
+  ).resolves.toBeUndefined();
+});

@@ -1,3 +1,4 @@
+import { availableParallelism } from "node:os";
 import { defineConfig } from "vite-plus";
 
 export default defineConfig({
@@ -51,6 +52,7 @@ export default defineConfig({
   test: {
     include: ["packages/*/src/**/*.test.ts", "internal/*/src/**/*.test.ts"],
     pool: "forks",
+    maxWorkers: Math.min(8, availableParallelism()),
     testTimeout: 15_000,
     coverage: {
       provider: "v8",

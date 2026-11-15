@@ -63,3 +63,16 @@ it("suggests forwarding the signal", async () => {
     fixCode(ruleName, 'const a = Effect.tryPromise(() => fetch(url, { method: "POST" }));\n', "suggestions"),
   ).resolves.toBe('const a = Effect.tryPromise((signal) => fetch(url, { signal, method: "POST" }));\n');
 });
+
+it("skips test files by default and reports once allow is replaced", async () => {
+  const code = "const p = Effect.tryPromise(() => fetch(url));\n";
+  await expect(
+    assertRuleDoesNotReport("effect/require-abort-signal", code, { filename: "src/store.test.ts" }),
+  ).resolves.toBeUndefined();
+  await expect(
+    assertRuleReports("effect/require-abort-signal", code, {
+      filename: "src/store.test.ts",
+      ruleOptions: { allow: ["**/nothing/**"] },
+    }),
+  ).resolves.toBeUndefined();
+});

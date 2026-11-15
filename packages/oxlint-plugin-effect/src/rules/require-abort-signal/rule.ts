@@ -9,6 +9,7 @@ import {
 } from "@aurelienbbn/oxlint-kit/ast";
 import { effectMethod } from "../binding-support.js";
 import { propertyNamed, stringArrayOption } from "../sota-support.js";
+import { isExemptFile, testSupportFiles } from "../test-paths.js";
 
 const defaultAbortableCalls: readonly string[] = ["fetch"];
 
@@ -76,11 +77,14 @@ export const requireAbortSignal: Rule = {
     schema: [
       {
         type: "object",
-        properties: { abortableCalls: { type: "array", items: { type: "string" } } },
+        properties: {
+          abortableCalls: { type: "array", items: { type: "string" } },
+          allow: { type: "array", items: { type: "string" } },
+        },
         additionalProperties: false,
       },
     ],
-    defaultOptions: [{ abortableCalls: [...defaultAbortableCalls] }],
+    defaultOptions: [{ abortableCalls: [...defaultAbortableCalls], allow: [...testSupportFiles] }],
   },
   createOnce(context) {
     return {
@@ -92,7 +96,7 @@ export const requireAbortSignal: Rule = {
 
         const abortable = stringArrayOption(optionsObject(context), "abortableCalls", defaultAbortableCalls);
         const [call] = uninterruptibleCalls(context, thunk, abortable);
-        if (call === undefined) return;
+        if (call === undefined || isExemptFile(context)) return;
 
         const callee = context.sourceCode.getText(call.callee);
         const body = thunk.body;

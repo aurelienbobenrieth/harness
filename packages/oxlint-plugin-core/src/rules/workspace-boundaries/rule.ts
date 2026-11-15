@@ -1,14 +1,17 @@
 /**
- * @attribution KeepCart/app tools/workspace-boundaries (same author; generalised with configurable apps and a forbidden-import matrix)
+ * @attribution Author's private workspace-boundaries tool (same author; generalised with configurable apps and a forbidden-import matrix)
  */
 import type { ESTree, Rule } from "@oxlint/plugins";
 import path from "node:path";
 import { boundaryViolation, type ForbiddenImport, matchesDirectory, type Member } from "./boundaries.js";
+import { isTestFile, type RuleContextWithFilename } from "../filename-support.js";
 import { findWorkspace, type Manifest, readManifests } from "./workspace.js";
 
 type Options = {
   readonly apps?: readonly string[];
   readonly forbidden?: readonly ForbiddenImport[];
+  readonly includeTestFiles?: boolean;
+  readonly missingExports?: "open" | "root";
 };
 
 type SourceNode =
@@ -51,6 +54,8 @@ export const workspaceBoundaries: Rule = {
             items: { type: "string", minLength: 1 },
             uniqueItems: true,
           },
+          includeTestFiles: { type: "boolean" },
+          missingExports: { enum: ["open", "root"] },
           forbidden: {
             type: "array",
             items: {
@@ -76,15 +81,18 @@ export const workspaceBoundaries: Rule = {
     if (workspace === undefined) return {};
 
     const apps = options.apps ?? defaultApps;
+    const rootOnly = options.missingExports === "root";
     const members: readonly Member[] = manifestsOf(workspace).map((manifest) => ({
       ...manifest,
+      exports: rootOnly && !manifest.declaresExports ? [{ key: ".", open: true }] : manifest.exports,
       kind: apps.some((pattern) => matchesDirectory(pattern, manifest.dir)) ? "app" : "package",
     }));
     const importer = path.relative(workspace.root, filename).replaceAll("\\", "/");
+    const testFile = options.includeTestFiles !== true && isTestFile(context as RuleContextWithFilename);
     const check = (node: SourceNode): void => {
       const specifier = literalSource(node);
       if (specifier === undefined) return;
-      const message = boundaryViolation({ members, importer, specifier, forbidden: options.forbidden ?? [] });
+      const message = boundaryViolation({ members, importer, specifier, forbidden: options.forbidden ?? [], testFile });
       if (message !== undefined) context.report({ node, message });
     };
 

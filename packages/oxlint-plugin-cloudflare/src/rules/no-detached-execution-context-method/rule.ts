@@ -4,8 +4,8 @@
  *
  * @attribution https://developers.cloudflare.com/workers/best-practices/workers-best-practices/ (inspiration; independently implemented)
  */
-import { parentOf, propertyKeyName, unwrapExpression } from "@aurelienbbn/oxlint-kit/ast";
-import type { ESTree, Rule } from "@oxlint/plugins";
+import { binding, parentOf, propertyKeyName, unwrapExpression } from "@aurelienbbn/oxlint-kit/ast";
+import type { Context, ESTree, Rule } from "@oxlint/plugins";
 
 const message =
   "This detaches the execution-context method from its receiver, so calling it throws 'Illegal invocation'. Call it on the context object: `ctx.waitUntil(promise)`, `ctx.passThroughOnException()`.";
@@ -62,8 +62,24 @@ function escapes(node: ESTree.MemberExpression): boolean {
   }
 }
 
-/** `const { waitUntil } = await import("cloudflare:workers")` reads a module export, not a context method. */
-function destructuresModule(pattern: ESTree.Node): boolean {
+function isModuleImport(context: Context, node: ESTree.Node, depth = 0): boolean {
+  let value = unwrapExpression(node);
+  if (value.type === "AwaitExpression") value = unwrapExpression(value.argument);
+  if (value.type === "ImportExpression") return true;
+  if (value.type !== "Identifier" || depth > 2) return false;
+  return (binding(context, value, value.name)?.defs ?? []).some((definition) => {
+    if (definition.type === "ImportBinding") return definition.node.type === "ImportNamespaceSpecifier";
+    if (definition.node.type !== "VariableDeclarator") return false;
+    const initial = definition.node.init;
+    return initial !== null && initial !== undefined && isModuleImport(context, initial, depth + 1);
+  });
+}
+
+/**
+ * `const { waitUntil } = await import("cloudflare:workers")` reads a module export, not a context method, also
+ * through a `const` or `let` that holds the module namespace first.
+ */
+function destructuresModule(context: Context, pattern: ESTree.Node): boolean {
   const parent = parentOf(pattern);
   if (
     parent?.type !== "VariableDeclarator" ||
@@ -72,9 +88,7 @@ function destructuresModule(pattern: ESTree.Node): boolean {
     parent.init === undefined
   )
     return false;
-  let value = unwrapExpression(parent.init);
-  if (value.type === "AwaitExpression") value = unwrapExpression(value.argument);
-  return value.type === "ImportExpression";
+  return isModuleImport(context, parent.init);
 }
 
 export const noDetachedExecutionContextMethod: Rule = {
@@ -92,7 +106,7 @@ export const noDetachedExecutionContextMethod: Rule = {
   createOnce(context) {
     return {
       ObjectPattern(node) {
-        if (destructuresModule(node)) return;
+        if (destructuresModule(context, node)) return;
         for (const property of node.properties) {
           if (property.type !== "Property") continue;
           const name = propertyKeyName(property);

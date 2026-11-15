@@ -2,6 +2,7 @@ import { testRuleFixtures } from "@aurelienbbn/agentlint/testing";
 import type { AgentlintRule } from "@aurelienbbn/agentlint";
 import { expect, it } from "vitest";
 import * as plugin from "./index.js";
+
 for (const value of Object.values(plugin)) {
   if (typeof value !== "object" || value === null || !("lifecycle" in value)) continue;
   const rule = value as AgentlintRule;
@@ -12,3 +13,9 @@ for (const value of Object.values(plugin)) {
     expect(report.failures).toEqual([]);
   });
 }
+
+it("ships every rule in both presets", () => {
+  const rules = [plugin.transactionNoNetwork, plugin.conversionKeepsFailure, plugin.refusalReasonReachesReader];
+  expect(plugin.strictPreset.rules).toEqual(rules);
+  expect(plugin.starterPreset.rules).toEqual(rules);
+});

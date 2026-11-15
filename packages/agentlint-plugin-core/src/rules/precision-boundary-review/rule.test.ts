@@ -34,3 +34,11 @@ it("supports repository conversion names", async () => {
     1,
   );
 });
+
+it("reports two same-unit expressions on one line under distinct keys instead of aborting the scan", async () => {
+  const findings = await testRuleOnSource({
+    rule: precisionBoundaryReview,
+    source: "export const a = widthMm * dpi / 25.4, b = heightMm * dpi / 25.4;\n",
+  });
+  expect(findings).toHaveLength(2);
+});

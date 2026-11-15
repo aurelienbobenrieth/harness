@@ -6,7 +6,7 @@ import { moduleMethod } from "../sota-support.js";
 const plainStringConstructors: ReadonlySet<string> = new Set(["String", "NonEmptyString", "string", "nonEmptyString"]);
 
 const defaultSecretPattern = "(SECRET|PASSWORD|PASSWD|TOKEN|API_?KEY|PRIVATE_?KEY|CREDENTIAL|DATABASE_URL|_DSN$)";
-const defaultBenignPattern = "_(TTL|LENGTH|NAME|HEADER|URL_PREFIX|COUNT|ENABLED)$";
+const defaultBenignPattern = "_(TTL|LENGTH|NAME|HEADER|URL_PREFIX|COUNT|ENABLED)$|(^|_)PUBLIC_";
 
 /** Require secrets to be read as `Redacted` so they never print in logs, spans, or error causes. */
 export const requireRedactedSecretConfig: Rule = {

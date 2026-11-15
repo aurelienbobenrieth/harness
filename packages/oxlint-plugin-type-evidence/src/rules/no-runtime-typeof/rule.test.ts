@@ -57,3 +57,19 @@ it("allows typeof inside type guard functions by default", async () => {
     ),
   ).resolves.toBeUndefined();
 });
+
+it("stays silent in test files", async () => {
+  await expect(
+    assertRuleReports(ruleName, "declare const value: string;\nconst kind = typeof value;\n"),
+  ).resolves.toBeUndefined();
+  await expect(
+    assertRuleDoesNotReport(ruleName, "declare const value: string;\nconst kind = typeof value;\n", {
+      filename: "src/sample.test.ts",
+    }),
+  ).resolves.toBeUndefined();
+  await expect(
+    assertRuleDoesNotReport(ruleName, "declare const value: string;\nconst kind = typeof value;\n", {
+      filename: "__tests__/sample.ts",
+    }),
+  ).resolves.toBeUndefined();
+});

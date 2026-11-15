@@ -60,3 +60,31 @@ it("ignores mysql2 in Node code that does not read a Worker env", async () => {
     ),
   ).resolves.toBeUndefined();
 });
+
+it("reports mysql2 options read from a Worker env passed as a parameter", async () => {
+  await expect(
+    assertRuleReports(
+      ruleName,
+      'import { createPool } from "mysql2/promise";\nexport const pool = (env: Env) => createPool({ host: env.DB_HOST });\n',
+      { message: /Add `disableEval: true`/ },
+    ),
+  ).resolves.toBeUndefined();
+});
+
+it("ignores an imported env module and import.meta.env in Node code", async () => {
+  await expect(
+    assertRuleDoesNotReport(
+      ruleName,
+      'import { createPool } from "mysql2/promise";\nimport { env } from "~/env";\nconst conn = createPool({ uri: env.DATABASE_URL });\nexport const other = createPool({ host: import.meta.env.DB_HOST });\n',
+    ),
+  ).resolves.toBeUndefined();
+});
+
+it("ignores a Bun server default export that is not a Worker handler", async () => {
+  await expect(
+    assertRuleDoesNotReport(
+      ruleName,
+      'import mysql from "mysql2/promise";\nconst conn = await mysql.createConnection({ host: process.env.DB_HOST });\nexport default { port: 3000, fetch(req: Request, server: unknown) { return new Response("ok"); } };\n',
+    ),
+  ).resolves.toBeUndefined();
+});

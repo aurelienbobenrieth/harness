@@ -12,6 +12,7 @@ it.each([
   'import { scheduler } from "timers/promises"; it("settles", async () => { await scheduler.wait(10); });',
   'import { sleep } from "./helpers"; it("settles", async () => { start(); await sleep(250); });',
   'it("settles", async () => { await delay(1_000); });',
+  'it("settles", async () => { await new Promise((r) => setTimeout(r, 10)); });',
 ])("reports wall-clock sleeps: %s", async (source) => {
   await assertRuleReports(ruleName, source, testFile);
 });
@@ -26,6 +27,7 @@ it.each([
   'it("schedules", () => { setTimeout(flush, 10); });',
   'import { setInterval } from "node:timers/promises"; import type { scheduler } from "node:timers/promises"; it("ticks", () => { expect(setInterval).toBeTypeOf("function"); });',
   'it("uses a local timer", async () => { const setTimeout = fakeTimer(); await new Promise((r) => setTimeout(r, 5)); });',
+  'it("flushes a tick", async () => { await new Promise((r) => setTimeout(r, 0)); await sleep(0); });',
 ])("allows condition waits, fake timers, and timers under test: %s", async (source) => {
   await assertRuleDoesNotReport(ruleName, source, testFile);
 });

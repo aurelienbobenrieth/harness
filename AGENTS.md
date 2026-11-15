@@ -2,6 +2,44 @@
 
 Harness: source of truth for @aurelienbbn steering packages - lint rules, tool configs, and conformance checks that compound across projects.
 
+<!-- harness:communication:start -->
+
+## Communication
+
+Always on. The user's requested depth, format and language win. Load the communication skill only for long documents.
+
+```yaml
+communication:
+  scope: explanations only; no compression of code, tests, names, validation or design
+  reset: concise each reply; requested depth lasts one turn
+  size: minimum sufficient; target 60 words including visual labels, 20 for simple answers; exceed for necessary facts or requested depth
+  prose: answer first; natural connected sentences
+  simple: one direct sentence; corrections give changed fact and consequence only
+  omit: preambles, established facts, recaps, menus, duplication, em dashes
+  choose: states -> labelled text state chart; async -> text sequence/call tree; guards -> decision tree/table; simple fact -> prose
+  layout: one readable idea per line; visual replaces prose; no dense cells or invented shorthand
+  general-rule: when requested, give the complete rule before evaluating an example
+  preserve: necessary values, units, negations, conditions, exceptions and uncertainty; caveat beside claim
+  verify: retain decision-critical facts; never invent edges, order or causality; cut repetition before facts
+```
+
+<!-- harness:communication:end -->
+
+<!-- harness:economy:start -->
+
+## Economy
+
+Always on, every task. Each call re-reads the whole context; anything in it is paid again on every later call.
+
+- **Search, then read a range.** `rg -n`/Grep first, then the needed lines (offset/limit, `sed -n 'a,bp'`). Never `cat` a file over ~200 lines or several at once; never re-read what context holds.
+- **Trim output at the source.** Failing tests only (`--reporter=dot`, fail-only flag), `git diff --stat` before the full diff. Capture exit status on the first run (`pipefail` with `tail`); never rerun a passing gate to recover it. Whole logs go to a file; read the failing part.
+- **Check the changed scope.** Scoped checks while iterating; then one full gate on the final state before handoff (PR or no PR), or CI when delegated by the project. Run checks in that order, not in parallel.
+- **Stay out of vendored trees.** Targeted `rg` with a path in vendored/generated trees, never a listing/full read.
+- **Delegate only broad, independent work.** Under ~5 files or one question: inline. Delegated: brief + budget (load the economy skill). **Wait once, never poll:** block on the command or use the host's wait tool; no `sleep` loops.
+- **Read around the named source.** Asked to write from a file: list its folder and read its neighbours first. A fact there that changes the answer goes in the output, with its source.
+
+<!-- harness:economy:end -->
+
 ## Taxonomy
 
 ```text
@@ -39,16 +77,16 @@ Verify: `rg "@attribution"`.
 
 ## Skills
 
-Read `skills/communication/SKILL.md` before your first reply; it governs all prose. Load the matching skill before acting:
+Load the matching skill before acting:
 
 ```text
+README, ADR/PDR, PR text, reference doc     → communication
 open requirements, ambiguous domain terms   → align
-feature, fix, refactor, new module/export   → build (with testing)
-writing or judging tests                    → testing
+feature, fix, refactor, writing tests       → build
 commit, history, push, PR                   → git
 review a change                             → code-review
+delegate, fan out, long autonomous run      → economy
 same correction twice, recurring friction   → retrospect
-reusable script, CLI, scaffold, doctor      → toolsmith
 Shopify app readiness                       → shopify-review
 add Harness to a project                    → install-harness
 ```
@@ -61,7 +99,7 @@ add Harness to a project                    → install-harness
 
 ## Validation gate
 
-`pnpm check` (build + lint + fmt:check + test) green before any work is called done.
+Scoped checks while iterating; then `pnpm check` (build + lint + fmt:check + test) once on the final state before handoff, with or without a PR; CI may run it when delegated by the project.
 
 ## Prose is the last resort
 

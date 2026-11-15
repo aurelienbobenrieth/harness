@@ -3,6 +3,15 @@ import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { parseDocument } from "yaml";
 
+/**
+ * Words a SKILL.md body may hold. The entry file loads whole whenever the skill triggers, so detail that
+ * only some tasks need moves to a linked `references/` file the agent reads on demand.
+ */
+export const skillWordBudget = 450;
+
+/** Counts tokens that carry a letter or digit, so table pipes and rules don't spend the budget. */
+export const countWords = (text) => text.match(/\S*[\p{L}\p{N}]\S*/gu)?.length ?? 0;
+
 const allowedFields = new Set(["name", "description", "license", "compatibility", "allowed-tools", "metadata"]);
 
 function parseMapping(source, label) {
@@ -29,6 +38,11 @@ export function validateSkill({ directory, source }) {
   if (!body.trim()) throw new Error(`${directory}: add skill instructions after frontmatter.`);
   if (/^\s*\[TODO:[^\n]*\]\s*$/mu.test(withoutFences(body)))
     throw new Error(`${directory}: replace the unfinished scaffold placeholder.`);
+  const words = countWords(body);
+  if (words > skillWordBudget)
+    throw new Error(
+      `${directory}: SKILL.md body has ${words} words, over the ${skillWordBudget}-word budget; move task-specific detail to a linked references/ file.`,
+    );
   return { name: metadata.name, description: metadata.description, body };
 }
 
@@ -118,7 +132,13 @@ export function checkSkills(skillsRoot) {
         source: readFileSync(entrypoint, "utf8"),
       });
       for (const file of files.filter((candidate) => candidate.endsWith(".md"))) {
-        for (const link of localLinks(readFileSync(file, "utf8"))) {
+        const content = readFileSync(file, "utf8");
+        const line = content.split(/\r?\n/u).findIndex((text) => text.includes("\u2014"));
+        if (line !== -1)
+          throw new Error(
+            `${file}:${line + 1}: remove the em dash; use a comma, colon, parentheses, or a new sentence.`,
+          );
+        for (const link of localLinks(content)) {
           const target = path.resolve(path.dirname(file), decodeURIComponent(link.split(/[?#]/u)[0]));
           const relative = path.relative(root, target);
           if (relative === ".." || relative.startsWith(`..${path.sep}`) || path.isAbsolute(relative))
@@ -149,7 +169,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.ar
   try {
     const skills = checkSkills(path.resolve(import.meta.dirname, "../skills"));
     console.log(
-      `Validated ${skills.length} skills, local references, and invocation metadata. Behavioral quality requires separate evaluation.`,
+      `Validated ${skills.length} skills: local references, word budget, no em dashes, invocation metadata. Behavioral quality requires separate evaluation.`,
     );
   } catch (error) {
     console.error(error instanceof Error ? error.message : String(error));

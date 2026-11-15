@@ -1,8 +1,10 @@
 /**
- * Require every foreign-key column of a Drizzle `pgTable` to lead an index,
- * unique constraint, or primary key; Postgres never indexes the referencing side.
+ * Require every foreign-key column of a Drizzle `pgTable` or `sqliteTable` to lead an index,
+ * unique constraint, or primary key; Postgres and SQLite (D1) never index the referencing side,
+ * while MySQL InnoDB does, so `mysqlTable` is out of scope.
  *
  * @attribution https://www.postgresql.org/docs/current/ddl-constraints.html (inspiration; independently implemented)
+ * @attribution https://www.sqlite.org/foreignkeys.html (inspiration; independently implemented)
  * @attribution planetscale/database-skills skills/postgres/references/schema-design.md by PlanetScale (MIT, concept)
  */
 import {
@@ -16,9 +18,11 @@ import {
 import type { Context, ESTree, Rule } from "@oxlint/plugins";
 
 const message =
-  "Postgres does not index foreign-key columns, so joins on this column and deletes of the referenced row scan the whole table. Add an index, unique constraint, or primary key that starts with this column in the table's extra config, e.g. `(t) => [index().on(t.column)]`.";
+  "Postgres and SQLite do not index foreign-key columns, so joins on this column and deletes of the referenced row scan the whole table. Add an index, unique constraint, or primary key that starts with this column in the table's extra config, e.g. `(t) => [index().on(t.column)]`.";
 
 const pgCore: readonly string[] = ["drizzle-orm/pg-core"];
+const sqliteCore: readonly string[] = ["drizzle-orm/sqlite-core"];
+const dialectCores: readonly string[] = [...pgCore, ...sqliteCore];
 
 /** Extra-config builders whose first column gets a usable btree prefix. */
 const coveringBuilders: ReadonlySet<string> = new Set(["index", "uniqueIndex", "unique", "primaryKey"]);
@@ -31,6 +35,7 @@ type ForeignKey = { readonly column: string; readonly node: ESTree.Node };
 function isTableCall(context: Context, node: ESTree.CallExpression): boolean {
   const callee = unwrapExpression(node.callee);
   if (importedNameFrom(context, callee, pgCore) === "pgTable") return true;
+  if (importedNameFrom(context, callee, sqliteCore) === "sqliteTable") return true;
   // `const app = pgSchema("app"); app.table(...)`
   if (callee.type !== "MemberExpression" || memberPropertyName(callee) !== "table") return false;
   const owner = unwrapExpression(callee.object);
@@ -141,7 +146,7 @@ function readExtraConfig(context: Context, node: ESTree.Node | undefined): Extra
   }
   for (const entry of entries) {
     const root = chainRoot(entry);
-    const builder = root === undefined ? undefined : importedNameFrom(context, root.callee, pgCore);
+    const builder = root === undefined ? undefined : importedNameFrom(context, root.callee, dialectCores);
     if (builder === undefined) continue;
     const column = builderFirstColumn(entry, param.name);
     if (column === undefined) continue;
@@ -156,7 +161,7 @@ export const fkColumnIndexed: Rule = {
     type: "problem",
     docs: {
       description:
-        "Require each foreign-key column of a Drizzle pgTable (.references() or foreignKey()) to be the first column of an index, unique constraint, or primary key.",
+        "Require each foreign-key column of a Drizzle pgTable or sqliteTable (.references() or foreignKey()) to be the first column of an index, unique constraint, or primary key.",
     },
     messages: {
       unindexedForeignKey: message,

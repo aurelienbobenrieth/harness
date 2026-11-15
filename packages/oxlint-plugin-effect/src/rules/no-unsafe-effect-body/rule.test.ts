@@ -116,3 +116,16 @@ it("ignores throw inside a generator declaration passed only to a non-Effect con
     ),
   ).resolves.toBeUndefined();
 });
+
+it("skips test files by default: a throw narrows a type inside a test body", async () => {
+  const code = "const p = Effect.gen(function* () { throw new Error('narrow'); });\n";
+  await expect(
+    assertRuleDoesNotReport("effect/no-unsafe-effect-body", code, { filename: "src/store.test.ts" }),
+  ).resolves.toBeUndefined();
+  await expect(
+    assertRuleReports("effect/no-unsafe-effect-body", code, {
+      filename: "src/store.test.ts",
+      ruleOptions: { allow: ["**/nothing/**"] },
+    }),
+  ).resolves.toBeUndefined();
+});

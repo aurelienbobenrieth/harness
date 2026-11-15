@@ -6,6 +6,7 @@ import {
   isBroadRecordType,
   isEmptyObjectLiteral,
   isKnownValueExpression,
+  isTestFile,
   isOpenDictionaryType,
   nearestFunction,
   typeMatches,
@@ -76,6 +77,7 @@ export const noKnownValueWidening: Rule = {
 
     return {
       before() {
+        if (isTestFile(context.filename)) return false;
         declaredBroad.clear();
         pendingAssignments = [];
       },

@@ -95,3 +95,77 @@ it("ignores setup imported from another module", async () => {
     assertRuleDoesNotReport(ruleName, 'import { setup } from "./test-utils.js";\nsetup({});\n'),
   ).resolves.toBeUndefined();
 });
+
+it("accepts XState v6 createMachine, setup, setupEffect and system.setup declaring schemas", async () => {
+  await expect(
+    assertRuleDoesNotReport(
+      ruleName,
+      'import { createMachine, createSystem, setup, types } from "xstate";\nimport { setupEffect } from "@xstate/effect";\nimport { Schema } from "effect";\nexport const a = createMachine({ schemas: { context: types<{ n: number }>() }, context: { n: 0 } });\nexport const b = setup({ schemas: { context: types<{ n: number }>() } });\nexport const c = setupEffect({ schemas: { context: Schema.Struct({ n: Schema.Number }) } });\nexport const d = createSystem({ registry: {} }).setup({ schemas: { context: types<{ n: number }>() } });\n',
+    ),
+  ).resolves.toBeUndefined();
+});
+
+it("accepts a bare XState v5 createMachine declaring types", async () => {
+  await expect(
+    assertRuleDoesNotReport(
+      ruleName,
+      'import { createMachine } from "xstate";\nexport const m = createMachine({ types: {} as { context: { count: number } }, context: { count: 0 } });\n',
+    ),
+  ).resolves.toBeUndefined();
+});
+
+it("accepts a setup without schemas whose machines declare them", async () => {
+  await expect(
+    assertRuleDoesNotReport(
+      ruleName,
+      'import { setup, types } from "xstate";\nexport const a = setup({ actions: { log: () => {} } }).createMachine({ schemas: { context: types<{ n: number }>() }, context: { n: 0 } });\nconst s = setup({ actions: { log: () => {} } });\nexport const b = s.createMachine({ schemas: { context: types<{ n: number }>() }, context: { n: 0 } });\n',
+    ),
+  ).resolves.toBeUndefined();
+});
+
+it("reports an XState v6 createMachine without schemas", async () => {
+  await expect(
+    assertRuleReports(
+      ruleName,
+      'import { createMachine } from "xstate";\nexport const m = createMachine({ context: { n: 0 } });\n',
+      { message: /createMachine\(\) without types or schemas leaves context and events untyped/ },
+    ),
+  ).resolves.toBeUndefined();
+});
+
+it("reports setupEffect without schemas", async () => {
+  await expect(
+    assertRuleReports(
+      ruleName,
+      'import { setupEffect } from "@xstate/effect";\nimport { Effect } from "effect";\nexport const s = setupEffect({ actions: { audit: () => Effect.void } });\n',
+      { message: /setupEffect\(\) without types or schemas/ },
+    ),
+  ).resolves.toBeUndefined();
+});
+
+it("reports system.setup() without schemas", async () => {
+  await expect(
+    assertRuleReports(
+      ruleName,
+      'import { createSystem } from "xstate";\nconst system = createSystem({ registry: {} });\nexport const m = system.setup().createMachine({ id: "app.cart" });\n',
+    ),
+  ).resolves.toBeUndefined();
+});
+
+it("reports a setup binding used by at least one untyped machine", async () => {
+  await expect(
+    assertRuleReports(
+      ruleName,
+      'import { setup, types } from "xstate";\nconst s = setup({ actions: {} });\nexport const a = s.createMachine({ schemas: { context: types<{ n: number }>() }, context: { n: 0 } });\nexport const b = s.createMachine({ id: "app.other" });\n',
+    ),
+  ).resolves.toBeUndefined();
+});
+
+it("ignores setupEffect and createSystem from other modules", async () => {
+  await expect(
+    assertRuleDoesNotReport(
+      ruleName,
+      'import { setupEffect } from "./effect-setup.js";\nimport { createSystem } from "./system.js";\nexport const a = setupEffect({});\nexport const b = createSystem({}).setup();\n',
+    ),
+  ).resolves.toBeUndefined();
+});

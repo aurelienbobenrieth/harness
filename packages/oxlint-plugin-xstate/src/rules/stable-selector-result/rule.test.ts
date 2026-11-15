@@ -101,3 +101,46 @@ it("ignores useSelector from other libraries", async () => {
     ),
   ).resolves.toBeUndefined();
 });
+
+it("reports an allocating XState v6 actor.select without a comparator", async () => {
+  await expect(
+    assertRuleReports(
+      ruleName,
+      'import { createActor } from "xstate";\nconst actor = createActor(cartMachine);\nexport const view = actor.select((snapshot) => ({ items: snapshot.context.items }));\n',
+      { message: /never matches and every snapshot re-renders the component or notifies subscribers/ },
+    ),
+  ).resolves.toBeUndefined();
+});
+
+it("reports actor.select on a system actor and on a useActorRef result", async () => {
+  await expect(
+    assertRuleReports(
+      ruleName,
+      'import { createSystem } from "xstate";\nconst system = createSystem({ registry: {} });\nconst actor = system.createActor(cartMachine);\nexport const ids = actor.select((snapshot) => snapshot.context.items.map((item: any) => item.id));\n',
+    ),
+  ).resolves.toBeUndefined();
+  await expect(
+    assertRuleReports(
+      ruleName,
+      'import { useActorRef } from "@xstate/react";\nexport function useView() { const ref = useActorRef(cartMachine); return ref.select((snapshot) => [snapshot.context.a, snapshot.context.b]); }\n',
+    ),
+  ).resolves.toBeUndefined();
+});
+
+it("accepts actor.select with a comparator or a stable result", async () => {
+  await expect(
+    assertRuleDoesNotReport(
+      ruleName,
+      'import { createActor } from "xstate";\nconst actor = createActor(cartMachine);\nexport const view = actor.select((snapshot) => ({ items: snapshot.context.items }), (a, b) => a.items === b.items);\nexport const items = actor.select((snapshot) => snapshot.context.items);\n',
+    ),
+  ).resolves.toBeUndefined();
+});
+
+it("ignores select on values that are not actor refs", async () => {
+  await expect(
+    assertRuleDoesNotReport(
+      ruleName,
+      'import { createActor } from "xstate";\nconst store = createStore();\nexport const view = store.select((state: any) => ({ items: state.items }));\nconsole.log(createActor);\n',
+    ),
+  ).resolves.toBeUndefined();
+});

@@ -13,7 +13,14 @@
 > [!WARNING]
 > **A static preflight.** `wrangler deploy --dry-run`, the config schema, and `tsc` against generated types stay authoritative for config validity and binding existence.
 
+> [!NOTE]
+> **Wrangler-config projects only.** Workers declared in Alchemy (`alchemy.run.ts`) have no `wrangler.*` to read, so every check fails with "No wrangler.json" there. Install it where a committed wrangler config exists, or point `wranglerConfigs` at the generated one.
+
 ## One file, six tests
+
+```sh
+pnpm add -D @aurelienbbn/conformance-cloudflare vitest   # vitest >=4.1.11 <6.0.0 (optional peer)
+```
 
 ```ts
 // conformance.test.ts
@@ -39,14 +46,14 @@ const report = await runCloudflareConformanceReport({ root: process.cwd() }); //
 
 Findings carry `check`, `severity`, `message`, `path`, the Cloudflare `docs` URL, and `evaluation` when evidence is missing.
 
-## Checks
+## Six checks Wrangler does not run for you
 
 | Check                             | Fails when                                                                                                                                    |
 | --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
 | `wrangler-types-current`          | the project's own `wrangler types --check` exits non-zero                                                                                     |
 | `no-secrets-in-vars`              | a `vars` name marks a secret (`API_KEY`, `dbPassword`, `SIGNING_KEY`) or a value looks like a credential (JWT, PEM, Stripe, GitHub…)          |
 | `environment-bindings-redeclared` | a top-level non-inheritable key (bindings, `vars`, `define`, `secrets`) or one of its names is missing in an `env.<name>`                     |
-| `compatibility-date-current`      | the date is missing, invalid, in the future, or too old; `nodejs_compat` is missing before 2026-08-04 (⚠️ redundant from it on)               |
+| `compatibility-date-current`      | the date is missing, invalid, or in the future; ⚠️ too old, `nodejs_compat` missing before 2026-08-04, or redundant from it on                |
 | `observability-enabled`           | `observability.enabled` isn't `true` at the top level or in an environment that overrides it                                                  |
 | `hyperdrive-contract`             | a `pg` / `postgres` / `mysql2` Worker lacks a binding, a supported driver, or Node.js compat; a committed password; PlanetScale's HTTP driver |
 
@@ -70,7 +77,7 @@ Keys follow Wrangler's own validator (checked 2026-09-24), a superset of the [do
 
 ### compatibility-date-current
 
-`YYYY-MM-DD`, a real calendar day, not after today (UTC), at most `compatibilityDateMaxAgeDays` old (default 180). Environments are checked only when they override `compatibility_date` or `compatibility_flags`. `no_nodejs_compat` is an explicit opt-out and stays silent. Never bumps the date: a bump changes runtime behavior.
+`YYYY-MM-DD`, a real calendar day, not after today (UTC), at most `compatibilityDateMaxAgeDays` old (default 180; an older date is a warning). Environments are checked only when they override `compatibility_date` or `compatibility_flags`. `no_nodejs_compat` is an explicit opt-out and stays silent. Never bumps the date: a bump changes runtime behavior.
 
 ### observability-enabled
 
@@ -91,7 +98,7 @@ Unset `wranglerConfigs`: the first of `wrangler.json`, `wrangler.jsonc`, `wrangl
 
 </details>
 
-## Options
+## Seven options; `root` is the only required one
 
 | Option                        | Default                           | Used by                      |
 | ----------------------------- | --------------------------------- | ---------------------------- |
@@ -105,7 +112,7 @@ Unset `wranglerConfigs`: the first of `wrangler.json`, `wrangler.jsonc`, `wrangl
 
 Not checked, owned elsewhere: config schema and unknown keys (`$schema` + Wrangler), binding use in code (`tsc`), SQLite Durable Object classes (deploy fails), traces, pricing and limits.
 
-## Sources
+## Every check re-implements Cloudflare guidance
 
 Independent implementations of Cloudflare's [Workers best practices](https://developers.cloudflare.com/workers/best-practices/workers-best-practices/), [Wrangler configuration](https://developers.cloudflare.com/workers/wrangler/configuration/), [Workers Logs](https://developers.cloudflare.com/workers/observability/logs/workers-logs/), the [Node.js compatibility default](https://developers.cloudflare.com/changelog/post/2026-08-04-nodejs-compat-default/), and the Hyperdrive driver and local development guides, reviewed 2026-09-24. The non-inheritable key list follows the [workers-sdk validator](https://github.com/cloudflare/workers-sdk/blob/fc3cbaa4150a3cf30502286452153806bf8800d2/packages/workers-utils/src/config/validation.ts). Source carries greppable `@attribution` tags.
 

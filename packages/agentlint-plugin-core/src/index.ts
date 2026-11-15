@@ -1,23 +1,15 @@
 import { defineConfig } from "@aurelienbbn/agentlint";
-import { abstractionEarnsKeep } from "./rules/abstraction-earns-keep/rule.js";
 import { boundaryResilience } from "./rules/boundary-resilience/rule.js";
 import { boundedDataAccess } from "./rules/bounded-data-access/rule.js";
 import { boundedWork } from "./rules/bounded-work/rule.js";
 import { commentSignal } from "./rules/comment-signal/rule.js";
 import { correlatedOptionalState } from "./rules/correlated-optional-state/rule.js";
-import { expectedValueRecomputed } from "./rules/expected-value-recomputed/rule.js";
 import { integrationTestOwnsItsBoundary } from "./rules/integration-test-owns-its-boundary/rule.js";
-import { operationsStayWithOwner } from "./rules/operations-stay-with-owner/rule.js";
 import { temporalCoupling } from "./rules/temporal-coupling/rule.js";
 import { testBehaviorCoverage } from "./rules/test-behavior-coverage/rule.js";
 import { testExercisesProjectCode } from "./rules/test-exercises-project-code/rule.js";
 import { testExpectationDrift } from "./rules/test-expectation-drift/rule.js";
 
-export {
-  abstractionEarnsKeep,
-  defineAbstractionEarnsKeep,
-  type AbstractionEarnsKeepOptions,
-} from "./rules/abstraction-earns-keep/rule.js";
 export {
   boundaryResilience,
   defineBoundaryResilience,
@@ -118,11 +110,6 @@ export {
   type ProtectedInvariantChangeOptions,
 } from "./rules/protected-invariant-change/rule.js";
 export {
-  defineOperationsStayWithOwner,
-  operationsStayWithOwner,
-  type OperationsStayWithOwnerOptions,
-} from "./rules/operations-stay-with-owner/rule.js";
-export {
   defineSingleUseExtractionReview,
   singleUseExtractionReview,
   type SingleUseExtractionReviewOptions,
@@ -133,15 +120,12 @@ export {
  */
 export const strictPreset = defineConfig({
   rules: [
-    abstractionEarnsKeep,
     boundaryResilience,
     boundedDataAccess,
     boundedWork,
     commentSignal,
     correlatedOptionalState,
-    expectedValueRecomputed,
     integrationTestOwnsItsBoundary,
-    operationsStayWithOwner,
     temporalCoupling,
     testBehaviorCoverage,
     testExercisesProjectCode,

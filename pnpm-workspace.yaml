@@ -10,9 +10,15 @@ minimumReleaseAgeExclude:
   - "@aurelienbbn/agentlint@0.4.0"
 
 overrides:
-  vite: npm:@voidzero-dev/vite-plus-core@0.3.2
-  vitest: 4.1.11
-  vite-plus: 0.3.2
-  oxlint: 1.82.0
-  oxfmt: 0.67.0
-  qs: 6.16.0
+  vite: npm:@voidzero-dev/vite-plus-core@1.5.1
+  "vitest>vite": 8.3.7
+  "@vitest/mocker>vite": 8.3.7
+  "@vitest/browser>vite": 8.3.7
+  "@vitest/browser-preview>vite": 8.3.7
+  vitest: 5.1.0
+  vite-plus: 1.5.1
+  oxlint: 1.93.0
+  oxfmt: 0.78.0
+  oxlint-tsgolint: 7.0.2006
+  qs: 6.17.1
+  "@stryker-mutator/core>minimatch": 11.0.4

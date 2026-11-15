@@ -27,7 +27,8 @@ export const alchemyStateGitignored: ConformanceCheck = {
           docs,
           severity: "error",
           evaluation: "failed",
-          message: "No alchemy.run.ts under the project root. Set `stackFiles` to the stack entrypoints.",
+          message:
+            "No Alchemy stack file (alchemy.run.ts or a source file importing `alchemy` and calling its stack factory) under the project root. Set `stackFiles` to the stack entrypoints.",
         },
       ];
     const directories = [

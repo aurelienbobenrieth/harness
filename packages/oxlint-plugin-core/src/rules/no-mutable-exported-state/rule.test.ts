@@ -67,3 +67,32 @@ it("accepts regression: function local() { const state = {}; return state; } con
 it("reports regression: export { state }; const state = {};", async () => {
   await assertRuleReports(ruleName, "export { state }; const state = {};");
 });
+
+it("allows exported collections annotated as readonly", async () => {
+  await expect(
+    assertRuleDoesNotReport(
+      ruleName,
+      [
+        "export const names: readonly string[] = [];",
+        "export const pair: readonly [number, number] = [1, 2];",
+        "export const labels: Readonly<Record<string, string>> = { a: 'A' };",
+        "export const ids: ReadonlyArray<number> = [1];",
+        "export const lookup: ReadonlyMap<string, number> = new Map();",
+        "export const seen: ReadonlySet<string> = new Set();",
+        "",
+      ].join("\n"),
+    ),
+  ).resolves.toBeUndefined();
+});
+
+it("still reports collections annotated with mutable types", async () => {
+  await expect(
+    assertRuleReports(ruleName, "export const labels: Record<string, string> = { a: 'A' };\n"),
+  ).resolves.toBeUndefined();
+});
+
+it("allows a readonly-annotated collection exported later", async () => {
+  await expect(
+    assertRuleDoesNotReport(ruleName, "const names: readonly string[] = [];\nexport { names };\n"),
+  ).resolves.toBeUndefined();
+});

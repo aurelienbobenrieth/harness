@@ -2,6 +2,7 @@ import type { Context, ESTree, Rule } from "@oxlint/plugins";
 import { binding, unwrapExpressionKeepingChain } from "@aurelienbbn/oxlint-kit/ast";
 import { effectMethod } from "../binding-support.js";
 import { moduleMethod, propertyNamed } from "../sota-support.js";
+import { allowOptionDefaults, allowOptionSchema, isExemptFile } from "../test-paths.js";
 
 const message =
   "Bound this retry: add Schedule.recurs(n), Schedule.upTo/during, a `times` option, or a `while`/`until` predicate so a permanently failing call cannot retry forever.";
@@ -113,6 +114,8 @@ export const boundedRetry: Rule = {
         "Require Effect.retry policies visible in the same file to carry a bound such as Schedule.recurs, Schedule.upTo, Schedule.during, times, while, or until.",
     },
     messages: { boundedRetry: message },
+    schema: [allowOptionSchema],
+    defaultOptions: allowOptionDefaults,
   },
   createOnce(context) {
     return {
@@ -121,6 +124,8 @@ export const boundedRetry: Rule = {
         const policy = node.arguments.length >= 2 ? node.arguments[1] : node.arguments[0];
         if (policy === undefined || policy.type === "SpreadElement") return;
         if (!isUnboundedPolicy(context, policy)) return;
+
+        if (isExemptFile(context)) return;
 
         context.report({ node: policy, messageId: "boundedRetry" });
       },

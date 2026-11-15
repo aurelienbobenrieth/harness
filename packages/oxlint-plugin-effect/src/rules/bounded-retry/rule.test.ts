@@ -55,3 +55,16 @@ it("skips policies it cannot see and intentionally unbounded repeats", async () 
     ),
   ).resolves.toBeUndefined();
 });
+
+it("skips test files by default: a test polls until ready under the test timeout", async () => {
+  const code = "const p = work.pipe(Effect.retry(Schedule.forever));\n";
+  await expect(
+    assertRuleDoesNotReport("effect/bounded-retry", code, { filename: "src/store.test.ts" }),
+  ).resolves.toBeUndefined();
+  await expect(
+    assertRuleReports("effect/bounded-retry", code, {
+      filename: "src/store.test.ts",
+      ruleOptions: { allow: ["**/nothing/**"] },
+    }),
+  ).resolves.toBeUndefined();
+});

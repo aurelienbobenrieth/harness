@@ -50,3 +50,23 @@ it("ignores non-vitest imports", async () => {
     }),
   ).resolves.toBeUndefined();
 });
+
+it.each([
+  "packages/ui/src/button.test-d.tsx",
+  "scripts/test-setup.mjs",
+  "src/test-support.ts",
+  "packages/server/src/__tests__/resource.ts",
+  "tests/utils.ts",
+  "packages/core/test/helpers.ts",
+  "src/__mocks__/clock.ts",
+  "e2e/fixtures.ts",
+])("allows vitest imports in test helpers and test folders: %s", async (filename) => {
+  await assertRuleDoesNotReport(ruleName, 'import { expect } from "vitest";\n', { filename });
+});
+
+it.each(["src/latest/clock.ts", "src/contest.ts", "src/testimony/index.ts"])(
+  "still reports source files whose path only resembles a test folder: %s",
+  async (filename) => {
+    await assertRuleReports(ruleName, 'import { expect } from "vitest";\n', { filename });
+  },
+);

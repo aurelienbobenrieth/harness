@@ -1,13 +1,8 @@
 import type { Rule } from "@oxlint/plugins";
 import { nearestFunction } from "@aurelienbbn/oxlint-kit/ast";
 import { moduleMethod } from "../binding-support.js";
-import {
-  defaultAllow,
-  getFilename,
-  getOptions,
-  isAllowedFile,
-  type RuleContextWithOptions,
-} from "../runtime-support.js";
+import { getFilename, getOptions, isAllowedFile, type RuleContextWithOptions } from "../runtime-support.js";
+import { testSupportFiles as defaultAllow } from "../test-paths.js";
 
 const message =
   "ManagedRuntime.make inside a function builds every layer again on each call and leaks the runtime unless dispose is awaited. Create the runtime once at module scope or in the composition root and pass it in.";
@@ -38,7 +33,7 @@ export const noManagedRuntimePerCall: Rule = {
         additionalProperties: false,
       },
     ],
-    defaultOptions: [{ allow: defaultAllow }],
+    defaultOptions: [{ allow: [...defaultAllow] }],
   },
   createOnce(context) {
     return {

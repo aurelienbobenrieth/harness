@@ -66,3 +66,13 @@ it("accepts regression: type A = Promise<B>; type B = Promise<A>; function load(
     "type A = Promise<B>; type B = Promise<A>; function load(): A { return load(); }",
   );
 });
+
+it("stays silent in test files", async () => {
+  await expect(assertRuleReports(ruleName, "function load(): unknown { return 1; }\n")).resolves.toBeUndefined();
+  await expect(
+    assertRuleDoesNotReport(ruleName, "function load(): unknown { return 1; }\n", { filename: "src/sample.test.ts" }),
+  ).resolves.toBeUndefined();
+  await expect(
+    assertRuleDoesNotReport(ruleName, "function load(): unknown { return 1; }\n", { filename: "__tests__/sample.ts" }),
+  ).resolves.toBeUndefined();
+});

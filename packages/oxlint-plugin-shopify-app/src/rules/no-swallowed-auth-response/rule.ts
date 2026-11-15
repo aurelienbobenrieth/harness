@@ -1,14 +1,14 @@
 import type { Context, ESTree, Rule } from "@oxlint/plugins";
-import { destructuredFrom, isAuthenticateCall, isFunctionNode, memberPath } from "../ast-support.js";
+import { destructuredFrom, isAuthenticateCall, isFunctionNode, isTestFile, memberPath } from "../ast-support.js";
 
 const message =
   "`{{call}}` signals redirects, bounce pages and 401s by throwing a Response, and this catch block never rethrows, so the auth or billing flow turns into an error result. Call it outside the try, or rethrow with `if (error instanceof Response) throw error;`.";
 
 const authenticateMembers = new Set(["admin", "webhook", "flow", "fulfillmentService", "pos"]);
-const contextMethods: Readonly<Record<string, ReadonlySet<string>>> = {
-  billing: new Set(["require", "request", "cancel", "updateUsageCappedAmount"]),
-  scopes: new Set(["request"]),
-};
+const contextMethods: ReadonlyMap<string, ReadonlySet<string>> = new Map([
+  ["billing", new Set(["require", "request", "cancel", "updateUsageCappedAmount"])],
+  ["scopes", new Set(["request"])],
+]);
 const adminOnly = new Set(["admin"]);
 
 function throwingCall(context: Context, node: ESTree.CallExpression): string | undefined {
@@ -25,7 +25,7 @@ function throwingCall(context: Context, node: ESTree.CallExpression): string | u
   const matches =
     (owner === "authenticate" && authenticateMembers.has(method)) ||
     (path.length >= 3 && path.at(-3) === "authenticate" && owner === "public") ||
-    contextMethods[owner]?.has(method) === true;
+    contextMethods.get(owner)?.has(method) === true;
   return matches ? path.slice(path.at(-3) === "authenticate" ? -3 : -2).join(".") : undefined;
 }
 
@@ -83,6 +83,9 @@ export const noSwallowedAuthResponse: Rule = {
   },
   createOnce(context) {
     return {
+      before() {
+        return !isTestFile(context);
+      },
       CallExpression(node) {
         const call = throwingCall(context, node);
         if (call === undefined || swallowingTry(node) === undefined) return;

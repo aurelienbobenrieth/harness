@@ -5,7 +5,6 @@ import { noDraftOrderCustomDiscounts } from "./rules/no-draft-order-custom-disco
 import { noNavEmoji } from "./rules/no-nav-emoji/rule.js";
 import { noScriptTagApi } from "./rules/no-script-tag-api/rule.js";
 import { noViewportZoomDisable } from "./rules/no-viewport-zoom-disable/rule.js";
-import { requireFetchAbortSignal } from "./rules/require-fetch-abort-signal/rule.js";
 import { sModalActionsUseSlots } from "./rules/s-modal-actions-use-slots/rule.js";
 import { sModalHeadingRequired } from "./rules/s-modal-heading-required/rule.js";
 import { sActionSlotContract } from "./rules/s-action-slot-contract/rule.js";
@@ -43,7 +42,6 @@ export default eslintCompatPlugin({
     "no-session-or-token-logging": noSessionOrTokenLogging,
     "no-swallowed-auth-response": noSwallowedAuthResponse,
     "no-viewport-zoom-disable": noViewportZoomDisable,
-    "require-fetch-abort-signal": requireFetchAbortSignal,
     "require-idempotent-mutations": requireIdempotentMutations,
     "require-mutation-user-errors": requireMutationUserErrors,
     "s-action-slot-contract": sActionSlotContract,

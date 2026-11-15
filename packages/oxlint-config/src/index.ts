@@ -41,7 +41,8 @@ export const strictOxlintConfig = {
     builtin: true,
     node: true,
   },
-  ignorePatterns: [],
+  // Emitted bundles and agent reference copies are not authored source.
+  ignorePatterns: ["**/*.min.js", "**/assets/*-esm.js", "**/.agents/ref-*/**"],
   jsPlugins: [],
   options: {
     denyWarnings: true,
@@ -52,13 +53,19 @@ export const strictOxlintConfig = {
   plugins: ["eslint", "typescript", "unicorn", "oxc", "node", "promise"],
   rules: {
     "eslint/default-case": "off",
-    "eslint/max-lines": ["error", { max: 300, skipBlankLines: true, skipComments: true }],
+    "eslint/func-style": ["error", "declaration", { allowArrowFunctions: true }],
+    "eslint/max-lines": "off",
     "eslint/max-lines-per-function": "off",
+    // A PascalCase call is a factory in TypeScript (`Schema.Struct(…)`, a schema named like its type); `new lowercase()` still reports.
+    "eslint/new-cap": ["error", { capIsNew: false }],
     "eslint/no-implied-eval": "off",
+    "eslint/no-redeclare": "off",
     "eslint/no-ternary": "off",
     "eslint/no-throw-literal": "off",
     "eslint/no-undefined": "off",
     "eslint/no-underscore-dangle": ["error", { allow: ["_tag", "_tree", "__dirname"] }],
+    // `void promise` is the form `typescript/no-floating-promises` asks for on a deliberate fire-and-forget.
+    "eslint/no-void": ["error", { allowAsStatement: true }],
     "eslint/no-warning-comments": "off",
     "eslint/one-var": ["error", "never"],
     "eslint/prefer-promise-reject-errors": "off",
@@ -69,6 +76,7 @@ export const strictOxlintConfig = {
     "oxc/no-optional-chaining": "off",
     "oxc/no-rest-spread-properties": "off",
     "typescript/ban-ts-comment": ["error", { "ts-ignore": true, "ts-expect-error": "allow-with-description" }],
+    "typescript/explicit-module-boundary-types": "off",
     "typescript/no-explicit-any": "error",
     "typescript/no-non-null-assertion": "error",
     "typescript/no-unnecessary-condition": "error",
@@ -77,6 +85,8 @@ export const strictOxlintConfig = {
       { allowDefaultCaseForExhaustiveSwitch: false, requireDefaultForNonUnion: true },
     ],
     "unicorn/filename-case": ["error", { case: "kebabCase" }],
+    // oxfmt lowercases hex digits and exponents, which this rule reports; the formatter owns literal casing.
+    "unicorn/number-literal-case": "off",
     "unicorn/prefer-array-find": "off",
     "unicorn/prefer-includes": "off",
     "unicorn/prefer-string-starts-ends-with": "off",
@@ -341,7 +351,6 @@ export const effectTsgoOwnerRules = {
 export const effectTsgoSettledRules = {
   "effecttsgo/catch-die-to-or-die": "off",
   "effecttsgo/catch-to-ignore": "off",
-  "effecttsgo/catch-to-or-else-succeed": "off",
   "effecttsgo/redundant-or-die": "off",
 } satisfies RuleEntries;
 
@@ -350,15 +359,11 @@ export const effectTsgoSettledRules = {
  * side wins; each rule keeps reporting what it exists for outside that idiom.
  *
  * - `typescript/promise-function-async`: its autofix adds `async`, which `effecttsgo/async-function` then reports.
- * - `eslint/new-cap`: Effect constructors are PascalCase functions (`Schema.Struct(…)`, `Context.Tag(…)`).
- *   `new lowercase()` still reports.
  * - `eslint/func-names`: `Effect.gen(function* () { … })` takes an anonymous generator. Other anonymous function
  *   expressions still report.
  * - `node/no-sync`: `Effect.runSync` runs an Effect at a runtime edge, not blocking I/O. `fs.*Sync` still reports.
  * - `eslint/max-classes-per-file`: tagged errors, `Schema.Class` models and services are all classes, so a domain
  *   module that keeps its schemas beside the errors it raises holds several. The rule has no option to tell them apart.
- * - `eslint/no-redeclare`: a Schema and its type share a name (`const User = Schema.Struct(…)` beside
- *   `type User = typeof User.Type`). TypeScript itself rejects real redeclarations.
  * - `unicorn/throw-new-error`: reports the `Schema.TaggedError<Self>()(…)` class factory, and its autofix emits
  *   `new Schema.TaggedError…`, which does not compile.
  * - `unicorn/no-array-callback-reference`, `unicorn/no-array-for-each`, `unicorn/no-array-method-this-argument`,
@@ -374,8 +379,6 @@ export const effectTsgoSettledRules = {
 export const effectIdiomRules = {
   "eslint/func-names": ["error", "always", { generators: "never" }],
   "eslint/max-classes-per-file": "off",
-  "eslint/new-cap": ["error", { capIsNew: false }],
-  "eslint/no-redeclare": "off",
   "node/no-sync": ["error", { ignores: ["runSync"] }],
   "typescript/prefer-readonly-parameter-types": [
     "error",

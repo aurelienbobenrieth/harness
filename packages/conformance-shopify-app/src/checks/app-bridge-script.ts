@@ -1,7 +1,7 @@
 import { parse, type DefaultTreeAdapterMap } from "parse5";
 import { parseToml } from "../toml-support.js";
 import path from "node:path";
-import type { ConformanceCheck, ConformanceFinding, ConformanceRunOptions } from "../finding.js";
+import type { ConformanceCheck, ConformanceFinding } from "../finding.js";
 import { readTextFile } from "../fs-support.js";
 import { appManifests } from "../app-manifests.js";
 import { documentEntries, withoutComments } from "../document-entries.js";
@@ -9,10 +9,10 @@ import { documentEntries, withoutComments } from "../document-entries.js";
 const docs = "https://shopify.dev/docs/apps/launch/built-for-shopify/requirements";
 const appBridgeScriptMarker = "cdn.shopify.com/shopifycloud/app-bridge.js";
 const defaultPlatformMarkers: readonly string[] = [];
-async function isEmbeddedApp(options: ConformanceRunOptions): Promise<boolean> {
-  const { root } = options;
-  const configFiles = await appManifests(options);
-  if (configFiles.length === 0) return true;
+const appProviderImport =
+  /import\s*\{[^}]*\bAppProvider\b[^}]*\}\s*from\s*["'](?:@shopify\/shopify-app-(?:react-router|remix)\/react|@shopify\/app-bridge-react)["']/;
+
+async function isEmbeddedApp(configFiles: readonly string[], root: string): Promise<boolean> {
   for (const configFile of configFiles) {
     const content = (await readTextFile(path.join(root, configFile))) ?? "";
     if (parseToml(content)?.embedded !== false) return true;
@@ -27,7 +27,18 @@ export const appBridgeScript: ConformanceCheck = {
   docs,
   async run(options) {
     const { platformMarkers } = options;
-    if (!(await isEmbeddedApp(options))) return [];
+    const configFiles = await appManifests(options);
+    if (configFiles.length === 0)
+      return [
+        {
+          check: "app-bridge-script",
+          severity: "warning",
+          message:
+            "No shopify.app.toml found: whether the app is embedded is unknown, so the App Bridge script check is skipped. Run from the Shopify app root or set appManifest.",
+          docs,
+        },
+      ];
+    if (!(await isEmbeddedApp(configFiles, options.root))) return [];
 
     const markers = platformMarkers ?? defaultPlatformMarkers;
     const candidates = await documentEntries(options);
@@ -49,6 +60,7 @@ export const appBridgeScript: ConformanceCheck = {
     for (const candidate of candidates) {
       const content = (await readTextFile(candidate)) ?? "";
       if (hasBridgeScript(content)) continue;
+      if (appProviderImport.test(withoutComments(content))) continue;
       const uncommented = withoutComments(content);
       if (markers.some((marker) => uncommented.includes(marker))) continue;
       findings.push({
@@ -57,7 +69,7 @@ export const appBridgeScript: ConformanceCheck = {
         docs,
         path: candidate,
         message:
-          "Load https://cdn.shopify.com/shopifycloud/app-bridge.js as the first script in this document head, or configure a verified platform injector marker. Verify every served document separately.",
+          "Load https://cdn.shopify.com/shopifycloud/app-bridge.js as the first script in this document head, render the Shopify AppProvider (@shopify/shopify-app-react-router, @shopify/shopify-app-remix or @shopify/app-bridge-react), or configure a verified platform injector marker. Verify every served document separately.",
       });
     }
     return findings;

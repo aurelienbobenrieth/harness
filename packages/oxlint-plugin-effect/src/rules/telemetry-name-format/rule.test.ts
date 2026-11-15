@@ -57,6 +57,24 @@ it("reports Rpc.make tags imported from effect/unstable/rpc", async () => {
   ).resolves.toBeUndefined();
 });
 
+it("reports Rpc.make tags imported from effect/rpc", async () => {
+  await expect(
+    assertRuleReports(
+      ruleName,
+      'import * as Rpc from "effect/rpc/Rpc";\nexport const GetUser = Rpc.make("GetUser", {});\n',
+    ),
+  ).resolves.toBeUndefined();
+  await expect(
+    assertRuleReports(ruleName, 'import { Rpc } from "effect/rpc";\nconst ListJobs = Rpc.make("jobs");\n'),
+  ).resolves.toBeUndefined();
+  await expect(
+    assertRuleDoesNotReport(
+      ruleName,
+      'import { Rpc } from "effect/rpc";\nconst ListJobs = Rpc.make("jobs.list", {});\n',
+    ),
+  ).resolves.toBeUndefined();
+});
+
 it("reports annotation keys in record and single-key forms, and withSpan attribute keys", async () => {
   await expect(
     reportedMessages(
@@ -277,4 +295,12 @@ describe("logMessages", () => {
       'Rename the log event "webhook.rejected" to match /^[A-Z][a-z]*(\\.[A-Z][a-z]*)+$/ with at least 2 dot-separated segments: log backends search and count by it, and one shape keeps it searchable.',
     ]);
   });
+});
+
+it("skips test files by default and checks them when allow is emptied", async () => {
+  const code = 'const run = Effect.fn("test")(function* () {});\n';
+  await expect(assertRuleDoesNotReport(ruleName, code, { filename: "src/run.test.ts" })).resolves.toBeUndefined();
+  await expect(
+    assertRuleReports(ruleName, code, { filename: "src/run.test.ts", ruleOptions: { allow: [] } }),
+  ).resolves.toBeUndefined();
 });

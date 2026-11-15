@@ -45,3 +45,16 @@ it("ignores non-Effect forEach calls", async () => {
 it("accepts regression: Effect.forEach(x => Effect.succeed(x), { concurrency: 2 });", async () => {
   await assertRuleDoesNotReport(ruleName, "Effect.forEach(x => Effect.succeed(x), { concurrency: 2 });");
 });
+
+it("skips test files by default: sequential steps keep a test deterministic", async () => {
+  const code = "const p = Effect.forEach(items, seed);\n";
+  await expect(
+    assertRuleDoesNotReport("effect/require-for-each-concurrency", code, { filename: "src/store.test.ts" }),
+  ).resolves.toBeUndefined();
+  await expect(
+    assertRuleReports("effect/require-for-each-concurrency", code, {
+      filename: "src/store.test.ts",
+      ruleOptions: { allow: ["**/nothing/**"] },
+    }),
+  ).resolves.toBeUndefined();
+});

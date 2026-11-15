@@ -2,6 +2,7 @@
  * @attribution anti-slop by Dillon Mulroy (MIT, concept re-implemented)
  */
 import type { ESTree, Rule } from "@oxlint/plugins";
+import { hasEffectImport } from "../effect-modules.js";
 
 const message =
   'Do not import Effect service constructor "{{name}}" into runtime code. Import the owning Layer and yield the contextual service.';
@@ -33,7 +34,8 @@ export const noServiceConstructorImports: Rule = {
   meta: {
     type: "problem",
     docs: {
-      description: "Disallow make-prefixed imports from project service directories into runtime code.",
+      description:
+        "Disallow make-prefixed imports from project service directories into runtime code of files that import Effect.",
     },
     schema: [
       {
@@ -47,9 +49,14 @@ export const noServiceConstructorImports: Rule = {
     },
   },
   createOnce(context) {
+    let fileImportsEffect = false;
+
     return {
+      Program(program: ESTree.Program) {
+        fileImportsEffect = hasEffectImport(program);
+      },
       ImportDeclaration(node) {
-        if (node.importKind === "type") return;
+        if (!fileImportsEffect || node.importKind === "type") return;
         const options = context.options[0] as { serviceModules?: string[] } | undefined;
         if (
           typeof node.source.value !== "string" ||

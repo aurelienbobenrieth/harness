@@ -105,3 +105,38 @@ it("ignores ignoreCause and catchDefect on non-Effect objects", async () => {
     ),
   ).resolves.toBeUndefined();
 });
+
+it("skips test files by default and reports once allow is replaced", async () => {
+  const code = "const p = work.pipe(Effect.catchCause(() => Effect.void));\n";
+  await expect(
+    assertRuleDoesNotReport("effect/no-catch-all-cause", code, { filename: "src/store.test.ts" }),
+  ).resolves.toBeUndefined();
+  await expect(
+    assertRuleReports("effect/no-catch-all-cause", code, {
+      filename: "src/store.test.ts",
+      ruleOptions: { allow: ["**/nothing/**"] },
+    }),
+  ).resolves.toBeUndefined();
+});
+
+it("allows a handler that hands the cause back: it recovers selectively and defects stay failed", async () => {
+  await expect(
+    assertRuleDoesNotReport(
+      "effect/no-catch-all-cause",
+      [
+        "const a = run.pipe(Effect.catchCause((cause) => (plan.stale ? Effect.failCause(cause) : rerun)));",
+        "const b = Effect.catchCause(run, (cause) => { if (!isStale(cause)) return Effect.failCause(cause); return rerun; });",
+        "",
+      ].join("\n"),
+    ),
+  ).resolves.toBeUndefined();
+});
+
+it("still reports a cause handler that swallows the cause", async () => {
+  await expect(
+    assertRuleReports(
+      "effect/no-catch-all-cause",
+      "const a = run.pipe(Effect.catchCause((cause) => Effect.logError(cause)));\n",
+    ),
+  ).resolves.toBeUndefined();
+});

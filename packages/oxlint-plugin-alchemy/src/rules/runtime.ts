@@ -22,9 +22,9 @@ import {
   memberPropertyName,
   nearestFunction,
   parentOf,
+  returnedExpressions,
   stringLiteralValue,
   unwrapExpression,
-  walk,
 } from "@aurelienbbn/oxlint-kit/ast";
 import type { Context, ESTree } from "@oxlint/plugins";
 
@@ -190,21 +190,6 @@ export function runtimeDeclaration(context: Context, call: ESTree.CallExpression
   const propsCandidate = args[propsIndex];
   const props = propsCandidate !== undefined && propsCandidate !== init ? propsCandidate : undefined;
   return { kind: shape.kind, call, props, init };
-}
-
-/** Expressions a function returns: `return` arguments owned by it, or an arrow's expression body. */
-export function returnedExpressions(fn: FunctionNode): readonly ESTree.Node[] {
-  const body = fn.body;
-  if (body === null) return [];
-  if (body.type !== "BlockStatement") return [body];
-  const returned: ESTree.Node[] = [];
-  walk(body, (node) => {
-    if (isFunctionNode(node)) return false;
-    if (node.type === "ReturnStatement" && node.argument !== null && node.argument !== undefined)
-      returned.push(node.argument);
-    return undefined;
-  });
-  return returned;
 }
 
 /** Init generator of `declaration`, when its init is written as `Effect.gen(function* () { ... })`. */

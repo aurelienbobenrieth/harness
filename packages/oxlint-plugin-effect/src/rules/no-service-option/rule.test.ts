@@ -39,3 +39,26 @@ it("ignores serviceOption on a local object shadowing Effect", async () => {
     ),
   ).resolves.toBeUndefined();
 });
+
+it("allows the ambient ParentSpan service by default", async () => {
+  await expect(
+    assertRuleDoesNotReport(
+      ruleName,
+      "const parent = Effect.serviceOption(Tracer.ParentSpan);\nconst bare = Effect.serviceOption(ParentSpan);\n",
+    ),
+  ).resolves.toBeUndefined();
+});
+
+it("allows the services named in allowedServices on top of ParentSpan and reports the rest", async () => {
+  const options = { ruleOptions: { allowedServices: ["SqlTransaction"] } };
+  await expect(
+    assertRuleDoesNotReport(
+      ruleName,
+      "const tx = Effect.serviceOption(Client.SqlTransaction);\nconst parent = Effect.serviceOption(Tracer.ParentSpan);\n",
+      options,
+    ),
+  ).resolves.toBeUndefined();
+  await expect(
+    assertRuleReports(ruleName, "const mail = Effect.serviceOption(Mailer);\n", options),
+  ).resolves.toBeUndefined();
+});

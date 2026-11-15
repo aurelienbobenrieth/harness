@@ -30,6 +30,7 @@ describe("compatibility-date-current", () => {
     const stale = await run({ compatibility_date: "2026-03-27", compatibility_flags: ["nodejs_compat"] });
     expect(stale).toHaveLength(1);
     expect(stale[0]?.message).toContain("older than 180 days");
+    expect(stale[0]?.severity).toBe("warning");
     expect(await run({ compatibility_date: "2026-09-01" }, { compatibilityDateMaxAgeDays: 30 })).toEqual([]);
     expect(await run({ compatibility_date: "2026-08-24" }, { compatibilityDateMaxAgeDays: 30 })).toHaveLength(1);
   });

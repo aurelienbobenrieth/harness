@@ -7,7 +7,8 @@
 import { type AgentlintNode, defineRule, type StateRule } from "@aurelienbbn/agentlint";
 import { codeText, discardsCaughtError, isFunctionNode } from "../ast.js";
 
-const defaultNetworkCallPattern = /^(?:fetch\s*\(|axios[.(]|got[.(]|ky[.(])/;
+const defaultNetworkCallPattern =
+  /^(?:fetch\s*\(|(?:axios|got|ky)\s*\(|(?:axios|got|ky)\.(?:get|post|put|patch|delete|head|options|request|stream|paginate)\s*\()/;
 const resilienceMarkerPattern = /\b(?:signal|timeout|timeoutMs|deadline)\s*[:,})]|\bAbortSignal\b/;
 
 const unboundedCallMessage =
@@ -23,6 +24,17 @@ export type BoundaryResilienceOptions = {
 export function defineBoundaryResilience(options: BoundaryResilienceOptions = {}): StateRule {
   options = structuredClone(options);
   const networkCallPattern = options.networkCallPattern ?? defaultNetworkCallPattern;
+
+  const isNetworkCall = (node: AgentlintNode): boolean => {
+    networkCallPattern.lastIndex = 0;
+    if (!networkCallPattern.test(node.text)) return false;
+    const callee = node.childByFieldName("function");
+
+    return !(callee?.descendantsOfType("call_expression") ?? []).some((inner) => {
+      networkCallPattern.lastIndex = 0;
+      return networkCallPattern.test(inner.text);
+    });
+  };
 
   return defineRule({
     lifecycle: "state",
@@ -75,17 +87,6 @@ export function defineBoundaryResilience(options: BoundaryResilienceOptions = {}
       version: 2,
       scan: "file",
       createOnce({ context }) {
-        const isNetworkCall = (node: AgentlintNode): boolean => {
-          networkCallPattern.lastIndex = 0;
-          if (!networkCallPattern.test(node.text)) return false;
-          const callee = node.childByFieldName("function");
-
-          return !(callee?.descendantsOfType("call_expression") ?? []).some((inner) => {
-            networkCallPattern.lastIndex = 0;
-            return networkCallPattern.test(inner.text);
-          });
-        };
-
         return {
           call_expression(node) {
             if (isNetworkCall(node)) {

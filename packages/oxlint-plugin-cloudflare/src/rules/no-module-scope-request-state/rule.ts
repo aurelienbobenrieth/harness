@@ -74,6 +74,18 @@ function isModuleScopeVariable(context: Context, node: ESTree.Node | undefined):
   return variable.defs.some((definition) => definition.type === "Variable");
 }
 
+/** A module-scope `new WeakMap()` / `new WeakSet()`: entries die with their key, so it is the idiom for per-isolate caches. */
+function isWeakCollection(context: Context, node: ESTree.Node | undefined): boolean {
+  if (node?.type !== "Identifier") return false;
+  return (binding(context, node, node.name)?.defs ?? []).some((definition) => {
+    if (definition.node.type !== "VariableDeclarator" || definition.node.init === null) return false;
+    const initial = definition.node.init === undefined ? undefined : unwrapExpression(definition.node.init);
+    if (initial?.type !== "NewExpression") return false;
+    const callee = unwrapExpression(initial.callee);
+    return callee.type === "Identifier" && (callee.name === "WeakMap" || callee.name === "WeakSet");
+  });
+}
+
 export const noModuleScopeRequestState: Rule = {
   meta: {
     type: "problem",
@@ -114,6 +126,7 @@ export const noModuleScopeRequestState: Rule = {
         const callee = unwrapExpression(node.callee);
         const method = memberPropertyName(callee);
         if (method === undefined || !mutatingMethods.has(method) || callee.type !== "MemberExpression") return;
+        if (isWeakCollection(context, rootIdentifier(callee.object))) return;
         checkWrite(node, callee.object);
       },
       AssignmentExpression(node) {

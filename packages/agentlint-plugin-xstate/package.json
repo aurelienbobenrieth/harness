@@ -1,6 +1,6 @@
 {
   "name": "@aurelienbbn/agentlint-plugin-xstate",
-  "version": "0.1.4",
+  "version": "0.2.3",
   "description": "Custom agentlint rules for XState machines and actors.",
   "keywords": [
     "agentlint",
@@ -47,7 +47,7 @@
     "@aurelienbbn/agentlint": "0.3.0"
   },
   "peerDependencies": {
-    "@aurelienbbn/agentlint": ">=0.3.0 <0.8.0"
+    "@aurelienbbn/agentlint": ">=0.3.0 <0.10.0"
   },
   "engines": {
     "node": "^22.19.0 || ^24.11.0"

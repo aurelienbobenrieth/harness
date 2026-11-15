@@ -40,6 +40,8 @@ export type ImportSite = {
   readonly importer: string;
   readonly specifier: string;
   readonly forbidden?: readonly ForbiddenImport[];
+  /** True when the importer is a test file: relative-path and unexported-subpath reaches are not judged. */
+  readonly testFile?: boolean;
 };
 
 const bareSpecifier = /^(?<name>@[^/]+\/[^/]+|[^@/.][^/]*)(?<rest>\/.*)?$/u;
@@ -130,7 +132,8 @@ function exportsViolation(to: Member, specifier: string): string | undefined {
  * Why an import crosses a workspace boundary, or `undefined` when it stays inside one.
  *
  * Boundaries, in report order: a forbidden edge of the matrix; a package never imports an app; members never reach
- * each other by relative path; a member enters another only through a subpath its `exports` open. Files outside every
+ * each other by relative path; a member enters another only through a subpath its `exports` open. Test files skip the
+ * last two, since they legitimately reach shared fixtures and internals. Files outside every
  * member (root configs, scripts) and imports within one member are never judged.
  */
 export function boundaryViolation(site: ImportSite): string | undefined {
@@ -148,6 +151,7 @@ export function boundaryViolation(site: ImportSite): string | undefined {
   if (forbidden !== undefined) return forbidden;
   if (from.kind === "package" && to.kind === "app")
     return `Packages never import apps: ${from.name} imports ${to.name} ("${specifier}"). Move the shared code into a package both can import.`;
+  if (site.testFile === true) return undefined;
   if (relative)
     return `${from.name} reaches into ${to.name} by a relative path: import "${to.name}" through its package.json exports.`;
   return exportsViolation(to, specifier);

@@ -61,3 +61,15 @@ it("suggests Config.Redacted", async () => {
     'const key = Config.Redacted("API_TOKEN");\n',
   );
 });
+
+it("treats a PUBLIC_ key as public, not secret", async () => {
+  await expect(
+    assertRuleDoesNotReport(
+      "effect/require-redacted-secret-config",
+      'const key = Config.string("GADGET_PUBLIC_SHOPIFY_API_KEY");\nconst id = Config.string("PUBLIC_API_KEY");\n',
+    ),
+  ).resolves.toBeUndefined();
+  await expect(
+    assertRuleReports("effect/require-redacted-secret-config", 'const key = Config.string("SHOPIFY_API_KEY");\n'),
+  ).resolves.toBeUndefined();
+});

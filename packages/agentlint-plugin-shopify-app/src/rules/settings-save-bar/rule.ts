@@ -1,6 +1,10 @@
 import { defineRule, type StateRule, type AgentlintNode } from "@aurelienbbn/agentlint";
 import { attributeValue, matchesPattern } from "../jsx-support.js";
 
+/** Routes outside the embedded admin surface: landing, login, and auth pages are public and hold no merchant settings. */
+const publicRoutePattern =
+  /(?:^|\/)(?:_index|auth|login|signin|sign-in|landing|unauthenticated)(?:[./_-][^/]*)?(?:\/|$)/;
+
 const defaultFormElementPattern = /^<(?:form|Form)(?=[\s/>])/;
 
 export type SettingsSaveBarOptions = {
@@ -67,10 +71,11 @@ export function defineSettingsSaveBar(options: SettingsSaveBarOptions = {}): Sta
         mustStaySilent: [{ file: "src/view.tsx", source: "const ui=<form data-save-bar/>;" }],
       },
       id: "shopify-app/settings-save-bar",
-      version: 1,
+      version: 2,
       scan: "file",
       createOnce({ context }) {
         const check = (node: AgentlintNode): void => {
+          if (publicRoutePattern.test(context.path.replaceAll("\\", "/"))) return;
           if (!matchesPattern(formElementPattern, node.text)) return;
           const marker = attributeValue(node, "data-save-bar");
           if (

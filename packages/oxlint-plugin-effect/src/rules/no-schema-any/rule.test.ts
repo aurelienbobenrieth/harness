@@ -69,3 +69,9 @@ it("ignores Any on a local object shadowing Schema", async () => {
     }),
   ).resolves.toBeUndefined();
 });
+
+it("skips type tests by default", async () => {
+  await expect(
+    assertRuleDoesNotReport("effect/no-schema-any", "const s = Schema.Any;\n", { filename: "src/schema.tst.ts" }),
+  ).resolves.toBeUndefined();
+});

@@ -22,6 +22,7 @@ const validationScripts = [
   "test:consumer-results",
   "test:shopify-policy",
   "test:check-plan",
+  "test:format",
 ];
 
 const packageScoped = /^(?:packages|internal)\/[^/]+\//u;

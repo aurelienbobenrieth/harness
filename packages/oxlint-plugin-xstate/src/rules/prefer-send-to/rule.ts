@@ -1,5 +1,8 @@
 /**
  * Prefer `sendTo` with an explicit actor ref over `sendParent`.
+ *
+ * @deprecated XState v6 removes `sendParent`: handlers reach the parent through `({ parent }, enq) =>
+ * enq.sendTo(parent, event)`. It keeps working on XState v5 code.
  */
 import { memberPropertyName } from "@aurelienbbn/oxlint-kit/ast";
 import { importsFrom } from "../ast.js";
@@ -19,6 +22,11 @@ export const preferSendTo: Rule = {
       preferSendTo: message,
     },
     schema: [],
+    deprecated: {
+      message:
+        "XState v6 removes sendParent (use ({ parent }, enq) => enq.sendTo(parent, event)); this rule keeps working on XState v5 code and has no replacement.",
+      deprecatedSince: "0.2.0",
+    },
   },
   createOnce(context) {
     let enabled = false;

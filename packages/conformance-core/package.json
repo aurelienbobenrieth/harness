@@ -1,11 +1,10 @@
 {
   "name": "@aurelienbbn/conformance-core",
-  "version": "0.1.1",
+  "version": "0.3.2",
   "description": "Stack-agnostic repo hygiene conformance checks, packaged as a Vitest suite.",
   "keywords": [
     "conformance",
     "jscpd",
-    "knip",
     "repository-hygiene",
     "tsconfig",
     "vitest"
@@ -48,10 +47,10 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "postcss": "8.5.28"
+    "postcss": "8.5.32"
   },
   "devDependencies": {
-    "vitest": "4.1.11"
+    "vitest": "5.1.0"
   },
   "peerDependencies": {
     "vitest": ">=4.1.11 <6.0.0"

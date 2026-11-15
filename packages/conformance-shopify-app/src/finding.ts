@@ -44,6 +44,11 @@ export type ConformanceRunOptions = {
    * preview on the `unstable` API version, so its configuration contract can still change.
    */
   readonly nextGenerationEvents?: boolean;
+  /**
+   * How the app is distributed. `compliance-webhooks` applies to `"public"` (App Store) apps only: custom
+   * apps are not required to subscribe to the privacy compliance topics. Default `"public"`.
+   */
+  readonly distribution?: "public" | "custom";
   /** Validate only explicitly supplied listing metadata and asset files; omitted fields are not assessed. */
   readonly listing?: import("./checks/listing-inputs.js").ShopifyAppListing;
 };

@@ -35,6 +35,59 @@ export type WebhookHandlerReviewOptions = {
   readonly topicPattern?: RegExp;
 };
 
+const functionTypes = new Set([
+  "arrow_function",
+  "function_expression",
+  "function_declaration",
+  "generator_function",
+  "generator_function_declaration",
+  "method_definition",
+]);
+const logCallPattern = /^(?:console|logger|log)(?:\.[A-Za-z]+)+$/;
+const responseCallPattern = /^(?:Response\.\w+|JSON\.stringify|json|data|redirect)$/;
+const complianceTopicPattern =
+  /(?:customers[/_]|shop[/_]|CUSTOMERS_|SHOP_)(?:data_request|redact|DATA_REQUEST|REDACT)/i;
+
+function isAuthenticateWebhookStatement(node: AgentlintNode): boolean {
+  return node.descendantsOfType("call_expression").some((call) => {
+    const callee = call.childByFieldName("function");
+    return callee !== null && authenticateWebhookPattern.test(callee.text);
+  });
+}
+
+/** A return does no work when it only builds a response: nothing awaited, no call but response construction. */
+function onlyBuildsResponse(statement: AgentlintNode): boolean {
+  if (statement.descendantsOfType("await_expression").length > 0) return false;
+  return statement.descendantsOfType("call_expression").every((call) => {
+    return responseCallPattern.test(call.childByFieldName("function")?.text ?? "");
+  });
+}
+
+/**
+ * A handler is trivial when its body only authenticates, logs, and returns: no database write, outbound call,
+ * or branch needs duplicate, ordering, or timing review. A file naming a compliance topic is never trivial.
+ */
+function isTrivialHandler(authenticateCall: AgentlintNode, source: string): boolean {
+  if (complianceTopicPattern.test(source)) return false;
+  let fn = authenticateCall.parent;
+  while (fn !== null && !functionTypes.has(fn.type)) fn = fn.parent;
+  const body = fn?.childByFieldName("body");
+  if (body?.type !== "statement_block") return false;
+  return body.children
+    .filter((statement) => statement.isNamed && statement.type !== "comment")
+    .every((statement) => {
+      if (statement.type === "return_statement") return onlyBuildsResponse(statement);
+      if (statement.type === "lexical_declaration") return isAuthenticateWebhookStatement(statement);
+      if (statement.type !== "expression_statement") return false;
+      const expression = statement.children.find((child) => child.isNamed);
+      const call = expression?.type === "await_expression" ? expression.children.find((c) => c.isNamed) : expression;
+      if (call?.type !== "call_expression") return false;
+      const callee = call.childByFieldName("function")?.text ?? "";
+      if (authenticateWebhookPattern.test(callee)) return true;
+      return logCallPattern.test(callee) && call.descendantsOfType("await_expression").length === 0;
+    });
+}
+
 function literalValue(node: AgentlintNode): string {
   return node.text.slice(1, -1);
 }
@@ -104,12 +157,18 @@ export function defineWebhookHandlerReview(options: WebhookHandlerReviewOptions 
         mustReport: [
           {
             file: "app/routes/webhooks.app.uninstalled.tsx",
-            source: "export const action = async ({ request }) => { await authenticate.webhook(request); };",
+            source:
+              "export const action = async ({ request }) => { const { shop } = await authenticate.webhook(request); await db.session.deleteMany({ where: { shop } }); return new Response(); };",
           },
           { file: "server/webhooks.ts", source: 'const hmac = req.get("X-Shopify-Hmac-Sha256");' },
           { file: "server/webhooks.ts", source: 'switch (topic) { case "ORDERS_CREATE": break; }' },
         ],
         mustStaySilent: [
+          {
+            file: "app/routes/webhooks.products.update.tsx",
+            source:
+              "export const action = async ({ request }) => { const { shop, topic } = await authenticate.webhook(request); console.log(topic, shop); return new Response(); };",
+          },
           {
             file: "app/routes/app._index.tsx",
             source: "export const loader = async ({ request }) => { await authenticate.admin(request); };",
@@ -121,7 +180,7 @@ export function defineWebhookHandlerReview(options: WebhookHandlerReviewOptions 
         ],
       },
       id: "shopify-app/webhook-handler-review",
-      version: 1,
+      version: 2,
       scan: "file",
       createOnce({ context }) {
         let reported = false;
@@ -140,7 +199,8 @@ export function defineWebhookHandlerReview(options: WebhookHandlerReviewOptions 
           },
           call_expression(node) {
             const callee = node.childByFieldName("function");
-            if (callee && authenticateWebhookPattern.test(callee.text)) report(node, "authenticate.webhook call");
+            if (callee && authenticateWebhookPattern.test(callee.text) && !isTrivialHandler(node, context.source))
+              report(node, "authenticate.webhook call");
           },
           string(node) {
             const value = literalValue(node);

@@ -73,3 +73,21 @@ it("skips extra config that is not statically readable and non-Postgres tables",
     ),
   ).resolves.toBeUndefined();
 });
+
+it("reports an unindexed SQLite (D1) foreign key and accepts an indexed one", async () => {
+  const sqlite =
+    'import { index, integer, sqliteTable } from "drizzle-orm/sqlite-core";\nexport const users = sqliteTable("users", { id: integer().primaryKey() });\n';
+  await expect(
+    assertRuleReports(
+      ruleName,
+      `${sqlite}export const posts = sqliteTable("posts", { authorId: integer().references(() => users.id) });\n`,
+      { message: /Postgres and SQLite/ },
+    ),
+  ).resolves.toBeUndefined();
+  await expect(
+    assertRuleDoesNotReport(
+      ruleName,
+      `${sqlite}export const posts = sqliteTable("posts", { authorId: integer().references(() => users.id) }, (t) => [index("by_author").on(t.authorId)]);\n`,
+    ),
+  ).resolves.toBeUndefined();
+});

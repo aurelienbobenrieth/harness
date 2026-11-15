@@ -1,6 +1,7 @@
 import { effectMethod } from "../binding-support.js";
 import type { ESTree, Rule, Context } from "@oxlint/plugins";
 import { hasPropertyNamed } from "../ast.js";
+import { allowOptionDefaults, allowOptionSchema, isExemptFile } from "../test-paths.js";
 
 const message = "Provide an explicit concurrency option for Effect.forEach.";
 
@@ -17,12 +18,16 @@ export const requireForEachConcurrency: Rule = {
     messages: {
       explicitConcurrency: message,
     },
+    schema: [allowOptionSchema],
+    defaultOptions: allowOptionDefaults,
   },
   createOnce(context) {
     return {
       CallExpression(node) {
         if (!isEffectForEachCall(node, context)) return;
         if (hasPropertyNamed(node.arguments.at(-1), "concurrency")) return;
+
+        if (isExemptFile(context)) return;
 
         context.report({
           node,

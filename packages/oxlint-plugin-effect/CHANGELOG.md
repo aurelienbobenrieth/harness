@@ -1,5 +1,65 @@
 # @aurelienbbn/oxlint-plugin-effect
 
+## 0.9.3
+
+### Patch Changes
+
+- [#99](https://github.com/aurelienbobenrieth/harness/pull/99) [`d46650d`](https://github.com/aurelienbobenrieth/harness/commit/d46650d2662b4a849cb8530218640c09e2c8c0a4) Thanks [@aurelienbobenrieth](https://github.com/aurelienbobenrieth)! - Rewrite the README: claim headings in the promised order (install and first command before reference), install commands where they were missing, and rule and preset counts corrected against the registered exports.
+
+## 0.9.2
+
+### Patch Changes
+
+- [#97](https://github.com/aurelienbobenrieth/harness/pull/97) [`754d98c`](https://github.com/aurelienbobenrieth/harness/commit/754d98c10480b77c654c88a412636d7ba80cffea) Thanks [@aurelienbobenrieth](https://github.com/aurelienbobenrieth)! - Accept agentlint 0.9 (`>=0.3.0 <0.10.0`) and oxfmt 0.78 (`>=0.67.0 <0.69.0 || ^0.74.0 || ^0.78.0`) as peers. Update runtime dependencies to `@oxlint/plugins` 1.93.0, `graphql` 17.1.0 and `parse5` 8.1.1. The current consumer profile is verified with agentlint 0.9.1, oxlint 1.93.0, oxlint-tsgolint 7.0.2006, oxfmt 0.78.0, Vite Plus 1.5.1 and Vitest 5.1.0.
+
+## 0.9.1
+
+### Patch Changes
+
+- [#95](https://github.com/aurelienbobenrieth/harness/pull/95) [`c90c05c`](https://github.com/aurelienbobenrieth/harness/commit/c90c05c647072e0f3276d951635499cfcda4976a) Thanks [@aurelienbobenrieth](https://github.com/aurelienbobenrieth)! - Update runtime dependencies to `@oxlint/plugins` 1.91.0, `oxc-parser` 0.157.0 and `postcss` 8.5.32.
+
+## 0.9.0
+
+### Minor Changes
+
+- [#92](https://github.com/aurelienbobenrieth/harness/pull/92) [`0621814`](https://github.com/aurelienbobenrieth/harness/commit/0621814cb10243be6f770408b4fd114498c75a41) Thanks [@aurelienbobenrieth](https://github.com/aurelienbobenrieth)! - Remove the duplicate Knip wrapper; run Knip directly for unused files, exports and dependencies. Add advisory snapshot ancestry, migration SQL, retention metadata, calendar schema, destructive reason and fenced JSDoc checks. Publish Windows-compatible commit-message attribution hooks. Keep statement spacing in post-oxfmt formatting.
+
+- [#92](https://github.com/aurelienbobenrieth/harness/pull/92) [`0621814`](https://github.com/aurelienbobenrieth/harness/commit/0621814cb10243be6f770408b4fd114498c75a41) Thanks [@aurelienbobenrieth](https://github.com/aurelienbobenrieth)! - Narrow the Effect failure, runtime-boundary and concurrency rules to the code they are right about.
+
+  `@aurelienbbn/oxlint-plugin-effect`:
+
+  - Test files and test-support folders (`testing/`, `fixtures/`, `e2e/`, `typetest/`, `scripts/`, `*.test.*`, `*.tst.*`) are skipped by default in `no-effect-ordie`, `no-effect-promise`, `no-fork-detach`, `no-catch-all-cause`, `no-unsafe-effect-body`, `no-untyped-try-promise-catch`, `preserve-thrown-cause`, `bounded-retry`, `require-all-concurrency`, `require-for-each-concurrency`, `require-tagged-effect-fail`, `require-abort-signal` and `no-swallowed-failure`; a failing seed or an assertion `throw` is a bug in the test, not a domain outcome. The ten rules that had no options gain an `allow` option; set it to replace the default.
+  - `no-effect-promise` allows `Effect.promise` in finalizers (`acquireRelease` release, `acquireUseRelease` release, `addFinalizer`, `ensuring`, `onExit`, `onInterrupt`), whose error channel must stay empty.
+  - `no-catch-all-cause` allows a cause handler that hands its cause back with `Effect.failCause(cause)`: it recovers selectively and defects stay failed.
+  - `require-tagged-effect-fail` accepts `{ _tag: "X" as const }`, `{ _tag: "X" } as const` and `satisfies` (it reported them as untagged).
+  - `no-run-promise-in-runtime` and `no-unscoped-runtime-launch` allow a handler of a default-exported Worker module object (`fetch`, `scheduled`, `queue`, `email`, `tail`, `trace`) and a browser entry file (touches `document`/`window` or imports a stylesheet); `no-unscoped-runtime-launch` allows `Layer.launch` handed to `runMain`.
+  - `prefer-run-main` skips browser entry files, where `NodeRuntime.runMain` does not exist.
+  - `prefer-it-effect` reports in test files that import Effect (`effect`, `effect/*`, `@effect/*`), whether or not they import `@effect/vitest`; the new option `requireEffectVitestImport: true` restores the narrow behaviour for a project that cannot install the package. Non-Effect test files stay silent.
+  - `no-swallowed-failure` no longer reports `Effect.orElseSucceed(() => default)`: an explicit fallback is a decision, not a swallow. `Effect.ignore` without a log and placeholder `Effect.catch` handlers still report.
+  - `require-redacted-secret-config` treats a `PUBLIC_` key as public.
+  - New rule `no-native-failure`: in files importing `effect`, `effect/*` or `@effect/*`, `try`/`catch` and `throw` report, with `Effect.fail` of a tagged error or `Effect.try` as the fix. Legal: anything inside the callback of `Effect.try` / `Effect.tryPromise`, `try`/`finally` without `catch`, and `throw redirect()` / `throw notFound()` imported from a router framework. A `throw` directly in an `Effect.gen`/`Effect.fn` body stays `no-unsafe-effect-body`'s and a `try`/`catch` there `effecttsgo/try-catch-in-effect-gen`'s, so nothing reports twice. Test-support files are exempt through `allow`.
+  - New rule `no-tagged-error-name-field`: a field called `name` in the payload of a `Schema.TaggedError`, `Schema.TaggedErrorClass` or `Data.TaggedError` class shadows `Error.name`; use a domain-specific field such as `queueName`. Idea from crosshatch/traits (Apache-2.0), implemented independently.
+  - Removed `no-unsafe-error-mapper`.
+
+  Cut false positives in the style and array rules after auditing them on Effect libraries, Effect apps and non-Effect code:
+
+  - `prefer-effect-array-helpers` and `no-service-constructor-imports` read only files that import Effect (one project carried 102 suppressions for root Node tools).
+  - `no-array-callback-reference` allows `Number`, `String`, `BigInt` and local functions that cannot read the index; `no-array-sort` and `no-array-method-this-argument` skip query-builder `sort({...})` and capitalized receivers such as `Query.find(Model, filter)`.
+  - `effect-fn-name-matches-binding` accepts the snake_case spelling of the binding, so it no longer conflicts with `telemetry-name-format`; `telemetry-name-format`, `prefer-match` and `require-named-effect-fn` skip tests by default (`allow`).
+  - `tagged-error-name` accepts a namespaced `_tag` that ends with the class name; `schema-literal-case` skips generated files, flags, paths and symbols and takes `allowedValues`; `schema-domain-types` skips recursive types and interfaces extending runtime handles; `no-service-option` allows `ParentSpan` and `allowedServices`; `no-service-dependency-parameters` no longer reports `Context.Service` tag types or lowercase SDK namespaces such as `ecs.Service`.
+
+  Scope `prefer-effect-array-helpers` to imported Effect runtime callbacks, excluding non-Effect assets and utilities in mixed files. Remove the array-helper advisory override after a 10/10 consumer precision check.
+
+  Resolve Vitest fake-timer utilities by import identity, including aliases and namespace members, while ignoring other exports renamed `vi`.
+
+## 0.8.1
+
+### Patch Changes
+
+- [#75](https://github.com/aurelienbobenrieth/harness/pull/75) [`666c4cc`](https://github.com/aurelienbobenrieth/harness/commit/666c4cc20f6e9f350a1a0df7259521e988be9d4e) Thanks [@aurelienbobenrieth](https://github.com/aurelienbobenrieth)! - `telemetry-name-format` recognizes `Rpc.make` imported from `effect/rpc` and `effect/rpc/Rpc`, where Effect 4.0.0 moved the RPC module from `effect/unstable/rpc`.
+
+- [#75](https://github.com/aurelienbobenrieth/harness/pull/75) [`666c4cc`](https://github.com/aurelienbobenrieth/harness/commit/666c4cc20f6e9f350a1a0df7259521e988be9d4e) Thanks [@aurelienbobenrieth](https://github.com/aurelienbobenrieth)! - Update runtime dependencies to `@oxlint/plugins` 1.88.0, `oxc-parser` 0.154.0, `postcss` 8.5.30 and `smol-toml` 1.9.1. Accept agentlint 0.8 alongside the existing supported engine versions (`>=0.3.0 <0.9.0`). Keep baseline tools pinned and exercise the current consumer profile with agentlint 0.8.0, oxlint 1.88.0, oxlint-tsgolint 7.0.2004, Vitest 5.0.4 and Stylelint 17.16.0.
+
 ## 0.8.0
 
 ### Minor Changes

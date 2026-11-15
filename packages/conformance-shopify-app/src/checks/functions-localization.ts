@@ -22,11 +22,11 @@ export const functionsLocalization: ConformanceCheck = {
       const translationKeys = [
         ...new Set(
           manifest.extensions
-            .filter((entry) => entry.type === "function")
-            .flatMap((entry) => [
-              entry.name,
-              Object.hasOwn(entry, "description") ? entry.description : manifest.config.description,
-            ])
+            .flatMap((entry) =>
+              entry.type === "function"
+                ? [entry.name, Object.hasOwn(entry, "description") ? entry.description : manifest.config.description]
+                : [],
+            )
             .filter((value): value is string => typeof value === "string" && value.startsWith("t:"))
             .map((value) => value.slice(2)),
         ),

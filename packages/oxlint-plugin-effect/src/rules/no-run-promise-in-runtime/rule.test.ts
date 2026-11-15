@@ -101,3 +101,38 @@ it("allows Effect.runPromiseWith in test files by default", async () => {
     }),
   ).resolves.toBeUndefined();
 });
+
+it("allows runPromise inside a default-exported Worker handler, the platform boundary", async () => {
+  await expect(
+    assertRuleDoesNotReport(
+      "effect/no-run-promise-in-runtime",
+      [
+        "export default {",
+        "  async fetch(request: Request, env: Env) { return Effect.runPromise(handle(request, env)); },",
+        "  scheduled: async (event, env) => { await Effect.runPromise(sweep(env)); },",
+        "} satisfies ExportedHandler<Env>;",
+        "",
+      ].join("\n"),
+    ),
+  ).resolves.toBeUndefined();
+});
+
+it("still reports runPromise in an ordinary exported function or a non-handler default property", async () => {
+  await expect(
+    assertRuleReports("effect/no-run-promise-in-runtime", "export const load = () => Effect.runPromise(program);\n"),
+  ).resolves.toBeUndefined();
+  await expect(
+    assertRuleReports(
+      "effect/no-run-promise-in-runtime",
+      "export default { helper() { return Effect.runPromise(program); } };\n",
+    ),
+  ).resolves.toBeUndefined();
+});
+
+it("skips test-support folders by default", async () => {
+  await expect(
+    assertRuleDoesNotReport("effect/no-run-promise-in-runtime", "export const run = (p) => Effect.runPromise(p);\n", {
+      filename: "src/testing/runner.ts",
+    }),
+  ).resolves.toBeUndefined();
+});

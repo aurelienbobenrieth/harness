@@ -5,7 +5,7 @@
  *
  * @attribution https://alchemy.run/infrastructure-as-effects/runtime (alchemy-run/alchemy docs, Apache-2.0; inspiration, independently implemented)
  */
-import { type FunctionNode, nearestFunction, parentOf } from "@aurelienbbn/oxlint-kit/ast";
+import { type FunctionNode, nearestFunction, parentOf, returnedExpressions } from "@aurelienbbn/oxlint-kit/ast";
 import type { Context, Rule } from "@oxlint/plugins";
 import {
   declarationOfInitGenerator,
@@ -13,7 +13,6 @@ import {
   effectMember,
   insideCallArguments,
   isWithin,
-  returnedExpressions,
   returningInit,
 } from "../runtime.js";
 

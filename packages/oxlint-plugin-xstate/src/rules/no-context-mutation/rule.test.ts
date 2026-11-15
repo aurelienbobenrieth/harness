@@ -111,3 +111,76 @@ it("ignores non-mutating reads and rebinding a local", async () => {
     ),
   ).resolves.toBeUndefined();
 });
+
+it("reports push on context inside an XState v6 transition function", async () => {
+  await expect(
+    assertRuleReports(
+      ruleName,
+      'import { createMachine } from "xstate";\nexport const m = createMachine({ context: { items: [] as number[] }, on: { add: ({ context }) => { context.items.push(1); } } });\n',
+      { message: /as a \{ context \} patch from the handler in XState v6/ },
+    ),
+  ).resolves.toBeUndefined();
+});
+
+it("reports mutation inside an XState v6 createLogic run", async () => {
+  await expect(
+    assertRuleReports(
+      ruleName,
+      'import { createLogic } from "xstate";\nexport const counter = createLogic({ context: { count: 0 }, run: ({ context }) => { context.count++; } });\n',
+    ),
+  ).resolves.toBeUndefined();
+});
+
+it("reports mutation in the config of an XState v6 createStateConfig(path, config)", async () => {
+  await expect(
+    assertRuleReports(
+      ruleName,
+      'import { setup } from "xstate";\nconst s = setup({ actors: {} });\nexport const loading = s.createStateConfig("loading", { entry: ({ context }) => { delete context.cache; } });\n',
+    ),
+  ).resolves.toBeUndefined();
+});
+
+it("reports mutation in an XState v6 createInvoke input mapper", async () => {
+  await expect(
+    assertRuleReports(
+      ruleName,
+      'import { setup } from "xstate";\nconst s = setup({ actors: {} });\nexport const invoke = s.createInvoke({ src: async () => 1, input: ({ context }) => { context.calls += 1; return {}; } });\n',
+    ),
+  ).resolves.toBeUndefined();
+});
+
+it("reports mutation inside an @xstate/effect setupEffect action", async () => {
+  await expect(
+    assertRuleReports(
+      ruleName,
+      'import { setupEffect } from "@xstate/effect";\nimport { Effect } from "effect";\nexport const s = setupEffect({ actions: { track: ({ context }) => Effect.sync(() => { context.seen.add(1); }) } });\n',
+    ),
+  ).resolves.toBeUndefined();
+});
+
+it("reports mutation inside machine.provide implementations", async () => {
+  await expect(
+    assertRuleReports(
+      ruleName,
+      'import { createActor } from "xstate";\nexport const actor = createActor(machine.provide({ actions: { bump: ({ context }) => { context.count++; } } }));\n',
+    ),
+  ).resolves.toBeUndefined();
+});
+
+it("accepts XState v6 context patches", async () => {
+  await expect(
+    assertRuleDoesNotReport(
+      ruleName,
+      'import { createLogic, createMachine } from "xstate";\nexport const m = createMachine({ context: { items: [] as number[] }, on: { add: ({ context }) => ({ context: { items: [...context.items, 1] } }) } });\nexport const counter = createLogic({ context: { count: 0 }, run: ({ context }) => ({ context: { count: context.count + 1 } }) });\n',
+    ),
+  ).resolves.toBeUndefined();
+});
+
+it("ignores context-shaped parameters in calls named like hosts from other modules", async () => {
+  await expect(
+    assertRuleDoesNotReport(
+      ruleName,
+      'import { createActor } from "xstate";\nimport { setupEffect } from "./local.js";\nimport { createLogic } from "./logic.js";\nconsole.log(createActor);\nexport const a = setupEffect({ run: ({ context }) => { context.items.push(1); } });\nexport const b = createLogic({ run: ({ context }) => { context.items.push(1); } });\n',
+    ),
+  ).resolves.toBeUndefined();
+});

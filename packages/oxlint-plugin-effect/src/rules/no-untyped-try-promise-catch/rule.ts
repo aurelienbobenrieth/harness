@@ -1,5 +1,6 @@
 import type { ESTree, Rule } from "@oxlint/plugins";
 import { effectMethod } from "../binding-support.js";
+import { allowOptionDefaults, allowOptionSchema, isExemptFile } from "../test-paths.js";
 
 const message =
   "Map thrown and rejected failures to the project domain error contract with an explicit catch handler; the framework default is a generic Cause.UnknownError wrapper.";
@@ -25,12 +26,16 @@ export const noUntypedTryPromiseCatch: Rule = {
     messages: {
       noUntypedTryPromiseCatch: message,
     },
+    schema: [allowOptionSchema],
+    defaultOptions: allowOptionDefaults,
   },
   createOnce(context) {
     return {
       CallExpression(node) {
         if (!tryConstructors.has(effectMethod(context, node.callee) ?? "")) return;
         if (hasCatchProperty(node.arguments.at(0))) return;
+
+        if (isExemptFile(context)) return;
 
         context.report({
           node,

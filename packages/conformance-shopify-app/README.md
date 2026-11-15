@@ -17,6 +17,10 @@
 
 ## One file, eleven tests
 
+```sh
+pnpm add -D @aurelienbbn/conformance-shopify-app vitest   # vitest >=4.1.11 <6.0.0 (optional peer)
+```
+
 ```ts
 // conformance.test.ts
 import { shopifyAppConformance } from "@aurelienbbn/conformance-shopify-app/vitest";
@@ -51,7 +55,7 @@ appManifests: [shopify.app.toml]          (minimumApiVersion: "2025-10", message
 ⚠️ api-version-contract  app/shopify.server.ts  apiVersion: The app server requests Admin API 2025-10 while shopify.app.toml delivers webhooks at 2025-07…
 ```
 
-## Checks
+## Eleven checks run by default; two wait for opt-in
 
 | Check                           | Missing evidence                                | Does not prove                      |
 | ------------------------------- | ----------------------------------------------- | ----------------------------------- |
@@ -80,13 +84,13 @@ shopifyAppConformance({ root: process.cwd() }, [...shopifyAppChecks, ...optional
 
 ### compliance-webhooks
 
-Checks the [App Store compliance-topic contract](https://shopify.dev/docs/apps/build/webhooks/subscribe) under `webhooks.subscriptions`, each with a nonempty `uri`. **Each deployment manifest holds its own topics: no pooling across environments.** Source mentions and unrelated tables register nothing. Also unproven: processing.
+Checks the [App Store compliance-topic contract](https://shopify.dev/docs/apps/build/webhooks/subscribe) under `webhooks.subscriptions`, each with a nonempty `uri`. **Each deployment manifest holds its own topics: no pooling across environments.** Source mentions and unrelated tables register nothing. Also unproven: processing. Set `distribution: "custom"` to skip the check: custom apps are not required to register the privacy topics (default `"public"`).
 
 With `nextGenerationEvents: true`, an `[[events.subscription]]` whose `topic` is a compliance topic ❌: [Events doesn't deliver them](https://shopify.dev/docs/apps/build/events/migrate-from-webhooks) (reviewed 2026-09-24).
 
 ### app-bridge-script
 
-Every selected embedded document loads `https://cdn.shopify.com/shopifycloud/app-bridge.js` as its first `<head>` script (comments ignored). Skipped when every selected manifest sets `embedded = false`.
+Every selected embedded document loads `https://cdn.shopify.com/shopifycloud/app-bridge.js` as its first `<head>` script (comments ignored), or renders the Shopify `AppProvider` imported from `@shopify/shopify-app-react-router/react`, `@shopify/shopify-app-remix/react` or `@shopify/app-bridge-react`. Skipped when every selected manifest sets `embedded = false`; with no `shopify.app.toml` it reports a warning and skips, since embedded status is unknown.
 
 | Option            | Default                                                                     | Rule                                                                                                                                |
 | ----------------- | --------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
@@ -156,7 +160,7 @@ Topic support, trigger paths, and query validity stay with `shopify app deploy`.
 
 | Bounds set                                     | `YYYY-01/04/07/10` | `unstable` | out of range |
 | ---------------------------------------------- | ------------------ | ---------- | ------------ |
-| neither                                        | ✅ syntax only     | ⚠️ warning | —            |
+| neither                                        | ✅ syntax only     | ⚠️ warning | nothing      |
 | `minimumApiVersion` and/or `maximumApiVersion` | ✅                 | ❌ error   | ❌ error     |
 
 - Bounds must be ordered quarterly versions, else throws.
@@ -245,7 +249,7 @@ selected manifest
 
 </details>
 
-## Options
+## Twelve options; `root` is the only required one
 
 | Option                                    | Default                                                            | Used by                        |
 | ----------------------------------------- | ------------------------------------------------------------------ | ------------------------------ |
@@ -258,6 +262,7 @@ selected manifest
 | `serverEntries`                           | `shopify.server.*`, `app/shopify.server.*`, `src/shopify.server.*` | `api-version-contract`         |
 | `builtForShopifyCategories`               | `[]`                                                               | `built-for-shopify-extensions` |
 | `nextGenerationEvents`                    | `false` (developer preview)                                        | webhook and compliance checks  |
+| `distribution`                            | `"public"`                                                         | `compliance-webhooks`          |
 | `listing`                                 | unset                                                              | `listing-inputs` (opt-in)      |
 
 ```ts
@@ -465,7 +470,7 @@ Weights from [Shopify's storefront performance guide](https://shopify.dev/docs/a
 
 </details>
 
-## Migration
+## Upgrading closes four silent passes
 
 | Change                                                         | Migrate by                                                                                                    |
 | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
@@ -476,11 +481,11 @@ Weights from [Shopify's storefront performance guide](https://shopify.dev/docs/a
 | `listing-inputs` left the default checks                       | pass `optionalShopifyAppChecks` to keep it                                                                    |
 | 3 new default checks                                           | fix their findings; each stays silent without its trigger (Polaris CDN, Flow template, 2025-10+ UI extension) |
 
-## Shopify CLI overlap
+## The Shopify CLI is no offline preflight
 
 `shopify app config validate` checks app and extension TOML against Shopify's schemas, so parts of `app-url-security`, `webhook-subscription-contract`, and `functions-localization` may overlap it. **Overlap unmeasured:** with CLI 4.8.1 on 2026-09-24, validating a fixture app stopped at the App Management API (`Cannot find a valid organization`): it needs a registered app and network, so it is no offline preflight. Run both; drop a check only once the CLI is shown to catch its failing fixtures.
 
-## Sources
+## Every check re-implements Shopify documentation
 
 Independent implementations of Shopify's [App Store requirements](https://shopify.dev/docs/apps/launch/shopify-app-store/app-store-requirements), [Built for Shopify requirements](https://shopify.dev/docs/apps/launch/built-for-shopify/requirements), [app configuration](https://shopify.dev/docs/apps/build/cli-for-apps/app-configuration), [API versioning](https://shopify.dev/docs/api/usage/versioning), and [theme app extension configuration](https://shopify.dev/docs/apps/build/online-store/theme-app-extensions/configuration). Discovery defaults verified against the MIT-licensed Shopify CLI's [configuration selection](https://github.com/Shopify/cli/blob/614187e5204ca6c4bc3c8418b8c6fcb224ab5dae/packages/app/src/cli/models/project/config-selection.ts) and [extension loader](https://github.com/Shopify/cli/blob/614187e5204ca6c4bc3c8418b8c6fcb224ab5dae/packages/app/src/cli/models/app/loader.ts). Source carries greppable `@attribution` tags.
 
@@ -497,7 +502,7 @@ Generated from package exports by `pnpm catalog`. Rule-specific options and limi
 | `app-url-security`              | App and configured OAuth callback URLs must declare HTTPS transport without embedded credentials.                                                                                        |
 | `built-for-shopify-extensions`  | Explicit Built for Shopify categories require their declared extension types and insertion targets; presence is only a prerequisite.                                                     |
 | `checkout-bundle-size`          | Checkout and full-page customer account extension dist JavaScript totals stay within their raw-byte budgets; Shopify CLI remains the deployment authority.                               |
-| `compliance-webhooks`           | Apps must subscribe to the three mandatory privacy compliance webhook topics.                                                                                                            |
+| `compliance-webhooks`           | Public apps must subscribe to the three mandatory privacy compliance webhook topics.                                                                                                     |
 | `extension-capability-contract` | Checkout and customer account UI extension source that uses fetch, Storefront API queries, or buyer journey interception must declare the matching capability in its extension TOML.     |
 | `extension-framework-contract`  | UI extensions on API version 2025-10 or later must not depend on or import @shopify/ui-extensions-react; they use Polaris web components with Preact.                                    |
 | `flow-template-contract`        | Flow template extensions must declare a valid handle, documented categories, an existing workflow module, and default plus English locales resolving their t: keys.                      |

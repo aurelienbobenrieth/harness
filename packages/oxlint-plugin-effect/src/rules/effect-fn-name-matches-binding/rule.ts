@@ -20,13 +20,36 @@ function bindingName(value: ESTree.Node): string | undefined {
   return undefined;
 }
 
+/** Split `createOrder`, `create_order`, `CreateOrder` and `create-order` into lowercase words. */
+function words(name: string): readonly string[] {
+  return name
+    .replace(/([a-z0-9])([A-Z])/gu, "$1 $2")
+    .replace(/([A-Z]+)([A-Z][a-z])/gu, "$1 $2")
+    .toLowerCase()
+    .split(/[^a-z0-9]+/u)
+    .filter((word) => word.length > 0);
+}
+
+/**
+ * Whether the span's last segment names the binding: the same words in any case style (`write_ui_mirror` for
+ * `writeUiMirror`), or the trailing words of a longer binding (`view_run` for `leaksViewRun`).
+ */
+function namesBinding(segment: string, binding: string): boolean {
+  const segmentWords = words(segment);
+  const bindingWords = words(binding);
+  if (segmentWords.length === 0 || segmentWords.length > bindingWords.length) return false;
+  const offset = bindingWords.length - segmentWords.length;
+  return segmentWords.every((word, index) => bindingWords[offset + index] === word);
+}
+
 function ignorePattern(options: Readonly<Record<string, unknown>>): RegExp | undefined {
   const pattern = options["ignorePattern"];
   return typeof pattern === "string" && pattern.length > 0 ? new RegExp(pattern, "u") : undefined;
 }
 
 /**
- * Keep `Effect.fn` span names in sync with the binding they trace.
+ * Keep `Effect.fn` span names in sync with the binding they trace. The last segment may use the binding's spelling or
+ * the snake_case of its words, so the rule agrees with `telemetry-name-format`.
  *
  * @attribution Effect bundled AGENTS.md "The name string should match the function name" (concept)
  */
@@ -35,7 +58,7 @@ export const effectFnNameMatchesBinding: Rule = {
     type: "problem",
     docs: {
       description:
-        "Require the last dot-segment of an Effect.fn span name to equal the variable or property the function is bound to.",
+        "Require the last dot-segment of an Effect.fn span name to name the variable or property the function is bound to, in camelCase or snake_case, or as its trailing words.",
     },
     hasSuggestions: true,
     messages: {
@@ -67,10 +90,11 @@ export const effectFnNameMatchesBinding: Rule = {
         if (name === undefined) return;
 
         const segments = spanName.split(".");
-        if (segments.at(-1) === name) return;
+        const last = segments.at(-1) ?? "";
+        if (last === name || namesBinding(last, name)) return;
         if (ignorePattern(optionsObject(context))?.test(spanName) === true) return;
 
-        const replacement = [...segments.slice(0, -1), name].join(".");
+        const replacement = [...segments.slice(0, -1), last.includes("_") ? words(name).join("_") : name].join(".");
         context.report({
           node: nameNode,
           messageId: "mismatch",

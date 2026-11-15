@@ -31,3 +31,36 @@ it("allows a native array method with its callback only", async () => {
     assertRuleDoesNotReport(ruleName, "export const doubled = [1, 2].map((n) => n * 2);\n"),
   ).resolves.toBeUndefined();
 });
+
+it("reports a thisArg after a callback on a native array", async () => {
+  await expect(
+    assertRuleReports(
+      ruleName,
+      "export const out = (rows: Row[], self: object) => rows.map(function (row) { return row; }, self);\n",
+    ),
+  ).resolves.toBeUndefined();
+});
+
+it("allows data-first calls on capitalized namespaces and classes that are not arrays", async () => {
+  await expect(
+    assertRuleDoesNotReport(
+      ruleName,
+      [
+        "export const next = Output.map(integration.id, (id) => `integrations/${id}`);",
+        "export const user = Query.find(UserModel, { active: true });",
+      ].join("\n"),
+    ),
+  ).resolves.toBeUndefined();
+});
+
+it("allows a find or some whose first argument cannot be a callback", async () => {
+  await expect(
+    assertRuleDoesNotReport(
+      ruleName,
+      [
+        'export const route = (router: Router) => router.find("GET", "/users");',
+        "export const hit = (root: Collection) => root.find({ type: 'Import' }, 2);",
+      ].join("\n"),
+    ),
+  ).resolves.toBeUndefined();
+});

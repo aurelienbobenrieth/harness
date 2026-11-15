@@ -5,11 +5,11 @@
 **15 agentlint reviews for Shopify apps and extensions: a deterministic trigger finds the spot, a reviewer checks it against Shopify's own guidance.**
 
 > [!WARNING]
-> Requires the engine `@aurelienbbn/agentlint` `>=0.3.0 <0.8.0` as a peer. [Evidence](../../docs/compatibility.md#agentlint-engine).
+> Requires the engine `@aurelienbbn/agentlint` `>=0.3.0 <0.10.0` as a peer. [Evidence](../../docs/compatibility.md#agentlint-engine).
 
 **A finding is something to inspect, not a policy violation.** Resolutions in `.agentlint/acceptances.jsonl` keep review evidence; neither they nor a clean run prove App Store or Built for Shopify eligibility.
 
-## Quick start
+## Four commands reach the first review
 
 ```sh
 agentlint init --preset "@aurelienbbn/agentlint-plugin-shopify-app#starterPreset"
@@ -27,7 +27,7 @@ import { checkoutExtensionPreset, shopifyAppPreset } from "@aurelienbbn/agentlin
 export default defineConfig({ extends: [shopifyAppPreset, checkoutExtensionPreset] });
 ```
 
-## Rules
+## Fifteen reviews across four presets, three of them opt-in
 
 | Rule                            | `shopifyApp` | `appServer` | `checkoutExtension` | `starter` | Rev  | Options                                              |
 | ------------------------------- | :----------: | :---------: | :-----------------: | :-------: | :--: | ---------------------------------------------------- |
@@ -62,7 +62,7 @@ defineNoPressureCopy({ languages: ["en", "fr"], additionalPatterns: [/última op
 defineSettingsSaveBar({ saveBarMarkerPattern: /useSaveBar/ });
 ```
 
-## What fires
+## A mention of a save bar is not a save bar
 
 ```tsx
 <form data-save-bar>…</form>           // ✅ direct literal attribute
@@ -82,12 +82,12 @@ for (const edge of (await admin.graphql(QUERY)).edges) {
 <details>
 <summary>Copy, auth and forms: triggers and boundaries</summary>
 
-| Rule                  | Fires on                                                                                                 | Boundary                                                                                                                     |
-| --------------------- | -------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| `no-pressure-copy`    | urgency, scarcity or outcome-guarantee wording in JSX text or strings                                    | default lexicons: `en`, `fr`, `de`                                                                                           |
-| `session-token-auth`  | `document.cookie`; `localStorage` / `sessionStorage` `getItem` / `setItem` with an identity-carrying key | `identityKeyPattern` default: token/session/auth/jwt/credential/api-key. Lexical candidates, not authentication verification |
-| `settings-save-bar`   | a `<form>` / `<Form>` opening element without its own save-bar marker                                    | a custom `saveBarMarkerPattern` stays a trusted escape hatch over the opening element                                        |
-| `review-solicitation` | specific review-request phrases in JSX text or strings                                                   | English, French and German defaults are partial lexicons; neutral requests still need placement and incentive review         |
+| Rule                  | Fires on                                                                                                 | Boundary                                                                                                                                                                                  |
+| --------------------- | -------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `no-pressure-copy`    | urgency, scarcity or outcome-guarantee wording in JSX text or strings                                    | default lexicons: `en`, `fr`, `de`                                                                                                                                                        |
+| `session-token-auth`  | `document.cookie`; `localStorage` / `sessionStorage` `getItem` / `setItem` with an identity-carrying key | `identityKeyPattern` default: token/session/auth/jwt/credential/api-key. Lexical candidates, not authentication verification                                                              |
+| `settings-save-bar`   | a `<form>` / `<Form>` opening element without its own save-bar marker                                    | public routes (`_index`, `auth*`, `login*`, `signin`, `landing*`, `unauthenticated` path segments); a custom `saveBarMarkerPattern` stays a trusted escape hatch over the opening element |
+| `review-solicitation` | specific review-request phrases in JSX text or strings                                                   | English, French and German defaults are partial lexicons; neutral requests still need placement and incentive review                                                                      |
 
 Recognized save-bar markers don't prove dirty-state or navigation behavior: exercise those states with a route review.
 
@@ -117,12 +117,12 @@ The Text field reference encourages feedback during typing; the Alerts guide rec
 <details>
 <summary>Server: loops, webhooks, Flow actions, scopes</summary>
 
-| Rule                            | Fires on                                                                                                                                                                                                                      | Stays silent                                                                                       |
-| ------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
-| `admin-api-loop-review`         | `admin.graphql`, `client.request` or `client.query` (optionally qualified) inside a `for` / `for…of` / `while` / `do` body, or a `.map` / `.forEach` / `.flatMap` callback                                                    | a `for…of` iterable, a `for` initializer, functions merely defined inside a loop; test files       |
-| `webhook-handler-review`        | once per file: `authenticate.webhook`, an `X-Shopify-Hmac-Sha256` / `X-Shopify-Topic` / `X-Shopify-Webhook-Id` string, or a known topic literal (`orders/create`, `APP_UNINSTALLED`) as a `switch` case or comparison operand | test files                                                                                         |
-| `flow-action-handler-review` 🧪 | once per file: `authenticate.flow`, an `action_run_id` / `action_definition_id` key (member, destructuring, computed or object key), or a path matching `handlerPathPattern`                                                  | preview and validation endpoints (no run id), the key as plain text; test files                    |
-| `scope-change-review` 🧪        | change rule: `shopify.app.toml` / `shopify.app.<name>.toml` whose `[access_scopes]` `scopes` / `optional_scopes` (or legacy top-level `scopes`) gained entries since the Git baseline                                         | removed, reordered or demoted scopes; unchanged manifests are never inventoried, even with `--all` |
+| Rule                            | Fires on                                                                                                                                                                                                                      | Stays silent                                                                                                               |
+| ------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| `admin-api-loop-review`         | `admin.graphql`, `client.request` or `client.query` (optionally qualified) inside a `for` / `for…of` / `while` / `do` body, or a `.map` / `.forEach` / `.flatMap` callback                                                    | a `for…of` iterable, a `for` initializer, functions merely defined inside a loop; test files                               |
+| `webhook-handler-review`        | once per file: `authenticate.webhook`, an `X-Shopify-Hmac-Sha256` / `X-Shopify-Topic` / `X-Shopify-Webhook-Id` string, or a known topic literal (`orders/create`, `APP_UNINSTALLED`) as a `switch` case or comparison operand | test files; a handler whose body only authenticates, logs, and returns (a file naming a compliance topic is never trivial) |
+| `flow-action-handler-review` 🧪 | once per file: `authenticate.flow`, an `action_run_id` / `action_definition_id` key (member, destructuring, computed or object key), or a path matching `handlerPathPattern`                                                  | preview and validation endpoints (no run id), the key as plain text; test files                                            |
+| `scope-change-review` 🧪        | change rule: `shopify.app.toml` / `shopify.app.<name>.toml` whose `[access_scopes]` `scopes` / `optional_scopes` (or legacy top-level `scopes`) gained entries since the Git baseline                                         | removed, reordered or demoted scopes; unchanged manifests are never inventoried, even with `--all`                         |
 
 | Limit                        |                                                                                                                                                                                                                                                                                                                           |
 | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -210,7 +210,7 @@ Requirement IDs and evidence boundaries: [`policy/shopify-requirements.json`](..
 
 </details>
 
-## Sources
+## Every review re-implements Shopify documentation
 
 Independently implemented from Shopify's official documentation; no Shopify code or templates vendored. Greppable `@attribution` tags mark source concepts in implementation files. `starterPreset` onboarding: conceptual inspiration from desloppify by Peter O'Malley; no code or guidance copied.
 

@@ -5,9 +5,9 @@
 **4 agentlint reviews for TanStack Query: every query and mutation shows its loading, error and stale states; data is fetched by key, not by command.**
 
 > [!WARNING]
-> Requires the engine `@aurelienbbn/agentlint` `>=0.3.0 <0.8.0` as a peer. [Evidence](../../docs/compatibility.md#agentlint-engine).
+> Requires the engine `@aurelienbbn/agentlint` `>=0.3.0 <0.10.0` as a peer. [Evidence](../../docs/compatibility.md#agentlint-engine).
 
-## Quick start
+## Four commands reach the first review
 
 ```sh
 agentlint init --preset "@aurelienbbn/agentlint-plugin-tanstack-query#starterPreset"
@@ -25,7 +25,7 @@ import { queryFreshnessIntent, strictPreset } from "@aurelienbbn/agentlint-plugi
 export default defineConfig({ extends: [strictPreset], rules: [queryFreshnessIntent] });
 ```
 
-## Rules
+## Four reviews, one of them opt-in
 
 | Rule                        | `strictPreset` | `starterPreset` | Authority | Standard rev | Detector | Skips             |
 | --------------------------- | :------------: | :-------------: | --------- | :----------: | :------: | ----------------- |
@@ -36,7 +36,7 @@ export default defineConfig({ extends: [strictPreset], rules: [queryFreshnessInt
 
 ✅ in preset · 🧪 opinionated, add `queryFreshnessIntent` to `rules`. Presets ignore `**/*.d.ts`.
 
-**⚠️ `query-state-coverage` rev 2: UI hooks own the review.** Shared `queryOptions` / `infiniteQueryOptions` no longer get duplicate prompts; Suspense hooks are included, with pending and error handling allowed in surrounding Suspense/error boundaries.
+**⚠️ `query-state-coverage` rev 2: UI hooks own the review.** Shared `queryOptions` / `infiniteQueryOptions` no longer get duplicate prompts; Suspense hooks are included, with pending and error handling allowed in surrounding Suspense/error boundaries. Detector v3: a state-owning hook (`useQuery`, `useQueries`, `useInfiniteQuery`) stays silent when its enclosing function already mentions both pending (`isPending`, `isLoading`, `status === "pending"`) and error (`isError`, `error`, `status === "error"`) state.
 
 ```ts
 trpc.todo.list.useQuery(undefined); // ❌ query-state-coverage

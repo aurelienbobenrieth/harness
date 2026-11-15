@@ -171,3 +171,36 @@ it("skips the files a configuration allows", async () => {
     }),
   ).resolves.toBeUndefined();
 });
+
+it("allows a recursive type, which a derived declaration cannot express", async () => {
+  await expect(
+    assertRuleDoesNotReport(
+      ruleName,
+      [
+        "export type Tree = { readonly value: number; readonly children: ReadonlyArray<Tree> };",
+        "export interface Node { readonly next: Node | undefined }",
+      ].join("\n"),
+      domainFile,
+    ),
+  ).resolves.toBeUndefined();
+});
+
+it("allows an interface that extends a runtime handle such as Context.Key", async () => {
+  await expect(
+    assertRuleDoesNotReport(
+      ruleName,
+      'import { Context } from "effect";\nexport interface Any extends Context.Key<unknown, unknown> {\n  readonly kind: "Aggregate";\n}\n',
+      domainFile,
+    ),
+  ).resolves.toBeUndefined();
+});
+
+it("still reports a type whose body only shares a prefix with its name", async () => {
+  await expect(
+    assertRuleReports(
+      ruleName,
+      "export type Order = { readonly orderId: string; readonly Orders: number };\n",
+      domainFile,
+    ),
+  ).resolves.toBeUndefined();
+});

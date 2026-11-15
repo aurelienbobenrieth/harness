@@ -28,10 +28,11 @@ function complianceTopicsInEvents(events: unknown): readonly string[] {
  */
 export const complianceWebhooks: ConformanceCheck = {
   id: "compliance-webhooks",
-  description: "Apps must subscribe to the three mandatory privacy compliance webhook topics.",
+  description: "Public apps must subscribe to the three mandatory privacy compliance webhook topics.",
   docs,
   async run(options) {
     const { root } = options;
+    if (options.distribution === "custom") return [];
     const findings: ConformanceFinding[] = [];
     const configFiles = await appManifests(options);
 

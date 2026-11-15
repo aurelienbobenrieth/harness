@@ -5,7 +5,7 @@
 **One oxfmt config for every JS/TS repo: 100 columns, double quotes, trailing commas, multiline JSDoc, sorted `package.json`.**
 
 ```sh
-pnpm add -D @aurelienbbn/oxfmt-config oxfmt   # oxfmt >=0.67.0 <0.69.0 · Node ^22.19.0 || ^24.11.0
+pnpm add -D @aurelienbbn/oxfmt-config oxfmt   # oxfmt ">=0.67.0 <0.69.0 || ^0.74.0 || ^0.78.0" · Node ^22.19.0 || ^24.11.0
 ```
 
 ```ts
@@ -16,9 +16,9 @@ import { defineConfig } from "oxfmt";
 export default defineConfig(defineOxfmtConfig({ ignorePatterns: ["dist/**"] }));
 ```
 
-Plain `OxfmtConfig`: works with oxfmt directly or as Vite+'s `fmt` config, no Vite+ dependency.
+The result is a plain `OxfmtConfig`: oxfmt reads it directly, or Vite+ reads it as its `fmt` config. No Vite+ dependency.
 
-## Exports
+## Three exports, one baseline
 
 | Export                                    | What                                   |
 | ----------------------------------------- | -------------------------------------- |
@@ -52,6 +52,6 @@ defineOxfmtConfig(o, { replaceLists: true }) ignorePatterns, overrides  →  you
 any other top-level key                                                  →  yours wins
 ```
 
-**Result is a `structuredClone`:** mutating it never touches `defaultOxfmtConfig`.
+**The result is a `structuredClone`:** mutating it never touches `defaultOxfmtConfig`.
 
 [Compatibility matrix](../../docs/compatibility.md): packed config vs baseline and current oxfmt, complete dependency-declaration checks, clean and badly formatted inputs.

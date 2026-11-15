@@ -27,10 +27,12 @@ const fingerprintVersion = new Map([
   ["0.3.0", 3],
   ["0.4.0", 3],
   ["0.7.0", 4],
+  ["0.8.0", 4],
+  ["0.9.1", 4],
 ]).get(engineManifest.version);
 if (fingerprintVersion === undefined) throw new Error(`Unreviewed engine fingerprint: ${engineManifest.version}`);
 const brokenSource =
-  'export interface IUser { id: string }\nexport type Order = { id: string };\nfetch("/unbounded"); useQuery({}); createActor(machine); const copy = "Hurry!";';
+  'import { Effect } from "effect";\nexport interface IUser { id: string }\nexport type Order = { id: string };\nfetch("/unbounded"); useQuery({}); createActor(machine); const copy = "Hurry!";\nstore.read().pipe(Effect.mapError(() => new Unavailable()));';
 
 function commitBaseline(cwd: string): void {
   execFileSync("git", ["init", "--quiet"], { cwd, windowsHide: true });

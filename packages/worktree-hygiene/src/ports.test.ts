@@ -15,19 +15,19 @@ describe("worktree ports", () => {
   const names = ["game", "worker", "atelier"];
 
   it("gives consecutive ports inside the worktree's range, in name order", () => {
-    const { range, ports } = worktreePorts({ root: "/work/panache", names, platform: "linux" });
+    const { range, ports } = worktreePorts({ root: "/work/acme", names, platform: "linux" });
 
     expect(ports).toStrictEqual({
       game: 20_000 + range * 10,
       worker: 20_000 + range * 10 + 1,
       atelier: 20_000 + range * 10 + 2,
     });
-    expect(range).toBe(fnv1a("/work/panache") % 900);
+    expect(range).toBe(fnv1a("/work/acme") % 900);
   });
 
   it("gives the same ports to two spellings of one Windows path", () => {
-    const native = worktreePorts({ root: "C:\\Work\\Panache\\", names, platform: "win32" });
-    const slashed = worktreePorts({ root: "c:/work/panache", names, platform: "win32" });
+    const native = worktreePorts({ root: "C:\\Work\\Acme\\", names, platform: "win32" });
+    const slashed = worktreePorts({ root: "c:/work/acme", names, platform: "win32" });
 
     expect(slashed.ports).toStrictEqual(native.ports);
   });

@@ -1,6 +1,6 @@
 {
   "name": "@aurelienbbn/oxlint-plugin-tanstack-query",
-  "version": "0.1.1",
+  "version": "0.1.6",
   "description": "Custom oxlint rules for TanStack Query failure modes the official plugin does not cover.",
   "keywords": [
     "lint",
@@ -44,7 +44,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@oxlint/plugins": "1.85.0"
+    "@oxlint/plugins": "1.93.0"
   },
   "devDependencies": {
     "@aurelienbbn/oxlint-kit": "workspace:*"

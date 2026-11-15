@@ -1,10 +1,11 @@
 import type { Context, ESTree, Rule } from "@oxlint/plugins";
 import { effectMethod, moduleMethod } from "../binding-support.js";
 import { getFilename, isAllowedFile, type RuleContextWithOptions } from "../runtime-support.js";
+import { testSupportFiles } from "../test-paths.js";
 
 const message =
   "Use typed Effect failures instead of converting failures to defects with Effect.orDie, Layer.orDie, or a catch handler that only dies.";
-const defaultAllow: readonly string[] = [];
+const defaultAllow = testSupportFiles;
 const defaultAllowedCalls: readonly string[] = [];
 
 type RuleOptions = {

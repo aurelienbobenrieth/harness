@@ -231,3 +231,11 @@ export function escapeRegExp(value: string): string {
 export function isBoundaryFile(filename: string): boolean {
   return /(?:^|[/\\])(?:boundaries|decoders|adapters)(?:[/\\])|\.boundary\.[cm]?[jt]sx?$/.test(filename);
 }
+
+/**
+ * Test files are exempt from every rule: assertion-built doubles (`vi.fn() as unknown as Port`), deliberately
+ * invalid inputs (`42 as never`) and `unknown` fixtures are how a test states its subject. A mistake there fails the test.
+ */
+export function isTestFile(filename: string): boolean {
+  return /\.(?:test|spec)\.[cm]?[jt]sx?$|(?:^|[/\\])(?:__tests__|__mocks__|tests?|e2e)[/\\]/.test(filename);
+}

@@ -58,3 +58,43 @@ it("narrows to visibly rejectable thunks in rejectable-only mode", async () => {
     assertRuleDoesNotReport(ruleName, "const value = Effect.promise(() => compute(input));\n", config),
   ).resolves.toBeUndefined();
 });
+
+it("allows Effect.promise in finalizers, whose error channel must stay empty", async () => {
+  await expect(
+    assertRuleDoesNotReport(
+      ruleName,
+      [
+        "const a = Effect.acquireRelease(open, (pg) => Effect.promise(() => pg.close()).pipe(Effect.timeoutOption(1000)));",
+        "const b = Effect.acquireUseRelease(open, use, (pg) => Effect.promise(() => pg.end()));",
+        "const c = program.pipe(Effect.ensuring(Effect.promise(() => provider.shutdown())));",
+        "const d = Effect.addFinalizer(() => Effect.promise(() => server.close()));",
+        "",
+      ].join("\n"),
+    ),
+  ).resolves.toBeUndefined();
+});
+
+it("still reports Effect.promise in the acquire and use positions", async () => {
+  await expect(
+    assertRuleReports(ruleName, "const a = Effect.acquireRelease(Effect.promise(() => connect()), close);\n"),
+  ).resolves.toBeUndefined();
+  await expect(
+    assertRuleReports(
+      ruleName,
+      "const b = Effect.acquireUseRelease(open, (pg) => Effect.promise(() => pg.query(sql)), close);\n",
+    ),
+  ).resolves.toBeUndefined();
+});
+
+it("skips test files and test-support folders by default", async () => {
+  await Promise.all(
+    ["src/store.test.ts", "src/testing/seed.ts", "src/__tests__/db.ts"].map(async (filename) => {
+      await expect(
+        assertRuleDoesNotReport(ruleName, "const res = Effect.promise(() => fetch(url));\n", { filename }),
+      ).resolves.toBeUndefined();
+    }),
+  );
+  await expect(
+    assertRuleReports(ruleName, "const res = Effect.promise(() => fetch(url));\n", { filename: "src/testimonials.ts" }),
+  ).resolves.toBeUndefined();
+});

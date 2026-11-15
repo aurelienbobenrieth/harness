@@ -1,5 +1,6 @@
 import type { Context, ESTree, Rule } from "@oxlint/plugins";
 import { effectBodyMethod } from "../binding-support.js";
+import { allowOptionDefaults, allowOptionSchema, isExemptFile } from "../test-paths.js";
 
 const throwMessage = "Use Effect.fail, Effect.die, or Effect.try instead of throwing inside an Effect body.";
 
@@ -35,11 +36,15 @@ export const noUnsafeEffectBody: Rule = {
     messages: {
       noThrow: throwMessage,
     },
+    schema: [allowOptionSchema],
+    defaultOptions: allowOptionDefaults,
   },
   createOnce(context) {
     return {
       ThrowStatement(node) {
         if (!isInsideEffectBody(node, context)) return;
+
+        if (isExemptFile(context)) return;
 
         context.report({
           node,

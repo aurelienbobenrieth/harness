@@ -3,7 +3,7 @@ import { mkdtempSync, mkdirSync, rmSync, symlinkSync, writeFileSync } from "node
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
-import { checkSkills, validateSkill } from "./check-skills.mjs";
+import { checkSkills, countWords, skillWordBudget, validateSkill } from "./check-skills.mjs";
 
 const source = (body = "Complete the requested task.") =>
   `---\nname: example\ndescription: A focused task skill.\n---\n\n${body}\n`;
@@ -116,4 +116,31 @@ test("a top-level junction cannot bypass the self-contained reference check", (c
     process.platform === "win32" ? "junction" : "dir",
   );
   assert.throws(() => checkSkills(path.join(root, "skills")), /symbolic links/u);
+});
+
+const words = (count) => Array.from({ length: count }, () => "word").join(" ");
+
+test("a body at the word budget passes and one word more fails, pointing at references", () => {
+  assert.doesNotThrow(() => validateSkill({ directory: "example", source: source(words(skillWordBudget)) }));
+  assert.throws(
+    () => validateSkill({ directory: "example", source: source(words(skillWordBudget + 1)) }),
+    /over the 450-word budget; move task-specific detail to a linked references\/ file/u,
+  );
+});
+
+test("table pipes, rules, and arrows do not spend the word budget", () => {
+  assert.equal(countWords("| Rule | Backed by |\n| ---- | --------- |\n| a → b | `x-y` |"), 6);
+});
+
+test("an em dash anywhere in a skill's markdown fails with its line, references included", (context) => {
+  const root = fixture(context, {
+    "example/SKILL.md": source("See [detail](references/detail.md)."),
+    "example/references/detail.md": "First line.\nSecond line \u2014 with a dash.\n",
+  });
+  assert.throws(() => checkSkills(root), /detail\.md:2: remove the em dash/u);
+});
+
+test("en dashes in ranges and hyphens stay allowed", (context) => {
+  const root = fixture(context, { "example/SKILL.md": source("Write 1\u20133 sentences in kebab-case.") });
+  assert.equal(checkSkills(root).length, 1);
 });

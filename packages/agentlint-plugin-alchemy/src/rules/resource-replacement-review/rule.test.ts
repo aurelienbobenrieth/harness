@@ -91,12 +91,6 @@ it("reports declarations lost with a deleted file and ignores declarations moved
 });
 
 it("reports replace-triggering props per the provider diff", async () => {
-  const change = (before: string, after: string) =>
-    messages({
-      before: { "alchemy.run.ts": stack(`  yield* ${before};`) },
-      after: { "alchemy.run.ts": stack(`  yield* ${after};`) },
-    });
-
   expect(await change('Cloudflare.R2.Bucket("B", { jurisdiction: "eu" })', 'Cloudflare.R2.Bucket("B")')).toEqual([
     'R2.Bucket "B" changes `jurisdiction` ("eu" → "default"): Alchemy plans a replace, which creates a new, empty R2.Bucket and deletes the old one with its data. Revert the prop or confirm the data is disposable or migrated.',
   ]);
@@ -116,12 +110,6 @@ it("reports replace-triggering props per the provider diff", async () => {
 });
 
 it("stays silent for prop changes that update in place or keep the deployed value", async () => {
-  const change = (before: string, after: string) =>
-    messages({
-      before: { "alchemy.run.ts": stack(`  yield* ${before};`) },
-      after: { "alchemy.run.ts": stack(`  yield* ${after};`) },
-    });
-
   expect(await change('Cloudflare.R2.Bucket("B", { name: "assets" })', 'Cloudflare.R2.Bucket("B")')).toEqual([]);
   expect(
     await change('Cloudflare.D1.Database("D", { primaryLocationHint: "weur" })', 'Cloudflare.D1.Database("D")'),
@@ -214,12 +202,28 @@ it("fails instead of passing when a snapshot has no content", async () => {
 });
 
 it("treats a missing jurisdiction as the default jurisdiction", async () => {
-  const change = (before: string, after: string) =>
-    messages({ before: { "alchemy.run.ts": `${before}\n` }, after: { "alchemy.run.ts": `${after}\n` } });
   const results = await Promise.all([
-    change('yield* Cloudflare.R2.Bucket("B");', 'yield* Cloudflare.R2.Bucket("B", { jurisdiction: "default" });'),
-    change('yield* Cloudflare.D1.Database("D", { jurisdiction: "default" });', 'yield* Cloudflare.D1.Database("D");'),
-    change('yield* Cloudflare.R2.Bucket("B");', 'yield* Cloudflare.R2.Bucket("B", { jurisdiction: "eu" });'),
+    jurisdictionChange(
+      'yield* Cloudflare.R2.Bucket("B");',
+      'yield* Cloudflare.R2.Bucket("B", { jurisdiction: "default" });',
+    ),
+    jurisdictionChange(
+      'yield* Cloudflare.D1.Database("D", { jurisdiction: "default" });',
+      'yield* Cloudflare.D1.Database("D");',
+    ),
+    jurisdictionChange(
+      'yield* Cloudflare.R2.Bucket("B");',
+      'yield* Cloudflare.R2.Bucket("B", { jurisdiction: "eu" });',
+    ),
   ]);
   expect(results.map((result) => result.length)).toEqual([0, 0, 1]);
 });
+
+const change = (before: string, after: string) =>
+  messages({
+    before: { "alchemy.run.ts": stack(`  yield* ${before};`) },
+    after: { "alchemy.run.ts": stack(`  yield* ${after};`) },
+  });
+
+const jurisdictionChange = (before: string, after: string) =>
+  messages({ before: { "alchemy.run.ts": `${before}\n` }, after: { "alchemy.run.ts": `${after}\n` } });

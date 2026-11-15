@@ -124,3 +124,10 @@ it("explains that Events cannot replace missing compliance subscriptions", async
     findings.every((finding) => finding.message.endsWith("Events subscriptions cannot carry compliance topics.")),
   ).toBe(true);
 });
+
+it("skips custom distribution apps and still enforces public ones", async () => {
+  const root = await createFixture({ "shopify.app.toml": 'name = "app"\n' });
+  expect(await complianceWebhooks.run({ root, distribution: "custom" })).toEqual([]);
+  expect(await complianceWebhooks.run({ root, distribution: "public" })).toHaveLength(3);
+  expect(await complianceWebhooks.run({ root })).toHaveLength(3);
+});

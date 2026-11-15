@@ -80,3 +80,50 @@ it("excludes test files by default and honours a configured machineCalleePattern
 
   expect(findings).toHaveLength(1);
 });
+
+const v6Uploads = `
+import { createMachine } from "xstate";
+
+export const uploads = createMachine({
+  actors: { upload: uploadLogic },
+  context: { uploads: [] },
+  on: {
+    "file.added": ({ context, event }, enq) => {
+      const upload = enq.spawn("upload", { id: \`upload-\${event.fileId}\`, input: { file: event.file } });
+      return { context: { ...context, uploads: [...context.uploads, upload] } };
+    },
+  },
+});
+`;
+
+it("reports a v6 machine that spawns through the enqueue parameter, with the per-version stop in the message", async () => {
+  const findings = await testRuleOnSource({ rule: spawnedActorRelease, source: v6Uploads, file: "src/uploads.ts" });
+
+  expect(findings.map((finding) => [finding.line, finding.message])).toEqual([
+    [
+      4,
+      "Machine spawns actors: pair every spawn with a stop (v5 stopChild(), v6 enq.stop()) and remove its ref from context in the same transition.",
+    ],
+  ]);
+});
+
+it("reports the enqueue spawn whatever the parameter is named, in methods and setupEffect actions", async () => {
+  const source = `
+const a = createMachine({ entry(_, queue) { queue.spawn("sync", { id: "sync" }); } });
+const b = setupEffect({ actions: { startSync: (_, enq) => enq.spawn("sync") } });
+const c = system.setup({ actors: { sync } }).createMachine({ context: ({ spawn, actors }) => ({ sync: spawn(actors.sync) }) });
+`;
+  await expect(testRuleOnSource({ rule: spawnedActorRelease, source: source, file: "src/m.ts" })).resolves.toHaveLength(
+    3,
+  );
+});
+
+it("stays silent when spawn is not the handler's enqueue parameter or a destructured spawn", async () => {
+  const source = `
+const a = createMachine({ on: { run: ({ context }, enq) => { context.pool.spawn("job"); } } });
+const b = createMachine({ on: { run: (enq) => { enq.spawn("job"); } } });
+const c = createMachine({ on: { run: (_, enq) => { [1].forEach((enq) => enq.spawn("job")); } } });
+const d = createMachine({ entry: ({ context }) => { spawn("git", ["status"]); } });
+`;
+  await expect(testRuleOnSource({ rule: spawnedActorRelease, source: source, file: "src/m.ts" })).resolves.toEqual([]);
+});

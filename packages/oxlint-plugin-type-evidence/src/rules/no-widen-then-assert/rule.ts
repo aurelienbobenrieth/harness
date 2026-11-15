@@ -6,7 +6,9 @@ import {
   isAssertionExpression,
   isBroadRecordType,
   isConstAssertion,
+  findAncestor,
   isKnownValueExpression,
+  isTestFile,
   typeMatches,
   unwrapExpressionParens,
   type AliasMap,
@@ -63,6 +65,23 @@ function initializerHasKnownEvidence(declarator: ESTree.VariableDeclarator): boo
   }
 }
 
+/**
+ * A generic builder (`const out: Record<string, unknown> = {}; …; return out as T`) cannot prove `T` to the compiler:
+ * the assertion to an enclosing type parameter is the only way to return it.
+ */
+function assertsToTypeParameter(node: ESTree.TSAsExpression | ESTree.TSTypeAssertion): boolean {
+  const target = node.typeAnnotation;
+  if (target.type !== "TSTypeReference" || target.typeName.type !== "Identifier") return false;
+  const name = target.typeName.name;
+  return (
+    findAncestor(node, (candidate) => {
+      const parameters = (candidate as { readonly typeParameters?: ESTree.TSTypeParameterDeclaration | null })
+        .typeParameters;
+      return parameters?.params.some((parameter) => parameter.name.name === name) ?? false;
+    }) !== undefined
+  );
+}
+
 export const noWidenThenAssert: Rule = {
   meta: {
     type: "problem",
@@ -85,7 +104,7 @@ export const noWidenThenAssert: Rule = {
     let assertions: NarrowingAssertion[] = [];
 
     const collectAssertion = (node: ESTree.TSAsExpression | ESTree.TSTypeAssertion): void => {
-      if (isConstAssertion(node) || isBroadType(node.typeAnnotation)) return;
+      if (isConstAssertion(node) || isBroadType(node.typeAnnotation) || assertsToTypeParameter(node)) return;
       const subject = unwrapExpressionParens(node.expression);
       if (subject.type !== "Identifier") return;
       assertions.push({
@@ -97,6 +116,7 @@ export const noWidenThenAssert: Rule = {
 
     return {
       before() {
+        if (isTestFile(context.filename)) return false;
         declarations = [];
         assertions = [];
       },

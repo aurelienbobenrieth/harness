@@ -45,6 +45,80 @@ describe("core/workspace-boundaries through oxlint", () => {
     expect(messages).toHaveLength(2);
   });
 
+  it("stays silent on a subpath of a member whose manifest declares no exports", async () => {
+    await expect(
+      assertRuleDoesNotReport(
+        ruleName,
+        'import { ranger } from "@fixture/ranger/src/index.ts";\nexport const mage = ranger;\n',
+        { filename: "packages/features/mage/src/index.ts", files: workspace },
+      ),
+    ).resolves.toBeUndefined();
+  });
+
+  it("exempts test files from the relative-path and unexported-subpath checks", async () => {
+    await expect(
+      assertRuleDoesNotReport(
+        ruleName,
+        'import { kernel } from "@fixture/kernel/src/index.ts";\nimport { again } from "../../../packages/kernel/src/index.ts";\nexport const t = [kernel, again];\n',
+        { filename: "apps/web/src/app.test.ts", files: workspace },
+      ),
+    ).resolves.toBeUndefined();
+  });
+
+  it("judges test files too with includeTestFiles", async () => {
+    const messages = await reportedMessages(
+      ruleName,
+      'import { kernel } from "@fixture/kernel/src/index.ts";\nimport { again } from "../../../packages/kernel/src/index.ts";\nexport const t = [kernel, again];\n',
+      { filename: "apps/web/src/app.test.ts", files: workspace, ruleOptions: { includeTestFiles: true } },
+    );
+
+    expect(messages).toHaveLength(2);
+  });
+
+  it('closes a member without an exports field to its root with missingExports "root"', async () => {
+    await expect(
+      assertRuleReports(
+        ruleName,
+        'import { ranger } from "@fixture/ranger/src/index.ts";\nexport const mage = ranger;\n',
+        {
+          filename: "packages/features/mage/src/index.ts",
+          files: workspace,
+          ruleOptions: { missingExports: "root" },
+          message: /is not opened by the package.json exports of @fixture\/ranger/u,
+        },
+      ),
+    ).resolves.toBeUndefined();
+  });
+
+  it('keeps the root of a member without exports open with missingExports "root"', async () => {
+    await expect(
+      assertRuleDoesNotReport(ruleName, 'import { ranger } from "@fixture/ranger";\nexport const mage = ranger;\n', {
+        filename: "packages/features/mage/src/index.ts",
+        files: workspace,
+        ruleOptions: { missingExports: "root" },
+      }),
+    ).resolves.toBeUndefined();
+  });
+
+  it("still reports a package importing an app from a test file", async () => {
+    await expect(
+      assertRuleReports(ruleName, 'import { web } from "@fixture/web";\nexport { web };\n', {
+        filename: "packages/kernel/src/leak.test.ts",
+        files: workspace,
+      }),
+    ).resolves.toBeUndefined();
+  });
+
+  it("reports the same deep import and relative path from a non-test file", async () => {
+    const messages = await reportedMessages(
+      ruleName,
+      'import { kernel } from "@fixture/kernel/src/index.ts";\nimport { again } from "../../../packages/kernel/src/index.ts";\nexport const t = [kernel, again];\n',
+      { filename: "apps/web/src/app.ts", files: workspace },
+    );
+
+    expect(messages).toHaveLength(2);
+  });
+
   it("reports a relative path between members", async () => {
     await expect(
       assertRuleReports(

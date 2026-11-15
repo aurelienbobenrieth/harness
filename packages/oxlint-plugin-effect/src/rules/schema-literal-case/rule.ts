@@ -6,6 +6,7 @@ import {
   unwrapExpression,
 } from "@aurelienbbn/oxlint-kit/ast";
 import { moduleMethod } from "../binding-support.js";
+import { isGeneratedFile } from "../generated-support.js";
 
 type LiteralCase = "snake" | "kebab" | "camel" | "pascal";
 
@@ -20,6 +21,17 @@ const casePatterns: Readonly<Record<LiteralCase, { readonly pattern: RegExp; rea
 
 function isLiteralCase(value: unknown): value is LiteralCase {
   return value === "snake" || value === "kebab" || value === "camel" || value === "pascal";
+}
+
+function allowedValues(context: Context): readonly RegExp[] {
+  const value = optionsObject(context)["allowedValues"];
+  if (!Array.isArray(value)) return [];
+  return value.flatMap((entry) => (typeof entry === "string" ? [new RegExp(entry, "u")] : []));
+}
+
+/** Flags, paths and symbols such as `--base`, `/s/:room` or a keyboard glyph are not words with a case. */
+function isNotAWord(value: string): boolean {
+  return value.length > 0 && (/^[-.@#$]|[/:\\]/u.test(value) || !/[A-Za-z0-9]/u.test(value));
 }
 
 function caseOption(context: Context): LiteralCase {
@@ -45,7 +57,7 @@ export const schemaLiteralCase: Rule = {
     type: "suggestion",
     docs: {
       description:
-        "Require the string values of Schema.Literals([...]) to follow one case: snake_case by default, or kebab, camel, or pascal.",
+        "Require the string values of Schema.Literals([...]) to follow one case: snake_case by default, or kebab, camel, or pascal. Generated files, flags, paths, symbols and values matching `allowedValues` are skipped.",
     },
     messages: {
       wrongCase:
@@ -54,7 +66,10 @@ export const schemaLiteralCase: Rule = {
     schema: [
       {
         type: "object",
-        properties: { case: { enum: ["snake", "kebab", "camel", "pascal"] } },
+        properties: {
+          case: { enum: ["snake", "kebab", "camel", "pascal"] },
+          allowedValues: { type: "array", items: { type: "string" } },
+        },
         additionalProperties: false,
       },
     ],
@@ -67,11 +82,15 @@ export const schemaLiteralCase: Rule = {
         const list = node.arguments[0] === undefined ? undefined : unwrapExpression(node.arguments[0]);
         if (list?.type !== "ArrayExpression") return;
 
+        if (isGeneratedFile(context)) return;
+
         const literalCase = caseOption(context);
+        const exempt = allowedValues(context);
         const { pattern, example } = casePatterns[literalCase];
         for (const element of list.elements) {
           const value = stringLiteralValue(element);
           if (element === null || value === undefined || pattern.test(value)) continue;
+          if (isNotAWord(value) || exempt.some((entry) => entry.test(value))) continue;
           context.report({ node: element, messageId: "wrongCase", data: { value, case: literalCase, example } });
         }
       },

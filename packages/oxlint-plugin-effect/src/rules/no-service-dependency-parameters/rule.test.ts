@@ -60,3 +60,21 @@ it("ignores service examples in template strings", async () => {
     assertRuleDoesNotReport(ruleName, "const example = `const run = (emailService: EmailService) => Effect.void`;\n"),
   ).resolves.toBeUndefined();
 });
+
+it("allows a service tag as a parameter, which is not a service instance", async () => {
+  await expect(
+    assertRuleDoesNotReport(
+      ruleName,
+      [
+        "const provide = <I, S>(tag: Context.Service<I, S>) => tag;",
+        "const lookup = <I, S>(tag: ServiceMap.Service<I, S>) => tag;",
+      ].join("\n"),
+    ),
+  ).resolves.toBeUndefined();
+});
+
+it("allows a Service type from a lowercase SDK namespace", async () => {
+  await expect(
+    assertRuleDoesNotReport(ruleName, "const describe = (service: ecs.Service) => service.name;\n"),
+  ).resolves.toBeUndefined();
+});

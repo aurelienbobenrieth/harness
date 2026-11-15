@@ -1,5 +1,5 @@
 import type { Context, ESTree, Rule } from "@oxlint/plugins";
-import { resolveVariable } from "../ast-support.js";
+import { isTestFile, resolveVariable } from "../ast-support.js";
 import { firstOption, stringArrayOption } from "../option-support.js";
 
 const headerPattern = /^x-shopify-hmac-sha256$/i;
@@ -83,6 +83,7 @@ export const webhookHmacVerificationShape: Rule = {
         createsHmac = false;
         reserialized = [];
         identifiers = new Set();
+        return !isTestFile(context);
       },
       Literal(node) {
         noteHeader(node, node.value);

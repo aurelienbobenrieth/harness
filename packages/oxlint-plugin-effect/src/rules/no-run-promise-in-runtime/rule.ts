@@ -1,12 +1,8 @@
 import type { Rule } from "@oxlint/plugins";
 import { effectMethod } from "../binding-support.js";
-import {
-  defaultAllow,
-  getFilename,
-  getOptions,
-  isAllowedFile,
-  type RuleContextWithOptions,
-} from "../runtime-support.js";
+import { getFilename, getOptions, isAllowedFile, type RuleContextWithOptions } from "../runtime-support.js";
+import { isBrowserEntry, isInsideWorkerHandler } from "../runtime-boundary.js";
+import { testSupportFiles as defaultAllow } from "../test-paths.js";
 
 const message =
   "Run Effects only at configured runtime boundaries instead of using Effect.runPromise, Effect.runPromiseExit, or their run*With variants here.";
@@ -34,7 +30,7 @@ export const noRunPromiseInRuntime: Rule = {
         additionalProperties: false,
       },
     ],
-    defaultOptions: [{ allow: defaultAllow }],
+    defaultOptions: [{ allow: [...defaultAllow] }],
   },
   createOnce(context) {
     return {
@@ -44,6 +40,8 @@ export const noRunPromiseInRuntime: Rule = {
         const options = getOptions(context as RuleContextWithOptions);
         const allow = options.allow ?? defaultAllow;
         if (isAllowedFile(getFilename(context as RuleContextWithOptions), allow)) return;
+
+        if (isInsideWorkerHandler(node) || isBrowserEntry(context)) return;
 
         context.report({
           node: node.parent.type === "CallExpression" && node.parent.callee === node ? node.parent : node,

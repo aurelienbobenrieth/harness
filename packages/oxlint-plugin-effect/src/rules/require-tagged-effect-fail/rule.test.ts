@@ -91,3 +91,37 @@ it("allows Effect.failSync producing an imported domain error", async () => {
     ),
   ).resolves.toBeUndefined();
 });
+
+it("skips test files by default and reports once allow is replaced", async () => {
+  await expect(
+    assertRuleDoesNotReport("effect/require-tagged-effect-fail", "const p = Effect.fail('boom');\n", {
+      filename: "src/store.test.ts",
+    }),
+  ).resolves.toBeUndefined();
+  await expect(
+    assertRuleReports("effect/require-tagged-effect-fail", "const p = Effect.fail('boom');\n", {
+      filename: "src/store.test.ts",
+      ruleOptions: { allow: ["**/nothing/**"] },
+    }),
+  ).resolves.toBeUndefined();
+});
+
+it("accepts a literal _tag under as const or satisfies", async () => {
+  await expect(
+    assertRuleDoesNotReport(
+      "effect/require-tagged-effect-fail",
+      [
+        'const a = Effect.fail({ _tag: "CreateAccountInProgress" as const });',
+        'const b = Effect.fail({ _tag: "Pending" } as const);',
+        'const c = Effect.fail({ _tag: "Pending" } satisfies Failure);',
+        "",
+      ].join("\n"),
+    ),
+  ).resolves.toBeUndefined();
+});
+
+it("still reports an object without a literal _tag under a type assertion", async () => {
+  await expect(
+    assertRuleReports("effect/require-tagged-effect-fail", 'const a = Effect.fail({ code: "X" } as const);\n'),
+  ).resolves.toBeUndefined();
+});

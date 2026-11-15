@@ -1,5 +1,6 @@
 import type { ESTree, Rule } from "@oxlint/plugins";
 import { fieldHasHole, graphqlSource, mutationDocument, selectionNames } from "../graphql-support.js";
+import { isTestFile } from "../ast-support.js";
 import { firstOption, stringArrayOption } from "../option-support.js";
 
 const message =
@@ -18,7 +19,7 @@ export const requireMutationUserErrors: Rule = {
     type: "problem",
     docs: {
       description:
-        "Require every GraphQL mutation field to select userErrors (or a *UserErrors field). Option `ignoreMutations` lists mutation names without such a payload field.",
+        "Require every GraphQL mutation field to select userErrors (or a *UserErrors field). Test and fixture files are skipped. Option `ignoreMutations` lists mutation names without such a payload field.",
     },
     messages: {
       requireMutationUserErrors: message,
@@ -51,6 +52,12 @@ export const requireMutationUserErrors: Rule = {
         });
       }
     };
-    return { TemplateLiteral: check, Literal: check };
+    return {
+      before() {
+        return !isTestFile(context);
+      },
+      TemplateLiteral: check,
+      Literal: check,
+    };
   },
 };

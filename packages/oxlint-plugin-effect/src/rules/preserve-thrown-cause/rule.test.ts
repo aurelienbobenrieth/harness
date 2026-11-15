@@ -56,3 +56,16 @@ it("leaves Effect.mapError and non-Effect try helpers alone", async () => {
     ),
   ).resolves.toBeUndefined();
 });
+
+it("skips test files by default and reports once allow is replaced", async () => {
+  const code = "const p = Effect.try({ try: () => load(), catch: () => new LoadFailure() });\n";
+  await expect(
+    assertRuleDoesNotReport("effect/preserve-thrown-cause", code, { filename: "src/store.test.ts" }),
+  ).resolves.toBeUndefined();
+  await expect(
+    assertRuleReports("effect/preserve-thrown-cause", code, {
+      filename: "src/store.test.ts",
+      ruleOptions: { allow: ["**/nothing/**"] },
+    }),
+  ).resolves.toBeUndefined();
+});

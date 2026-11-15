@@ -41,10 +41,25 @@ function isMutableInitializer(node: ESTree.Node | undefined | null): boolean {
   return node.type === "NewExpression" && isIdentifier(node.callee) && mutableConstructors.has(node.callee.name);
 }
 
+const readonlyTypeNames = new Set(["Readonly", "ReadonlyArray", "ReadonlyMap", "ReadonlySet"]);
+
+/** True for `readonly T[]`, `readonly [A, B]`, `Readonly<T>`, `ReadonlyArray<T>`, `ReadonlyMap<K, V>`, and `ReadonlySet<T>`. */
+function isReadonlyAnnotation(declarator: VariableDeclarator): boolean {
+  const annotation = (declarator.id as { typeAnnotation?: { typeAnnotation?: ESTree.Node } | null }).typeAnnotation
+    ?.typeAnnotation;
+  if (annotation === undefined) return false;
+  if (annotation.type === "TSTypeOperator") return annotation.operator === "readonly";
+  return (
+    annotation.type === "TSTypeReference" &&
+    annotation.typeName.type === "Identifier" &&
+    readonlyTypeNames.has(annotation.typeName.name)
+  );
+}
+
 function mutableDeclaratorNames(declaration: VariableDeclaration): readonly string[] {
   if (declaration.kind !== "let" && declaration.kind !== "var") {
     return declaration.declarations
-      .filter((declarator) => isMutableInitializer(declarator.init))
+      .filter((declarator) => isMutableInitializer(declarator.init) && !isReadonlyAnnotation(declarator))
       .flatMap((declarator) => (isIdentifier(declarator.id) ? [declarator.id.name] : []));
   }
 

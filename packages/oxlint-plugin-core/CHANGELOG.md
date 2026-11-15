@@ -1,5 +1,55 @@
 # @aurelienbbn/oxlint-plugin-core
 
+## 0.5.3
+
+### Patch Changes
+
+- [#99](https://github.com/aurelienbobenrieth/harness/pull/99) [`d46650d`](https://github.com/aurelienbobenrieth/harness/commit/d46650d2662b4a849cb8530218640c09e2c8c0a4) Thanks [@aurelienbobenrieth](https://github.com/aurelienbobenrieth)! - Rewrite the README: claim headings in the promised order (install and first command before reference), install commands where they were missing, and rule and preset counts corrected against the registered exports.
+
+## 0.5.2
+
+### Patch Changes
+
+- [#97](https://github.com/aurelienbobenrieth/harness/pull/97) [`754d98c`](https://github.com/aurelienbobenrieth/harness/commit/754d98c10480b77c654c88a412636d7ba80cffea) Thanks [@aurelienbobenrieth](https://github.com/aurelienbobenrieth)! - Accept agentlint 0.9 (`>=0.3.0 <0.10.0`) and oxfmt 0.78 (`>=0.67.0 <0.69.0 || ^0.74.0 || ^0.78.0`) as peers. Update runtime dependencies to `@oxlint/plugins` 1.93.0, `graphql` 17.1.0 and `parse5` 8.1.1. The current consumer profile is verified with agentlint 0.9.1, oxlint 1.93.0, oxlint-tsgolint 7.0.2006, oxfmt 0.78.0, Vite Plus 1.5.1 and Vitest 5.1.0.
+
+## 0.5.1
+
+### Patch Changes
+
+- [#95](https://github.com/aurelienbobenrieth/harness/pull/95) [`c90c05c`](https://github.com/aurelienbobenrieth/harness/commit/c90c05c647072e0f3276d951635499cfcda4976a) Thanks [@aurelienbobenrieth](https://github.com/aurelienbobenrieth)! - Update runtime dependencies to `@oxlint/plugins` 1.91.0, `oxc-parser` 0.157.0 and `postcss` 8.5.32.
+
+## 0.5.0
+
+### Minor Changes
+
+- [#92](https://github.com/aurelienbobenrieth/harness/pull/92) [`0621814`](https://github.com/aurelienbobenrieth/harness/commit/0621814cb10243be6f770408b4fd114498c75a41) Thanks [@aurelienbobenrieth](https://github.com/aurelienbobenrieth)! - Remove the duplicate Knip wrapper; run Knip directly for unused files, exports and dependencies. Add advisory snapshot ancestry, migration SQL, retention metadata, calendar schema, destructive reason and fenced JSDoc checks. Publish Windows-compatible commit-message attribution hooks. Keep statement spacing in post-oxfmt formatting.
+
+- [#92](https://github.com/aurelienbobenrieth/harness/pull/92) [`0621814`](https://github.com/aurelienbobenrieth/harness/commit/0621814cb10243be6f770408b4fd114498c75a41) Thanks [@aurelienbobenrieth](https://github.com/aurelienbobenrieth)! - Precision fixes found by linting 25 projects.
+
+  - Removes `core/padding-before-exit` (deprecated since `padding-line-between-statements`; drop it from configs that name it) and `core/no-stubbed-subject` (no hits across 25 projects).
+  - `no-multi-positional-parameters` accepts externally imposed signatures only: callbacks and objects handed to an imported-from-a-package or builtin callee, bindings, `satisfies` and `as` typed by a package or global type, `override` methods of a package or global class, and default-exported objects. Callees, types and base classes declared in the project, and overload implementations, are reported.
+  - `no-let` gains `allowForLoopHeaders` and `allowBranchInitialization` (both default `false`).
+  - `workspace-boundaries` skips the relative-path and unexported-subpath checks in test files.
+  - `no-mutable-exported-state` accepts `readonly T[]`, `readonly [..]`, `Readonly<..>`, `ReadonlyArray`, `ReadonlyMap` and `ReadonlySet` annotations.
+  - `workspace-boundaries` no longer judges subpath imports of a member whose manifest has no `exports` field.
+  - `no-test-sleeps` allows zero-delay yields (`setTimeout(resolve, 0)`, `sleep(0)`).
+  - `no-vitest-in-source` and `no-test-logic-in-production` also treat `*.test-d.*`, `test-setup`/`test-support`/`test-helpers` files, and `test`, `tests`, `__tests__`, `__mocks__`, `e2e` folders as test code; `*.test-d.*` counts as a test file for the test rules.
+  - `no-reexport-only-modules` allows every `index.*` and `mod.ts` entrypoint by default.
+  - `no-error-message-matching` ignores emptiness checks (`error.message !== ""`).
+  - `no-exported-anonymous-object-return` accepts `Named & { extra }` return types.
+  - Adds `require-fetch-abort-signal`: every global `fetch` (also `window`/`globalThis`/`self`/`global`) must carry a signal (an init `{ signal }`, a parameter init forwarded whole, or a `new Request(url, { signal })`); test files and `Effect.tryPromise` / `Effect.promise` thunks (owned by `effect/require-abort-signal`) are skipped. Replaces `shopify-app/require-fetch-abort-signal`.
+  - `workspace-boundaries` gains `includeTestFiles` (judge relative and unexported-subpath reaches in test files too, default `false`) and `missingExports: "root"` (a member whose manifest has no `exports` field opens only its root, default `"open"`), so a project can drop a local copy of the rule and keep its stricter verdicts.
+
+  Allow empty error-message presence checks used to choose display fallbacks.
+
+  Add harness-format-padding: run only the statement-spacing autofix as part of formatting. Remove both padding rules from reported steering findings; consumers should disable them in lint and run harness-format-padding after oxfmt.
+
+## 0.4.1
+
+### Patch Changes
+
+- [#75](https://github.com/aurelienbobenrieth/harness/pull/75) [`666c4cc`](https://github.com/aurelienbobenrieth/harness/commit/666c4cc20f6e9f350a1a0df7259521e988be9d4e) Thanks [@aurelienbobenrieth](https://github.com/aurelienbobenrieth)! - Update runtime dependencies to `@oxlint/plugins` 1.88.0, `oxc-parser` 0.154.0, `postcss` 8.5.30 and `smol-toml` 1.9.1. Accept agentlint 0.8 alongside the existing supported engine versions (`>=0.3.0 <0.9.0`). Keep baseline tools pinned and exercise the current consumer profile with agentlint 0.8.0, oxlint 1.88.0, oxlint-tsgolint 7.0.2004, Vitest 5.0.4 and Stylelint 17.16.0.
+
 ## 0.4.0
 
 ### Minor Changes

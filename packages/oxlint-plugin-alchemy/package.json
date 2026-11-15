@@ -1,6 +1,6 @@
 {
   "name": "@aurelienbbn/oxlint-plugin-alchemy",
-  "version": "0.1.0",
+  "version": "0.1.4",
   "description": "Custom oxlint rules for Alchemy v2 (Infrastructure as Effects) stacks and runtimes.",
   "keywords": [
     "alchemy",
@@ -45,7 +45,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@oxlint/plugins": "1.85.0"
+    "@oxlint/plugins": "1.93.0"
   },
   "devDependencies": {
     "@aurelienbbn/oxlint-kit": "workspace:*"

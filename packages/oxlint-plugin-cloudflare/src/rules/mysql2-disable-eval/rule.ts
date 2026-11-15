@@ -5,6 +5,7 @@
  * @attribution https://developers.cloudflare.com/hyperdrive/examples/connect-to-mysql/mysql-drivers-and-libraries/mysql2/ (inspiration; independently implemented)
  */
 import {
+  binding,
   importedNameFrom,
   memberPropertyName,
   propertyKeyName,
@@ -22,16 +23,22 @@ const disabledMessage =
 
 const factories: ReadonlySet<string> = new Set(["createConnection", "createPool", "createPoolCluster"]);
 
-/** True when an options object reads a Worker env: `env.X`, `this.env.X`, `c.env.X` (not Node's `process.env`). */
-function readsEnv(node: ESTree.Node): boolean {
+/** True when `env` is a function parameter: a Worker passes its bindings in, a Node `env` module is imported or declared. */
+function isEnvParameter(context: Context, owner: ESTree.Node): boolean {
+  if (owner.type !== "Identifier") return false;
+  return (binding(context, owner, owner.name)?.defs ?? []).some((definition) => definition.type === "Parameter");
+}
+
+/** True when an options object reads a Worker env: `env.X` with `env` a parameter, `this.env.X`, `c.env.X` (not `process.env`, `import.meta.env` or an imported `env`). */
+function readsEnv(context: Context, node: ESTree.Node): boolean {
   let found = false;
   walk(node, (child) => {
     if (found || child.type !== "MemberExpression") return !found;
     const owner = unwrapExpression(child.object);
-    if (owner.type === "Identifier" && owner.name === "env") found = true;
+    if (owner.type === "Identifier" && owner.name === "env") found = isEnvParameter(context, owner);
     else if (owner.type === "MemberExpression" && memberPropertyName(owner) === "env") {
       const root = unwrapExpression(owner.object);
-      found = !(root.type === "Identifier" && root.name === "process");
+      found = !(root.type === "MetaProperty" || (root.type === "Identifier" && root.name === "process"));
     }
     return !found;
   });
@@ -69,7 +76,7 @@ export const mysql2DisableEval: Rule = {
         if (first === undefined || first.type === "SpreadElement") return;
         const options = unwrapExpression(first);
         if (options.type !== "ObjectExpression") return;
-        if (!worker && !readsEnv(options)) return;
+        if (!worker && !readsEnv(context, options)) return;
         // A spread may already carry the flag; without seeing it there is no single safe rewrite.
         if (options.properties.some((property) => property.type === "SpreadElement")) return;
         const flag = options.properties.find(

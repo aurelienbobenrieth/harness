@@ -4,13 +4,19 @@
  * @attribution ai-automation by Sandro Maglione (inspiration, independently re-implemented)
  */
 import { defineRule, type AgentlintNode, type StateRule } from "@aurelienbbn/agentlint";
+import { isFunction, propertyKey } from "../syntax.js";
 
 const assignCallPattern = /^(?:[\w$]+\.)?assign\s*[(<]/;
 const defaultContextFlagPattern = /\b(?:can|is|has)[A-Z]\w*\??\s*:/;
-const defaultStateMirrorPattern = /\b(?:status|state|step|phase|mode)\??\s*:\s*(?:\|\s*)?["'`]/;
+// A string literal or union in a type/value, or a literal/enum schema (zod, valibot, Effect Schema) in v6 `schemas`.
+const defaultStateMirrorPattern =
+  /\b(?:status|state|step|phase|mode)\??\s*:\s*(?:\|\s*)?(?:["'`]|[\w$]+\.(?:enum|literal|Literal|Literals|picklist)\s*\()/;
 const defaultMachineFilePattern = /createMachine/;
 const machineCalleePattern = /(?:^|\.)createMachine$/;
-const typesOwnerCalleePattern = /(?:^|\.)createMachine$|^setup$/;
+const typesOwnerCalleePattern = /(?:^|\.)(?:createMachine|setup)$|^setupEffect$/;
+// v6 handler keys whose returned `{ context }` is a context patch; event handlers sit under `on` / `after`.
+const handlerKeys = new Set(["entry", "exit", "always", "onDone", "onError", "onSnapshot", "onTimeout", "to"]);
+const handlerMapKeys = new Set(["on", "after"]);
 
 const flagMessage = "Context flag assignment: model availability as a guard and read snapshot.can() from the UI.";
 const mirrorMessage =
@@ -25,9 +31,7 @@ export type DerivedBooleanContextOptions = {
   readonly machineFilePattern?: RegExp;
 };
 
-function keyName(pair: AgentlintNode): string | undefined {
-  return pair.childByFieldName("key")?.text.replace(/^['"`]|['"`]$/g, "");
-}
+const keyName = propertyKey;
 
 function calleeText(call: AgentlintNode | null | undefined): string {
   return call?.type === "call_expression" ? (call.childByFieldName("function")?.text ?? "") : "";
@@ -44,6 +48,31 @@ function initialContextPair(machineCall: AgentlintNode): AgentlintNode | undefin
     .childByFieldName("arguments")
     ?.children.find((child) => child.type === "object")
     ?.children.find((child) => child.type === "pair" && keyName(child) === "context");
+}
+
+/** The function returning `object`, either as an arrow body or through a `return` statement. */
+function returningFunction(object: AgentlintNode): AgentlintNode | null {
+  const parent = object.parent;
+  if (parent?.type === "return_statement") {
+    for (let ancestor = parent.parent; ancestor; ancestor = ancestor.parent) if (isFunction(ancestor)) return ancestor;
+    return null;
+  }
+  const body = parent?.type === "parenthesized_expression" ? parent.parent : null;
+  return body?.type === "arrow_function" ? body : null;
+}
+
+/**
+ * Whether `value` (a handler function, or a static transition object) is a v6 transition, entry/exit or event
+ * handler, so the `{ context }` it returns or holds patches machine context.
+ */
+function isHandler(value: AgentlintNode): boolean {
+  const holder =
+    value.type === "method_definition" ? value : value.parent?.type === "array" ? value.parent.parent : value.parent;
+  if (holder?.type !== "pair" && holder?.type !== "method_definition") return false;
+  const key = keyName(holder);
+  if (key && handlerKeys.has(key)) return true;
+  const map = holder.parent?.parent;
+  return map?.type === "pair" && handlerMapKeys.has(keyName(map) ?? "");
 }
 
 /** The createMachine call a `types` holder belongs to: itself, or the call chained on a setup(...) result. */
@@ -70,23 +99,24 @@ export function defineDerivedBooleanContext(options: DerivedBooleanContextOption
     lifecycle: "state",
     standard: {
       id: "xstate/derived-boolean-context",
-      revision: 2,
+      revision: 3,
       title: "Derived Boolean Context",
       summary:
-        "Flags assign() calls and machine context declarations that cache availability booleans or string-enum copies of the finite state.",
+        "Flags context writes (v5 assign(), v6 returned context patches) and context declarations that cache availability booleans or string-enum copies of the finite state.",
       guidance: {
         standard:
-          "Context fields that cache transition availability (canSubmit, isLoading) or mirror the finite state (status, step, phase) drift out of sync with the machine; the machine already knows where it is and what it can do. Model the predicate as a guard, expose UI-facing groupings as state tags, and read snapshot.can(event), snapshot.hasTag(tag) or snapshot.matches(value) from the UI. snapshot.can(event) executes the transition guards, so every guard it reaches must be pure and synchronous.",
+          "Context fields that cache transition availability (canSubmit, isLoading) or mirror the finite state (status, step, phase) drift out of sync with the machine; the machine already knows where it is and what it can do. Model the predicate as a guard (v5 guard config, v6 a guards.x(...) check inside the transition function), expose UI-facing groupings as state tags, and read snapshot.can(event), snapshot.hasTag(tag) or snapshot.matches(value) from the UI. snapshot.can(event) evaluates the transition without taking it (v5 runs its guards, v6 calls the transition function itself), so everything it reaches must be pure and synchronous.",
         checks: [
           "Availability flags (canSubmit, isReady) move into transition guards.",
           'UI reads snapshot.can({ type: "EVENT" }) instead of context booleans.',
           "UI reads snapshot.hasTag(...) or snapshot.matches(...) instead of a mirrored isLoading flag or a status/step/phase string kept in context.",
-          "Guards reachable through snapshot.can(...) are pure: no I/O, no mutation, no dependence on time or randomness.",
+          "Code reachable through snapshot.can(...) is pure: no I/O, no mutation, no dependence on time or randomness. In v6 that includes the transition function body; side effects go through enq(...), never inline.",
           "Booleans or enums that are intentionally persisted domain data (not derived availability or a copy of the finite state) may be accepted with a reason.",
         ],
         refs: [
           { type: "url", href: "https://stately.ai/docs/guards" },
           { type: "url", href: "https://stately.ai/docs/states" },
+          { type: "url", href: "https://github.com/statelyai/xstate/blob/next/docs/guards.md" },
         ],
       },
     },
@@ -126,6 +156,23 @@ export function defineDerivedBooleanContext(options: DerivedBooleanContextOption
             file: "src/module.ts",
             source: 'setup({types:{context:{} as {status:"idle"|"loading"}}}).createMachine({});',
           },
+          {
+            label: "v6 returned context patch",
+            file: "src/module.ts",
+            source:
+              "createMachine({on:{load:({context})=>({target:'.loading',context:{...context,isLoading:true}})}});",
+          },
+          {
+            label: "v6 static transition context",
+            file: "src/module.ts",
+            source: "createMachine({on:{ready:{target:'.ready',context:{canSubmit:true}}}});",
+          },
+          {
+            label: "v6 schemas.context state mirror",
+            file: "src/module.ts",
+            source:
+              "setupEffect({schemas:{context:Schema.Struct({phase:Schema.Literals(['a','b'])})}}).createMachine({});",
+          },
         ],
         mustStaySilent: [
           { file: "src/module.ts", source: "createMachine({}); assign({count:1});" },
@@ -139,10 +186,15 @@ export function defineDerivedBooleanContext(options: DerivedBooleanContextOption
             file: "src/module.ts",
             source: "createMachine({context:{status:initialStatus,items:[]}});",
           },
+          {
+            label: "v6 input mapper returning a context key",
+            file: "src/module.ts",
+            source: "createMachine({invoke:{src:'load',input:({context})=>({context:{isLoading:true}})}});",
+          },
         ],
       },
       id: "xstate/derived-boolean-context",
-      version: 2,
+      version: 3,
       scan: "file",
       createOnce({ context }) {
         const inMachineFile = (): boolean => {
@@ -160,13 +212,22 @@ export function defineDerivedBooleanContext(options: DerivedBooleanContextOption
             if (keyName(node) !== "context") return;
             const message = messageFor(node.text);
             if (!message || !inMachineFile()) return;
+            const patchFrom = node.parent?.type === "object" ? returningFunction(node.parent) : null;
+            if (patchFrom) {
+              if (isHandler(patchFrom)) context.report({ node, message });
+              return;
+            }
+            if (node.parent && isHandler(node.parent)) {
+              context.report({ node, message });
+              return;
+            }
             const owner = configOwnerCall(node);
             if (owner) {
               if (machineCalleePattern.test(calleeText(owner))) context.report({ node, message });
               return;
             }
             const typesPair = node.parent?.parent;
-            if (typesPair?.type !== "pair" || keyName(typesPair) !== "types") return;
+            if (typesPair?.type !== "pair" || !["types", "schemas"].includes(keyName(typesPair) ?? "")) return;
             const typesOwner = configOwnerCall(typesPair);
             if (!typesOwner || !typesOwnerCalleePattern.test(calleeText(typesOwner))) return;
             const machineCall = machineCallFor(typesOwner);

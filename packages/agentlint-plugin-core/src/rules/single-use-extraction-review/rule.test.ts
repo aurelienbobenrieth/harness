@@ -38,3 +38,25 @@ it("supports calibrated thresholds and rejects invalid values", async () => {
   ).toHaveLength(1);
   expect(() => defineSingleUseExtractionReview({ minParameters: 0 })).toThrow("must be a positive integer");
 });
+
+it("reports same-named helpers in different scopes under distinct keys instead of aborting the scan", async () => {
+  const helper = [
+    "  function step(order, customer) {",
+    "    validate(order);",
+    "    reserve(order);",
+    "    notify(customer);",
+    "  }",
+  ];
+  const source = [
+    "function a(order, customer) {",
+    ...helper,
+    "  step(order, customer);",
+    "}",
+    "function b() {",
+    ...helper,
+    "}",
+    "",
+  ].join("\n");
+  const findings = await testRuleOnSource({ rule: singleUseExtractionReview, source });
+  expect(findings).toHaveLength(2);
+});

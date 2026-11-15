@@ -24,9 +24,12 @@ function isPublic(node: FunctionNode, exported: ReadonlySet<ESTree.Node>): boole
   );
 }
 
+/** True when the return type spells out an object shape; `Named & { extra: T }` keeps its contract in the named part. */
 function objectType(type: ESTree.TSType): boolean {
   if (type.type === "TSTypeLiteral") return true;
-  if (type.type === "TSUnionType" || type.type === "TSIntersectionType") return type.types.some(objectType);
+  if (type.type === "TSUnionType") return type.types.some(objectType);
+  if (type.type === "TSIntersectionType")
+    return type.types.some(objectType) && !type.types.some((member) => member.type === "TSTypeReference");
   if (type.type === "TSParenthesizedType") return objectType(type.typeAnnotation);
   if (type.type === "TSTypeReference" && type.typeName.type === "Identifier" && type.typeName.name === "Promise")
     return type.typeArguments?.params.some(objectType) ?? false;

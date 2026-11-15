@@ -37,21 +37,27 @@ export function definePersistedSnapshotCompat(options: PersistedSnapshotCompatOp
     lifecycle: "state",
     standard: {
       id: "xstate/persisted-snapshot-compat",
-      revision: 1,
+      revision: 2,
       title: "Persisted Snapshot Compatibility",
       summary:
         "Flags sites that persist or restore an actor snapshot so stored state is reviewed for versioning, fallback and serialisability.",
       guidance: {
         standard:
-          "A persisted snapshot outlives the machine that produced it. XState does not migrate it: restoring a snapshot that names a renamed or removed state throws at actor creation, so every returning user crashes on the deploy that changed the machine. Persisted state is versioned, restored defensively, and limited to JSON-serialisable context.",
+          "A persisted snapshot outlives the machine that produced it. Restoring a snapshot that names a renamed or removed state does not throw at createActor(...): in v5 and v6 alike the actor comes back with status 'error', and without an error observer that error is reported as unhandled, so every returning user lands on a dead actor after the deploy that changed the machine. v5 never migrates stored snapshots; v6 stamps the machine's id and version into each persisted snapshot and migrates old ones through machineVersions(). Snapshots stored by v5 do not restore in v6. Persisted state is versioned, restored defensively, and limited to JSON-serialisable context.",
         checks: [
-          "The stored payload carries a version or schema key that is checked before restore, or the storage key itself is versioned.",
-          "Restore is wrapped so an incompatible, corrupt or missing snapshot falls back to a fresh actor instead of throwing at startup.",
-          "Context holds only JSON-serialisable values: no Date, Map, Set, class instance, function or DOM node.",
-          "Nothing relies on entry actions re-running after restore: actions are not replayed for the restored state.",
-          "Persisted machines reference child actors by named src (setup({ actors })): an inline child actor cannot be persisted and getPersistedSnapshot() throws.",
+          "The stored payload is versioned. v5: a version or schema key checked before restore, or a versioned storage key. v6: the machine declares a version, and older snapshots go through machineVersions(...).migrateSnapshot(...) or are discarded.",
+          "Restore checks the restored actor's status (or subscribes with an error observer) and falls back to a fresh actor when the snapshot is incompatible, corrupt or missing; wrapping createActor(...) in try/catch alone catches nothing.",
+          "An upgrade from v5 to v6 drains or discards snapshots stored by v5: their internal shape changed.",
+          "Context holds only JSON-serialisable values: no Map, Set, class instance, function, BigInt or DOM node. A Date comes back as a string.",
+          "Nothing relies on entry actions re-running after restore: restoring runs no transitions and replays no actions (in v6, always transitions are not re-evaluated until the next event).",
+          "The persisted value comes from actor.getPersistedSnapshot(), never from actor.getSnapshot().",
+          "Spawned child actors use a registered source (setup({ actors }) in v5, the machine's actors in v6). v6: getPersistedSnapshot() throws 'An inline child actor cannot be persisted.' while an inline spawned child exists. v5: an inline spawned child is written without a source the machine can resolve.",
+          "@xstate/effect actors started with createEffectActor(...) cannot be restored from a persisted snapshot yet: their snapshot is not a durable checkpoint.",
         ],
-        refs: [{ type: "url", href: "https://stately.ai/docs/persistence" }],
+        refs: [
+          { type: "url", href: "https://stately.ai/docs/persistence" },
+          { type: "url", href: "https://github.com/statelyai/xstate/blob/next/docs/persistence.md" },
+        ],
       },
     },
     binding: {
@@ -86,6 +92,11 @@ export function definePersistedSnapshotCompat(options: PersistedSnapshotCompatOp
             label: "restore",
             file: "src/module.ts",
             source: "createActor(machine,{snapshot:JSON.parse(raw)});",
+          },
+          {
+            label: "v6 system actor restore",
+            file: "src/module.ts",
+            source: "system.createActor(machine,{snapshot:migrated}).start();",
           },
           {
             label: "hook restore",

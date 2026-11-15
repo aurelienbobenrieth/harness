@@ -21,7 +21,7 @@ export type ConformanceRunOptions = {
   readonly root: string;
   /** Check ids to exclude; they are reported as skipped, never as passed. Unknown ids throw. */
   readonly skipChecks?: readonly string[];
-  /** Project-relative globs of stack entrypoints. Default: `["**\/alchemy.run.ts"]`, `node_modules` excluded. */
+  /** Project-relative globs of stack entrypoints. Default: every `alchemy.run.ts` plus any other source file that imports `alchemy` and calls its stack factory; `node_modules` excluded. */
   readonly stackFiles?: readonly string[];
   /** Project-relative directory of GitHub Actions workflows. Default: `.github/workflows`. */
   readonly workflowsDir?: string;

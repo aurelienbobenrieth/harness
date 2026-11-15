@@ -27,7 +27,7 @@
 
 | Need                                                                                   | Tool                                                                          | A pass establishes                          |
 | -------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- | ------------------------------------------- |
-| Polaris components known to installed types, labels, action slots, modals, API calls   | [27 Oxlint rules](../packages/oxlint-plugin-shopify-app/README.md)            | source meets the configured static contract |
+| Polaris components known to installed types, labels, action slots, modals, API calls   | [26 Oxlint rules](../packages/oxlint-plugin-shopify-app/README.md)            | source meets the configured static contract |
 | native HTML accessibility                                                              | [App Home Oxlint recipe](../examples/shopify/app-home.oxlintrc.json)          | `jsx-a11y` on native elements               |
 | copy, recovery, destructive actions, onboarding, navigation, checkout UX, Flow actions | [15 agentlint reviews](../packages/agentlint-plugin-shopify-app/README.md) 🔒 | review work found, not a verdict            |
 | manifests, API versions, Polaris CDN major, Flow templates, Preact migration, bundles  | [13 conformance checks](../packages/conformance-shopify-app/README.md)        | local inputs meet their contract            |
@@ -35,7 +35,7 @@
 | admin, carrier, fulfillment, storefront performance                                    | conformance performance evaluators                                            | supplied measurements meet thresholds       |
 | app-wide applicability, missing evidence                                               | [Shopify review skill](../skills/shopify-review/SKILL.md) + planner           | scope + pending work, never acceptance      |
 
-Oxlint + conformance: public-registry consumer validation. Agentlint: packed-consumer and registry validation on the public engine `>=0.3.0 <0.8.0` ([contract](agentlint-contract.md)).
+Oxlint + conformance: public-registry consumer validation. Agentlint: packed-consumer and registry validation on the public engine `>=0.3.0 <0.10.0` ([contract](agentlint-contract.md)).
 
 ## Shopify's own agent tooling complements this review
 
@@ -77,8 +77,8 @@ Oxlint + conformance: public-registry consumer validation. Agentlint: packed-con
 | server + API baseline (`userErrors`, idempotent mutations, thrown auth, billing test mode, webhook HMAC) | per the [plugin README](../packages/oxlint-plugin-shopify-app/README.md) |
 | `no-admin-rest-api`                                                                                      | new public-app GraphQL policy only                                       |
 | `no-asset-api-theme-writes`, `no-draft-order-custom-discounts`                                           | category + distribution apply                                            |
-| `functions-no-unavailable-runtime-apis`                                                                  | Function directories, via `overrides`                                    |
-| `require-fetch-abort-signal`                                                                             | relevant checkout extension paths                                        |
+| `functions-no-unavailable-runtime-apis`                                                                  | self-scoped to Function extensions (`scope: "all"` lints anything)       |
+| `require-fetch-abort-signal` (now `core/require-fetch-abort-signal`)                                     | generic: every `fetch` call, any project                                 |
 | `app-ux-review`, `scope-change-review` (agentlint)                                                       | ⚙️ opt-in, in no preset                                                  |
 | `extension-capability-contract`, `listing-inputs` (conformance)                                          | ⚙️ opt-in: pass `optionalShopifyAppChecks`                               |
 | `[events]` checks: `nextGenerationEvents: true` (conformance)                                            | ⚙️ opt-in while Events is a developer preview on `unstable`              |

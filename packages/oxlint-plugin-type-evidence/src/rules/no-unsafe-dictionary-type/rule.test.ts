@@ -75,3 +75,13 @@ it("allows dictionaries inside type parameter constraints", async () => {
     ),
   ).resolves.toBeUndefined();
 });
+
+it("stays silent in test files", async () => {
+  await expect(assertRuleReports(ruleName, "type Dict = Record<string, unknown>;\n")).resolves.toBeUndefined();
+  await expect(
+    assertRuleDoesNotReport(ruleName, "type Dict = Record<string, unknown>;\n", { filename: "src/sample.test.ts" }),
+  ).resolves.toBeUndefined();
+  await expect(
+    assertRuleDoesNotReport(ruleName, "type Dict = Record<string, unknown>;\n", { filename: "__tests__/sample.ts" }),
+  ).resolves.toBeUndefined();
+});

@@ -57,3 +57,22 @@ it("allows chained literal ternaries in files without an effect import", async (
     assertRuleDoesNotReport(ruleName, 'const label = kind === "a" ? first : kind === "b" ? second : third;\n'),
   ).resolves.toBeUndefined();
 });
+
+it("allows chained literal ternaries in test files, which pick fixture data by id", async () => {
+  await expect(
+    assertRuleDoesNotReport(
+      ruleName,
+      `${effectImport}const file = id === "f1" ? "z.ts" : id === "f2" ? "a.ts" : "b.ts";\n`,
+      { filename: "src/update.test.ts" },
+    ),
+  ).resolves.toBeUndefined();
+});
+
+it("reports in test files when the allow option is emptied", async () => {
+  await expect(
+    assertRuleReports(ruleName, `${effectImport}const file = id === "f1" ? "z.ts" : id === "f2" ? "a.ts" : "b.ts";\n`, {
+      filename: "src/update.test.ts",
+      ruleOptions: { allow: [] },
+    }),
+  ).resolves.toBeUndefined();
+});

@@ -1,5 +1,7 @@
 /**
- * Forbid `useSelector` selectors that allocate a new object or array without a comparator.
+ * Forbid selectors that allocate a new object or array without a comparator:
+ * `useSelector` (standalone or bound to an actor context) and the XState v6
+ * `actor.select(selector)` on an actor ref.
  */
 import {
   importedSpecifierName,
@@ -8,16 +10,24 @@ import {
   unwrapExpressionKeepingChain,
 } from "@aurelienbbn/oxlint-kit/ast";
 import { importsFrom } from "../ast.js";
-import type { ESTree, Rule } from "@oxlint/plugins";
+import { isActor } from "../binding-support.js";
+import type { Context, ESTree, Rule } from "@oxlint/plugins";
 
 const message =
-  "This selector allocates a new {{kind}} on every snapshot, so the default === comparison never matches and the component re-renders each time: select primitives or existing references, or pass a comparator such as shallowEqual.";
+  "This selector allocates a new {{kind}} on every snapshot, so the default comparison (=== / Object.is) never matches and every snapshot re-renders the component or notifies subscribers: select primitives or existing references, or pass a comparator such as shallowEqual.";
 
 const selectorSources: readonly string[] = ["@xstate/react", "@xstate/store-react", "@xstate/store/react"];
 
 const allocatingArrayMethods: ReadonlySet<string> = new Set(["map", "filter", "flatMap", "toSorted"]);
 
 const allocatingObjectStatics: ReadonlySet<string> = new Set(["keys", "values", "entries"]);
+
+/** `<actor>.select(...)` on a provable actor ref. */
+function isActorSelect(context: Context, callee: ESTree.Node): boolean {
+  return (
+    memberPropertyName(callee) === "select" && callee.type === "MemberExpression" && isActor(context, callee.object)
+  );
+}
 
 function returnedExpression(selector: ESTree.Node): ESTree.Node | undefined {
   if (!isFunctionNode(selector) || selector.body === null) return undefined;
@@ -44,7 +54,7 @@ export const stableSelectorResult: Rule = {
     type: "problem",
     docs: {
       description:
-        "Forbid inline useSelector selectors that return a fresh object or array when no comparator argument is passed.",
+        "Forbid inline useSelector and actor.select selectors that return a fresh object or array when no comparator argument is passed.",
     },
     messages: {
       stableSelectorResult: message,
@@ -52,16 +62,17 @@ export const stableSelectorResult: Rule = {
     schema: [],
   },
   createOnce(context) {
-    let enabled = false;
+    let hooksImported = false;
     return {
       Program(node) {
-        enabled = importsFrom(node, selectorSources);
+        hooksImported = importsFrom(node, selectorSources);
       },
       CallExpression(node) {
-        if (!enabled) return;
         const standalone =
+          hooksImported &&
           importedSpecifierName(context, node.callee, (source) => selectorSources.includes(source)) === "useSelector";
-        if (!standalone && memberPropertyName(node.callee) !== "useSelector") return;
+        const bound = hooksImported && memberPropertyName(node.callee) === "useSelector";
+        if (!standalone && !bound && !isActorSelect(context, node.callee)) return;
         const selectorIndex = standalone ? 1 : 0;
         if (node.arguments.length > selectorIndex + 1) return;
         const selector = node.arguments[selectorIndex];

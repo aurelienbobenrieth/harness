@@ -1050,7 +1050,7 @@
     },
     "require-fetch-abort-signal": {
       "kind": "rule",
-      "package": "oxlint-plugin-shopify-app",
+      "package": "oxlint-plugin-core",
       "member": "require-fetch-abort-signal",
       "boundary": "Checks recognized source forms only. Dynamic values, wrappers, cross-file behavior and runtime accessibility require the linked evidence protocol; apply the documented surface and category scope."
     },

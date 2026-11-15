@@ -46,3 +46,19 @@ it("allows a single as const assertion", async () => {
 it("allows chains made only of as const", async () => {
   await expect(assertRuleDoesNotReport(ruleName, "const pair = [1, 2] as const as const;\n")).resolves.toBeUndefined();
 });
+
+it("stays silent in test files", async () => {
+  await expect(
+    assertRuleReports(ruleName, "declare const input: string;\nconst user = input as unknown as User;\n"),
+  ).resolves.toBeUndefined();
+  await expect(
+    assertRuleDoesNotReport(ruleName, "declare const input: string;\nconst user = input as unknown as User;\n", {
+      filename: "src/sample.test.ts",
+    }),
+  ).resolves.toBeUndefined();
+  await expect(
+    assertRuleDoesNotReport(ruleName, "declare const input: string;\nconst user = input as unknown as User;\n", {
+      filename: "__tests__/sample.ts",
+    }),
+  ).resolves.toBeUndefined();
+});

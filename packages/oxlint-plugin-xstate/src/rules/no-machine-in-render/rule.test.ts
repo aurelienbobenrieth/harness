@@ -102,3 +102,55 @@ it("ignores createMachine from another module", async () => {
     ),
   ).resolves.toBeUndefined();
 });
+
+it("reports the XState v6 system.createActor in a component body", async () => {
+  await expect(
+    assertRuleReports(
+      ruleName,
+      'import { useSelector } from "@xstate/react";\nimport { createSystem } from "xstate";\nconst system = createSystem({ registry: {} });\nexport function Cart() { const actor = system.createActor(cartMachine).start(); return useSelector(actor, (s) => s.value); }\n',
+      { message: /createActor\(\) runs on every render here/ },
+    ),
+  ).resolves.toBeUndefined();
+});
+
+it("reports setupEffect().createMachine and system.setup().createMachine in a component body", async () => {
+  await expect(
+    assertRuleReports(
+      ruleName,
+      'import { useMachine } from "@xstate/react";\nimport { setupEffect } from "@xstate/effect";\nexport function Cart() { const [snapshot] = useMachine(setupEffect({}).createMachine({})); return snapshot.value; }\n',
+    ),
+  ).resolves.toBeUndefined();
+  await expect(
+    assertRuleReports(
+      ruleName,
+      'import { useMachine } from "@xstate/react";\nimport { createSystem } from "xstate";\nconst system = createSystem({ registry: {} });\nexport function Cart() { const [snapshot] = useMachine(system.setup().createMachine({})); return snapshot.value; }\n',
+    ),
+  ).resolves.toBeUndefined();
+});
+
+it("reports createActorAtoms in a component body", async () => {
+  await expect(
+    assertRuleReports(
+      ruleName,
+      'import { useAtomValue } from "@effect/atom-react";\nimport { createActorAtoms } from "@xstate/effect/atom";\nimport { useMemo } from "react";\nexport function Cart() { const atoms = createActorAtoms(runtime, cartMachine); return useAtomValue(atoms.state); }\nconsole.log(useMemo);\n',
+    ),
+  ).resolves.toBeUndefined();
+});
+
+it("accepts module-scope XState v6 systems, setups and actor atoms", async () => {
+  await expect(
+    assertRuleDoesNotReport(
+      ruleName,
+      'import { useMachine, useSelector } from "@xstate/react";\nimport { createActorAtoms } from "@xstate/effect/atom";\nimport { createSystem } from "xstate";\nconst system = createSystem({ registry: {} });\nconst cartMachine = system.setup().createMachine({});\nconst actor = system.createActor(cartMachine).start();\nconst atoms = createActorAtoms(runtime, cartMachine);\nexport function Cart() { const [snapshot] = useMachine(cartMachine); return [snapshot.value, useSelector(actor, (s) => s.value), atoms]; }\n',
+    ),
+  ).resolves.toBeUndefined();
+});
+
+it("ignores createActor members on objects that are not XState v6 systems", async () => {
+  await expect(
+    assertRuleDoesNotReport(
+      ruleName,
+      'import { useMachine } from "@xstate/react";\nconst registry = makeRegistry();\nexport function Cart() { const record = registry.createActor("cart"); return [record.id, useMachine]; }\n',
+    ),
+  ).resolves.toBeUndefined();
+});
