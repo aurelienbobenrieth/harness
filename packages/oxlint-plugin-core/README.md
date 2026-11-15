@@ -2,7 +2,7 @@
 
 [![npm](https://img.shields.io/npm/v/@aurelienbbn/oxlint-plugin-core)](https://www.npmjs.com/package/@aurelienbbn/oxlint-plugin-core) [![downloads](https://img.shields.io/npm/dm/@aurelienbbn/oxlint-plugin-core)](https://www.npmjs.com/package/@aurelienbbn/oxlint-plugin-core) [![CI](https://github.com/aurelienbobenrieth/harness/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/aurelienbobenrieth/harness/actions/workflows/ci.yml) [![license](https://img.shields.io/npm/l/@aurelienbbn/oxlint-plugin-core)](https://github.com/aurelienbobenrieth/harness/blob/main/packages/oxlint-plugin-core/LICENSE) [![node](https://img.shields.io/node/v/@aurelienbbn/oxlint-plugin-core)](https://github.com/aurelienbobenrieth/harness/blob/main/packages/oxlint-plugin-core/package.json)
 
-**18 oxlint rules for any TypeScript codebase: swallowed errors, flaky or hollow tests, test code in production, anonymous public contracts, workspace members that leak into each other, cramped statements.**
+**19 oxlint rules for any TypeScript codebase: swallowed errors, flaky or hollow tests, test code in production, anonymous public contracts, workspace members and modules that leak into each other, cramped statements.**
 
 ```sh
 pnpm add -D @aurelienbbn/oxlint-plugin-core oxlint   # oxlint >=1.82.0 <2.0.0
@@ -19,7 +19,7 @@ pnpm add -D @aurelienbbn/oxlint-plugin-core oxlint   # oxlint >=1.82.0 <2.0.0
 }
 ```
 
-**No preset, one kind of autofix.** Enable each rule by name; every fix but the padding rules' blank lines needs a decision a tool can't make.
+**No preset, two kinds of autofix.** Enable each rule by name; every fix but the padding rules' blank lines and `module-boundaries` import specifiers needs a decision a tool can't make.
 
 <details>
 <summary>Rules by job, options, and the decision each fix needs</summary>
@@ -29,7 +29,7 @@ pnpm add -D @aurelienbbn/oxlint-plugin-core oxlint   # oxlint >=1.82.0 <2.0.0
 | 🧯 errors    | `no-discarded-caught-error`, `no-error-message-matching`                                                                                                     |
 | 🧪 tests     | `no-weak-test-assertions`, `no-test-sleeps`, `no-ambient-nondeterminism-in-tests`, `no-vitest-mocking`, `no-vitest-in-source`, `no-test-logic-in-production` |
 | 📜 contracts | `no-exported-anonymous-object-return`, `no-multi-positional-parameters`, `no-mutable-exported-state`, `no-reexport-only-modules`, `no-let`                   |
-| 🧱 workspace | `workspace-boundaries`                                                                                                                                       |
+| 🧱 workspace | `workspace-boundaries`, `module-boundaries` (autofix)                                                                                                        |
 | 🌐 network   | `require-fetch-abort-signal`                                                                                                                                 |
 | 💬 comments  | `no-dead-comments`                                                                                                                                           |
 | ↕️ layout    | `padding-line-between-statements` (autofix)                                                                                                                  |
@@ -51,9 +51,15 @@ pnpm add -D @aurelienbbn/oxlint-plugin-core oxlint   # oxlint >=1.82.0 <2.0.0
 |                                      | `forbidden` (`{ from, to, message? }` member directory pairs)            | `[]`                                        |
 |                                      | `includeTestFiles` (judge relative and unexported reaches in tests)      | `false` (test files exempt)                 |
 |                                      | `missingExports` (`"root"`: a manifest without `exports` opens only `.`) | `"open"` (every subpath open)               |
+| `module-boundaries`                  | `sourceRoot` (relative to the nearest package.json)                      | `"src"`                                     |
+|                                      | `units` (unit root directory patterns under `sourceRoot`)                | `[]` (each directory is a unit)             |
+|                                      | `forbidden` (`{ from, to, message? }` path patterns)                     | `[]`                                        |
+|                                      | `private` (path patterns relative to a unit root)                        | `[]`                                        |
+|                                      | `includeTestFiles`                                                       | `false` (tests skip forbidden, private)     |
 
 | Rule                                  | The decision its fix needs                                              |
 | ------------------------------------- | ----------------------------------------------------------------------- |
+| `module-boundaries`                   | forbidden or private imports: which unit owns what both need            |
 | `no-ambient-nondeterminism-in-tests`  | the scenario's locale, frozen instant, or seed                          |
 | `no-dead-comments`                    | a bare TODO: track it or delete it                                      |
 | `no-discarded-caught-error`           | rethrow, branch on the error, or record a reason                        |
@@ -288,6 +294,32 @@ import { body } from "@game/physics"; // ✅ an exported subpath
 
 A manifest whose `exports` has no subpath keys opens only its root; a manifest with no `exports` field at all declares no public surface, so its subpaths are not judged (`missingExports: "root"` closes them to the root); a subpath mapped to `null` stays closed; `*` matches at least one character, as in Node. Type-only imports and re-exports are judged like value imports: a type dependency is still a dependency. `require()` and `import x = require()` are not read. Files outside every member (root configs, scripts) are never judged. Directory patterns: `*` within one segment, `**` across segments. Members are read once per lint process: restart an editor's language server after adding one. Cycles stay with `import/no-cycle`, dead files with Knip.
 
+`module-boundaries` judges the same imports inside one member, between the units of its source root. A file's unit is the deepest directory a `units` pattern names, else its own directory:
+
+```ts
+// src/features/leaks/index/view.ts, with package.json "imports": { "#*": "./src/*" }
+import { order } from "../order/view.ts"; // ❌ relative path into another unit, fixed to "#features/leaks/order/view.ts"
+import { sections } from "#features/leaks/index/_/sections.ts"; // ❌ # subpath into the own unit, fixed to "./_/sections.ts"
+import { store } from "#hosting/mock/store.ts"; // ❌ forbidden edge
+import { state } from "#features/leaks/order/_/state.ts"; // ❌ private to features/leaks/order
+import { placed } from "#features/leaks/order/events.ts"; // ✅
+```
+
+```json
+{
+  "core/module-boundaries": [
+    "error",
+    {
+      "units": ["features/*/*", "connectors/*", "hosting/*"],
+      "forbidden": [{ "from": "features/**", "to": "hosting/**" }],
+      "private": ["_/state.ts", "_/aggregate.ts", "_/ports/**"]
+    }
+  ]
+}
+```
+
+Only targets inside `sourceRoot` are judged, through relative paths and `#` specifiers. The fix to a `#` subpath uses the member's package.json `imports` pattern whose string target maps onto `sourceRoot`, and only when that subpath resolves back to the same file; without one, the import is reported unfixed. Both fixes keep a `?query` suffix. `forbidden` and `private` patterns match a file or any directory containing it, apply only between different units, and skip test files unless `includeTestFiles` is set; the specifier form is checked in test files too. Package manifests are read once per lint process.
+
 ## 💬 Comments describe code, not its history
 
 ```text
@@ -400,6 +432,7 @@ Generated from package exports by `pnpm catalog`. Rule-specific options and limi
 | Rule/check                            | Trigger or review scope                                                                                                                                                                                                                                                                             |
 | ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `fenced-doc-examples`                 | Fence every nonempty JSDoc @example so documentation tools render executable code correctly.                                                                                                                                                                                                        |
+| `module-boundaries`                   | Keep the units of one workspace member apart: other units are imported through a `#` subpath and never by relative path, the own unit by relative path, and configured edges and private paths never across units.                                                                                  |
 | `no-ambient-nondeterminism-in-tests`  | Disallow test files from depending on the host locale, the real clock, or `Math.random()`: locale-sensitive formatting without a locale, `new Date()` / `Date.now()` / `performance.now()` without fake timers, and unseeded randomness.                                                            |
 | `no-dead-comments`                    | Disallow dead comments: closing-brace labels, placeholder scaffolding, untracked TODOs, and comments narrating a change instead of the code.                                                                                                                                                        |
 | `no-discarded-caught-error`           | Require a catch clause or inline promise rejection handler that never rethrows and ignores or only logs the error to carry a reasoned marker comment.                                                                                                                                               |
