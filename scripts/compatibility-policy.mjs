@@ -87,9 +87,7 @@ export function validateCompatibility({ policy, rootManifest, packages }) {
             ? ["oxlint", "oxlint-tsgolint"]
             : directory === "oxfmt-config"
               ? ["oxfmt"]
-              : directory.startsWith("stylelint-plugin-")
-                ? ["stylelint"]
-                : [];
+              : [];
     assert.deepEqual(
       Object.keys(manifest.peerDependencies ?? {}).toSorted(),
       expectedPeers.toSorted(),

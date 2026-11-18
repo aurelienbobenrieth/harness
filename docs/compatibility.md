@@ -20,7 +20,6 @@ Source of truth: [policy/compatibility.json](../policy/compatibility.json). ESM 
 | oxfmt           | `>=0.67.0 <0.69.0 \|\| ^0.74.0 \|\| ^0.78.0 \|\| ^0.79.0` | 0.78.0     | 0.79.0    |
 | vite-plus       | `^0.3.2 \|\| ^1.4.0`                                      | 1.5.1      | 1.7.0     |
 | Vitest          | `>=4.1.11 <6.0.0`                                         | 5.1.0      | 5.1.0     |
-| Stylelint       | `>=17.15.0 <18.0.0`                                       | 17.15.0    | 17.16.0   |
 
 Both pin TypeScript 7.0.2 · Vite 8.3.8 · `@types/node` 22.20.5 · Lit 3.3.3 · XState 5.33.4 · jsdom 31.0.1.
 
@@ -31,11 +30,11 @@ Both pin TypeScript 7.0.2 · Vite 8.3.8 · `@types/node` 22.20.5 · Lit 3.3.3 ·
 <details>
 <summary>Registry sources, pending upgrades, host types</summary>
 
-- Checked against the public npm registry on 2026-11-18 (matches `registryCheckedAt`): [agentlint](https://registry.npmjs.org/@aurelienbbn%2Fagentlint/0.3.0), [oxlint](https://registry.npmjs.org/oxlint/1.88.0), [Vite Plus](https://registry.npmjs.org/vite-plus/0.3.2), [Vitest](https://registry.npmjs.org/vitest/5.0.4), [Stylelint](https://registry.npmjs.org/stylelint/17.16.0).
+- Checked against the public npm registry on 2026-11-18 (matches `registryCheckedAt`): [agentlint](https://registry.npmjs.org/@aurelienbbn%2Fagentlint/0.3.0), [oxlint](https://registry.npmjs.org/oxlint/1.88.0), [Vite Plus](https://registry.npmjs.org/vite-plus/0.3.2), [Vitest](https://registry.npmjs.org/vitest/5.0.4).
 - Adopted as `current` from the registry on 2026-09-29: [agentlint 0.4.0](https://registry.npmjs.org/@aurelienbbn%2Fagentlint/0.4.0), whose TSX grammar accepts `&` in JSX string attributes.
 - The current profile now uses [agentlint 0.9.1](https://registry.npmjs.org/@aurelienbbn%2Fagentlint/0.9.1), verified from the registry on 2026-11-11; its `source-structure` fingerprint stays at v4, as in 0.8.0. Packed consumers install with strict peer checks and run the same positive/negative plugin fixtures; baseline and development remain on 0.3.0.
-- The 2026-11-18 refresh moves `current` to agentlint 0.10.0 (peer range widens to `<0.11.0`; its `source-structure` fingerprint stays at v4), oxlint 1.94.0, oxlint-tsgolint 7.0.2007, oxfmt 0.79.0 (the peer range gains `^0.79.0`) and Vite Plus 1.7.0; both profiles pin Vite 8.3.8 and jsdom 31.0.1. `baseline` and development stay unchanged. Stylelint 18.0.0 is out: a major needs review.
-- The 2026-11-11 refresh adopts oxlint 1.93.0, oxlint-tsgolint 7.0.2006, oxfmt 0.78.0 (the peer range gains `^0.78.0`), Vite Plus 1.5.1, Vitest 5.1.0 and Vite 8.3.7. Oxlint 1.93 needs oxlint-tsgolint >=7.0.2005. Stylelint 18 stays out of range: no Stylelint plugin ships to verify it.
+- The 2026-11-18 refresh moves `current` to agentlint 0.10.0 (peer range widens to `<0.11.0`; its `source-structure` fingerprint stays at v4), oxlint 1.94.0, oxlint-tsgolint 7.0.2007, oxfmt 0.79.0 (the peer range gains `^0.79.0`) and Vite Plus 1.7.0; both profiles pin Vite 8.3.8 and jsdom 31.0.1. `baseline` and development stay unchanged. Stylelint leaves the policy: no package in this repo uses it.
+- The 2026-11-11 refresh adopts oxlint 1.93.0, oxlint-tsgolint 7.0.2006, oxfmt 0.78.0 (the peer range gains `^0.78.0`), Vite Plus 1.5.1, Vitest 5.1.0 and Vite 8.3.7. Oxlint 1.93 needs oxlint-tsgolint >=7.0.2005.
 - The earlier security migration adopted oxfmt 0.74.0, oxlint 1.89.0, Vite Plus 1.4.0, Vitest 5.0.5, oxlint-tsgolint 7.0.2005, and patched Vite 8.3.3. Oxlint 1.89 needs oxlint-tsgolint >=7.0.2003; older engines cannot execute its new typed rules. Existing formatter peers remain supported; updating the config requires no configuration migration. Table range unions use \|\| for readability.
 - Parked `conformance-shopify-theme` keeps TypeScript 6.0.3 at runtime: TypeScript 7 drops the compiler API it uses to resolve event names.
 - Config packages import host types from `oxlint` and `oxfmt`. Vite+ re-exports them, so the same objects work in its `lint` and `fmt` fields without Vite+ in either peer contract.
