@@ -1,7 +1,7 @@
 /* eslint-disable no-await-in-loop -- Install and validate one isolated, explicitly selected toolchain at a time. */
 import assert from "node:assert/strict";
 import { execFile } from "node:child_process";
-import { access, copyFile, mkdir, mkdtemp, readFile, readdir, rm, writeFile } from "node:fs/promises";
+import { access, copyFile, mkdir, mkdtemp, readFile, readdir, realpath, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { promisify } from "node:util";
@@ -141,7 +141,8 @@ try {
   const evidence = validateConsumerResults(
     JSON.parse(await readFile(path.join(consumer, "consumer-results.json"), "utf8")),
     {
-      root: consumer,
+      // Vitest reports resolved paths: a temp dir behind a junction or an 8.3 short name must match them.
+      root: await realpath(consumer),
       expectedFiles: ["exports.test.ts", "lint-runners.test.ts", "runners.test.ts", "compatibility.test.ts"],
     },
   );
