@@ -1,7 +1,9 @@
 import assert from "node:assert/strict";
+import { mkdir, mkdtemp, rm, symlink, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
 import path from "node:path";
 import { test } from "node:test";
-import { validateConsumerResults } from "./consumer-results.mjs";
+import { readConsumerReport, validateConsumerResults } from "./consumer-results.mjs";
 
 const root = path.resolve("consumer");
 const options = { root, expectedFiles: ["acceptance.test.ts"] };
@@ -23,9 +25,11 @@ const report = () => ({
 });
 const skippedReport = () => {
   const input = report();
+
   input.testResults[0].assertionResults.push(result("pending"));
   input.numPendingTests = 1;
   input.numTotalTests = 2;
+
   return input;
 };
 const skipOptions = {
@@ -42,6 +46,7 @@ const skipOptions = {
 test("accepts actual passing evidence without fixing the number of future cases", () => {
   assert.deepEqual(validateConsumerResults(report(), options), { files: 1, passed: 1, skipped: 0 });
   const input = report();
+
   input.testResults[0].assertionResults.push({ ...result(), title: "another behavior" });
   input.numPassedTests += 1;
   input.numTotalTests += 1;
@@ -50,7 +55,9 @@ test("accepts actual passing evidence without fixing the number of future cases"
 
 test("rejects zero tests and missing selected test files even with success=true", () => {
   const empty = { ...report(), numPassedTests: 0, numTotalTests: 0, testResults: [] };
+
   assert.throws(() => validateConsumerResults(empty, options), /must execute passing tests/);
+
   assert.throws(
     () =>
       validateConsumerResults(report(), {
@@ -72,20 +79,25 @@ test("allows a named draft exclusion only in its original suite and file", () =>
     passed: 1,
     skipped: 1,
   });
+
   const runtimeSkip = skippedReport();
+
   runtimeSkip.testResults[0].assertionResults[1].status = "skipped";
   assert.equal(validateConsumerResults(runtimeSkip, skipOptions).skipped, 1);
   assert.throws(() => validateConsumerResults(runtimeSkip, options), /unexpected skipped test/);
   const unrelatedSuite = skippedReport();
+
   unrelatedSuite.testResults[0].assertionResults[1].ancestorTitles = ["generated scaffold"];
   assert.throws(() => validateConsumerResults(unrelatedSuite, skipOptions), /unexpected skipped test/);
   const unrelatedFile = skippedReport();
+
   unrelatedFile.testResults[0].name = path.join(root, "generated.test.ts");
   assert.throws(() => validateConsumerResults(unrelatedFile, skipOptions), /unexpected skipped test/);
 });
 
 test("does not allow one approved skip to hide multiple excluded checks", () => {
   const input = skippedReport();
+
   input.testResults[0].assertionResults.push(result("pending"));
   input.numPendingTests += 1;
   input.numTotalTests += 1;
@@ -94,12 +106,56 @@ test("does not allow one approved skip to hide multiple excluded checks", () => 
 
 test("rejects failed files, unknown result states, and inconsistent summaries", () => {
   const failed = report();
+
   failed.testResults[0].status = "failed";
   assert.throws(() => validateConsumerResults(failed, options), /consumer suite must pass/);
   const unknown = report();
+
   unknown.testResults[0].assertionResults[0].status = "unknown";
   assert.throws(() => validateConsumerResults(unknown, options), /unsupported consumer result/);
   assert.throws(() => validateConsumerResults({ ...report(), numPassedTests: 9 }, options), /passing count/);
   assert.throws(() => validateConsumerResults({ ...report(), numPendingTests: 9 }, options), /skipped count/);
   assert.throws(() => validateConsumerResults({ ...report(), numTotalTests: 9 }, options), /total must match/);
+});
+
+/** A consumer folder reachable both directly and through a linked alias, like a Windows short-name temp dir. */
+async function aliasedConsumer(t) {
+  const temporary = await mkdtemp(path.join(tmpdir(), "consumer-results-"));
+
+  t.after(() => rm(temporary, { recursive: true, force: true }));
+  const real = path.join(temporary, "real-consumer");
+  const alias = path.join(temporary, "alias");
+
+  await mkdir(real);
+  await writeFile(path.join(real, "acceptance.test.ts"), "");
+  await symlink(real, alias, "junction");
+
+  return { real, alias };
+}
+
+async function writeReport(consumer, testFile) {
+  const input = report();
+
+  input.testResults[0].name = testFile;
+  await writeFile(path.join(consumer, "consumer-results.json"), JSON.stringify(input));
+}
+
+test("accepts a report naming test files through the resolved path while the runner holds the alias", async (t) => {
+  const { real, alias } = await aliasedConsumer(t);
+
+  await writeReport(real, path.join(real, "acceptance.test.ts"));
+
+  const { report: read, root: resolved } = await readConsumerReport(alias);
+
+  assert.deepEqual(validateConsumerResults(read, { ...options, root: resolved }), { files: 1, passed: 1, skipped: 0 });
+});
+
+test("accepts a report naming test files through the alias while the runner holds the alias", async (t) => {
+  const { real, alias } = await aliasedConsumer(t);
+
+  await writeReport(real, path.join(alias, "acceptance.test.ts"));
+
+  const { report: read, root: resolved } = await readConsumerReport(alias);
+
+  assert.deepEqual(validateConsumerResults(read, { ...options, root: resolved }), { files: 1, passed: 1, skipped: 0 });
 });
