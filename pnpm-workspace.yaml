@@ -2,6 +2,11 @@ packages:
   - packages/*
   - internal/*
 
+auditConfig:
+  # picomatch ReDoS with no patched release (#105); remove once picomatch ships a fix.
+  ignoreGhsas:
+    - GHSA-fc5q-39xc-vjpf
+
 allowBuilds:
   msgpackr-extract: false
 

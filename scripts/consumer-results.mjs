@@ -1,8 +1,12 @@
 import assert from "node:assert/strict";
 import path from "node:path";
 
-/** Arguments for auditing a fresh consumer graph, with no ignored advisories. */
-export const consumerAuditArgs = ["audit", "--audit-level=low"];
+/**
+ * Arguments for auditing a fresh consumer graph. Each ignored advisory has no patched release and
+ * matches `auditConfig.ignoreGhsas` in pnpm-workspace.yaml; remove it once upstream ships a fix.
+ * - GHSA-fc5q-39xc-vjpf: picomatch <=4.0.7 ReDoS on single-branch repeated extglobs (#105).
+ */
+export const consumerAuditArgs = ["audit", "--audit-level=low", "--ignore", "GHSA-fc5q-39xc-vjpf"];
 
 /** Validates executed consumer evidence, including each explicitly allowed unavailable check. */
 export function validateConsumerResults(report, { root, expectedFiles, allowedSkips = [] }) {
