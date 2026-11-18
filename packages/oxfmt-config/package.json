@@ -1,6 +1,6 @@
 {
   "name": "@aurelienbbn/oxfmt-config",
-  "version": "0.2.3",
+  "version": "0.3.0",
   "description": "Reusable oxfmt config for JavaScript and TypeScript projects.",
   "keywords": [
     "code-style",

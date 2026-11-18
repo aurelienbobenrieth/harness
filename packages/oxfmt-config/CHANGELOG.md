@@ -1,5 +1,11 @@
 # @aurelienbbn/oxfmt-config
 
+## 0.3.0
+
+### Minor Changes
+
+- [#106](https://github.com/aurelienbobenrieth/harness/pull/106) [`ef6851d`](https://github.com/aurelienbobenrieth/harness/commit/ef6851d11c0d7415d3e21d07743bf0eeb0da89a2) Thanks [@aurelienbobenrieth](https://github.com/aurelienbobenrieth)! - Accept agentlint 0.10 (`>=0.3.0 <0.11.0`) and oxfmt 0.79 (`>=0.67.0 <0.69.0 || ^0.74.0 || ^0.78.0 || ^0.79.0`) as peers. The current consumer profile is verified with agentlint 0.10.0, oxlint 1.94.0, oxlint-tsgolint 7.0.2007, oxfmt 0.79.0, Vite Plus 1.7.0 and Vitest 5.1.0.
+
 ## 0.2.3
 
 ### Patch Changes
