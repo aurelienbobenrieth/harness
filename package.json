@@ -55,7 +55,7 @@
     "@vitest/coverage-v8": "5.1.0",
     "@voidzero-dev/vite-plus-core": "1.5.1",
     "jscpd": "5.4.3",
-    "knip": "6.45.0",
+    "knip": "6.45.1",
     "oxfmt": "0.78.0",
     "oxlint": "1.93.0",
     "publint": "0.3.25",
@@ -69,5 +69,5 @@
   "engines": {
     "node": "^22.19.0 || ^24.11.0"
   },
-  "packageManager": "pnpm@11.9.0"
+  "packageManager": "pnpm@11.28.13"
 }
