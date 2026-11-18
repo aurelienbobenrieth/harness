@@ -1,12 +1,26 @@
 import assert from "node:assert/strict";
+import { readFile, realpath } from "node:fs/promises";
 import path from "node:path";
 
 /**
  * Arguments for auditing a fresh consumer graph. Each ignored advisory has no patched release and
- * reaches consumers only through a peer tool; remove it once upstream ships a fix.
- * - GHSA-vfj7-8cjw-p6xm: braces <=3.0.3 stack exhaustion on nested patterns, via stylelint > micromatch.
+ * matches `auditConfig.ignoreGhsas` in pnpm-workspace.yaml; remove it once upstream ships a fix.
+ * - GHSA-fc5q-39xc-vjpf: picomatch <=4.0.7 ReDoS on single-branch repeated extglobs (#105).
  */
-export const consumerAuditArgs = ["audit", "--audit-level=low", "--ignore", "GHSA-vfj7-8cjw-p6xm"];
+export const consumerAuditArgs = ["audit", "--audit-level=low", "--ignore", "GHSA-fc5q-39xc-vjpf"];
+
+/**
+ * Reads a consumer's Vitest JSON report with the consumer root and every test file name resolved to
+ * real paths. Vitest prints either form depending on the install, and a Windows temp dir can sit
+ * behind an 8.3 short name or a junction.
+ */
+export async function readConsumerReport(consumer) {
+  const report = JSON.parse(await readFile(path.join(consumer, "consumer-results.json"), "utf8"));
+  report.testResults = await Promise.all(
+    report.testResults.map(async (file) => ({ ...file, name: await realpath(file.name) })),
+  );
+  return { report, root: await realpath(consumer) };
+}
 
 /** Validates executed consumer evidence, including each explicitly allowed unavailable check. */
 export function validateConsumerResults(report, { root, expectedFiles, allowedSkips = [] }) {

@@ -104,7 +104,7 @@ test("rejects versions with leading zeros instead of treating them as reviewed r
 
 test("rejects an untested host in a profile", () => {
   const input = fixture();
-  delete input.policy.profiles.current.stylelint;
+  delete input.policy.profiles.current.vitest;
   assert.throws(() => validateCompatibility(input), /every public peer needs an explicit test version/);
 });
 

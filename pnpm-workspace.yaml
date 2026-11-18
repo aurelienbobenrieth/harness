@@ -2,6 +2,11 @@ packages:
   - packages/*
   - internal/*
 
+auditConfig:
+  # picomatch ReDoS with no patched release (#105); remove once picomatch ships a fix.
+  ignoreGhsas:
+    - GHSA-fc5q-39xc-vjpf
+
 allowBuilds:
   msgpackr-extract: false
 
@@ -11,10 +16,10 @@ minimumReleaseAgeExclude:
 
 overrides:
   vite: npm:@voidzero-dev/vite-plus-core@1.5.1
-  "vitest>vite": 8.3.7
-  "@vitest/mocker>vite": 8.3.7
-  "@vitest/browser>vite": 8.3.7
-  "@vitest/browser-preview>vite": 8.3.7
+  "vitest>vite": 8.3.8
+  "@vitest/mocker>vite": 8.3.8
+  "@vitest/browser>vite": 8.3.8
+  "@vitest/browser-preview>vite": 8.3.8
   vitest: 5.1.0
   vite-plus: 1.5.1
   oxlint: 1.93.0

@@ -5,7 +5,7 @@ import { access, copyFile, mkdir, mkdtemp, readFile, readdir, rm, writeFile } fr
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { promisify } from "node:util";
-import { consumerAuditArgs, validateConsumerResults } from "./consumer-results.mjs";
+import { consumerAuditArgs, readConsumerReport, validateConsumerResults } from "./consumer-results.mjs";
 
 const execute = promisify(execFile);
 const root = path.resolve(import.meta.dirname, "..");
@@ -171,24 +171,22 @@ try {
     "--outputFile=consumer-results.json",
   ]);
   console.log(validation.stdout);
-  const evidence = validateConsumerResults(
-    JSON.parse(await readFile(path.join(consumer, "consumer-results.json"), "utf8")),
-    {
-      root: consumer,
-      expectedFiles: expectedTests,
-      allowedSkips: [
-        "duplication-budget",
-        "closed-design-system-probe",
-        "tsconfig-strictness",
-        "instruction-blocks",
-        "migration-snapshot-ancestry",
-      ].map((check) => ({
-        file: "acceptance.test.ts",
-        ancestorTitles: ["core conformance"],
-        check,
-      })),
-    },
-  );
+  const { report, root: resolvedConsumer } = await readConsumerReport(consumer);
+  const evidence = validateConsumerResults(report, {
+    root: resolvedConsumer,
+    expectedFiles: expectedTests,
+    allowedSkips: [
+      "duplication-budget",
+      "closed-design-system-probe",
+      "tsconfig-strictness",
+      "instruction-blocks",
+      "migration-snapshot-ancestry",
+    ].map((check) => ({
+      file: "acceptance.test.ts",
+      ancestorTitles: ["core conformance"],
+      check,
+    })),
+  });
   console.log(
     `Validated executed evidence: ${evidence.passed} passed, ${evidence.skipped} skipped in ${evidence.files} files.`,
   );

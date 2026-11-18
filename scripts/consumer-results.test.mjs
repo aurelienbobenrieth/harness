@@ -1,7 +1,9 @@
 import assert from "node:assert/strict";
+import { mkdir, mkdtemp, rm, symlink, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
 import path from "node:path";
 import { test } from "node:test";
-import { validateConsumerResults } from "./consumer-results.mjs";
+import { readConsumerReport, validateConsumerResults } from "./consumer-results.mjs";
 
 const root = path.resolve("consumer");
 const options = { root, expectedFiles: ["acceptance.test.ts"] };
@@ -102,4 +104,40 @@ test("rejects failed files, unknown result states, and inconsistent summaries", 
   assert.throws(() => validateConsumerResults({ ...report(), numPassedTests: 9 }, options), /passing count/);
   assert.throws(() => validateConsumerResults({ ...report(), numPendingTests: 9 }, options), /skipped count/);
   assert.throws(() => validateConsumerResults({ ...report(), numTotalTests: 9 }, options), /total must match/);
+});
+
+/** A consumer folder reachable both directly and through a linked alias, like a Windows short-name temp dir. */
+async function aliasedConsumer(t) {
+  const temporary = await mkdtemp(path.join(tmpdir(), "consumer-results-"));
+  t.after(() => rm(temporary, { recursive: true, force: true }));
+  const real = path.join(temporary, "real-consumer");
+  const alias = path.join(temporary, "alias");
+  await mkdir(real);
+  await writeFile(path.join(real, "acceptance.test.ts"), "");
+  await symlink(real, alias, "junction");
+  return { real, alias };
+}
+
+async function writeReport(consumer, testFile) {
+  const input = report();
+  input.testResults[0].name = testFile;
+  await writeFile(path.join(consumer, "consumer-results.json"), JSON.stringify(input));
+}
+
+test("accepts a report naming test files through the resolved path while the runner holds the alias", async (t) => {
+  const { real, alias } = await aliasedConsumer(t);
+  await writeReport(real, path.join(real, "acceptance.test.ts"));
+
+  const { report: read, root: resolved } = await readConsumerReport(alias);
+
+  assert.deepEqual(validateConsumerResults(read, { ...options, root: resolved }), { files: 1, passed: 1, skipped: 0 });
+});
+
+test("accepts a report naming test files through the alias while the runner holds the alias", async (t) => {
+  const { real, alias } = await aliasedConsumer(t);
+  await writeReport(real, path.join(alias, "acceptance.test.ts"));
+
+  const { report: read, root: resolved } = await readConsumerReport(alias);
+
+  assert.deepEqual(validateConsumerResults(read, { ...options, root: resolved }), { files: 1, passed: 1, skipped: 0 });
 });

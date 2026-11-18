@@ -40,12 +40,6 @@ for (const directory of (await readdir(path.join(root, "packages"))).toSorted())
     for (const value of Object.values(module))
       if (value?.standard?.id && value?.detector && value?.binding)
         entries.set(value.standard.id.split("/").at(-1), value.standard.summary);
-  if (directory.startsWith("stylelint-plugin-"))
-    for (const plugin of module.default)
-      entries.set(
-        plugin.ruleName.split("/").at(-1),
-        plugin.rule.meta?.description ?? `Enforce the ${plugin.ruleName.split("/").at(-1)} CSS policy.`,
-      );
   if (directory.startsWith("conformance-"))
     for (const value of Object.values(module))
       if (value?.id && typeof value.run === "function") entries.set(value.id, value.description);

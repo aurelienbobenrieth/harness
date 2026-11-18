@@ -5,7 +5,7 @@ import { access, copyFile, mkdir, mkdtemp, readFile, readdir, rm, writeFile } fr
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { promisify } from "node:util";
-import { consumerAuditArgs, validateConsumerResults } from "./consumer-results.mjs";
+import { consumerAuditArgs, readConsumerReport, validateConsumerResults } from "./consumer-results.mjs";
 
 const execute = promisify(execFile);
 const root = path.resolve(import.meta.dirname, "..");
@@ -138,13 +138,11 @@ try {
     "--outputFile=consumer-results.json",
   ]);
   console.log(result.stdout);
-  const evidence = validateConsumerResults(
-    JSON.parse(await readFile(path.join(consumer, "consumer-results.json"), "utf8")),
-    {
-      root: consumer,
-      expectedFiles: ["exports.test.ts", "lint-runners.test.ts", "runners.test.ts", "compatibility.test.ts"],
-    },
-  );
+  const { report, root: resolvedConsumer } = await readConsumerReport(consumer);
+  const evidence = validateConsumerResults(report, {
+    root: resolvedConsumer,
+    expectedFiles: ["exports.test.ts", "lint-runners.test.ts", "runners.test.ts", "compatibility.test.ts"],
+  });
   console.log(
     `Validated executed evidence: ${evidence.passed} passed, ${evidence.skipped} skipped in ${evidence.files} files.`,
   );
