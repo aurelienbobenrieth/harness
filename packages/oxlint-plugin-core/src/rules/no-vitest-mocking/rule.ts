@@ -4,6 +4,7 @@ import { testApi } from "../test-api-support.js";
 
 const message =
   "Inject deterministic doubles instead of replacing modules. Spies and fake functions can express observable boundary contracts.";
+const stubMethods = new Set(["stubGlobal", "stubEnv"]);
 const bannedMethods = new Set(["mock", "doMock", "unmock", "doUnmock"]);
 
 function isAllowedMockingFile(filename: string): boolean {
@@ -23,7 +24,7 @@ export const noVitestMocking: Rule = {
     schema: [
       {
         type: "object",
-        properties: { forbidSpies: { type: "boolean" } },
+        properties: { forbidSpies: { type: "boolean" }, forbidStubs: { type: "boolean" } },
         additionalProperties: false,
       },
     ],
@@ -34,11 +35,13 @@ export const noVitestMocking: Rule = {
   createOnce(context) {
     return {
       CallExpression(node) {
-        const options = context.options[0] as { forbidSpies?: boolean } | undefined;
+        const options = context.options[0] as { forbidSpies?: boolean; forbidStubs?: boolean } | undefined;
         const method = testApi(context, node.callee)?.replace(/^vi\./, "");
         if (
           method === undefined ||
-          (!bannedMethods.has(method) && !(options?.forbidSpies === true && ["fn", "spyOn"].includes(method)))
+          (!bannedMethods.has(method) &&
+            !(options?.forbidSpies === true && ["fn", "spyOn"].includes(method)) &&
+            !(options?.forbidStubs === true && stubMethods.has(method)))
         )
           return;
         if (isAllowedMockingFile(getFilename(context as RuleContextWithFilename))) return;

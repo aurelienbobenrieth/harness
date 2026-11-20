@@ -1,5 +1,8 @@
 import type { Context, ESTree, Scope } from "@oxlint/plugins";
 
+/** Modules whose exports are Vitest's own (vite-plus and Effect re-export `vi`, `it`, `expect`). */
+const vitestModules = ["vitest", "vite-plus/test", "@effect/vitest"];
+
 /** Resolves Vitest and fast-check imports and unshadowed configured test globals. */
 export function testApi(context: Context, node: ESTree.Node): string | undefined {
   if (node.type === "MemberExpression" && !node.computed && node.property.type === "Identifier") {
@@ -17,7 +20,7 @@ export function testApi(context: Context, node: ESTree.Node): string | undefined
       for (const definition of variable.defs) {
         if (definition.parent?.type !== "ImportDeclaration" || definition.parent.importKind === "type") continue;
         const source = definition.parent.source.value;
-        if (!["vitest", "fast-check", "@fast-check/vitest"].includes(String(source))) continue;
+        if (![...vitestModules, "fast-check", "@fast-check/vitest"].includes(String(source))) continue;
         if (definition.node.type === "ImportNamespaceSpecifier" || definition.node.type === "ImportDefaultSpecifier")
           return source === "fast-check" ? "fast-check" : "vitest";
         if (definition.node.type === "ImportSpecifier" && definition.node.importKind !== "type") {

@@ -34,28 +34,28 @@ pnpm add -D @aurelienbbn/oxlint-plugin-core oxlint   # oxlint >=1.82.0 <2.0.0
 | 💬 comments  | `no-dead-comments`                                                                                                                                           |
 | ↕️ layout    | `padding-line-between-statements` (autofix)                                                                                                                  |
 
-| Rule                                 | Option                                                                   | Default                                     |
-| ------------------------------------ | ------------------------------------------------------------------------ | ------------------------------------------- |
-| `no-discarded-caught-error`          | `logOnlyCallees`                                                         | `["console", "logger", "log"]`              |
-|                                      | `reasonMarker`                                                           | `"REASON"`                                  |
-|                                      | `includeTestFiles`                                                       | `false` (test files exempt)                 |
-| `no-ambient-nondeterminism-in-tests` | `allowClock`                                                             | `false`; `true` waives clock reads only     |
-| `no-weak-test-assertions`            | `assertionHelpers`                                                       | `[]`                                        |
-| `no-vitest-mocking`                  | `forbidSpies`                                                            | `false` (`vi.fn`, `vi.spyOn` allowed)       |
-| `no-reexport-only-modules`           | `allow`                                                                  | `index.*` (every JS/TS extension), `mod.ts` |
-| `no-multi-positional-parameters`     | `exemptFunctionNames`, `exemptFileBasenames`                             | `[]`, `[]`                                  |
-| `no-let`                             | `allowForLoopHeaders` (`let` in a `for` header)                          | `false`                                     |
-|                                      | `allowBranchInitialization` (`let x;` assigned once per branch)          | `false`                                     |
-| `padding-line-between-statements`    | ESLint's `{ blankLine, prev, next }` list                                | the configuration shown under ↕️ below      |
-| `workspace-boundaries`               | `apps` (member directories that are deployables)                         | `["apps/**"]`                               |
-|                                      | `forbidden` (`{ from, to, message? }` member directory pairs)            | `[]`                                        |
-|                                      | `includeTestFiles` (judge relative and unexported reaches in tests)      | `false` (test files exempt)                 |
-|                                      | `missingExports` (`"root"`: a manifest without `exports` opens only `.`) | `"open"` (every subpath open)               |
-| `module-boundaries`                  | `sourceRoot` (relative to the nearest package.json)                      | `"src"`                                     |
-|                                      | `units` (unit root directory patterns under `sourceRoot`)                | `[]` (each directory is a unit)             |
-|                                      | `forbidden` (`{ from, to, message? }` path patterns)                     | `[]`                                        |
-|                                      | `private` (path patterns relative to a unit root)                        | `[]`                                        |
-|                                      | `includeTestFiles`                                                       | `false` (tests skip forbidden, private)     |
+| Rule                                 | Option                                                                   | Default                                                              |
+| ------------------------------------ | ------------------------------------------------------------------------ | -------------------------------------------------------------------- |
+| `no-discarded-caught-error`          | `logOnlyCallees`                                                         | `["console", "logger", "log"]`                                       |
+|                                      | `reasonMarker`                                                           | `"REASON"`                                                           |
+|                                      | `includeTestFiles`                                                       | `false` (test files exempt)                                          |
+| `no-ambient-nondeterminism-in-tests` | `allowClock`                                                             | `false`; `true` waives clock reads only                              |
+| `no-weak-test-assertions`            | `assertionHelpers`                                                       | `[]`                                                                 |
+| `no-vitest-mocking`                  | `forbidSpies`, `forbidStubs`                                             | `false` (`vi.fn`, `vi.spyOn`, `vi.stubGlobal`, `vi.stubEnv` allowed) |
+| `no-reexport-only-modules`           | `allow`                                                                  | `index.*` (every JS/TS extension), `mod.ts`                          |
+| `no-multi-positional-parameters`     | `exemptFunctionNames`, `exemptFileBasenames`                             | `[]`, `[]`                                                           |
+| `no-let`                             | `allowForLoopHeaders` (`let` in a `for` header)                          | `false`                                                              |
+|                                      | `allowBranchInitialization` (`let x;` assigned once per branch)          | `false`                                                              |
+| `padding-line-between-statements`    | ESLint's `{ blankLine, prev, next }` list                                | the configuration shown under ↕️ below                               |
+| `workspace-boundaries`               | `apps` (member directories that are deployables)                         | `["apps/**"]`                                                        |
+|                                      | `forbidden` (`{ from, to, message? }` member directory pairs)            | `[]`                                                                 |
+|                                      | `includeTestFiles` (judge relative and unexported reaches in tests)      | `false` (test files exempt)                                          |
+|                                      | `missingExports` (`"root"`: a manifest without `exports` opens only `.`) | `"open"` (every subpath open)                                        |
+| `module-boundaries`                  | `sourceRoot` (relative to the nearest package.json)                      | `"src"`                                                              |
+|                                      | `units` (unit root directory patterns under `sourceRoot`)                | `[]` (each directory is a unit)                                      |
+|                                      | `forbidden` (`{ from, to, message? }` path patterns)                     | `[]`                                                                 |
+|                                      | `private` (path patterns relative to a unit root)                        | `[]`                                                                 |
+|                                      | `includeTestFiles`                                                       | `false` (tests skip forbidden, private)                              |
 
 | Rule                                  | The decision its fix needs                                              |
 | ------------------------------------- | ----------------------------------------------------------------------- |
@@ -225,7 +225,7 @@ export const parse = (input) => input; // ❌ comment marks it test-only
 
 Test-only names: `__test__` / `__tests__` / `__testing__`, `_internal(s)`, `internals`, `testOnly*`, `*ForTest` / `*ForTests` / `*ForTesting`. Comments like "exported for testing" or "visible only for tests" directly above the export.
 
-**Vitest APIs:** `no-vitest-in-source` reports importing `vitest` from non-test source; `no-vitest-mocking` reports module replacement via Vitest mock APIs, plus `vi.fn` / `vi.spyOn` with `forbidSpies: true`.
+**Vitest APIs:** `no-vitest-in-source` reports importing `vitest` from non-test source; `no-vitest-mocking` reports module replacement via Vitest mock APIs, plus `vi.fn` / `vi.spyOn` with `forbidSpies: true` and `vi.stubGlobal` / `vi.stubEnv` with `forbidStubs: true`. `vi` resolves from `vitest`, `vite-plus/test` and `@effect/vitest`.
 
 </details>
 
