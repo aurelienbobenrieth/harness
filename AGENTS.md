@@ -8,20 +8,29 @@ Harness: source of truth for @aurelienbbn steering packages - lint rules, tool c
 
 Always on. The user's requested depth, format and language win. Load the communication skill only for long documents.
 
-```yaml
-communication:
-  scope: explanations only; no compression of code, tests, names, validation or design
-  reset: concise each reply; requested depth lasts one turn
-  size: minimum sufficient; target 60 words including visual labels, 20 for simple answers; exceed for necessary facts or requested depth
-  prose: answer first; natural connected sentences
-  simple: one direct sentence; corrections give changed fact and consequence only
-  omit: preambles, established facts, recaps, menus, duplication, em dashes
-  choose: states -> labelled text state chart; async -> text sequence/call tree; guards -> decision tree/table; simple fact -> prose
-  layout: one readable idea per line; visual replaces prose; no dense cells or invented shorthand
-  general-rule: when requested, give the complete rule before evaluating an example
-  preserve: necessary values, units, negations, conditions, exceptions and uncertainty; caveat beside claim
-  verify: retain decision-critical facts; never invent edges, order or causality; cut repetition before facts
-```
+- **Scope:** explanations only; never compress code, tests, names, validation or design.
+- **Reset:** concise each reply; requested depth lasts one turn.
+- **Size:**
+  - answer first, in connected sentences
+  - minimum sufficient: target 60 words including visual labels, 20 for simple answers
+  - exceed for necessary facts or requested depth
+- **Simple:** one direct sentence; corrections give changed fact and consequence only.
+- **Omit:** preambles, established facts, recaps, menus, duplication, em dashes.
+- **Choose:**
+  - states -> labelled text state chart
+  - async -> text sequence/call tree
+  - guards -> decision tree/table
+  - simple fact -> prose
+- **Layout:**
+  - one readable idea per line
+  - visual replaces prose
+  - no dense cells or invented shorthand
+- **General rule:** when requested, give the complete rule before evaluating an example.
+- **Preserve:**
+  - necessary values, units, negations, conditions, exceptions and uncertainty
+  - caveat beside claim
+  - cut repetition before facts
+  - never invent edges, order or causality
 
 <!-- harness:communication:end -->
 
@@ -29,14 +38,26 @@ communication:
 
 ## Economy
 
-Always on, every task. Each call re-reads the whole context; anything in it is paid again on every later call.
+Always on, every task: everything in context is paid again on every call.
 
-- **Search, then read a range.** `rg -n`/Grep first, then the needed lines (offset/limit, `sed -n 'a,bp'`). Never `cat` a file over ~200 lines or several at once; never re-read what context holds.
-- **Trim output at the source.** Failing tests only (`--reporter=dot`, fail-only flag), `git diff --stat` before the full diff. Capture exit status on the first run (`pipefail` with `tail`); never rerun a passing gate to recover it. Whole logs go to a file; read the failing part.
-- **Check the changed scope.** Scoped checks while iterating; then one full gate on the final state before handoff (PR or no PR), or CI when delegated by the project. Run checks in that order, not in parallel.
+- **Search first, then read only the needed range.** Never re-read what context holds.
+- **Trim output at the source.**
+  - Failing tests only (`--reporter=dot`, fail-only flag).
+  - `git diff --stat` before the full diff.
+  - Capture exit status on the first run (`pipefail` with `tail`); never rerun a passing gate to recover it.
+  - Whole logs go to a file; read the failing part.
+- **Check the changed scope.**
+  - Scoped checks while iterating.
+  - Then one full gate on the final state before handoff (PR or no PR), or CI when delegated by the project.
+  - In that order, not in parallel.
 - **Stay out of vendored trees.** Targeted `rg` with a path in vendored/generated trees, never a listing/full read.
-- **Delegate only broad, independent work.** Under ~5 files or one question: inline. Delegated: brief + budget (load the economy skill). **Wait once, never poll:** block on the command or use the host's wait tool; no `sleep` loops.
-- **Read around the named source.** Asked to write from a file: list its folder and read its neighbours first. A fact there that changes the answer goes in the output, with its source.
+- **Delegate only broad, independent work.**
+  - Under ~5 files or one question: inline.
+  - Delegated: brief + budget (load the economy skill).
+  - Wait once, never poll; no `sleep` loops.
+- **Read around the named source.**
+  - Asked to write from a file: list its folder and read its neighbours first.
+  - A fact there that changes the answer goes in the output, with its source.
 
 <!-- harness:economy:end -->
 
