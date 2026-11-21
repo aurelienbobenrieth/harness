@@ -1,0 +1,27 @@
+{
+  "entry": "index.report-library",
+  "admin": "Analytics > Reports",
+  "path": "/analytics/reports",
+  "adminSteps": "Open Analytics > Reports. Table is a div-based Polaris-Table: Name, Category, Last viewed, Created by, then a 48 px actions cell. Headings are sort buttons. 'New exploration' exists in the DOM as a zero-size s-internal-button (not drawn at this width), so it is not measured. The 'Sort by' icon button (28 px, x 1226) was not opened. Hover not measured.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "table",
+  "rootWidth": 1182,
+  "locate": {
+    "table": "div.Polaris-Table",
+    "title": "h1",
+    "head": { "sel": "div.Polaris-Table-TableHeadingCell", "nth": 0, "in": "table" },
+    "hname": { "sel": "button[class*=TableHeadingCell__]", "in": "table" },
+    "name": { "sel": "a[class*=_Link_]", "in": "table" },
+    "cat": { "sel": "div.Polaris-Table-TableCell", "nth": 1, "in": "table" },
+    "actions": { "sel": "div.Polaris-Table-TableCell", "nth": 4, "in": "table" }
+  },
+  "parts": {
+    "title": { "font": "13/28 500", "color": "#101010" },
+    "head": { "h": 31, "bg": "#f7f7f7", "font": "12/18 500", "color": "#4a4a4a" },
+    "hname": { "h": 30, "pad": "6 6 6 12", "font": "12/18 500", "color": "#4a4a4a" },
+    "name": { "x": 12, "h": 20, "font": "13/20 400", "color": "#101010" },
+    "cat": { "h": 32, "w": 164, "bg": "#ffffff", "font": "13/20 400", "color": "#101010" },
+    "actions": { "w": 48, "h": 32 }
+  }
+}

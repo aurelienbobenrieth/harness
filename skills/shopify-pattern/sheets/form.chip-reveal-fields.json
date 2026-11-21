@@ -1,0 +1,49 @@
+{
+  "entry": "form.chip-reveal-fields",
+  "admin": "Products > Add product > Pricing card footer",
+  "path": "/products/new",
+  "adminSteps": "Open the page; the Pricing card footer (under a divider) holds Compare-at, Unit price, Charge tax Yes, Cost per item chips and a chevron at the right. Page loaded fresh; locators only work before a chip is pressed.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "footer",
+  "rootWidth": 760,
+  "locate": {
+    "footer": { "sel": "[class*=_BasePill_]", "text": "Compare-at", "up": 5 },
+    "footer-row": { "sel": "[class*=_BasePill_]", "text": "Compare-at", "up": 4 },
+    "pill": { "sel": "[class*=_BasePill_]", "text": "Compare-at", "in": "footer" },
+    "pill-state": { "sel": "[class*=_BasePill_]", "text": "Charge tax", "in": "footer" },
+    "pill-label": { "sel": "p", "text": "Charge tax", "in": "footer" },
+    "chevron": { "sel": "button", "in": "footer", "nth": -1 }
+  },
+  "parts": {
+    "footer-row": { "h": 45, "border": "1 #dddddd", "pad": "8 0" },
+    "pill": {
+      "x": 16,
+      "h": 28,
+      "radius": "8",
+      "pad": "4 8",
+      "gap": "4",
+      "bg": "#000000/8",
+      "font": "13/20 400",
+      "color": "#101010"
+    },
+    "pill-state": { "h": 28, "radius": "8", "pad": "4 8", "bg": "#000000/8" },
+    "pill-label": { "color": "#4a4a4a", "font": "13/20 400" },
+    "chevron": { "w": 20, "h": 22, "right": 16 }
+  },
+  "states": {
+    "pressed": {
+      "adminSteps": "Click the Cost per item chip. The chip left the footer and a row of three bordered pills appeared in the card: Cost (input), Profit and Margin (read-only, em dash). No darker pressed chip was seen. Locators are per state.",
+      "locate": {
+        "cost": { "sel": "[class*=_BasePill_]", "text": "^Cost$" },
+        "profit": { "sel": "[class*=_BasePill_]", "text": "^Profit$" },
+        "margin": { "sel": "[class*=_BasePill_]", "text": "^Margin$" }
+      },
+      "parts": {
+        "cost": { "h": 31, "radius": "8", "pad": "4 8", "gap": "4", "border": "1 #f2f2f2" },
+        "profit": { "h": 29, "radius": "8", "pad": "4 8", "border": "1 #f2f2f2" },
+        "margin": { "h": 29, "radius": "8", "pad": "4 8", "border": "1 #f2f2f2" }
+      }
+    }
+  }
+}

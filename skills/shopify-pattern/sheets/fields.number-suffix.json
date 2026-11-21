@@ -1,0 +1,25 @@
+{
+  "entry": "fields.number-suffix",
+  "admin": "Discounts > Create discount > Amount off products > Discount value (Percentage)",
+  "path": "/discounts/new/amount-off-product",
+  "adminSteps": "Open the page; the number field sits right of the Percentage select in the Value card. Stepper icon opacity is 0 until hover (hover not measured), so icon values are left out.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "grid",
+  "rootWidth": 728,
+  "locate": {
+    "grid": { "sel": ".Polaris-InlineGrid", "nth": 0 },
+    "num": { "sel": "div.internal-number-field", "in": "grid" },
+    "control": { "sel": "div.input-wrapper", "in": "num" },
+    "suffix": { "sel": "div.suffix-wrapper", "in": "num" },
+    "inc": { "sel": "button.increment", "in": "num" },
+    "dec": { "sel": "button.decrement", "in": "num" }
+  },
+  "parts": {
+    "num": { "w": 239, "h": 32 },
+    "control": { "bg": "#ffffff", "radius": "12", "shadow": "yes" },
+    "suffix": { "font": "13/20 400", "color": "#4a4a4a", "text": "%" },
+    "inc": { "right": 0, "w": 28, "h": 16, "color": "#4a4a4a", "pad": "4 4 0" },
+    "dec": { "right": 0, "w": 28, "h": 16, "color": "#4a4a4a", "pad": "0 4 4" }
+  }
+}

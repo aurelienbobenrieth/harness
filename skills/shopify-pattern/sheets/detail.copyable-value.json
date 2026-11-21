@@ -1,0 +1,31 @@
+{
+  "entry": "detail.copyable-value",
+  "admin": "Discounts > SPIKE-3 > aside top block",
+  "path": "/discounts/1732038688907",
+  "adminSteps": "Open the discount. Root is the aside's first section: h3 code, then the button 'Copy SPIKE-3 discount code' 8 to its right. Order aside hover copy buttons and the tooltip not measured (hover not reachable).",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "aside",
+  "rootWidth": 280,
+  "locate": {
+    "aside": { "sel": "section", "nth": 0 },
+    "code": { "sel": "h3", "nth": 0 },
+    "copy": { "sel": "button[aria-label*=\"opy\"]" },
+    "copy-icon": { "sel": "s-internal-icon", "in": "copy" }
+  },
+  "parts": {
+    "code": { "x": 0, "h": 22, "font": "15/22 500", "color": "#101010" },
+    "copy": { "x": 66, "w": 28, "h": 28, "radius": "9999", "color": "#606060" },
+    "copy-icon": { "x": 70, "w": 20, "h": 20, "color": "#606060" }
+  },
+  "states": {
+    "copied": {
+      "adminSteps": "Click the copy button (element.click()). The icon changes from clipboard to check in place, no toast; the button colour turns #4a4a4a (may be a pressed or hover colour).",
+      "locate": {},
+      "parts": {
+        "copy": { "x": 66, "w": 28, "h": 28, "color": "#4a4a4a" },
+        "copy-icon": { "x": 70, "w": 20, "h": 20, "color": "#4a4a4a" }
+      }
+    }
+  }
+}

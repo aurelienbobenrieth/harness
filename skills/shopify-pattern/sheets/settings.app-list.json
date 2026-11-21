@@ -1,0 +1,30 @@
+{
+  "entry": "settings.app-list",
+  "admin": "Settings > Apps",
+  "path": "/settings/apps",
+  "adminSteps": "Open Settings > Apps, tab Installed (9 apps). Measured the first and the second row. The row menu (Open app, View details, Uninstall in critical tone) did not open from script: menu and hover not measured; the thumbnail radius is clamp(6px, 25%, 12px) and cannot be resolved, so it is left out.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "root",
+  "rootWidth": 784,
+  "locate": {
+    "root": "div[class*=\"_SettingsTable_\"]",
+    "tablewrap": { "sel": "div.Polaris-Table__TableWrapper", "in": "root" },
+    "head": { "sel": "div.Polaris-Table-TableHeadingCell", "in": "root" },
+    "row-first": { "sel": "div.Polaris-Table-TableCell", "nth": 0, "in": "tablewrap" },
+    "row-second": { "sel": "div.Polaris-Table-TableCell", "nth": 3, "in": "tablewrap" },
+    "thumb": { "sel": "div.thumbnail", "in": "tablewrap" },
+    "name": { "sel": "a.link", "in": "tablewrap" },
+    "sub": { "sel": "span.text", "nth": 0, "in": "tablewrap" },
+    "activity": { "sel": "div.Polaris-Table-TableCell", "nth": 1, "in": "tablewrap" }
+  },
+  "parts": {
+    "head": { "h": 31, "font": "12/18 500", "color": "#4a4a4a", "bg": "#f7f7f7" },
+    "row-first": { "h": 52 },
+    "row-second": { "h": 53, "border": "1 #f2f2f2" },
+    "thumb": { "x": 18, "w": 24, "h": 24 },
+    "name": { "x": 54, "font": "13/20 400", "color": "#101010" },
+    "sub": { "x": 54, "font": "13/20 400", "color": "#4a4a4a" },
+    "activity": { "x": 491, "w": 241 }
+  }
+}

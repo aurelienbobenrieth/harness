@@ -1,0 +1,48 @@
+{
+  "entry": "form.collection-builder",
+  "admin": "Products > Collections > Create collection",
+  "path": "/collections/new",
+  "adminSteps": "Open the page. Condition rows not opened. Image tile is a button; title input has an animated floating label (opacity 0 at rest, not measured). Skeleton tile positions depend on scroll.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "aside",
+  "rootWidth": 292,
+  "locate": {
+    "aside": "[class*=\"_Card_vgwv8\"]",
+    "type": { "sel": "button.activator", "text": "Source type" },
+    "cond": { "sel": "button.activator", "text": "Add condition", "in": "aside" },
+    "prod": { "sel": "button.activator", "text": "Add products to include", "in": "aside" },
+    "tile": { "sel": "[class*=\"_emptyStateLabel_\"]", "closest": "button" },
+    "tile-label": "[class*=\"_emptyStateLabel_\"]",
+    "chip-channels": { "sel": "[class*=\"_InlineButton_\"]", "text": "Manage sales" },
+    "chip-template": { "sel": "[class*=\"_InlineButton_\"]", "nth": 1 },
+    "skeleton": "[class*=\"_Card_1d9oe\"]"
+  },
+  "parts": {
+    "aside": { "w": 292, "pad": "6", "radius": "20" },
+    "type": { "w": 111, "h": 28, "x": 6, "radius": "9999", "pad": "4" },
+    "cond": {
+      "w": 121,
+      "h": 28,
+      "font": "13/20 400",
+      "color": "#4a4a4a",
+      "gap": "4",
+      "pad": "4 8 4 4",
+      "radius": "9999"
+    },
+    "prod": {
+      "w": 119,
+      "h": 28,
+      "font": "13/20 400",
+      "color": "#4a4a4a",
+      "gap": "4",
+      "pad": "4 8 4 4",
+      "radius": "9999"
+    },
+    "tile": { "w": 120, "h": 120, "radius": "16", "border": "1 #f2f2f2", "color": "#4a4a4a", "gap": "4" },
+    "tile-label": { "font": "13/20 400", "color": "#606060" },
+    "chip-channels": { "h": 28, "radius": "9999", "pad": "4 14 4 8" },
+    "chip-template": { "h": 28, "radius": "9999", "pad": "4 14 4 8" },
+    "skeleton": { "w": 175, "h": 215, "radius": "20", "opacity": "0.5", "gap": "8" }
+  }
+}

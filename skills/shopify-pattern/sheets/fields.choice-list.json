@@ -1,0 +1,22 @@
+{
+  "entry": "fields.choice-list",
+  "admin": "Discounts > Create discount > Amount off products > Minimum purchase requirements",
+  "path": "/discounts/new/amount-off-product",
+  "adminSteps": "Open the page, scroll to Minimum purchase requirements, click the radio 'Minimum purchase amount ($)' so one radio is checked and the follow-up money field shows. The group label is visually hidden here and no choice has details help, so group label and details are not measured. Disabled state not reached.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "group",
+  "rootWidth": 728,
+  "locate": {
+    "group": { "sel": "fieldset.choice-list", "nth": 0 },
+    "row": { "sel": "label.choice", "text": "No minimum", "in": "group" },
+    "row-checked": { "sel": "label.choice", "text": "Minimum purchase amount", "in": "group" },
+    "radio": { "sel": "input.radio", "in": "row" },
+    "radio-checked": { "sel": "input.radio", "in": "row-checked" }
+  },
+  "parts": {
+    "row": { "h": 28, "pad": "4 0", "gap": "8", "font": "13/20 400", "color": "#101010" },
+    "radio": { "w": 14, "h": 14, "radius": "50%", "shadow": "yes" },
+    "radio-checked": { "w": 16, "h": 16, "radius": "50%", "bg": "#101010", "shadow": "yes" }
+  }
+}

@@ -25,15 +25,16 @@
  customer accounts       │ Functions           │ storefront themes
 ```
 
-| Need                                                                                   | Tool                                                                          | A pass establishes                          |
-| -------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- | ------------------------------------------- |
-| Polaris components known to installed types, labels, action slots, modals, API calls   | [26 Oxlint rules](../packages/oxlint-plugin-shopify-app/README.md)            | source meets the configured static contract |
-| native HTML accessibility                                                              | [App Home Oxlint recipe](../examples/shopify/app-home.oxlintrc.json)          | `jsx-a11y` on native elements               |
-| copy, recovery, destructive actions, onboarding, navigation, checkout UX, Flow actions | [15 agentlint reviews](../packages/agentlint-plugin-shopify-app/README.md) 🔒 | review work found, not a verdict            |
-| manifests, API versions, Polaris CDN major, Flow templates, Preact migration, bundles  | [13 conformance checks](../packages/conformance-shopify-app/README.md)        | local inputs meet their contract            |
-| iframe protection, webhook rejection                                                   | conformance HTTP helpers                                                      | supplied handler passes tested scenarios    |
-| admin, carrier, fulfillment, storefront performance                                    | conformance performance evaluators                                            | supplied measurements meet thresholds       |
-| app-wide applicability, missing evidence                                               | [Shopify review skill](../skills/shopify-review/SKILL.md) + planner           | scope + pending work, never acceptance      |
+| Need                                                                                   | Tool                                                                            | A pass establishes                          |
+| -------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- | ------------------------------------------- |
+| Polaris components known to installed types, labels, action slots, modals, API calls   | [26 Oxlint rules](../packages/oxlint-plugin-shopify-app/README.md)              | source meets the configured static contract |
+| native HTML accessibility                                                              | [App Home Oxlint recipe](../examples/shopify/app-home.oxlintrc.json)            | `jsx-a11y` on native elements               |
+| copy, recovery, destructive actions, onboarding, navigation, checkout UX, Flow actions | [15 agentlint reviews](../packages/agentlint-plugin-shopify-app/README.md) 🔒   | review work found, not a verdict            |
+| manifests, API versions, Polaris CDN pin, Flow templates, Preact migration, bundles    | [14 conformance checks](../packages/conformance-shopify-app/README.md)          | local inputs meet their contract            |
+| admin-native UI patterns and their measured values                                     | [shopify-pattern skill](../skills/shopify-pattern/SKILL.md) + its catalog check | components attach to catalogued patterns    |
+| iframe protection, webhook rejection                                                   | conformance HTTP helpers                                                        | supplied handler passes tested scenarios    |
+| admin, carrier, fulfillment, storefront performance                                    | conformance performance evaluators                                              | supplied measurements meet thresholds       |
+| app-wide applicability, missing evidence                                               | [Shopify review skill](../skills/shopify-review/SKILL.md) + planner             | scope + pending work, never acceptance      |
 
 Oxlint + conformance: public-registry consumer validation. Agentlint: packed-consumer and registry validation on the public engine `>=0.3.0 <0.11.0` ([contract](agentlint-contract.md)).
 

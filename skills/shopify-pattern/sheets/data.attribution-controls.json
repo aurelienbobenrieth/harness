@@ -1,0 +1,33 @@
+{
+  "entry": "data.attribution-controls",
+  "admin": "Growth > Attribution",
+  "path": "/growth/attribution",
+  "adminSteps": "Open the page; the controls row is the first line: date pill, compare pill, then the model pill and the traffic pill at the right. The option lists (descriptions) were not opened: not measured.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "row",
+  "rootWidth": 1182,
+  "locate": {
+    "row": "div.Polaris-InlineStack",
+    "period": { "sel": "button.button", "text": "Date control", "in": "row" },
+    "compare": { "sel": "button.button", "text": "Comparison control", "in": "row" },
+    "model": { "sel": "button.button", "in": "row", "nth": 2 },
+    "traffic": { "sel": "button.button", "text": "Traffic type", "in": "row" }
+  },
+  "parts": {
+    "row": { "h": 28 },
+    "period": {
+      "x": 0,
+      "w": 128,
+      "h": 28,
+      "font": "12/16 500",
+      "color": "#101010",
+      "radius": "9999",
+      "pad": "4 12 4 6",
+      "gap": "2"
+    },
+    "compare": { "x": 136, "w": 175, "h": 28, "font": "12/16 500", "radius": "9999", "pad": "4 12 4 6" },
+    "model": { "w": 175, "h": 28, "font": "12/16 500", "radius": "9999", "pad": "4 6 4 12" },
+    "traffic": { "right": 0, "w": 153, "h": 28, "font": "12/16 500", "radius": "9999", "pad": "4 6 4 12" }
+  }
+}

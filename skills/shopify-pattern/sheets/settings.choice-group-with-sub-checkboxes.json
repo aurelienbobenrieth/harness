@@ -1,0 +1,35 @@
+{
+  "entry": "settings.choice-group-with-sub-checkboxes",
+  "admin": "Settings > Checkout > Customer contact method",
+  "path": "/settings/checkout",
+  "adminSteps": "Open the page. Radios are 'Phone number or email' (help line with a link under it) and 'Email'; below them, checkboxes. Radios live in a shadow-DOM choice list (fieldset.choice-list). Root is the radio group. Group heading and info icon not measured.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "group",
+  "rootWidth": 752,
+  "locate": {
+    "group": "fieldset.choice-list",
+    "radio": { "sel": "label.choice", "in": "group" },
+    "radio-input": { "sel": "input.radio", "in": "group" },
+    "radio-help": { "sel": ".field-details", "in": "group" },
+    "radio-next": { "sel": "label.choice", "in": "group", "nth": 1 },
+    "checkbox": { "sel": "span", "text": "^Show a link for" },
+    "checkbox-box": ".Polaris-Checkbox__Backdrop",
+    "checkbox-help": { "sel": "span", "text": "^Customers will be able" },
+    "checkbox-next": ".label-text",
+    "checkbox-next-box": "div.checkbox",
+    "checkbox-next-help": { "sel": ".field-details", "text": "Customers can only" }
+  },
+  "parts": {
+    "radio": { "x": 0, "h": 28, "gap": "8", "pad": "4 0", "font": "13/20 400", "color": "#101010" },
+    "radio-input": { "x": 0, "w": 16, "h": 16, "radius": "50%", "bg": "#101010" },
+    "radio-help": { "x": 24, "font": "12/16 400", "color": "#4a4a4a" },
+    "radio-next": { "x": 0, "h": 28 },
+    "checkbox": { "x": 26, "font": "13/20 400", "color": "#101010" },
+    "checkbox-box": { "w": 16, "h": 16, "radius": "5", "bg": "#101010" },
+    "checkbox-help": { "x": 26, "font": "12/18 400", "color": "#4a4a4a" },
+    "checkbox-next": { "x": 24, "font": "13/20 400", "color": "#101010" },
+    "checkbox-next-box": { "w": 14, "h": 14, "radius": "4", "bg": "#ffffff" },
+    "checkbox-next-help": { "x": 0, "font": "12/16 400", "color": "#4a4a4a", "pad": "0 0 0 24" }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "entry": "onboarding.contact-row",
+  "admin": "Home, top right",
+  "path": "/",
+  "adminSteps": "Open Home; 'Questions? (844) 982-1186' sits in the top bar at right. The row is a div holding an s-internal-text label and an underlined link.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "row",
+  "rootWidth": 155,
+  "locate": {
+    "label": { "sel": "s-internal-text", "text": "Questions" },
+    "row": { "sel": "s-internal-text", "text": "Questions", "up": 1 },
+    "link": { "sel": "a", "in": "row" }
+  },
+  "parts": {
+    "row": { "h": 18 },
+    "link": { "h": 15, "font": "12/18 400", "color": "#4a4a4a", "radius": "4" }
+  }
+}

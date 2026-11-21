@@ -1,0 +1,31 @@
+{
+  "entry": "actions.disclosure-menu",
+  "admin": "Orders > #1044, header More actions",
+  "path": "/orders/6649667223691",
+  "adminSteps": "Open the order. The third header button (after Refund, Edit) is More actions. The popover needs a click through the button element (element.click()); the pointer click did not open it in the preview. Opacity and transition were not read (preview tab is hidden, opacity read 0).",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "trigger",
+  "rootWidth": 109,
+  "locate": {
+    "trigger": { "sel": "button.fill-layer", "nth": 2 },
+    "caret": { "sel": "s-internal-icon", "in": "trigger", "nth": -1 }
+  },
+  "parts": {
+    "trigger": { "h": 28, "font": "12/16 500", "color": "#101010", "radius": "9999", "pad": "4 6 4 12", "gap": "2" },
+    "caret": { "w": 16, "h": 16 }
+  },
+  "states": {
+    "expanded": {
+      "adminSteps": "Click More actions; the button gets aria-expanded=true and the popover opens under it, right edges aligned.",
+      "locate": {
+        "pop": { "sel": "div.dialog[class*=\"popover\"]" },
+        "menu": { "sel": "ul.menu", "in": "pop" }
+      },
+      "parts": {
+        "pop": { "w": 187, "bg": "#ffffff", "radius": "16", "right": 0, "shadow": "yes" },
+        "menu": { "pad": "3 4 4", "gap": "2" }
+      }
+    }
+  }
+}

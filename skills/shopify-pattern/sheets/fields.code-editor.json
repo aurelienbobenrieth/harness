@@ -1,0 +1,23 @@
+{
+  "entry": "fields.code-editor",
+  "admin": "Settings > Notifications > Customer notifications > Order confirmation > Edit code",
+  "path": "/email_templates/order_confirmation/edit",
+  "adminSteps": "Open the path and wait about 3 s for the CodeMirror editor to mount. Subject input, 'Revert to default' and 'Preview' were not found in the page text or buttons (see findings). Token colours not measured.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "label",
+  "rootWidth": 866,
+  "locate": {
+    "label": { "sel": "label", "text": "Email body" },
+    "editor": ".cm-editor",
+    "gutter": { "sel": ".cm-gutters", "in": "editor" },
+    "line-number": { "sel": ".cm-lineNumbers .cm-gutterElement", "nth": 1, "in": "editor" },
+    "content": { "sel": ".cm-content", "in": "editor" }
+  },
+  "parts": {
+    "editor": { "x": 1, "w": 864, "h": 499, "bg": "#ffffff", "radius": "8" },
+    "gutter": { "x": 1, "w": 37 },
+    "line-number": { "color": "#999999" },
+    "content": { "font": "13/18.2 400" }
+  }
+}

@@ -6,4 +6,5 @@ Ideas this skill re-implements in its own words. Never loaded by agents; kept fo
 @attribution https://shopify.dev/docs/apps/launch/shopify-app-store/app-store-requirements (inspiration; independently authored review workflow)
 @attribution https://shopify.dev/docs/apps/launch/built-for-shopify/requirements (inspiration; independently authored review workflow)
 @attribution https://shopify.dev/docs/apps/design/content (inspiration; independently authored review workflow)
+@attribution https://shopify.dev/docs/api/checkout-ui-extensions (inspiration: the compiled bundle limits; independently authored review workflow)
 ```

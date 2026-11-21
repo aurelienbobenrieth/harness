@@ -1,0 +1,55 @@
+{
+  "entry": "actions.button-secondary",
+  "admin": "Orders (Export)",
+  "path": "/orders",
+  "adminSteps": "Open Orders; the Export button left of Create order in the title bar. Hover not reproducible in the preview tab.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "secondary",
+  "rootWidth": 61,
+  "locate": {
+    "secondary": "button.button.variant-secondary",
+    "fill": {
+      "sel": ".fill",
+      "in": "secondary"
+    },
+    "decoration": {
+      "sel": ".decoration",
+      "in": "secondary"
+    }
+  },
+  "parts": {
+    "secondary": {
+      "h": 28,
+      "radius": "9999",
+      "pad": "6 12",
+      "font": "12/16 500",
+      "color": "#101010",
+      "bg": "none"
+    },
+    "fill": {
+      "bg": "#ffffff"
+    },
+    "decoration": {
+      "shadow": "yes",
+      "radius": "9999"
+    }
+  },
+  "states": {
+    "disabled": {
+      "adminSteps": "Open one order (/orders/6649667223691); the Go to previous page icon button is disabled",
+      "path": "/orders/6649667223691",
+      "locate": {
+        "secondary": ".button.variant-secondary.disabled"
+      },
+      "parts": {
+        "secondary": {
+          "h": 28,
+          "radius": "9999",
+          "color": "#a6a6a6",
+          "shadow": "none"
+        }
+      }
+    }
+  }
+}

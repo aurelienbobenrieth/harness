@@ -1,0 +1,26 @@
+{
+  "entry": "feedback.empty-state",
+  "admin": "Products > Purchase orders",
+  "path": "/purchase_orders",
+  "adminSteps": "Open /purchase_orders in a store with no purchase orders. The block is the Polaris BlockStack that holds the illustration (tagged data-kc by hand for the measure; locate it as the BlockStack that contains the img). The button's gradient background-image is left out. The Learn more pill sits outside the block, 36 below its bottom edge here. The illustration fades in (opacity 0 at first read). The filter bar and its height are not measured.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "block",
+  "rootWidth": 1182,
+  "locate": {
+    "block": "div.Polaris-BlockStack:has(img)",
+    "illustration": { "sel": "img", "in": "block" },
+    "title": { "sel": "p", "text": "Manage your purchase", "in": "block" },
+    "body": { "sel": "p", "text": "Track and receive", "in": "block" },
+    "button": { "sel": "span", "text": "Create purchase order", "in": "block", "closest": "button,a,[role=button]" },
+    "link-host": { "sel": "s-internal-button", "text": "Learn more about purchase" },
+    "link": { "sel": "button", "in": "link-host" }
+  },
+  "parts": {
+    "illustration": { "w": 226, "h": 226 },
+    "title": { "font": "15/22 500", "color": "#101010" },
+    "body": { "font": "12/18 400" },
+    "button": { "h": 28, "bg": "#101010", "color": "#ffffff", "radius": "9999", "pad": "6 12" },
+    "link": { "h": 28, "radius": "9999", "pad": "6 12", "font": "12/16 500", "color": "#101010" }
+  }
+}

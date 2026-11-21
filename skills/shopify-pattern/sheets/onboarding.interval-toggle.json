@@ -1,0 +1,20 @@
+{
+  "entry": "onboarding.interval-toggle",
+  "admin": "Discounts > create > Amount off products (method: Discount code / Automatic discount)",
+  "path": "/discounts/new/amount-off-product",
+  "adminSteps": "Open /discounts/new/amount-off-product; the first segmented control under the title is two s-press-button in a button group; the first option is pressed on load. Background and inset shadow read transparent in the hidden tab (colour transition never advanced), so bg and shadow are not recorded; the entry's rgb(208,208,208) and rgb(235,235,235) stay unverified. Hover not measured.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "group",
+  "rootWidth": 238,
+  "locate": {
+    "group": "div.button-group",
+    "pressed": { "sel": "button.button", "nth": 0, "in": "group" },
+    "rest": { "sel": "button.button", "nth": 1, "in": "group" }
+  },
+  "parts": {
+    "group": { "h": 28 },
+    "pressed": { "x": 0, "h": 28, "font": "12/16 500", "color": "#101010", "radius": "9999 0 0 9999", "pad": "6 12" },
+    "rest": { "h": 28, "font": "12/16 500", "color": "#101010", "radius": "0 9999 9999 0", "pad": "6 12" }
+  }
+}

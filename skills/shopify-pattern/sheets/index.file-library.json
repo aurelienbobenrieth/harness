@@ -1,0 +1,46 @@
+{
+  "entry": "index.file-library",
+  "admin": "Content > Files",
+  "path": "/content/files",
+  "adminSteps": "Open Content > Files. Header actions: More actions (28 px icon button), a 102 px secondary pill (New folder by its 62 px label; its text was not read back), primary Upload files. Upload from URL not seen as a button, probably in More actions (menu not opened). Table is div-based Polaris-Table, header checkbox carries the hidden text 'Select all 20 on page'. Dirty-view buttons Reset view, Save not measured (off screen at this width). Hover not measured.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "table",
+  "rootWidth": 1182,
+  "locate": {
+    "table": "div.Polaris-Table",
+    "title": "h1",
+    "primary": { "sel": "button.admin-next", "text": "Upload files" },
+    "more": { "sel": "button", "text": "More actions" },
+    "view": { "sel": "button[class*=Activator]", "text": "^All$" },
+    "head": { "sel": "div.Polaris-Table-TableHeadingCell", "nth": 2, "in": "table" },
+    "hcheck": { "sel": "span.Polaris-Checkbox", "in": "table" },
+    "hname": { "sel": "button[class*=TableHeadingCell__]", "in": "table" },
+    "rcell": { "sel": "div.Polaris-Table-TableCell", "nth": 2, "in": "table" },
+    "thumb": { "sel": "img", "in": "table" },
+    "name": { "sel": "a[class*=LinkBlock]", "in": "table" },
+    "refs": { "sel": "button", "text": "View file references", "in": "table" },
+    "replace": { "sel": "button", "text": "^Replace$", "in": "table" }
+  },
+  "parts": {
+    "primary": {
+      "h": 28,
+      "font": "12/16 500",
+      "color": "#ffffff",
+      "bg": "#101010",
+      "radius": "9999",
+      "pad": "4 12 4 6",
+      "w": 66
+    },
+    "more": { "w": 28, "h": 28, "radius": "9999" },
+    "title": { "font": "13/28 500", "color": "#101010" },
+    "head": { "h": 31, "bg": "#f7f7f7", "font": "12/18 500", "color": "#4a4a4a" },
+    "hcheck": { "w": 16, "h": 16, "x": 13 },
+    "hname": { "h": 30, "pad": "6", "font": "12/18 500", "color": "#4a4a4a" },
+    "rcell": { "h": 44, "bg": "#ffffff", "font": "13/20 400", "color": "#101010" },
+    "thumb": { "w": 32, "h": 32, "x": 42 },
+    "name": { "h": 20, "font": "13/20 400", "color": "#101010" },
+    "refs": { "h": 44, "w": 172 },
+    "replace": { "w": 28, "h": 28, "radius": "9999" }
+  }
+}

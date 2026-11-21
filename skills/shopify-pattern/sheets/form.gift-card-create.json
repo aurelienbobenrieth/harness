@@ -1,0 +1,41 @@
+{
+  "entry": "form.gift-card-create",
+  "admin": "Gift cards > Issue gift card",
+  "path": "/gift_cards/new",
+  "adminSteps": "Open the page; nothing else. The save bar renders in the top bar (y is negative in page coordinates, so no y kept). The page has a 'Gift card code' text input above 'Initial value'.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "code-input",
+  "rootWidth": 704,
+  "locate": {
+    "code-input": { "sel": "input", "nth": 1 },
+    "customer-input": "input[placeholder=\"Search or create customer\"]",
+    "code-label": { "sel": "span.label-content", "text": "Gift card code" },
+    "value-label": { "sel": "span", "text": "^Initial value$" },
+    "value-input": { "sel": "input.Polaris-TextField__Input", "nth": 1 },
+    "expiry": "button[aria-label^=Expiration]",
+    "notes-button": "button[aria-label=\"Edit notes\"]",
+    "unsaved": { "sel": "span", "text": "^Unsaved changes$" },
+    "discard": "[class*=\"_ButtonDiscard_\"]",
+    "save": "[class*=\"_ButtonSave_\"]"
+  },
+  "parts": {
+    "customer-input": { "h": 30, "font": "13/20 400", "pad": "5 12 5 0" },
+    "code-label": { "font": "13/20 500", "color": "#101010" },
+    "value-label": { "font": "13/20 500", "color": "#101010" },
+    "value-input": { "w": 330, "h": 30, "font": "13/20 400", "pad": "5 12 5 0" },
+    "expiry": { "w": 121, "h": 28, "font": "12/16 500", "radius": "9999", "pad": "4 12 4 6" },
+    "notes-button": { "w": 28, "h": 28, "color": "#606060", "radius": "9999", "pad": "4" },
+    "unsaved": { "font": "12/18 400" },
+    "discard": {
+      "w": 53,
+      "h": 24,
+      "font": "13/20 500",
+      "color": "#eeeeee",
+      "bg": "#ffffff/12",
+      "radius": "9999",
+      "pad": "6 12"
+    },
+    "save": { "w": 42, "bg": "#fcfcfc", "color": "#121212", "radius": "9999", "pad": "6 12" }
+  }
+}

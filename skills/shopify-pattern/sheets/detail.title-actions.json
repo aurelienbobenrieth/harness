@@ -1,0 +1,29 @@
+{
+  "entry": "detail.title-actions",
+  "admin": "Orders > #1044",
+  "path": "/orders/6649667223691",
+  "adminSteps": "Open the order; read the title bar. Buttons are 28 high pills painted by span.fill (bg #ffffff) and span.decoration (shadow); the probe reads the button itself. Gap between buttons is 6, the bar gap 8 (pagination sits 7 after More actions).",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "bar",
+  "rootWidth": 1182,
+  "locate": {
+    "bar": "div.header-content",
+    "actions": { "sel": "div.actions", "in": "bar" },
+    "refund": { "sel": "button", "nth": 0, "in": "actions" },
+    "refund-fill": { "sel": "span.fill", "in": "refund" },
+    "edit": { "sel": "button", "nth": 1, "in": "actions" },
+    "more": { "sel": "button", "nth": 2, "in": "actions" },
+    "more-chevron": { "sel": "s-internal-icon", "in": "more" },
+    "pagination": { "sel": "div.pagination-wrapper", "in": "bar" }
+  },
+  "parts": {
+    "actions": { "right": 0, "h": 28, "gap": "6" },
+    "refund": { "h": 28, "pad": "6 12", "font": "12/16 500", "color": "#101010" },
+    "refund-fill": { "bg": "#ffffff", "radius": "9999" },
+    "edit": { "h": 28, "pad": "6 12", "font": "12/16 500" },
+    "more": { "h": 28, "pad": "4 6 4 12", "font": "12/16 500" },
+    "more-chevron": { "w": 16, "h": 16 },
+    "pagination": { "right": 0, "w": 56, "h": 28, "bg": "#ffffff", "radius": "9999", "shadow": "yes" }
+  }
+}

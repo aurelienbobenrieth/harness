@@ -1,0 +1,33 @@
+{
+  "entry": "detail.destructive-in-more-actions",
+  "admin": "Customers > a customer > More actions",
+  "path": "/customers/8906969383051",
+  "adminSteps": "Open a customer. The title bar holds a pill More actions with a caret and prev/next arrows. Opened from script by clicking the s-internal-button whose commandfor is 'action-group-menu-More actions' (a pointer click did not open it in the hidden tab). Menu opens below the pill with a search field 'Search actions' at the top, then six items in one group: Send account invite, Issue store credit, Merge customer, Request customer data, Erase personal data, Delete customer (red). Order's menu and confirm modals not measured. Hover not measured.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "dialog",
+  "rootWidth": 176,
+  "locate": {
+    "dialog": { "sel": "div.dialog" },
+    "list": { "sel": "ul.menu", "in": "dialog" },
+    "item": { "sel": "button.menu-item", "in": "dialog" },
+    "item-merge": { "sel": "button.menu-item", "text": "Merge customer", "in": "dialog" },
+    "item-erase": { "sel": "button.menu-item", "text": "Erase personal data", "in": "dialog" },
+    "item-delete": { "sel": "button.menu-item", "text": "Delete customer", "in": "dialog" }
+  },
+  "parts": {
+    "dialog": { "w": 176, "bg": "#ffffff", "radius": "16", "shadow": "yes" },
+    "list": { "pad": "3 4 4" },
+    "item": { "h": 30, "font": "13.3/20 400", "color": "#101010", "radius": "12", "pad": "4 8 4 4" },
+    "item-merge": { "color": "#101010" },
+    "item-erase": { "color": "#101010" },
+    "item-delete": { "color": "#ce1f18" }
+  },
+  "states": {
+    "open": {
+      "adminSteps": "Menu open, as above.",
+      "locate": {},
+      "parts": {}
+    }
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "entry": "index.view-menu",
+  "admin": "Orders, filter bar left end",
+  "path": "/orders",
+  "adminSteps": "Open Orders; the pill reads All. Viewport was 1281 wide. Popover radius and shadow sit on an ancestor beyond 3 parents and were not read. Pill hover not reachable (no real pointer); open state read.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "pill",
+  "rootWidth": 51,
+  "locate": {
+    "pill": { "sel": "[class*=\"_Activator_19lk4\"]" },
+    "label": { "sel": "[class*=\"_LabelWrapper_\"]", "in": "pill" },
+    "chevron": { "sel": "s-internal-icon", "in": "pill" }
+  },
+  "parts": {
+    "pill": { "w": 51, "h": 28, "radius": "9999", "pad": "0 2 0 8" },
+    "label": { "font": "13/20 400", "color": "#101010" },
+    "chevron": { "w": 20, "h": 20 }
+  },
+  "states": {
+    "open": {
+      "adminSteps": "Click the pill; the menu (role=menu, label Select a view) opens 5 below the pill. Press Escape to close.",
+      "locate": {
+        "pill": { "sel": "[class*=\"_Activator_19lk4\"]" },
+        "menu": { "sel": "[role=menu]" },
+        "pop": { "sel": "[role=menu]", "up": 1 },
+        "item": { "sel": "[role=menuitemradio]", "in": "menu" },
+        "check": { "sel": "s-internal-icon", "in": "item" }
+      },
+      "parts": {
+        "pill": { "bg": "#000000/13" },
+        "pop": { "w": 222, "pad": "4" },
+        "item": { "h": 28, "radius": "12", "pad": "4 32 4 4", "gap": "8" },
+        "check": { "w": 20, "h": 20 }
+      }
+    }
+  }
+}

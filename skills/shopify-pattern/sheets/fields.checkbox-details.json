@@ -1,0 +1,22 @@
+{
+  "entry": "fields.checkbox-details",
+  "admin": "Settings > Checkout",
+  "path": "/settings/checkout",
+  "adminSteps": "Open Settings > Checkout and scroll to the checked checkbox 'Show a link for customers to track their order with Shop' (details line below). Unchecked, hover, focus and disabled not measured.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "wrap",
+  "rootWidth": 752,
+  "locate": {
+    "wrap": { "sel": "[class*=\"Choice__HelpText\"]", "up": 2 },
+    "box": { "sel": "[class*=\"Checkbox__Backdrop\"]", "in": "wrap" },
+    "label-wrap": { "sel": "[class*=\"Choice__Label\"]", "in": "wrap" },
+    "label": { "sel": "span", "text": "[a-z]", "in": "label-wrap" },
+    "details": { "sel": "[class*=\"Choice__HelpText\"] span" }
+  },
+  "parts": {
+    "box": { "x": 1, "w": 16, "h": 16, "bg": "#101010", "radius": "5" },
+    "label": { "x": 26, "font": "13/20 400", "color": "#101010" },
+    "details": { "x": 26, "font": "12/18 400", "color": "#4a4a4a" }
+  }
+}

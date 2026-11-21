@@ -1,0 +1,84 @@
+{
+  "entry": "overlay.confirm-destructive",
+  "admin": "Discounts, 2 rows selected, Actions > Delete discounts",
+  "path": "/discounts",
+  "adminSteps": "tick two rows, Actions, Delete discounts; press Cancel afterwards",
+  "measured": "2026-11-16",
+  "root": "surface",
+  "rootWidth": 620,
+  "locate": {
+    "surface": {
+      "text": "[?]$",
+      "sel": "h2",
+      "up": 4
+    },
+    "title": {
+      "sel": "h2",
+      "in": "surface"
+    },
+    "close": {
+      "sel": "button",
+      "text": "^Close$",
+      "in": "surface"
+    },
+    "body": {
+      "text": "can.t be undone",
+      "in": "surface"
+    },
+    "cancel": {
+      "text": "^Cancel$",
+      "closest": "button",
+      "in": "surface"
+    },
+    "confirm": {
+      "text": "^Delete",
+      "closest": "button",
+      "in": "surface"
+    },
+    "confirm-label": {
+      "text": "^Delete",
+      "in": "surface",
+      "nth": -1
+    }
+  },
+  "parts": {
+    "surface": {
+      "w": 620,
+      "h": 144,
+      "radius": "24",
+      "bg": "#ffffff"
+    },
+    "title": {
+      "x": 20,
+      "font": "15/22 500",
+      "color": "#101010"
+    },
+    "close": {
+      "w": 28,
+      "h": 28,
+      "right": 16
+    },
+    "body": {
+      "font": "13/20 400",
+      "color": "#101010"
+    },
+    "cancel": {
+      "h": 28,
+      "pad": "6 12",
+      "radius": "9999",
+      "bg": "#ffffff"
+    },
+    "confirm": {
+      "h": 28,
+      "right": 16,
+      "pad": "6 12",
+      "radius": "9999",
+      "bg": "#d82019",
+      "color": "#ffffff"
+    },
+    "confirm-label": {
+      "font": "12/16 600",
+      "color": "#ffffff"
+    }
+  }
+}

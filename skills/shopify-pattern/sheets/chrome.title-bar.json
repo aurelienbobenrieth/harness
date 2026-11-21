@@ -1,0 +1,75 @@
+{
+  "entry": "chrome.title-bar",
+  "admin": "Orders (index)",
+  "path": "/orders",
+  "adminSteps": "Open Orders. Buttons are slotted outside .toolbar, so they are located from the page panel. Secondary and tertiary rings sit on the .decoration span, the white fill on .fill; the primary paints on the button itself (radius 9999, shadow yes, gradient highlights left out).",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "panel",
+  "rootWidth": 1217,
+  "locate": {
+    "panel": "#AppFrameMain",
+    "header": { "sel": ".toolbar", "in": "panel" },
+    "icon": { "sel": "s-internal-icon", "in": "header" },
+    "title": { "sel": "h1", "in": "header" },
+    "picker": { "sel": "button.button", "text": "Showing orders", "in": "panel" },
+    "picker-fill": { "sel": ".fill", "in": "picker" },
+    "primary": { "sel": "a.button", "in": "panel" },
+    "primary-label": { "sel": ".text-wrapper", "in": "primary" }
+  },
+  "parts": {
+    "panel": { "radius": "16", "bg": "#ffffff" },
+    "header": { "h": 28, "y": 12, "pad": "0 4 0 16" },
+    "icon": { "x": 16, "w": 20, "h": 20 },
+    "title": { "x": 44, "h": 28, "font": "13/28 500", "color": "#101010" },
+    "picker": { "x": 93, "h": 28, "radius": "9999", "pad": "4 6 4 12", "font": "12/16 500" },
+    "picker-fill": { "bg": "#ffffff", "radius": "9999" },
+    "primary": {
+      "h": 28,
+      "right": 19,
+      "radius": "9999",
+      "pad": "6 12",
+      "font": "12/16 500",
+      "color": "#ffffff",
+      "bg": "#101010",
+      "shadow": "yes"
+    },
+    "primary-label": { "font": "12/16 500", "color": "#ffffff" }
+  },
+  "states": {
+    "detail": {
+      "adminSteps": "Open an order (Orders > #1044). Back circle is a.button 28x28 (ring on its .decoration span, fill #fff); breadcrumb 'Orders' 13/20 500 #4a4a4a; secondary buttons then 'More actions' (pad 4 6 4 12, chevron 16) then prev/next 28x28 tertiary buttons (icon colour #a6a6a6 when disabled). Buttons are the visible button.button of the panel, in order: 0 first secondary, 2 More actions.",
+      "path": "/orders/6649667223691",
+      "locate": {
+        "panel": "#AppFrameMain",
+        "header": { "sel": ".toolbar", "in": "panel" },
+        "back": { "sel": "a.button", "in": "panel" },
+        "back-fill": { "sel": ".fill", "in": "back" },
+        "back-icon": { "sel": "s-internal-icon", "in": "back" },
+        "crumb": { "sel": ".breadcrumb-icon-label", "in": "header" },
+        "title": { "sel": "h1", "in": "header" },
+        "secondary": { "sel": "button.button", "in": "panel", "nth": 0 },
+        "secondary-fill": { "sel": ".fill", "in": "secondary" },
+        "more": { "sel": "button.button", "in": "panel", "nth": 2 },
+        "more-fill": { "sel": ".fill", "in": "more" },
+        "more-icon": { "sel": "s-internal-icon", "in": "more" },
+        "prev": { "sel": "button.button", "in": "panel", "nth": 3 },
+        "next": { "sel": "button.button", "in": "panel", "nth": 4 }
+      },
+      "parts": {
+        "back": { "x": 16, "w": 28, "h": 28, "radius": "9999" },
+        "back-fill": { "bg": "#ffffff", "radius": "9999" },
+        "back-icon": { "w": 20, "h": 20 },
+        "crumb": { "font": "13/20 500", "color": "#4a4a4a" },
+        "title": { "font": "13/28 500", "color": "#101010" },
+        "secondary": { "h": 28, "pad": "6 12", "radius": "9999", "font": "12/16 500", "color": "#101010" },
+        "secondary-fill": { "bg": "#ffffff" },
+        "more": { "h": 28, "pad": "4 6 4 12", "radius": "9999", "font": "12/16 500" },
+        "more-fill": { "bg": "#ffffff" },
+        "more-icon": { "w": 16, "h": 16 },
+        "prev": { "w": 28, "h": 28, "radius": "9999", "color": "#a6a6a6" },
+        "next": { "w": 28, "h": 28, "right": 19, "radius": "9999", "color": "#a6a6a6" }
+      }
+    }
+  }
+}

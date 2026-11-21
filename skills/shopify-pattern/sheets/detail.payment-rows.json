@@ -1,0 +1,39 @@
+{
+  "entry": "detail.payment-rows",
+  "admin": "Orders > #1044 > payment card",
+  "path": "/orders/6649667223691",
+  "adminSteps": "Open the order; the payment card is the section holding Subtotal, Shipping, Total and Paid, under the fulfillment card (the line item with thumbnail, title, quantity chip is in the fulfillment card). Row text sits in s-internal-text whose styles the probe cannot read: values read in its shadow span are detail column colour #4a4a4a, Total row weight 600, other labels and amounts 400 #101010, line title 500. Thumbnail radius is clamp(6px, round(25%, 2px), 12px) with a 1px rgba(0,0,0,.08) border on its ::after; left out. Row pitch 28; label column ends 148 from the card edge (detail column x 164).",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "card",
+  "rootWidth": 760,
+  "locate": {
+    "host": { "sel": "s-internal-text", "text": "^Subtotal$", "closest": "s-internal-section" },
+    "card": { "sel": "div.card", "in": "host" },
+    "row-subtotal": { "sel": "s-internal-text", "text": "^Subtotal$", "closest": "div.Polaris-InlineGrid" },
+    "row-shipping": { "sel": "s-internal-text", "text": "^Shipping$", "closest": "div.Polaris-InlineGrid" },
+    "row-total": { "sel": "s-internal-text", "text": "^Total$", "nth": -1, "closest": "div.Polaris-InlineGrid" },
+    "row-paid": { "sel": "s-internal-text", "text": "^Paid$", "nth": -1, "closest": "div.Polaris-InlineGrid" },
+    "label": { "sel": "s-internal-text", "text": "^Subtotal$", "up": 1 },
+    "detail": { "sel": "s-internal-text", "text": "^1 item$", "up": 1 },
+    "amount-total": { "sel": "s-internal-text", "text": "779.95", "nth": 0, "up": 1 },
+    "hairline": { "sel": "hr", "nth": -1 },
+    "line-thumb": { "sel": "div.thumbnail" },
+    "line-title": { "sel": "h3.heading" },
+    "line-qty-chip": { "sel": "span.Polaris-Tag" }
+  },
+  "parts": {
+    "card": { "w": 760, "pad": "16", "radius": "20", "bg": "#ffffff", "shadow": "yes" },
+    "row-subtotal": { "x": 16, "h": 20, "right": 16 },
+    "row-shipping": { "x": 16, "h": 20, "right": 16 },
+    "row-total": { "x": 16, "h": 20, "right": 16 },
+    "row-paid": { "x": 16, "h": 20, "right": 16 },
+    "label": { "x": 16 },
+    "detail": { "x": 164 },
+    "amount-total": { "right": 16, "w": 53 },
+    "hairline": { "x": 16, "h": 1, "border": "1 #f2f2f2" },
+    "line-thumb": { "w": 40, "h": 40 },
+    "line-title": { "font": "13/20 500", "color": "#101010" },
+    "line-qty-chip": { "h": 20, "radius": "8", "bg": "#000000/5", "color": "#4a4a4a", "pad": "0 6" }
+  }
+}

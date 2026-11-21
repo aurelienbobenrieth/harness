@@ -1,0 +1,74 @@
+{
+  "entry": "index.bulk-bar",
+  "admin": "Discounts, 2 rows selected",
+  "path": "/discounts",
+  "adminSteps": "tick two row checkboxes",
+  "measured": "2026-11-16",
+  "root": "bar",
+  "locate": {
+    "bar": {
+      "text": "^[0-9]+ selected$",
+      "up": 4
+    },
+    "select-all": {
+      "sel": "span.Polaris-Checkbox__Backdrop",
+      "in": "bar"
+    },
+    "count": {
+      "text": "^[0-9]+ selected$",
+      "closest": "button"
+    },
+    "count-label": {
+      "text": "^[0-9]+ selected$"
+    },
+    "action": {
+      "text": "^Activate discounts$",
+      "closest": "button"
+    },
+    "action-label": {
+      "text": "^Activate discounts$"
+    },
+    "more": {
+      "sel": "button",
+      "text": "^Actions$"
+    }
+  },
+  "parts": {
+    "bar": {
+      "h": 31,
+      "bg": "#f7f7f7",
+      "gap": "4"
+    },
+    "select-all": {
+      "w": 16,
+      "h": 16,
+      "radius": "5",
+      "bg": "#101010"
+    },
+    "count": {
+      "h": 24,
+      "radius": "9999",
+      "pad": "2 4 2 8"
+    },
+    "count-label": {
+      "font": "12/16 500",
+      "color": "#101010"
+    },
+    "action": {
+      "h": 24,
+      "bg": "#ebebeb",
+      "radius": "9999",
+      "pad": "2 8"
+    },
+    "action-label": {
+      "font": "12/16 500",
+      "color": "#101010"
+    },
+    "more": {
+      "w": 24,
+      "h": 24,
+      "bg": "#ebebeb",
+      "radius": "9999"
+    }
+  }
+}

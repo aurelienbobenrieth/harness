@@ -1,0 +1,58 @@
+{
+  "entry": "settings.user-list",
+  "admin": "Settings > Users",
+  "path": "/settings/organization-account/",
+  "adminSteps": "Open Settings > Users (/settings/account redirects here). The settings sidebar sub-nav shows Users, Roles, Security. Title bar right: 'Import' (secondary, white fill, 61 wide) and 'Add users' (primary, #101010, 81 wide), both 28 high, no accessible name text read. Card: view tabs 'All users', 'Active users', 'Pending users' (pill tabs, the selected one #000000/13), 'More views', a 'Search and filter results' and a 'Sort the results' icon button, then the table. Status badges: Pending #ffe45c with text #574100, Active #b3f782 with text #214b03. Security icon is shield-person when a secure sign-in method is required, shield-none when not (both in the default text colour, no red); its text is visually hidden. Pending users show the email alone in the link. Sorting buttons only on User and Status headers. Hover and More views not measured.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "card",
+  "rootWidth": 784,
+  "locate": {
+    "card": "div[class*=_SettingsTable_]",
+    "tab": { "sel": "button", "text": "^All", "in": "card" },
+    "tab-other": { "sel": "button", "text": "^Active", "in": "card" },
+    "search": { "sel": "button", "text": "Search and filter", "in": "card" },
+    "sort": { "sel": "button", "text": "Sort the results", "in": "card" },
+    "table": { "sel": "div.Polaris-Table", "in": "card" },
+    "head-select": { "sel": "div[class*=TableHeadingCell]", "text": "^Selection$", "in": "table" },
+    "head-user": { "sel": "div[class*=TableHeadingCell]", "text": "^User$", "in": "table" },
+    "head-status": { "sel": "div[class*=TableHeadingCell]", "text": "^Status$", "in": "table" },
+    "head-role": { "sel": "div[class*=TableHeadingCell]", "text": "^Role$", "in": "table" },
+    "checkbox": { "sel": "span.Polaris-Checkbox", "in": "table", "nth": 1 },
+    "user-link": { "sel": "a", "in": "table" },
+    "status-badge": { "sel": "div.badge", "in": "table" },
+    "status-text": { "sel": "span.content", "in": "status-badge" },
+    "role-text": { "sel": "span.Polaris-Truncate", "in": "table" }
+  },
+  "parts": {
+    "tab": { "x": 12, "h": 28, "bg": "#000000/13", "radius": "9999", "pad": "4 12" },
+    "tab-other": { "h": 28, "color": "#4a4a4a", "radius": "9999", "pad": "4 12" },
+    "search": { "w": 48, "h": 28, "bg": "#ebebeb", "radius": "9999", "pad": "4" },
+    "sort": { "right": 8, "w": 28, "h": 28, "bg": "#ebebeb", "radius": "9999", "pad": "4" },
+    "table": { "x": 10, "right": 10 },
+    "head-select": { "w": 32, "h": 31, "bg": "#f7f7f7", "radius": "10 0 0 10" },
+    "head-user": { "w": 147, "h": 31, "font": "12/18 500", "color": "#4a4a4a", "bg": "#f7f7f7" },
+    "head-status": { "w": 70, "h": 31, "font": "12/18 500", "color": "#4a4a4a", "bg": "#f7f7f7" },
+    "head-role": {
+      "right": 10,
+      "h": 31,
+      "font": "12/18 500",
+      "color": "#4a4a4a",
+      "bg": "#f7f7f7",
+      "radius": "0 10 10 0",
+      "pad": "6 8 6 6"
+    },
+    "checkbox": { "x": 19, "w": 16, "h": 16 },
+    "user-link": { "x": 48, "w": 131, "h": 20, "font": "13/20 600", "color": "#101010" },
+    "status-badge": {
+      "h": 20,
+      "font": "12/18 500",
+      "color": "#574100",
+      "bg": "#ffe45c",
+      "radius": "8",
+      "pad": "1 6",
+      "gap": "4"
+    },
+    "role-text": { "x": 297, "h": 20, "font": "13/20 400", "color": "#101010" }
+  }
+}

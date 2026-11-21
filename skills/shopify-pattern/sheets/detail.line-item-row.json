@@ -1,0 +1,28 @@
+{
+  "entry": "detail.line-item-row",
+  "admin": "Orders > #1044 > Unfulfilled card line",
+  "path": "/orders/6649667223691",
+  "adminSteps": "Open the order; the first line sits under the delivery-method row of the Unfulfilled card. Customer last-order and Abandoned checkout cards not measured. Thumbnail radius is clamp(6px, 25%, 12px), left out.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "row",
+  "rootWidth": 728,
+  "locate": {
+    "row": { "sel": "[class*=\"_SubgridLayout_\"]", "nth": 0 },
+    "thumb": { "sel": "div.thumbnail", "in": "row" },
+    "title": { "sel": "a.link", "in": "row" },
+    "unit": { "sel": "span.Polaris-Text--root", "in": "row", "text": "[$]749" },
+    "times": { "sel": "p.Polaris-Text--root", "in": "row", "text": "×" },
+    "qty": { "sel": "span.Polaris-Tag", "in": "row" },
+    "total": { "sel": "span.Polaris-Text--root", "in": "row", "text": "[$]749", "nth": 1 }
+  },
+  "parts": {
+    "row": { "w": 728, "h": 41, "gap": "10 12" },
+    "thumb": { "x": 0, "w": 40, "h": 40 },
+    "title": { "x": 48, "font": "13/20 500", "color": "#101010" },
+    "unit": { "x": 550, "font": "13/20 400", "color": "#101010", "text": "$749.95" },
+    "times": { "font": "13/20 400", "color": "#101010", "text": "×" },
+    "qty": { "w": 20, "h": 20, "bg": "#000000/5", "color": "#4a4a4a", "radius": "8", "pad": "0 6" },
+    "total": { "right": 0, "font": "13/20 400", "color": "#101010", "text": "$749.95" }
+  }
+}

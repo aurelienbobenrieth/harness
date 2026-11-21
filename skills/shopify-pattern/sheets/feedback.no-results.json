@@ -1,0 +1,23 @@
+{
+  "entry": "feedback.no-results",
+  "admin": "Orders, search with no match",
+  "path": "/orders?query=zzzzqqqq",
+  "adminSteps": "open the orders index with a search term that matches nothing; the block sits in the table wrapper under the filter bar. Illustration colour not measured (img).",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "table",
+  "rootWidth": 1182,
+  "locate": {
+    "table": "[class*=\"Polaris-Table__TableWrapper\"]",
+    "block": { "sel": "[class*=\"Polaris-LegacyStack\"]", "in": "table" },
+    "illustration": { "sel": "img,svg", "in": "block" },
+    "title": { "sel": "p", "text": "No orders found", "in": "block" },
+    "body": { "sel": "p", "text": "Try changing", "in": "block" }
+  },
+  "parts": {
+    "block": { "w": 315 },
+    "illustration": { "w": 60, "h": 60 },
+    "title": { "font": "22/28 500", "color": "#101010" },
+    "body": { "font": "13/20 400", "color": "#4a4a4a" }
+  }
+}

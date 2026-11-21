@@ -1,0 +1,22 @@
+{
+  "entry": "index.empty-first-run",
+  "admin": "Purchase orders",
+  "path": "/purchase_orders",
+  "adminSteps": "Open Purchase orders (empty in this store). The 'Learn more about purchase orders' pill was not located by probe.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "",
+  "rootWidth": 1281,
+  "locate": {
+    "img": { "sel": "img", "nth": 0 },
+    "title": { "sel": "p", "text": "^Manage your purchase orders$" },
+    "body": { "sel": "p", "text": "^Track and receive inventory" },
+    "button": { "sel": "a", "text": "Create purchase order" }
+  },
+  "parts": {
+    "img": { "w": 226, "h": 226 },
+    "title": { "font": "15/22 500", "color": "#101010" },
+    "body": { "font": "12/18 400", "color": "#101010" },
+    "button": { "h": 28, "w": 153, "pad": "6 12", "radius": "9999", "bg": "#101010", "color": "#ffffff" }
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "entry": "data.period-pill",
+  "admin": "Analytics > date button",
+  "path": "/analytics",
+  "adminSteps": "Open Analytics; the date control sits above the tiles. Button 'Date control: Today' (91x28). The painted background is its span.fill (#ebebeb at rest), not the button. Click it (element.click(); the pointer hit another element) to open the popover. Popover radius and shadow sit on a shadow-DOM wrapper and could not be resolved.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "pill",
+  "rootWidth": 91,
+  "locate": {
+    "pill": { "sel": "button.button", "text": "Date control" },
+    "fill": { "sel": "span.fill", "in": "pill" },
+    "icon": { "sel": "s-icon", "in": "pill" },
+    "text": { "sel": "span.text-wrapper", "in": "pill" },
+    "cmp": { "sel": "button.button", "text": "Comparison control" }
+  },
+  "parts": {
+    "pill": { "w": 91, "h": 28, "font": "12/16 500", "pad": "4 12 4 6", "radius": "9999", "gap": "2" },
+    "fill": { "bg": "#ebebeb", "radius": "9999" },
+    "icon": { "x": 6, "w": 20, "h": 20 },
+    "text": { "x": 28, "h": 16, "font": "12/16 500" },
+    "cmp": { "x": 99, "h": 28, "pad": "4 12 4 6" }
+  },
+  "states": {
+    "open": {
+      "adminSteps": "Click the Date control button; the popover opens 4px below it (pill bottom y 153, popover y 157), 665x371.",
+      "locate": {
+        "picker": "div.picker",
+        "sidebar": { "sel": "div.sidebar", "in": "picker" },
+        "item": { "sel": "li.option-item", "in": "picker" },
+        "itembtn": { "sel": "button.option-button", "in": "picker" },
+        "itemtext": { "sel": "span.text-small", "in": "picker" },
+        "hr": { "sel": "hr", "in": "picker" },
+        "input": { "sel": "div.input-field", "in": "picker" },
+        "day": { "sel": "button", "text": "^15$", "in": "picker" }
+      },
+      "parts": {
+        "picker": { "w": 665, "h": 371 },
+        "sidebar": { "w": 161, "h": 371, "bg": "#f7f7f7" },
+        "item": { "w": 142, "h": 23 },
+        "itembtn": { "w": 142, "h": 23, "pad": "2 6", "radius": "8", "bg": "#ebebeb", "font": "13/20 600", "gap": "8" },
+        "itemtext": { "font": "12/20 600" },
+        "hr": { "h": 1, "border": "1 #f2f2f2" },
+        "input": { "w": 202, "h": 28 },
+        "day": { "w": 31, "h": 30, "radius": "10", "font": "13/20 400" }
+      }
+    }
+  }
+}

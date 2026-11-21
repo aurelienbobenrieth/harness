@@ -1,0 +1,56 @@
+{
+  "entry": "form.seo-listing-editor",
+  "admin": "Content > Blog posts > Add blog post > Search engine listing",
+  "path": "/content/articles/new",
+  "adminSteps": "Open the page. Click the edit icon button (aria-label Edit) at the right of the heading; the card grows to hold the fields. Fields measured empty.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "section",
+  "rootWidth": 760,
+  "locate": {
+    "section": { "sel": "h2", "text": "^Search engine listing$", "closest": "section" },
+    "heading": { "sel": "h2", "text": "^Search engine listing$" },
+    "edit-button": { "sel": "button", "in": "section" },
+    "card": { "sel": ".card", "in": "section" },
+    "title-label": { "sel": "label", "text": "Page title", "in": "section" },
+    "title-box": { "sel": ".Polaris-TextField__Backdrop", "in": "section" },
+    "title-count": { "sel": "p", "text": "0 of 70", "in": "section" },
+    "desc-box": { "sel": ".Polaris-TextField__Backdrop", "in": "section", "nth": 1 },
+    "desc-count": { "sel": "p", "text": "0 of 160", "in": "section" },
+    "handle-box": { "sel": ".Polaris-TextField__Backdrop", "in": "section", "nth": 2 },
+    "handle-prefix": { "sel": "span", "text": "^blogs/news/$", "in": "section" },
+    "url-line": { "sel": "p", "text": "^https://", "in": "section" }
+  },
+  "parts": {
+    "heading": { "x": 0, "font": "15/22 500", "color": "#101010" },
+    "edit-button": { "w": 28, "h": 28, "right": 0, "color": "#606060", "radius": "9999" }
+  },
+  "states": {
+    "editing": {
+      "adminSteps": "After clicking the edit icon button: preview box on top (52 tall, 16 padding), a divider, then three fields in a 16-padded stack with 16 gaps.",
+      "locate": {
+        "section": { "sel": "h2", "text": "^Search engine listing$", "closest": "section" },
+        "card": { "sel": ".card", "in": "section" },
+        "title-label": { "sel": "label", "text": "Page title", "in": "section" },
+        "title-box": { "sel": ".Polaris-TextField__Backdrop", "in": "section" },
+        "title-count": { "sel": "p", "text": "0 of 70", "in": "section" },
+        "desc-box": { "sel": ".Polaris-TextField__Backdrop", "in": "section", "nth": 1 },
+        "desc-count": { "sel": "p", "text": "0 of 160", "in": "section" },
+        "handle-box": { "sel": ".Polaris-TextField__Backdrop", "in": "section", "nth": 2 },
+        "handle-prefix": { "sel": "span", "text": "^blogs/news/$", "in": "section" },
+        "url-line": { "sel": "p", "text": "^https://", "in": "section" }
+      },
+      "parts": {
+        "card": { "x": 0, "h": 425, "bg": "#ffffff", "radius": "20", "shadow": "yes" },
+        "title-label": { "x": 16, "h": 20, "font": "13/20 400", "color": "#101010" },
+        "title-box": { "x": 16, "right": 16, "h": 30, "bg": "#ffffff", "radius": "12" },
+        "title-count": { "x": 16, "h": 18, "font": "12/18 400", "color": "#4a4a4a" },
+        "desc-box": { "x": 16, "right": 16, "h": 90, "bg": "#ffffff", "radius": "12" },
+        "desc-count": { "x": 16, "h": 18, "font": "12/18 400", "color": "#4a4a4a" },
+        "handle-box": { "x": 16, "right": 16, "h": 30, "bg": "#ffffff", "radius": "12" },
+        "handle-prefix": { "x": 28, "font": "13/20 400", "color": "#4a4a4a" },
+        "url-line": { "x": 16, "h": 18, "font": "12/18 400", "color": "#4a4a4a" }
+      }
+    }
+  }
+}

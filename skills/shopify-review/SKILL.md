@@ -18,6 +18,14 @@ description: Review a Shopify app against App Store, Built for Shopify, Polaris,
 - Manifest, extensions, built output: conformance, explicit deployment.
 - Copy, UX: scoped agentlint or direct review; findings aren't approval. Headers, auth, webhooks, navigation, entitlements, keyboard, layout: app tests (webhook controls execute app behavior: isolated handlers, fixtures).
 
+## Extensions
+
+Shopify rejects at deploy a checkout UI extension compiled over 64 KB, 128 KB for a full-page customer account extension ([checkout UI extensions](https://shopify.dev/docs/api/checkout-ui-extensions)). Built as the Shopify CLI builds it, a measured checkout extension was 130,747 B against the 65,536 B limit; 71,093 B without Effect, 60,751 B once plain TypeScript.
+
+- Vanilla TypeScript; no runtime library beyond Shopify's own. No Effect, no analytics SDK: send events (PostHog, for instance) through a plain `fetch`.
+- Imports that tree-shake: named imports from side-effect-free modules, never a namespace or barrel that pulls a whole library.
+- Run `checkout-bundle-size` on a real build of each extension; source size is no evidence.
+
 ## Copy
 
 Merchant task to outcome, consequence, next action (labels, recovery, translations included); [Voice](https://shopify.dev/docs/apps/design/content/voice-and-tone) per situation, [mechanics](https://shopify.dev/docs/apps/design/content/grammar-and-mechanics) per locale. Preserve names, quoted input, consent wording.

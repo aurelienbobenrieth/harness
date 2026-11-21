@@ -1,0 +1,52 @@
+{
+  "entry": "settings.legacy-feature-notice",
+  "admin": "Settings > Apps > Develop apps",
+  "path": "/settings/apps/development",
+  "adminSteps": "Open the path. Most text sits in light DOM of s-internal-* hosts (display: contents), so outline text: search finds nothing; locate by class inside the shadow tree. The legacy paragraph is inside a yellow banner. Hover not measured.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "root",
+  "rootWidth": 800,
+  "locate": {
+    "root": "[class*=\"_MainContent_\"]",
+    "title": "h1.heading",
+    "heading": { "sel": "h2.heading", "in": "root" },
+    "primary-card": { "sel": "[class*=\"_Card_\"]", "in": "root" },
+    "primary-text": { "sel": "p.paragraph", "in": "primary-card" },
+    "primary-button": { "sel": "a.button", "in": "primary-card" },
+    "learn-more": { "sel": "a.button", "nth": 1, "in": "primary-card" },
+    "card-image": { "sel": "img", "in": "primary-card" },
+    "legacy-banner": { "sel": "div.banner", "in": "root" },
+    "legacy-text": { "sel": "p.paragraph", "nth": 1, "in": "root" },
+    "allow-button": { "sel": "a.button,button", "nth": -1, "in": "root" },
+    "legal-line": { "sel": "p.paragraph", "nth": -1, "in": "root" }
+  },
+  "parts": {
+    "title": { "font": "13/28 500" },
+    "heading": { "x": 16, "font": "15/22 500", "color": "#101010" },
+    "primary-card": { "x": 32, "w": 752, "h": 123 },
+    "primary-text": { "x": 32, "w": 556, "font": "13/20 400", "color": "#101010" },
+    "primary-button": {
+      "h": 28,
+      "font": "12/16 500",
+      "color": "#ffffff",
+      "bg": "#101010",
+      "radius": "9999",
+      "pad": "6 12"
+    },
+    "learn-more": {
+      "h": 28,
+      "w": 88,
+      "font": "12/16 500",
+      "color": "#101010",
+      "bg": "none",
+      "radius": "9999",
+      "pad": "6 12"
+    },
+    "card-image": { "w": 176, "h": 123, "right": 16 },
+    "legacy-banner": { "x": 32, "w": 752, "h": 92, "bg": "#fff5c5", "color": "#312500", "radius": "20", "gap": "8" },
+    "legacy-text": { "x": 74, "font": "13/20 400", "color": "#574100" },
+    "allow-button": { "h": 28, "font": "12/16 500", "color": "#101010", "bg": "none", "radius": "9999", "pad": "6 12" },
+    "legal-line": { "x": 32, "font": "13/20 400", "color": "#4a4a4a" }
+  }
+}

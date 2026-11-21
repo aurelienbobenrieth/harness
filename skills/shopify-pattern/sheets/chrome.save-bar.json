@@ -1,0 +1,25 @@
+{
+  "entry": "chrome.save-bar",
+  "admin": "Settings > General",
+  "path": "/settings/general",
+  "adminSteps": "Open Settings > General, scroll to Order ID, type one character in the Prefix field (focus it with element.focus() then insertText; a pointer click did not focus it in the automated tab), do not save. The bar's inner pill was frozen mid-enter animation in the hidden tab (208x27, y -42), so its size and offsets are left out; the container (277x36) is the settled box. Leave without saving.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "overlay",
+  "rootWidth": 977,
+  "locate": {
+    "overlay": "[class*=\"_MainOverlay_\"]",
+    "container": { "sel": "[class*=\"_Container_jz5ww\"]", "in": "overlay" },
+    "bar": { "sel": "[class*=\"_Bar_jz5ww\"]", "in": "overlay" },
+    "label": { "sel": "span.text", "in": "bar" },
+    "discard": { "sel": "[class*=\"_ButtonDiscard_\"]", "in": "bar" },
+    "save": { "sel": "[class*=\"_ButtonSave_\"]", "in": "bar" }
+  },
+  "parts": {
+    "container": { "w": 277, "h": 36 },
+    "bar": { "bg": "#0a0a0a", "radius": "9999", "pad": "4 4 4 12", "shadow": "yes", "color": "#eeeeee" },
+    "label": { "color": "#eeeeee", "text": "Unsaved changes" },
+    "discard": { "bg": "#ffffff/12", "color": "#eeeeee", "radius": "9999", "pad": "6 12" },
+    "save": { "bg": "#fcfcfc", "color": "#121212", "radius": "9999", "pad": "6 12" }
+  }
+}

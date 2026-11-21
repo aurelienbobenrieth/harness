@@ -1,0 +1,27 @@
+{
+  "entry": "detail.aside-section",
+  "admin": "Orders > #1044 aside",
+  "path": "/orders/6649667223691",
+  "adminSteps": "Open the order. Root is the first aside section (Notes). Heading row 28, heading text 4 below its top, heading text to content 32, content to hairline 16, hairline to next heading text 21 (section step = content + 33). The hairline is a 1px border-top #f2f2f2 on each section's ::before; the probe prints only its height. Hover copy buttons not measured.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "aside",
+  "rootWidth": 280,
+  "locate": {
+    "aside": { "sel": "section", "nth": 0 },
+    "heading": { "sel": "h2.heading", "in": "aside", "nth": -1 },
+    "icon-button": { "sel": "button", "in": "aside" },
+    "hairline": { "sel": "section", "nth": 1, "pseudo": "::before" },
+    "customer-link": { "sel": "a[href*=\"/customers/\"]" },
+    "map-link": { "sel": "a[href*=\"map\"]" },
+    "address-line": { "sel": "span", "text": "rue Lucie" }
+  },
+  "parts": {
+    "heading": { "x": 0, "h": 20, "font": "13/20 500", "color": "#101010" },
+    "icon-button": { "right": 0, "w": 28, "h": 28, "radius": "9999", "color": "#606060" },
+    "hairline": { "w": 280, "h": 1 },
+    "customer-link": { "x": 0, "font": "13/20 400", "color": "#1650d0" },
+    "map-link": { "font": "13/20 400", "color": "#1650d0" },
+    "address-line": { "x": 0, "font": "13/20 400", "color": "#101010" }
+  }
+}

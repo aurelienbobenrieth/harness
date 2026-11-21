@@ -1,0 +1,27 @@
+{
+  "entry": "fields.select",
+  "admin": "Discounts > Create discount > Amount off products > Applies to / Purchase type",
+  "path": "/discounts/new/amount-off-product",
+  "adminSteps": "Open the page; the two selects 'Applies to' and 'Purchase type' sit side by side in the Value card. No select with details help was on the page.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "sel-grid",
+  "rootWidth": 728,
+  "locate": {
+    "sel-grid": { "sel": ".Polaris-InlineGrid", "nth": 1 },
+    "stack": { "sel": ".Polaris-BlockStack", "in": "sel-grid" },
+    "label": { "sel": "label.label", "in": "stack" },
+    "control": { "sel": "div.select", "in": "stack" },
+    "value": { "sel": "span.value", "in": "stack" },
+    "chevron": { "sel": "svg", "in": "control" },
+    "control-2": { "sel": "div.select", "in": "sel-grid", "nth": 1 }
+  },
+  "parts": {
+    "stack": { "w": 360, "h": 56, "gap": "8" },
+    "label": { "h": 20, "font": "13/20 500", "color": "#101010" },
+    "control": { "w": 360, "h": 30, "bg": "#ffffff", "radius": "12", "pad": "5 8 5 12", "shadow": "yes" },
+    "value": { "x": 12, "font": "13/20 400", "color": "#101010" },
+    "chevron": { "w": 16, "h": 16, "right": 378, "color": "#707070" },
+    "control-2": { "x": 368, "w": 360, "h": 30 }
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "entry": "detail.last-record-card",
+  "admin": "Customers > a customer with orders > Last order placed",
+  "path": "/customers/8906969383051",
+  "adminSteps": "Open a customer that has at least one order; the section sits under Store credit and Notes in the main column. Order #1040 is a test order, so the warning banner shows. Tax-free label and hover states not measured. The shop's heading colour on the date row inside the banner is not a part.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "card",
+  "rootWidth": 760,
+  "locate": {
+    "section": { "sel": "s-internal-section[heading=\"Last order placed\"]" },
+    "card": { "sel": "div.card", "in": "section" },
+    "section-heading": { "sel": "h2", "in": "section" },
+    "view-all": { "sel": "a.button", "in": "section" },
+    "create": { "sel": "s-internal-button", "text": "Create order", "in": "section" },
+    "create-button": { "sel": "button", "in": "create" },
+    "banner": { "sel": "s-internal-banner", "in": "section" },
+    "banner-box": { "sel": "div", "in": "banner" },
+    "number": { "sel": "h2", "in": "section", "nth": 1 },
+    "status": { "sel": "div.badge", "in": "section" },
+    "status-2": { "sel": "div.badge", "in": "section", "nth": 1 },
+    "total": { "sel": "h2", "in": "section", "nth": 2 },
+    "date": { "sel": "span._NoWrap_2yhup_1", "in": "section", "up": 1 },
+    "thumb": { "sel": "div.thumbnail", "in": "section" },
+    "line": { "sel": "h3", "in": "section" },
+    "line-total": { "sel": "span.text", "in": "section" }
+  },
+  "parts": {
+    "card": { "w": 760, "bg": "#ffffff", "radius": "20", "shadow": "yes", "pad": "16" },
+    "section-heading": { "font": "15/22 500", "color": "#101010" },
+    "view-all": { "h": 28, "font": "12/16 500", "color": "#101010", "radius": "9999", "pad": "6 12" },
+    "create-button": {
+      "w": 95,
+      "h": 28,
+      "right": 0,
+      "font": "12/16 500",
+      "color": "#ffffff",
+      "bg": "#101010",
+      "radius": "9999",
+      "pad": "6 12"
+    },
+    "banner-box": { "x": 16, "h": 52, "bg": "#fff5c5", "color": "#312500", "radius": "20", "gap": "8" },
+    "number": { "x": 16, "font": "15/22 500", "color": "#101010" },
+    "status": { "h": 20, "font": "12/18 500", "color": "#4a4a4a", "bg": "#000000/5", "radius": "8", "pad": "1 6 1 4" },
+    "status-2": { "h": 20, "font": "12/18 500", "color": "#574100", "bg": "#ffe45c", "radius": "8", "pad": "1 6 1 4" },
+    "total": { "right": 16, "font": "15/22 500", "color": "#101010" },
+    "date": { "x": 16, "font": "13/20 400", "color": "#4a4a4a" },
+    "thumb": { "x": 16, "w": 40, "h": 40 },
+    "line": { "x": 68, "font": "13/20 500", "color": "#101010" },
+    "line-total": { "right": 16, "font": "13/20 400", "color": "#101010" }
+  }
+}

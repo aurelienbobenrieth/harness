@@ -1,0 +1,19 @@
+{
+  "entry": "data.chart-empty",
+  "admin": "Analytics > Reports > Orders over time (store with 0 orders)",
+  "path": "/analytics/reports/orders_over_time",
+  "adminSteps": "Open the report. Totals show \"0\" for a count and an em dash for ratios and averages. The flat line chart and axis were not measured.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "summary",
+  "rootWidth": 886,
+  "locate": {
+    "summary": { "sel": "div[class*=\"_SummaryRow_\"]" },
+    "zero": { "sel": "span[class*=\"_Truncate_\"]", "text": "^0$", "in": "summary" },
+    "dash": { "sel": "span[class*=\"_Truncate_\"]", "text": "^—$", "in": "summary" }
+  },
+  "parts": {
+    "zero": { "font": "12/18 600", "color": "#101010", "text": "0" },
+    "dash": { "font": "12/18 600", "color": "#101010", "text": "—" }
+  }
+}

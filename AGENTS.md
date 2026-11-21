@@ -109,6 +109,7 @@ review a change                             → code-review
 delegate, fan out, long autonomous run      → economy
 same correction twice, recurring friction   → retrospect
 Shopify app readiness                       → shopify-review
+embedded Shopify app UI that looks native   → shopify-pattern
 add Harness to a project                    → install-harness
 ```
 

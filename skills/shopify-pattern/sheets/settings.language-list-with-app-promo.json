@@ -1,0 +1,73 @@
+{
+  "entry": "settings.language-list-with-app-promo",
+  "admin": "Settings > Languages",
+  "path": "/settings/languages",
+  "adminSteps": "Open the path and wait until the app card has left its skeleton (about 2 s). Text sits in light DOM of s-internal-* hosts, so the table cells are located by class. The table has no select checkbox column in this store and no 'Add German' row beyond the suggestion row; hover not measured.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "root",
+  "rootWidth": 962,
+  "locate": {
+    "root": "[class*=\"_ChildContainer_\"]",
+    "subheading": { "sel": "p.subheading", "in": "root" },
+    "add": { "sel": "button.button", "in": "root" },
+    "table": { "sel": "div.Polaris-Table", "in": "root" },
+    "language-cell": { "sel": "div.Polaris-Table-TableCell", "in": "table" },
+    "published-badge": { "sel": "div.badge", "in": "table" },
+    "domains-button": { "sel": "button.Polaris-Button", "in": "table" },
+    "adapt-button": { "sel": "a.Polaris-Button", "in": "table" },
+    "more-button": { "sel": "button.Polaris-Button", "nth": 1, "in": "table" },
+    "suggestion": { "sel": "button[class*=\"_suggestionButton_\"]", "in": "table" },
+    "dismiss": { "sel": "button[class*=\"_dismissButton_\"]", "in": "table" },
+    "promo": { "sel": "div.AppCardStyleProvider", "in": "root" },
+    "promo-logo": { "sel": "img", "in": "promo" },
+    "promo-name": { "sel": "h3", "in": "promo" },
+    "promo-rating": { "sel": "span.Polaris-Text--root", "text": "4[.]4", "in": "promo" },
+    "install": { "sel": "button.Polaris-Button", "in": "promo" },
+    "account-note": { "sel": "p.Polaris-Text--root", "text": "account language", "in": "root" }
+  },
+  "parts": {
+    "subheading": { "x": 89, "w": 784, "font": "13/20 400", "color": "#4a4a4a" },
+    "add": {
+      "w": 103,
+      "h": 28,
+      "right": 4,
+      "font": "12/16 500",
+      "color": "#ffffff",
+      "bg": "#101010",
+      "radius": "9999",
+      "pad": "6 12"
+    },
+    "table": { "x": 99, "w": 764, "bg": "#ffffff" },
+    "language-cell": { "h": 54, "bg": "#ffffff" },
+    "published-badge": {
+      "w": 68,
+      "h": 20,
+      "font": "12/18 500",
+      "color": "#214b03",
+      "bg": "#b3f782",
+      "radius": "8",
+      "pad": "1 6",
+      "gap": "4"
+    },
+    "domains-button": {
+      "w": 95,
+      "h": 32,
+      "color": "#4a4a4a",
+      "bg": "none",
+      "radius": "9999",
+      "pad": "6 12",
+      "gap": "2"
+    },
+    "adapt-button": { "w": 58, "h": 28, "color": "#101010", "bg": "#ebebeb", "radius": "9999", "pad": "4 12" },
+    "more-button": { "w": 28, "h": 28, "bg": "#ebebeb", "radius": "9999", "pad": "4" },
+    "suggestion": { "h": 20, "font": "13/20 400", "bg": "none" },
+    "dismiss": { "w": 24, "h": 24, "radius": "8", "pad": "4" },
+    "promo": { "x": 105, "w": 752, "h": 60 },
+    "promo-logo": { "x": 105, "w": 40, "h": 40, "radius": "8" },
+    "promo-name": { "x": 157, "h": 20 },
+    "promo-rating": { "x": 157, "font": "13/20 400", "color": "#4a4a4a" },
+    "install": { "w": 75, "h": 28, "color": "#101010", "bg": "#ebebeb", "radius": "9999", "pad": "6 12 6 6" },
+    "account-note": { "x": 329, "w": 303, "font": "12/18 400", "color": "#101010" }
+  }
+}

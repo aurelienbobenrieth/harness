@@ -1,0 +1,26 @@
+{
+  "entry": "chrome.account-menu",
+  "admin": "Orders, avatar at the foot of the rail",
+  "path": "/orders",
+  "adminSteps": "Click the avatar button (aria-label is the account name) at the foot of the rail; a real pointer click did not open popovers in the preview tab, button.click() in an expression did. Menu lists the current store, the account's other stores, View all, the profile row (name, email), Help Center, Log out. Popover reads opacity 0 mid-transition: ignored. Locators outside the popover root, since items sit in a sibling scope.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "popover",
+  "rootWidth": 285,
+  "locate": {
+    "popover": "div.popover",
+    "store": { "sel": "div.Polaris-Box", "text": "<store name>" },
+    "item": { "sel": "a.Polaris-ActionList__Item", "nth": 0 },
+    "profile": "button[class*=\"_ProfileButton_\"]",
+    "name": { "sel": "p", "nth": 0, "in": "profile" },
+    "email": { "sel": "p", "nth": 1, "in": "profile" }
+  },
+  "parts": {
+    "popover": { "w": 285, "bg": "#ffffff", "radius": "16", "shadow": "yes" },
+    "store": { "x": 42, "font": "13/20 600", "color": "#101010" },
+    "item": { "x": 4, "right": 4, "h": 30, "radius": "12", "pad": "4 6", "font": "13/20 400", "color": "#101010" },
+    "profile": { "x": 9, "right": 11, "h": 44, "radius": "8", "pad": "4 6", "gap": "6" },
+    "name": { "font": "13/20 500", "color": "#101010" },
+    "email": { "font": "12/18 400", "color": "#4a4a4a" }
+  }
+}

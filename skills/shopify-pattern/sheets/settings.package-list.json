@@ -1,0 +1,76 @@
+{
+  "entry": "settings.package-list",
+  "admin": "Settings > Shipping and delivery > Packages",
+  "path": "/settings/shipping",
+  "adminSteps": "Open Shipping and delivery; click the 'Packages' row (button, element.click()) to expand it. The list is a bordered card of rows (name over a muted '4 × 4 × 4 in, 0 lb' line, a 'Store default' badge on the default row, a 'More actions' icon button) followed by an 'Add package' row-button; the row locators climb from the package name. The store held one package left by an earlier session ('zz pattern test 2', the default), so the default-ticked state of a first package was not reached and the second-package state (unticked) is what the modal shows. 'More actions' menu and hover not measured.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "list",
+  "rootWidth": 752,
+  "locate": {
+    "list": { "sel": "p", "text": "zz pattern", "closest": "div[class*=_SettingsList_]" },
+    "row": { "sel": "p", "text": "zz pattern", "closest": "div[class*=_ListItem_]" },
+    "icon": { "sel": "s-internal-icon", "in": "row" },
+    "name": { "sel": "p", "text": "zz pattern" },
+    "dims": { "sel": "p.paragraph", "in": "row" },
+    "badge": { "sel": "div.badge", "in": "row" },
+    "more": { "sel": "button", "text": "More actions", "in": "row" }
+  },
+  "parts": {
+    "list": { "w": 752, "radius": "8", "border": "1 #f2f2f2" },
+    "icon": { "x": 17, "w": 20, "h": 20 },
+    "name": { "x": 45, "font": "13/20 400", "color": "#101010" },
+    "dims": { "x": 45, "font": "13/20 400", "color": "#4a4a4a" },
+    "badge": { "h": 20, "font": "12/18 500", "color": "#4a4a4a", "bg": "#000000/5", "radius": "8", "pad": "1 6" },
+    "more": { "w": 28, "h": 28, "radius": "9999", "pad": "4" }
+  },
+  "states": {
+    "add-modal": {
+      "adminSteps": "Click the 'Add package' row-button with element.click(). Custom package is selected, Box is selected, the primary 'Add package' is aria-disabled until name, length, width and height are valid. Cancel closes without saving. Weight value measured only as a label ('Weight (empty)').",
+      "locate": {
+        "modal": "div.Polaris-Modal-Dialog__Modal",
+        "title": { "sel": "h2", "in": "modal" },
+        "tab": { "sel": "button[class*=_PackageTabButton_]", "in": "modal" },
+        "tab-other": { "sel": "button[class*=_PackageTabButton_]", "in": "modal", "nth": 1 },
+        "type-heading": { "sel": "h3", "in": "modal" },
+        "type": { "sel": "button[class*=_PackageTypeButton_]", "in": "modal" },
+        "type-other": { "sel": "button[class*=_PackageTypeButton_]", "in": "modal", "nth": 1 },
+        "field-label": { "sel": "label.Polaris-Label__Text", "in": "modal" },
+        "field": { "sel": "div.Polaris-TextField", "in": "modal" },
+        "unit": { "sel": "div.select", "in": "modal" },
+        "default-help": { "sel": "*", "text": "Used to calculate", "in": "modal" },
+        "primary": { "sel": "button.Polaris-Button", "in": "modal", "nth": -1 }
+      },
+      "parts": {
+        "modal": { "w": 620, "bg": "#ffffff", "radius": "24", "shadow": "yes" },
+        "title": { "x": 20, "font": "15/22 500", "color": "#101010" },
+        "tab": { "x": 16, "w": 290, "h": 53, "bg": "#f2f2f2", "radius": "8", "pad": "16 12", "border": "1 #5083f0" },
+        "tab-other": { "w": 290, "h": 53, "bg": "#ffffff", "radius": "8", "pad": "16 12", "border": "1 #dddddd" },
+        "type-heading": { "x": 16, "font": "13/20 500", "color": "#101010" },
+        "type": {
+          "x": 16,
+          "w": 191,
+          "h": 45,
+          "bg": "#f2f2f2",
+          "radius": "8",
+          "pad": "12",
+          "gap": "8",
+          "border": "1 #5083f0"
+        },
+        "field-label": { "font": "13/20 400", "color": "#101010" },
+        "field": { "w": 104, "h": 30 },
+        "unit": { "w": 51, "h": 30, "bg": "#ffffff", "radius": "12", "pad": "5 8 5 12" },
+        "default-help": { "x": 20, "font": "12/16 400", "color": "#4a4a4a", "pad": "0 0 0 24" },
+        "primary": {
+          "right": 16,
+          "w": 100,
+          "h": 28,
+          "radius": "9999",
+          "pad": "6 12",
+          "color": "#ffffff",
+          "bg": "#000000/13"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "entry": "navigation.settings-sidebar",
+  "admin": "Settings > General, settings sub-navigation",
+  "path": "/settings/general",
+  "adminSteps": "Open Settings > General. The sidebar sits beside the white rounded main panel. Positions are from the viewport. The selected item's fill resolves to transparent on every element tried (link, children, pseudo-elements), so its bg is left out. Group headers, hover and phone layout not measured.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "locate": {
+    "link": { "sel": "a[class*=\"_Link_\"]", "nth": 2 },
+    "label": { "sel": "span[class*=\"_LabelItem_\"]", "in": "link" },
+    "icon": { "sel": "[class*=\"_SubnavIcon_\"]", "in": "link" },
+    "selected": { "sel": "a[class*=\"_Active_\"]" },
+    "selected-label": { "sel": "span[class*=\"_LabelItem_\"]", "in": "selected" },
+    "main": { "sel": "main" },
+    "column": { "sel": "div[class*=\"Polaris-Layout__Section\"]", "in": "main" }
+  },
+  "parts": {
+    "link": { "w": 230, "h": 28, "radius": "8", "pad": "0 16" },
+    "label": { "font": "13/20 450", "color": "#dcdcdc" },
+    "icon": { "w": 20, "h": 20 },
+    "selected": { "h": 28, "radius": "8", "color": "#fcfcfc" },
+    "selected-label": { "font": "13/20 500", "color": "#fcfcfc" },
+    "main": { "w": 977, "radius": "16", "bg": "#ffffff" },
+    "column": { "w": 784 }
+  }
+}

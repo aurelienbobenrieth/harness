@@ -1,0 +1,27 @@
+{
+  "entry": "detail.aside-edit-affordance",
+  "admin": "Orders > #1044 aside (Notes, Customer, Shipping address, Tags)",
+  "path": "/orders/6649667223691",
+  "adminSteps": "Open the order; the aside holds the sections. Buttons are located by aria-label. Icons read from s-internal-icon type: Add note plus, Edit customer menu-horizontal, Edit shipping address menu-horizontal, Manage tags edit (pencil), copy buttons clipboard. Store credit and customer-page Notes not measured. Menus not opened.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "aside",
+  "rootWidth": 280,
+  "locate": {
+    "aside": "aside.aside",
+    "add-note": { "sel": "button", "text": "Add note" },
+    "edit-customer": { "sel": "button", "text": "Edit customer" },
+    "edit-shipping": { "sel": "button", "text": "Edit shipping address" },
+    "manage-tags": { "sel": "button", "text": "Manage tags" },
+    "copy-email": { "sel": "button", "text": "Copy email" },
+    "copy-icon": { "sel": "s-internal-icon", "in": "copy-email" }
+  },
+  "parts": {
+    "add-note": { "w": 28, "h": 28, "right": 0, "radius": "9999", "color": "#606060", "bg": "none" },
+    "edit-customer": { "w": 28, "h": 28, "right": 0, "radius": "9999", "color": "#606060", "bg": "none" },
+    "edit-shipping": { "w": 28, "h": 28, "right": 0, "radius": "9999", "color": "#606060", "bg": "none" },
+    "manage-tags": { "w": 28, "h": 28, "right": 0, "radius": "9999", "color": "#606060", "bg": "none" },
+    "copy-email": { "w": 28, "h": 28, "right": -4, "radius": "9999", "color": "#101010", "bg": "none" },
+    "copy-icon": { "w": 20, "h": 20, "color": "#606060" }
+  }
+}

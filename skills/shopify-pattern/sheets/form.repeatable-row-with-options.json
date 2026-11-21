@@ -1,0 +1,51 @@
+{
+  "entry": "form.repeatable-row-with-options",
+  "admin": "Settings > Custom data > Add definition",
+  "path": "/settings/custom_data/metaobjects/create",
+  "adminSteps": "Open the page; the Fields card holds one row. Click the chevron 'Expand field options' (reach the inner button through the s-internal-button shadowRoot) for the expanded state. Type-specific validation (character limits, regular expression) needs a type chosen and was not reached; drag lift hint, hover and the lower option cards' checkboxes not measured.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "page",
+  "rootWidth": 784,
+  "locate": {
+    "page": "section.section",
+    "fields-heading": { "sel": "h2.heading", "in": "fields-section" },
+    "fields-section": { "sel": "section.section", "nth": 1 },
+    "fields-card": { "sel": "div.card", "nth": 1 },
+    "row": "div[class*=\"_InlineFieldRow_\"]",
+    "drag": { "sel": "button[class*=\"_DragHandle_\"]", "in": "row" },
+    "label-input": { "sel": "div[class*=\"_FieldLabelInput_\"] div.Polaris-TextField", "in": "row" },
+    "required": { "sel": "button[class*=\"_RequiredToggle_\"]", "in": "row" },
+    "one": { "sel": "button[class*=\"_Activator_\"]", "in": "row" },
+    "type": { "sel": "button[class*=\"_Button_\"]", "in": "row", "nth": -1 },
+    "options-card": { "sel": "div.card", "nth": 2 },
+    "options-heading": { "sel": "h2.heading", "nth": 1 },
+    "field-options-card": { "sel": "div.card", "nth": 3 }
+  },
+  "parts": {
+    "fields-heading": { "x": 0, "font": "15/22 500", "color": "#101010" },
+    "fields-card": { "x": 0, "w": 784, "bg": "#ffffff", "radius": "20", "shadow": "yes" },
+    "row": { "h": 48 },
+    "drag": { "x": 8, "w": 20, "h": 20 },
+    "label-input": { "x": 36, "w": 348, "h": 30 },
+    "required": { "w": 24, "h": 24, "radius": "6" },
+    "one": { "w": 59, "h": 24, "bg": "#f2f2f2", "radius": "6", "font": "12/16 600" },
+    "type": { "w": 270, "h": 20 },
+    "options-card": { "x": 0, "w": 784, "bg": "#ffffff", "radius": "20", "shadow": "yes" }
+  },
+  "states": {
+    "expanded": {
+      "adminSteps": "Click the row's chevron 'Expand field options'. Panel shows Description, then 'Delete field' (secondary, text #7e100c) and a 'Key' button at the right; heading 'Validation' appears only once a type is chosen.",
+      "locate": {
+        "area": { "sel": "div[class*=\"_CollapsibleArea_\"] > div", "in": "row" },
+        "description": { "sel": "div.Polaris-TextField", "in": "area" },
+        "key": { "sel": "button[class*=\"_KeyButton_\"]", "in": "area" }
+      },
+      "parts": {
+        "area": { "x": 36, "w": 704, "gap": "8" },
+        "description": { "x": 48, "w": 680, "h": 30 },
+        "key": { "w": 42, "h": 28, "bg": "#ffffff", "radius": "8", "pad": "4 8", "font": "13/normal 400" }
+      }
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "entry": "feedback.banner",
+  "admin": "Settings > Notifications > Staff notifications > Add recipient (modal)",
+  "path": "/settings/notifications/staff",
+  "adminSteps": "Open Add recipient, type abc in the email field, click Add recipient in the modal: a critical banner 'Enter a valid email.' appears at the top of the modal body (no heading, no dismiss, no inline field error). Warning and info tones not measured here (order banner and domain modal not opened).",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "banner",
+  "rootWidth": 580,
+  "locate": {
+    "banner": { "sel": "div.banner.tone-critical" },
+    "icon": { "sel": "div.icon", "in": "banner" },
+    "message": { "sel": "s-internal-banner[tone=critical] > p" }
+  },
+  "parts": {
+    "banner": { "w": 580, "h": 52, "radius": "20", "bg": "#ffe7e6", "color": "#360200", "shadow": "none" },
+    "icon": { "x": 16, "w": 20, "h": 20, "color": "#e2221a" },
+    "message": { "x": 42, "font": "13/20 400", "color": "#7e100c" }
+  },
+  "states": {}
+}

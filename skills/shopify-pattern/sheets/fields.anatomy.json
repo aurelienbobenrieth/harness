@@ -1,0 +1,27 @@
+{
+  "entry": "fields.anatomy",
+  "admin": "Discounts > Create discount > Amount off products",
+  "path": "/discounts/new/amount-off-product",
+  "adminSteps": "Open the page; the Discount code field is first. Settings > Checkout not reached (navigation blocked by the unsaved-form guard). A plain text field with a 500 label was not on the page: weight 500 is read on the select label 'Applies to'.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "stack",
+  "rootWidth": 728,
+  "locate": {
+    "stack": { "sel": "div.internal-text-field", "nth": 0, "up": 2, "closest": ".Polaris-BlockStack" },
+    "label-row": { "sel": ".Polaris-InlineStack", "in": "stack" },
+    "label-link": { "sel": "button.button", "in": "label-row" },
+    "control": { "sel": "div.input-wrapper", "in": "stack" },
+    "input": { "sel": "input", "in": "stack" },
+    "help": { "sel": "div.field-details", "in": "stack" },
+    "sel-label": { "sel": "label.label", "text": "Applies to" }
+  },
+  "parts": {
+    "label-row": { "h": 20, "gap": "8" },
+    "label-link": { "font": "13/20 400", "color": "#1650d0" },
+    "control": { "h": 30, "bg": "#ffffff", "radius": "12", "pad": "0 12", "shadow": "yes" },
+    "input": { "x": 12, "h": 20, "font": "13/20 400", "color": "#101010" },
+    "help": { "h": 18, "font": "12/18 400", "color": "#4a4a4a" },
+    "sel-label": { "font": "13/20 500", "color": "#101010" }
+  }
+}

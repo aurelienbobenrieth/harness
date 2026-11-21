@@ -1,0 +1,29 @@
+{
+  "entry": "data.report-page",
+  "admin": "Analytics > Reports > Orders over time",
+  "path": "/analytics/reports/orders_over_time",
+  "adminSteps": "Open the report URL; it redirects to add the ?ql= query (30 days, compare to previous period). The config panel was open, so the editor card is 886 wide and the chart svg 846x314 (entry text: 1044 and 1004x290, panel closed). The main card is the ShopifyQL editor block (radius 20, white, shadow, box-shadow .3s cubic-bezier(.25,.1,.25,1)). Store has no orders: the chart is empty.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "page",
+  "rootWidth": 1202,
+  "locate": {
+    "page": "[class*=\"_Container_1igrr\"]",
+    "h1": { "sel": "h1", "in": "page" },
+    "back": { "sel": "a.button", "text": "Reports", "in": "page" },
+    "date": { "sel": "button", "text": "^Date control", "in": "page" },
+    "compare": { "sel": "button", "text": "^Comparison control", "in": "page" },
+    "annotations": { "sel": "button", "text": "annotations", "in": "page" },
+    "exploration": { "sel": "button", "text": "exploration", "in": "page" },
+    "card": { "sel": "[class*=\"_ShopifyQlEditor_\"]", "in": "page" }
+  },
+  "parts": {
+    "back": { "x": 16, "w": 28, "h": 28, "radius": "9999" },
+    "h1": { "font": "13/28 500", "color": "#101010" },
+    "date": { "x": 16, "h": 28, "font": "12/16 500", "radius": "9999" },
+    "compare": { "h": 28, "font": "12/16 500", "radius": "9999", "pad": "4 12 4 6" },
+    "annotations": { "h": 28, "radius": "9999", "pad": "4 12 4 6" },
+    "exploration": { "h": 28, "radius": "9999", "pad": "4 12 4 6" },
+    "card": { "bg": "#ffffff", "radius": "20", "shadow": "yes" }
+  }
+}

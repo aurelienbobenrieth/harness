@@ -1,0 +1,68 @@
+{
+  "entry": "overlay.manage-publishing",
+  "admin": "Products > Add product > Publishing > sliders icon",
+  "path": "/products/new",
+  "adminSteps": "Click the sliders button (aria-label Manage publishing) in the Publishing card of the aside. Modal opens with Sales Channels selected. Done is disabled until a switch changes (bg black at 13%). Cancel or Escape closes. Footer buttons are s-internal-button hosts: measure the inner button through the host. Warning icon row not present in this store: not measured.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "modal",
+  "rootWidth": 980,
+  "locate": {
+    "modal": ".Polaris-Modal-Dialog__Modal",
+    "header": { "sel": ".Polaris-Box", "in": "modal" },
+    "title": { "sel": "h2", "in": "modal" },
+    "close": { "sel": "button", "text": "Close", "in": "modal" },
+    "rail": { "sel": ".Polaris-Modal__Body .Polaris-InlineStack > .Polaris-Box", "in": "modal" },
+    "rail-item": { "sel": "[class*=\"_SidebarButton_\"]", "in": "modal" },
+    "rail-item-other": { "sel": "[class*=\"_SidebarButton_\"]", "nth": -1, "in": "modal" },
+    "rail-name": { "sel": "strong.text", "in": "modal" },
+    "rail-count": { "sel": "span.text", "in": "rail-item" },
+    "rail-group-label": { "sel": "strong.text", "nth": 2, "in": "modal" },
+    "search": { "sel": "input", "in": "modal" },
+    "list": { "sel": ".Polaris-ResourceList", "in": "modal" },
+    "group-head": { "sel": "button[class*=\"_SortButton_\"]", "in": "modal" },
+    "group-switch": { "sel": "input.admin-next-light", "in": "modal" },
+    "row": { "sel": "li.Polaris-ResourceItem__ListItem", "in": "modal" },
+    "row-name": { "sel": "h2", "in": "row" },
+    "row-switch": { "sel": "input.admin-next-light", "in": "row" },
+    "cancel-host": { "text": "^Cancel$", "in": "modal" },
+    "done-host": { "text": "^Done$", "in": "modal" },
+    "cancel": { "sel": "button", "in": "cancel-host" },
+    "done": { "sel": "button", "in": "done-host" }
+  },
+  "parts": {
+    "modal": { "w": 980, "h": 634, "bg": "#ffffff", "radius": "24", "shadow": "yes" },
+    "header": { "h": 60, "pad": "16 16 16 20" },
+    "title": { "x": 20, "font": "15/22 500", "color": "#101010" },
+    "close": { "w": 28, "h": 28, "right": 16, "bg": "#ffffff", "radius": "9999" },
+    "rail": { "x": 0, "w": 244, "pad": "12" },
+    "rail-item": { "x": 12, "w": 220, "h": 38, "bg": "#f2f2f2", "radius": "8", "pad": "8" },
+    "rail-item-other": { "x": 12, "w": 220, "h": 38, "bg": "none", "radius": "8", "pad": "8" },
+    "rail-name": { "font": "12/18 600", "color": "#101010" },
+    "rail-count": { "font": "12/18 400", "color": "#4a4a4a" },
+    "rail-group-label": { "x": 12, "font": "12/18 500", "color": "#4a4a4a" },
+    "search": { "font": "13/20 400", "color": "#101010" },
+    "list": { "w": 693 },
+    "row": { "w": 693, "h": 48 },
+    "row-name": { "x": 305, "font": "13/20 400", "color": "#101010" },
+    "row-switch": { "w": 32, "h": 16, "bg": "#101010", "radius": "9999" },
+    "group-switch": { "w": 32, "h": 16, "right": 58, "radius": "9999" },
+    "cancel": {
+      "w": 64,
+      "h": 28,
+      "right": 78,
+      "font": "12/16 500",
+      "color": "#101010",
+      "radius": "9999",
+      "pad": "6 12"
+    },
+    "done": { "w": 54, "h": 28, "right": 16, "font": "12/16 500", "radius": "9999", "pad": "6 12" }
+  },
+  "states": {
+    "done-disabled": {
+      "adminSteps": "Open the modal and change nothing: Done is the disabled one.",
+      "locate": {},
+      "parts": { "done": { "color": "#ffffff", "bg": "#000000/13" } }
+    }
+  }
+}

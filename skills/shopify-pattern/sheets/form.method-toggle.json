@@ -1,0 +1,42 @@
+{
+  "entry": "form.method-toggle",
+  "admin": "Discounts > Create discount > Amount off products > Method",
+  "path": "/discounts/new/amount-off-product",
+  "adminSteps": "Open the path; the Method segmented control is at the top of the first card. The selected button paints with an inset shadow only; the unselected button has a ::before layer rgba(0,0,0,0.11). Hover not measured.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "group",
+  "rootWidth": 238,
+  "locate": {
+    "group": "div.button-group",
+    "first-host": { "sel": "s-press-button", "text": "^Discount code$" },
+    "first": { "sel": "button", "in": "first-host" },
+    "second-host": { "sel": "s-press-button", "text": "^Automatic discount$" },
+    "second": { "sel": "button", "in": "second-host" },
+    "second-layer": { "sel": "button", "in": "second-host", "pseudo": "::before" },
+    "label-host": { "sel": "s-internal-text", "text": "^Method$" },
+    "label": { "sel": "span", "in": "label-host" }
+  },
+  "parts": {
+    "group": { "w": 238, "h": 28 },
+    "first": {
+      "x": 0,
+      "w": 105,
+      "h": 28,
+      "font": "12/16 500",
+      "pad": "6 12",
+      "radius": "9999 0 0 9999",
+      "shadow": "yes"
+    },
+    "second": {
+      "x": 104,
+      "w": 133,
+      "h": 28,
+      "font": "12/16 500",
+      "pad": "6 12",
+      "radius": "0 9999 9999 0",
+      "shadow": "none"
+    },
+    "label": { "font": "13/20 400", "color": "#101010" }
+  }
+}

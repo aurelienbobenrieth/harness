@@ -1,0 +1,21 @@
+{
+  "entry": "actions.menu-item",
+  "admin": "Orders > #1044, More actions menu",
+  "path": "/orders/6649667223691",
+  "adminSteps": "Open the order and open More actions (third header button) with element.click() on the button; read the popover. Hover, focus and pressed fills not measured (preview pointer hover did not reach the menu).",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "menu",
+  "rootWidth": 187,
+  "locate": {
+    "pop": { "sel": "div.dialog[class*=\"popover\"]" },
+    "menu": { "sel": "ul.menu", "in": "pop" },
+    "item": { "sel": "button.menu-item", "in": "menu" },
+    "item-last": { "sel": "button.menu-item", "in": "menu", "nth": -1 },
+    "section-heading": { "sel": "div.section-heading", "in": "menu" }
+  },
+  "parts": {
+    "item": { "x": 4, "h": 30, "font": "13.3/20 400", "color": "#101010", "radius": "12", "pad": "4 8 4 4" },
+    "section-heading": { "x": 4, "font": "12/18 400", "color": "#606060", "pad": "2 12 2 8" }
+  }
+}

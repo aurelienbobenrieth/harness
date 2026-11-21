@@ -1,0 +1,29 @@
+{
+  "entry": "settings.template-list-grouped",
+  "admin": "Settings > Notifications > Customer notifications",
+  "path": "/settings/notifications/customer",
+  "adminSteps": "Open the page; measure the first group (Order processing, a collapsible card header). Header actions and the card chrome are in shadow DOM and were not measured.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "root",
+  "rootWidth": 784,
+  "locate": {
+    "root": { "sel": "[class*=\"_ListHeader__CollapsibleButton_\"]", "up": 4 },
+    "group": { "sel": "[class*=\"_ListHeader__CollapsibleButton_\"]", "nth": 0 },
+    "group-title": { "sel": "span", "text": "Order processing" },
+    "row": { "sel": "[class*=\"_SettingsItem__wrapper_\"]", "nth": 0 },
+    "name": { "sel": "a[class*=\"clickableAction\"]", "nth": 0 },
+    "help": { "sel": "[class*=\"_Subtitle_\"]", "nth": 0 },
+    "chevron": { "sel": "s-internal-icon", "nth": 0, "in": "row" },
+    "divider": { "sel": "hr", "nth": 0, "in": "root" }
+  },
+  "parts": {
+    "group": { "h": 44, "pad": "12 16" },
+    "group-title": { "x": 16, "font": "13/20 500", "color": "#101010" },
+    "row": { "h": 68, "pad": "16 16 12" },
+    "name": { "x": 16, "font": "13/20 400", "color": "#101010" },
+    "help": { "x": 16, "font": "13/20 400", "color": "#4a4a4a" },
+    "chevron": { "w": 20, "h": 20, "right": 16 },
+    "divider": { "h": 1, "border": "1 #f2f2f2" }
+  }
+}

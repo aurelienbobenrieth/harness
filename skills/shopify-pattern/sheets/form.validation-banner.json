@@ -1,0 +1,23 @@
+{
+  "entry": "form.validation-banner",
+  "admin": "Discounts > Create discount, after Save",
+  "path": "/discounts/new/amount-off-product?discountType=order&method=code",
+  "adminSteps": "open the path, type 'ZZ' in Discount code, leave Discount value empty, click Save in the save bar (nothing is saved: the form is invalid). The banner appears at the top of the main column and shows 'There are 2 errors with this discount:' with two items. Root is the body h1 (main column left edge). List items sit in the light DOM of the banner, located by index (li nth 24 counts the sidebar and aside items before them; the first banner item is the first li whose x is 32 from the root). Heading weight not resolved (the probe reads 400 on the inner div).",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "title",
+  "rootWidth": 760,
+  "locate": {
+    "title": { "sel": "h1", "nth": -1 },
+    "banner": { "sel": "div.banner", "nth": 0 },
+    "banner-icon": { "sel": "s-internal-icon", "in": "banner" },
+    "banner-heading": { "sel": "div.title", "in": "banner" },
+    "banner-item": { "sel": "li", "nth": 24 }
+  },
+  "parts": {
+    "banner": { "x": 0, "w": 760, "bg": "#ffe7e6", "color": "#360200", "radius": "20", "gap": "8" },
+    "banner-icon": { "x": 16, "w": 20, "h": 20, "color": "#e2221a" },
+    "banner-heading": { "x": 42, "h": 20, "color": "#360200" },
+    "banner-item": { "x": 32, "h": 20, "font": "13/20 400", "color": "#7e100c" }
+  }
+}

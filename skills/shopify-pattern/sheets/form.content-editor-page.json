@@ -1,0 +1,28 @@
+{
+  "entry": "form.content-editor-page",
+  "admin": "Content > Blog posts > Add blog post",
+  "path": "/content/articles/new",
+  "adminSteps": "Open the page; nothing to click. Main column 760 wide, aside 280 wide 48 to its right. Main: card with Title (Generate icon button inside the input) and Content rich text, then Excerpt and Search engine listing sections. Aside: flat sections, no card background.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "main",
+  "rootWidth": 760,
+  "locate": {
+    "main": "div.page-main",
+    "aside": "aside.aside",
+    "title-label": { "sel": "label", "text": "^Title$" },
+    "title-box": { "sel": ".input-wrapper", "in": "main" },
+    "generate": { "sel": "button", "text": "Generate title" },
+    "excerpt-heading": { "sel": "h2", "text": "^Excerpt$" },
+    "seo-heading": { "sel": "h2", "text": "^Search engine listing$" },
+    "visibility-heading": { "sel": "h2", "text": "^Visibility$" }
+  },
+  "parts": {
+    "main": { "x": 0, "w": 760 },
+    "aside": { "x": 808, "w": 280 },
+    "generate": { "w": 20, "h": 20 },
+    "excerpt-heading": { "font": "15/22 500", "color": "#101010" },
+    "seo-heading": { "font": "15/22 500", "color": "#101010" },
+    "visibility-heading": { "font": "13/20 500", "color": "#101010" }
+  }
+}

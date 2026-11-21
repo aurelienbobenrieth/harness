@@ -21,6 +21,7 @@ const validationScripts = [
   "test:skills",
   "test:consumer-results",
   "test:shopify-policy",
+  "test:shopify-pattern",
   "test:check-plan",
   "test:format",
 ];

@@ -1,0 +1,34 @@
+{
+  "entry": "form.summary-aside",
+  "admin": "Discounts > Create discount, aside",
+  "path": "/discounts/new/amount-off-product?discountType=order&method=code",
+  "adminSteps": "open the path; the aside is the right column. Blank-code state only: the code line above 'Code' is empty and the copy button is not measured. Aside root is the first section (h2 texts sit in shadow roots, so headings are located by index: Type, Details, Sales channel access).",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "aside",
+  "rootWidth": 280,
+  "locate": {
+    "aside": { "sel": "section.section", "nth": 0 },
+    "code-label": { "sel": "p.paragraph", "nth": 0 },
+    "type-heading": { "sel": "h2", "nth": 0 },
+    "details-heading": { "sel": "h2", "nth": 1 },
+    "channel-heading": { "sel": "h2", "nth": 2 },
+    "details-list": { "sel": "ul", "nth": 5 },
+    "details-row": { "sel": "li", "in": "details-list" },
+    "details-row-next": { "sel": "li", "in": "details-list", "nth": 1 },
+    "channel-box": { "sel": "div.checkbox", "nth": 0 },
+    "channel-label": { "sel": "span.label-text", "text": "Allow discount" }
+  },
+  "parts": {
+    "aside": { "w": 280, "bg": "none", "shadow": "none" },
+    "code-label": { "font": "12/18 400", "color": "#4a4a4a" },
+    "type-heading": { "x": 0, "font": "13/20 500", "color": "#101010" },
+    "details-heading": { "x": 0, "font": "13/20 500", "color": "#101010" },
+    "channel-heading": { "x": 0, "font": "13/20 500", "color": "#101010" },
+    "details-list": { "pad": "0 0 0 16" },
+    "details-row": { "x": 16, "h": 20, "font": "13/20 400", "color": "#101010" },
+    "details-row-next": { "x": 16, "h": 20 },
+    "channel-box": { "w": 14, "h": 14, "radius": "4" },
+    "channel-label": { "x": 24, "font": "13/20 400", "color": "#101010" }
+  }
+}

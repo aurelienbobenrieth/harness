@@ -1,0 +1,38 @@
+{
+  "entry": "detail.media-file-editor",
+  "admin": "Content > Files > one file",
+  "path": "/content/files/26402798665867",
+  "adminSteps": "Open /content/files, then click a file name; the editor is a role=dialog that covers the viewport (opening the file URL directly shows the list). The right column holds six toggle cards: Information (open), Crop and transform, Resize, Draw, Color background, Generate. Dark card panels paint on a parent not measured here; the toggle buttons carry radius 12 and pad 16. Expanded cards and the focal-point hint not measured. Hover not measured.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "dialog",
+  "rootWidth": 1281,
+  "locate": {
+    "dialog": "[role=dialog]",
+    "back": { "sel": "button", "text": "^Exit$", "in": "dialog" },
+    "title": { "sel": "h3", "in": "dialog" },
+    "download": { "sel": "button", "text": "^Download$", "in": "dialog" },
+    "image": { "sel": "canvas", "in": "dialog" },
+    "card-info": { "sel": "button._ToggleButton_1lqde_11", "in": "dialog" },
+    "card-crop": { "sel": "button._ToggleButton_1lqde_11", "in": "dialog", "nth": 1 },
+    "card-resize": { "sel": "button._ToggleButton_1lqde_11", "in": "dialog", "nth": 2 },
+    "card-draw": { "sel": "button._ToggleButton_1lqde_11", "in": "dialog", "nth": 3 },
+    "name-label": { "sel": "h3", "text": "^Name$", "in": "dialog" },
+    "name-input": { "sel": "input.Polaris-TextField__Input", "in": "dialog" },
+    "alt-label": { "sel": "h3", "text": "^Alt text$", "in": "dialog" }
+  },
+  "parts": {
+    "dialog": { "w": 1281, "h": 800, "bg": "#0a0a0a", "color": "#eeeeee" },
+    "back": { "x": 8, "w": 28, "h": 28, "color": "#aaaaaa", "radius": "9999", "pad": "4" },
+    "title": { "x": 44, "font": "13/20 600", "color": "#eeeeee" },
+    "download": { "right": 12, "w": 28, "h": 28, "color": "#aaaaaa", "radius": "9999", "pad": "4" },
+    "image": { "w": 616, "h": 616 },
+    "card-info": { "right": 40, "w": 320, "h": 54, "radius": "12", "pad": "16", "color": "#eeeeee" },
+    "card-crop": { "right": 40, "w": 320, "h": 54, "radius": "12", "pad": "16" },
+    "card-resize": { "right": 40, "w": 320, "h": 54, "radius": "12", "pad": "16" },
+    "card-draw": { "right": 40, "w": 320, "h": 54, "radius": "12", "pad": "16" },
+    "name-label": { "x": 937, "font": "13/20 500", "color": "#eeeeee" },
+    "name-input": { "x": 937, "w": 288, "h": 30, "font": "13/20 400", "color": "#eeeeee", "pad": "5 12" },
+    "alt-label": { "x": 937, "font": "13/20 500", "color": "#eeeeee" }
+  }
+}

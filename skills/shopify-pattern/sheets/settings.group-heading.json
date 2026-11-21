@@ -1,0 +1,32 @@
+{
+  "entry": "settings.group-heading",
+  "admin": "Settings > General",
+  "path": "/settings/general",
+  "adminSteps": "Open the page. First group: header-wrapper with the h2 (44 tall: 16 top padding, h2 22). Third group \"Order ID format\" has a description under the h2: header 60 tall, description colour #4a4a4a 13/20 (a slot, not probed as a box). Card starts 12 below the header box (h2 bottom to card top 15 on the first group). Hover and info icon of \"Order processing\" not measured.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "hw",
+  "rootWidth": 784,
+  "locate": {
+    "hw": { "sel": "div.header-wrapper", "nth": 0 },
+    "h2": { "sel": "h2", "in": "hw" },
+    "card": { "sel": "div.card", "nth": 0 }
+  },
+  "parts": {
+    "hw": { "x": 0, "w": 784, "h": 44, "pad": "16 0 0" },
+    "h2": { "x": 0, "h": 22, "font": "15/22 500", "color": "#101010" }
+  },
+  "states": {
+    "with-description": {
+      "adminSteps": "Third group (Order ID format): header grows to 60, card 12 below it.",
+      "locate": {
+        "hw": { "sel": "div.header-wrapper", "nth": 2 },
+        "h2": { "sel": "h2", "in": "hw" }
+      },
+      "parts": {
+        "hw": { "w": 784, "h": 60, "pad": "16 0 0" },
+        "h2": { "x": 0, "y": 16, "h": 22, "font": "15/22 500", "color": "#101010" }
+      }
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "entry": "fields.switch",
+  "admin": "Orders > Display options popover",
+  "path": "/orders",
+  "adminSteps": "Open Orders, click the 'Display options' icon button at the right of the tab row (inside a shadow root; element.click() works). The popover lists switches 'Group by batch' (on) and 'Hide archived'. Off, hover and focus not measured. Track is an input[type=checkbox] inside s-internal-switch; the knob is its ::before.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "row",
+  "rootWidth": 245,
+  "locate": {
+    "label": { "sel": "s-internal-text", "text": "^Group by batch$" },
+    "row": { "sel": "s-internal-text", "text": "^Group by batch$", "up": 2 },
+    "track": { "sel": "input.admin-next-light", "in": "row" },
+    "knob": { "sel": "input.admin-next-light", "in": "row", "pseudo": "::before" }
+  },
+  "parts": {
+    "label": { "font": "13/20 400", "color": "#101010" },
+    "track": { "right": 0, "w": 30, "h": 15, "bg": "#101010", "radius": "9999" },
+    "knob": { "w": 16, "h": 12, "bg": "#ffffff" }
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "entry": "settings.checkbox-list-with-help",
+  "admin": "Settings > Checkout > checkboxes below the contact method",
+  "path": "/settings/checkout",
+  "adminSteps": "Open the page; the checkboxes 'Show a link for customers to track their order with Shop' (checked, Polaris checkbox) and 'Require customers to sign in...' (unchecked, custom checkbox) with help lines. Settings > Taxes bottom card now holds switches (32x16, radius 9999) with a leading icon in a settings list, not checkboxes. Root is the first checkbox label.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "row",
+  "rootWidth": 752,
+  "locate": {
+    "row": "label.Polaris-Choice",
+    "label": { "sel": "span", "text": "^Show a link for" },
+    "box": ".Polaris-Checkbox__Backdrop",
+    "help": { "sel": "span", "text": "^Customers will be able" },
+    "row-next": "label.label-with-text",
+    "box-next": "div.checkbox",
+    "label-next": ".label-text",
+    "help-next": { "sel": ".field-details", "text": "Customers can only" }
+  },
+  "parts": {
+    "row": { "h": 28, "pad": "4 0" },
+    "label": { "x": 26, "font": "13/20 400", "color": "#101010" },
+    "box": { "x": 1, "w": 16, "h": 16, "radius": "5", "bg": "#101010" },
+    "help": { "x": 26, "font": "12/18 400", "color": "#4a4a4a" },
+    "row-next": { "h": 28, "pad": "4 0", "gap": "8" },
+    "box-next": { "w": 14, "h": 14, "radius": "4", "bg": "#ffffff" },
+    "label-next": { "x": 24, "font": "13/20 400", "color": "#101010" },
+    "help-next": { "font": "12/16 400", "color": "#4a4a4a", "pad": "0 0 0 24" }
+  }
+}

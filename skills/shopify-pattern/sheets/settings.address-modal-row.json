@@ -1,0 +1,55 @@
+{
+  "entry": "settings.address-modal-row",
+  "admin": "Settings > General > Store address",
+  "path": "/settings/general",
+  "adminSteps": "Click the 'Store address' button in the list; the modal opens. Cancel closes it. Row font and colours not re-probed (row text matches the Currency display row: 13/20). Save is aria-disabled until a field changes (not typed in).",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "row",
+  "rootWidth": 784,
+  "locate": {
+    "row": { "sel": "span", "text": "^Store address$", "closest": "[class*=\"_SettingsItem__wrapper_\"]" },
+    "icon": { "sel": "s-internal-icon", "in": "row" },
+    "title": { "sel": "span", "text": "^Store address$" },
+    "chevron": { "sel": "[class*=\"_SettingsItem__rightIconWrap_\"]", "in": "row" }
+  },
+  "parts": {
+    "row": { "h": 64 },
+    "icon": { "x": 16, "w": 20, "h": 20 },
+    "title": { "x": 48 },
+    "chevron": { "w": 20, "h": 20, "right": 16 }
+  },
+  "states": {
+    "modal": {
+      "adminSteps": "Click the row. Fields in order: Company name, Country/region (select, shows flag), Address, Apartment suite etc, City, State, ZIP code. Footer: Cancel, Save (aria-disabled until dirty).",
+      "root": "modal",
+      "rootWidth": 620,
+      "locate": {
+        "modal": ".Polaris-Modal-Dialog__Modal",
+        "title": { "sel": "h2", "in": "modal" },
+        "close": { "sel": "button[aria-label=Close]", "in": "modal" },
+        "field-label": { "sel": "label span", "text": "^Address$", "in": "modal" },
+        "field-backdrop": { "sel": ".Polaris-TextField__Backdrop", "in": "modal" },
+        "cancel": { "sel": "span", "text": "^Cancel$", "in": "modal", "closest": "button" },
+        "save": { "sel": "span", "text": "^Save$", "in": "modal", "closest": "button" }
+      },
+      "parts": {
+        "modal": { "w": 620, "bg": "#ffffff", "radius": "24", "shadow": "yes" },
+        "title": { "x": 20, "font": "15/22 500", "color": "#101010" },
+        "close": { "w": 28, "h": 28, "right": 16, "radius": "9999" },
+        "field-label": { "x": 20, "font": "13/20 500", "color": "#101010" },
+        "field-backdrop": { "x": 20, "right": 20, "h": 30, "radius": "12", "bg": "#ffffff" },
+        "cancel": { "w": 64, "h": 28, "right": 76, "radius": "9999", "pad": "6 12", "bg": "#ffffff" },
+        "save": {
+          "w": 52,
+          "h": 28,
+          "right": 16,
+          "radius": "9999",
+          "pad": "6 12",
+          "bg": "#000000/13",
+          "color": "#ffffff"
+        }
+      }
+    }
+  }
+}

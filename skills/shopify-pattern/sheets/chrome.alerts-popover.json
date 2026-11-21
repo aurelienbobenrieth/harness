@@ -1,0 +1,34 @@
+{
+  "entry": "chrome.alerts-popover",
+  "admin": "Orders, bell at the foot of the rail",
+  "path": "/orders",
+  "adminSteps": "Click the bell (aria-label \"Alerts Feed - N unread alerts\") at the foot of the rail; a real pointer click did not open it in the preview tab, button.click() in an expression did. Store had 0 alerts, so the empty state is shown. Popover surface reads opacity 0 mid-transition: ignored.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "popover",
+  "rootWidth": 361,
+  "locate": {
+    "popover": "[class*=\"_MenuPopover_\"]",
+    "surface": { "sel": "div.popover" },
+    "title": { "sel": "h3", "in": "popover" },
+    "unread": { "sel": "button", "text": "View unread only", "in": "popover" },
+    "mark-all": { "sel": "button.button", "in": "popover" },
+    "empty": { "sel": "p", "in": "popover" }
+  },
+  "parts": {
+    "popover": { "w": 361 },
+    "surface": { "bg": "#ffffff", "radius": "16", "shadow": "yes" },
+    "title": { "x": 11, "font": "15/22 500", "color": "#101010" },
+    "unread": { "w": 27, "h": 27, "radius": "9999", "color": "#a6a6a6", "right": 143 },
+    "mark-all": {
+      "h": 27,
+      "right": 11,
+      "radius": "9999",
+      "pad": "4 12 4 6",
+      "gap": "2",
+      "font": "12/16 500",
+      "color": "#a6a6a6"
+    },
+    "empty": { "x": 35, "right": 35, "font": "13/20 400", "color": "#101010" }
+  }
+}

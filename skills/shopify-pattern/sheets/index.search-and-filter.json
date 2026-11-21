@@ -1,0 +1,20 @@
+{
+  "entry": "index.search-and-filter",
+  "admin": "Orders, filter bar",
+  "path": "/orders",
+  "adminSteps": "Open Orders, empty search. Viewport was 1281 wide. The outer 36 high box (pad 4) showed radius 0 and no shadow, so the card-shadow radius 12 was not seen; the inner bar (icon plus field) is radius 8. Clear and plus icons need text; not measured.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "bar",
+  "rootWidth": 1090,
+  "locate": {
+    "bar": { "sel": "[class*=\"_SearchBarPlus_\"]" },
+    "icon": { "sel": "s-internal-icon", "in": "bar" },
+    "field": { "sel": "[aria-label=\"Search and filter\"]" }
+  },
+  "parts": {
+    "bar": { "h": 28, "radius": "8" },
+    "icon": { "x": 0, "w": 20, "h": 20 },
+    "field": { "x": 20, "h": 28, "font": "13/20 400", "color": "#101010", "pad": "4" }
+  }
+}

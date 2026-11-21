@@ -1,0 +1,31 @@
+{
+  "entry": "detail.back",
+  "admin": "Orders > #1044",
+  "path": "/orders/6649667223691",
+  "adminSteps": "Open the order; read the left of the title bar. The white fill is span.fill, the shadow is span.decoration; the link itself has no paint. The icon and divider read opacity 0 mid-transition, so they carry no size check here. Tooltip and hover not measured.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "bar",
+  "rootWidth": 1182,
+  "locate": {
+    "bar": "div.header-content",
+    "back": { "sel": "a.button", "in": "bar" },
+    "back-fill": { "sel": "span.fill", "in": "back" },
+    "back-deco": { "sel": "span.decoration", "in": "back" },
+    "back-icon": { "sel": "svg", "in": "back" },
+    "crumb-icon": { "sel": "span.breadcrumb-icon-content s-internal-icon" },
+    "crumb-label": { "sel": "span.breadcrumb-icon-label", "in": "bar" },
+    "crumb-divider": { "sel": "span.breadcrumb-divider", "in": "bar" },
+    "record-name": { "sel": "h1.heading", "in": "bar" }
+  },
+  "parts": {
+    "back": { "x": 0, "w": 28, "h": 28, "pad": "4", "radius": "9999", "text": "Orders", "tag": "a" },
+    "back-fill": { "w": 28, "h": 28, "bg": "#ffffff", "radius": "9999" },
+    "back-deco": { "shadow": "yes", "radius": "9999" },
+    "back-icon": { "w": 16, "h": 16 },
+    "crumb-icon": { "w": 20, "h": 20, "color": "#4a4a4a" },
+    "crumb-label": { "font": "13/20 500", "color": "#4a4a4a", "text": "Orders" },
+    "crumb-divider": { "font": "13/20 400", "color": "#4a4a4a", "text": "/" },
+    "record-name": { "color": "#101010", "text": "#1044" }
+  }
+}

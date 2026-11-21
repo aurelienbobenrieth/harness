@@ -1,0 +1,37 @@
+{
+  "entry": "index.thumbnail-title-cell",
+  "admin": "Products",
+  "path": "/products",
+  "adminSteps": "Open Products. Thumbnail radius is a clamp() and is left out. Inventory text samples: '20 in stock', '30 in stock for 3 variants'.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "table",
+  "rootWidth": 1182,
+  "locate": {
+    "table": "div.Polaris-Table",
+    "headcell": { "sel": "div.Polaris-Table-TableHeadingCell", "nth": 1, "in": "table" },
+    "cell": { "sel": "div.Polaris-Table-TableCell", "nth": 1, "in": "table" },
+    "thumb": { "sel": "div.thumbnail", "in": "table" },
+    "img": { "sel": "img", "in": "thumb" },
+    "name": { "sel": "span[class*=\"_Wrapper_\"]", "text": ".", "in": "table" },
+    "status": { "sel": "div.badge", "in": "table" },
+    "inventory": { "sel": "span.text", "nth": 1, "in": "table" }
+  },
+  "parts": {
+    "headcell": { "h": 31, "font": "12/18 500", "color": "#4a4a4a", "bg": "#f7f7f7" },
+    "cell": { "h": 52 },
+    "thumb": { "x": 42, "w": 36, "h": 36 },
+    "img": { "w": 36, "h": 36 },
+    "name": { "x": 90, "w": 200, "font": "13/20 500", "color": "#101010" },
+    "status": {
+      "h": 20,
+      "font": "12/18 500",
+      "color": "#214b03",
+      "bg": "#b3f782",
+      "radius": "8",
+      "pad": "1 6",
+      "gap": "4"
+    },
+    "inventory": { "font": "13/20 400", "color": "#101010" }
+  }
+}

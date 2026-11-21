@@ -1,0 +1,43 @@
+{
+  "entry": "index.queue-table-recovery",
+  "admin": "Orders > Abandoned checkouts",
+  "path": "/checkouts",
+  "adminSteps": "Open Abandoned checkouts. Title action buttons and the automation banner not measured. Store had 1 checkout row.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "table",
+  "rootWidth": 1182,
+  "locate": {
+    "table": "div.Polaris-Table",
+    "headcell": { "sel": "div.Polaris-Table-TableHeadingCell", "nth": 1, "in": "table" },
+    "cell": { "sel": "div.Polaris-Table-TableCell", "nth": 1, "in": "table" },
+    "checkout": { "sel": "span[class*=\"_Wrapper_\"]", "text": "^#4", "in": "table" },
+    "email-status": { "sel": "div.badge", "nth": 0, "in": "table" },
+    "recovery-status": { "sel": "div.badge", "nth": 1, "in": "table" },
+    "total": { "sel": "span[class*=\"_Wrapper_\"]", "text": "[$]", "in": "table" }
+  },
+  "parts": {
+    "headcell": { "h": 31, "font": "12/18 500", "color": "#4a4a4a", "bg": "#f7f7f7" },
+    "cell": { "h": 32 },
+    "checkout": { "x": 42, "font": "13/20 500", "color": "#606060" },
+    "email-status": {
+      "h": 20,
+      "font": "12/18 500",
+      "color": "#214b03",
+      "bg": "#b3f782",
+      "radius": "8",
+      "pad": "1 6",
+      "gap": "4"
+    },
+    "recovery-status": {
+      "h": 20,
+      "font": "12/18 500",
+      "color": "#6f2e01",
+      "bg": "#ffbf80",
+      "radius": "8",
+      "pad": "1 6",
+      "gap": "4"
+    },
+    "total": { "right": 34, "font": "13/20 400", "color": "#606060" }
+  }
+}

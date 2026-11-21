@@ -1,0 +1,17 @@
+{
+  "entry": "fields.focus",
+  "admin": "Discounts > Create (Amount off products, code) > Applies to > Specific collections > search field",
+  "path": "/discounts/new/amount-off-product?method=code",
+  "adminSteps": "Pick 'Specific collections' in the Applies to select; focus the 'Search collections' input (input.focus()). The wrapper gains Polaris-TextField--focus. Focused box-shadow of the backdrop: rgba(0,0,0,.04) 0 2px 3px -1px, rgba(0,0,0,.04) 0 3px 4px -1.5px, rgba(0,0,0,.04) 0 4px 5px -2px, rgb(80,131,240) 0 0 0 1px, rgba(53,115,246,.06) 0 0 0 3px, rgba(53,115,246,.06) 0 4px 20px 2px, rgba(53,115,246,.05) 0 0 8px 1px inset. Unfocused: rgba(0,0,0,.04) 0 2px 3px -1px, rgba(0,0,0,.04) 0 3px 4px -1.5px, rgba(0,0,0,.13) 0 0 0 1px. The probe prints only shadow yes/none. Hover not measured.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "field",
+  "rootWidth": 654,
+  "locate": {
+    "field": { "sel": "input[placeholder='Search collections']", "closest": "div[class*=\"Polaris-TextField\"]" },
+    "back": { "sel": "[class*=\"TextField__Backdrop\"]", "in": "field" }
+  },
+  "parts": {
+    "back": { "h": 30, "bg": "#ffffff", "radius": "12", "shadow": "yes" }
+  }
+}

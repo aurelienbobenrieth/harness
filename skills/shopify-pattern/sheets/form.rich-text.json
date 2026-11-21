@@ -1,0 +1,24 @@
+{
+  "entry": "form.rich-text",
+  "admin": "Products > Add product > Description",
+  "path": "/products/new",
+  "adminSteps": "Open the page; Description editor sits at the top of the main card. At 728 px wide the lists, indent and clear tools collapse into 'Additional controls'. Border is a box-shadow ring, not a border.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "box",
+  "rootWidth": 728,
+  "locate": {
+    "box": "[class*=\"_Editor_g4q2w\"]",
+    "toolbar": "[class*=\"_Toolbar_g4q2w\"]",
+    "gen": "button[aria-label=\"Generate text\"]",
+    "para": { "sel": "button", "text": "Paragraph" },
+    "bold": "button[aria-label=Bold]"
+  },
+  "parts": {
+    "box": { "radius": "12", "shadow": "yes" },
+    "toolbar": { "h": 36 },
+    "gen": { "x": 8, "w": 24, "h": 24, "radius": "9999", "bg": "#f7f7f7" },
+    "para": { "x": 49, "w": 100, "h": 24, "font": "12/12 500", "radius": "9999", "pad": "2 2 2 8" },
+    "bold": { "x": 165, "w": 24, "h": 24, "font": "12/12 500", "radius": "9999", "pad": "2" }
+  }
+}

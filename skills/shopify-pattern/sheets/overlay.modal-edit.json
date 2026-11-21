@@ -1,0 +1,30 @@
+{
+  "entry": "overlay.modal-edit",
+  "admin": "Settings > Domains > Connect existing (one field modal)",
+  "path": "/settings/domains/connect",
+  "adminSteps": "Open Domains, click Connect existing in the page header. In the hidden preview tab the dialog stays closed: it was shown by calling showModal() on the dialog and its open transform (scale .96) cleared; values are the settled ones. Control radius 12 sits on a sibling box of the input (not located). Disabled and invalid states not measured.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "dialog",
+  "rootWidth": 620,
+  "locate": {
+    "dialog": "dialog.modal",
+    "header": { "sel": ".header", "in": "dialog" },
+    "title": { "sel": "h2", "in": "dialog" },
+    "footer": { "sel": ".footer", "in": "dialog" },
+    "label": { "sel": "label", "in": "dialog" },
+    "control": { "sel": "input", "up": 1, "in": "dialog" },
+    "cancel": { "sel": "button", "text": "Cancel", "in": "dialog" },
+    "primary": { "sel": "button", "text": "Next", "in": "dialog" }
+  },
+  "parts": {
+    "dialog": { "w": 620, "radius": "24", "bg": "#ffffff" },
+    "header": { "h": 60, "pad": "16 16 16 20" },
+    "title": { "x": 20, "font": "15/22 500", "color": "#101010" },
+    "footer": { "pad": "12 16 16", "h": 56 },
+    "label": { "x": 20, "font": "13/20 400", "color": "#101010" },
+    "control": { "x": 20, "w": 580, "h": 30 },
+    "cancel": { "h": 28, "font": "12/16 500", "radius": "9999", "pad": "6 12" },
+    "primary": { "h": 28, "font": "12/16 500", "color": "#ffffff", "bg": "#101010", "radius": "9999", "pad": "6 12" }
+  }
+}

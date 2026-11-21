@@ -30,6 +30,15 @@ export default defineConfig({
     },
     overrides: [
       {
+        // Skill scripts include page-evaluated snippets: one bare function expression whose helpers must stay
+        // inside it, because only its source text reaches the page.
+        files: ["skills/*/scripts/**"],
+        rules: {
+          "eslint/no-unused-expressions": "off",
+          "unicorn/consistent-function-scoping": "off",
+        },
+      },
+      {
         // Conformance checks are ordered filesystem walks with early exits;
         // sequential awaits are intentional there.
         files: ["packages/conformance-*/src/**"],

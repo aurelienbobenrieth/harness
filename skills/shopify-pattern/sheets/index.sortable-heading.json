@@ -1,0 +1,21 @@
+{
+  "entry": "index.sortable-heading",
+  "admin": "Orders table header",
+  "path": "/orders",
+  "adminSteps": "Open Orders; read the Order heading button. Hover and focus ring not reached (no real pointer or keyboard focus). Viewport was 1281 wide.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "table",
+  "rootWidth": 1235,
+  "locate": {
+    "table": { "sel": ".Polaris-Table" },
+    "btn": { "sel": "button[aria-label*=\"Sort this table by Order\"]", "in": "table" },
+    "cell": { "sel": "button[aria-label*=\"Sort this table by Order\"]", "in": "table", "up": 1 },
+    "arrow": { "sel": "s-internal-icon", "in": "btn" }
+  },
+  "parts": {
+    "cell": { "h": 31, "bg": "#f7f7f7" },
+    "btn": { "h": 30, "pad": "6", "font": "12/18 500", "color": "#4a4a4a", "bg": "none", "radius": "0" },
+    "arrow": { "w": 16, "h": 16 }
+  }
+}

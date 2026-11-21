@@ -1,0 +1,39 @@
+{
+  "entry": "settings.select-rows-card",
+  "admin": "Settings > Checkout > Customer information",
+  "path": "/settings/checkout",
+  "adminSteps": "Open the page; the card is the list with Full name, Company name, Address line 2, Shipping address phone number. Popover list and save bar not opened (no write).",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "card",
+  "rootWidth": 784,
+  "locate": {
+    "card": { "sel": "span", "text": "^Full name$", "closest": "[class*=\"_SettingsList_\"]" },
+    "row": { "sel": "span", "text": "^Full name$", "closest": "[class*=\"_SettingsItem__wrapper_\"]" },
+    "label": { "sel": "span", "text": "^Full name$" },
+    "select": { "sel": "button.Polaris-Button", "in": "row" },
+    "value": { "sel": "span", "text": "^Only require last name$", "in": "row" },
+    "chevron": { "sel": ".Polaris-Button__DisclosureIcon", "in": "row" },
+    "row-next": { "sel": "span", "text": "^Company name$", "closest": "[class*=\"_SettingsItem__wrapper_\"]" },
+    "select-next": { "sel": "button.Polaris-Button", "in": "row-next" },
+    "divider": { "sel": "hr", "in": "card" }
+  },
+  "parts": {
+    "row": { "h": 56, "pad": "16 16 12" },
+    "row-next": { "h": 52, "pad": "12 16" },
+    "label": { "x": 16, "font": "13/20 400", "color": "#101010" },
+    "select": {
+      "h": 28,
+      "right": 16,
+      "bg": "#ebebeb",
+      "radius": "9999",
+      "pad": "6 6 6 12",
+      "gap": "2",
+      "shadow": "none"
+    },
+    "select-next": { "w": 112, "h": 28, "right": 16, "bg": "#ebebeb", "radius": "9999" },
+    "value": { "font": "12/16 500", "color": "#101010" },
+    "chevron": { "w": 16, "h": 16, "right": 22 },
+    "divider": { "x": 16, "right": 16, "h": 1, "border": "1 #f2f2f2" }
+  }
+}

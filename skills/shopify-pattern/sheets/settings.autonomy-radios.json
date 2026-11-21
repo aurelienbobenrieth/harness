@@ -1,0 +1,28 @@
+{
+  "entry": "settings.autonomy-radios",
+  "admin": "Growth > Autopilot (Permissions row)",
+  "path": "/growth/autopilot",
+  "adminSteps": "Open the page (the store shows the setup banner, the settings column is still present). Permissions is not a radio list here: it is a row 'Permissions' with a value pill 'Manage approved' that opens a listbox of three options (Always ask, Manage approved campaigns, Full autonomy, each with a help line, e.g. 'Autopilot prepares changes; you approve every edit and new campaign.'). The popover did not open from a synthetic click, so the options' box is not measured. Row and pill are the 5th _SettingsRow_ and _SettingsValuePill_ on the page (nth 4).",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "row",
+  "rootWidth": 280,
+  "locate": {
+    "row": { "sel": "[class*=\"_SettingsRow_\"]", "nth": 4 },
+    "label": { "sel": "div.Polaris-InlineStack", "in": "row", "nth": 0 },
+    "pill": { "sel": "[class*=\"_SettingsValuePill_\"]", "nth": 4 }
+  },
+  "parts": {
+    "row": { "w": 280, "h": 30, "gap": "8" },
+    "label": { "x": 0, "font": "13/20 400", "color": "#101010" },
+    "pill": {
+      "h": 30,
+      "pad": "6 12",
+      "radius": "16",
+      "bg": "#f7f7f7",
+      "font": "13/20 400",
+      "color": "#101010",
+      "right": 0
+    }
+  }
+}

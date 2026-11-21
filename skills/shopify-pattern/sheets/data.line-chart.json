@@ -1,0 +1,25 @@
+{
+  "entry": "data.line-chart",
+  "admin": "Analytics overview > Total sales over time card",
+  "path": "/analytics",
+  "adminSteps": "Open Analytics; the trend card is the 5th _Card_ in the dashboard. The store has no orders, so the series is the flat zero line, the legend is empty (0 high) and axis labels live in a nested shadow root the probe cannot reach. Axis, series colours and dashed comparison were not measured. Card painted by section.card.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "card",
+  "rootWidth": 782,
+  "locate": {
+    "dash": "[class*=\"_AnalyticsDashboardContainer_\"]",
+    "card": { "sel": "[class*=\"_Card_\"]", "nth": 4, "in": "dash" },
+    "paint": { "sel": "section.card", "nth": 4, "in": "dash" },
+    "heading": { "sel": ".heading", "in": "card" },
+    "value": { "sel": ".metric-card-summary-value", "in": "card" },
+    "plot": { "sel": "svg", "in": "card" },
+    "view-data": { "sel": "button.view-data", "in": "card" }
+  },
+  "parts": {
+    "heading": { "x": 16, "font": "13/16 600", "color": "#101010" },
+    "value": { "x": 16, "font": "20/20 600", "color": "#101010" },
+    "plot": { "x": 16, "h": 277 },
+    "view-data": { "right": 0, "h": 24, "font": "12/20 400", "color": "#4a4a4a", "radius": "6", "pad": "2 8" }
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "entry": "navigation.back-link",
+  "admin": "Orders > #1044 title bar",
+  "path": "/orders/6649667223691",
+  "adminSteps": "Open the order; the title bar row is at the top. Positions are from the viewport (condensed 60 wide nav, so the circle sits at x 76). Tooltip and hover not measured. The circle paints no background and no shadow on this build, only the 28 circle box and a 16 chevron inside a 20 icon box.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "locate": {
+    "back": { "sel": "a", "text": "^Orders$" },
+    "back-icon": { "sel": "s-internal-icon", "in": "back" },
+    "slash": { "sel": "span", "text": "^/$" },
+    "title": { "sel": "h1" }
+  },
+  "parts": {
+    "back": {
+      "x": 76,
+      "w": 28,
+      "h": 28,
+      "radius": "9999",
+      "pad": "4",
+      "bg": "none",
+      "shadow": "none",
+      "color": "#101010",
+      "text": "Orders"
+    },
+    "back-icon": { "w": 20, "h": 20 },
+    "slash": { "w": 13, "h": 20, "font": "13/20 400", "color": "#4a4a4a" },
+    "title": { "h": 28, "font": "13/28 500", "color": "#101010" }
+  }
+}

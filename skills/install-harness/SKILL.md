@@ -20,6 +20,7 @@ description: Add Harness lint, format, conformance packages, and skills to a con
   - copy each always-on file verbatim between its markers: `communication/core.md` between `<!-- harness:communication:start -->` and `<!-- harness:communication:end -->`, `economy/core.md` between `<!-- harness:economy:start -->` and `<!-- harness:economy:end -->`;
   - add a task to skill map for the installed skills (shape of Harness's `AGENTS.md` Skills section);
   - wire conformance-core's `instruction-blocks` check at each `core.md` path, so a skill update fails until the block is recopied.
+- `shopify-pattern`, embedded apps with merchant-facing UI only: copy `skills/shopify-pattern/` unchanged to `.agents/skills/shopify-pattern` (or the host's skills folder). App facts go in the project folder `.agents/shopify-pattern/`, never in the skill. Once `components.md` exists, set conformance-shopify-app `shopifyPattern` to the project and custom components folders (`skill` when installed elsewhere).
 
 ## Verify
 

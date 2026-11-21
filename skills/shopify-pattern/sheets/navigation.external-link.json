@@ -1,0 +1,40 @@
+{
+  "entry": "navigation.external-link",
+  "admin": "Orders > #1044, aside (customer name link, \"View map\" link)",
+  "path": "/orders/6649667223691",
+  "adminSteps": "Open the order; the customer card in the right aside holds the customer name link and, under the shipping address, a \"View map\" link. Both are s-internal-link / s-internal-button hosts with display contents; the painted element is the inner a in the shadow root. Modified-click and title-bar secondary action not measured.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "root",
+  "rootWidth": 1217,
+  "locate": {
+    "root": "main",
+    "customer-host": {
+      "sel": "s-internal-link",
+      "text": "^[^ ]+ [^ ]+$",
+      "in": "root"
+    },
+    "customer": {
+      "sel": "a",
+      "in": "customer-host"
+    },
+    "map-host": {
+      "sel": "s-internal-button",
+      "text": "^View map$"
+    },
+    "view-map": {
+      "sel": "a",
+      "in": "map-host"
+    }
+  },
+  "parts": {
+    "customer": {
+      "font": "13/20 400",
+      "color": "#1650d0"
+    },
+    "view-map": {
+      "font": "13/20 400",
+      "color": "#1650d0"
+    }
+  }
+}

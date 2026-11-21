@@ -1,0 +1,26 @@
+{
+  "entry": "data.live-metrics",
+  "admin": "Analytics > Live View",
+  "path": "/analytics/live",
+  "adminSteps": "Open the page. The metric cards sit in a narrow 2-column inline grid (484 wide here, beside a globe column); window subtitles (Last 5 minutes...) not found as text, not measured.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "grid",
+  "rootWidth": 484,
+  "locate": {
+    "grid": "div.Polaris-InlineGrid",
+    "card": { "sel": "section.card", "in": "grid" },
+    "card-next": { "sel": "section.card", "in": "grid", "nth": 1 },
+    "heading": { "sel": "span.heading", "text": "Visitors right now", "in": "grid" },
+    "value": { "sel": "div.metric-card-summary-value", "in": "grid" },
+    "stamp": { "text": "^Just now$" }
+  },
+  "parts": {
+    "grid": { "gap": "8" },
+    "card": { "w": 238, "h": 76, "bg": "#ffffff", "radius": "20", "pad": "16" },
+    "card-next": { "x": 246, "w": 238 },
+    "heading": { "x": 16, "font": "13/16 600", "color": "#101010" },
+    "value": { "x": 16, "font": "13/20 600", "color": "#101010" },
+    "stamp": { "font": "13/20 400", "color": "#101010" }
+  }
+}

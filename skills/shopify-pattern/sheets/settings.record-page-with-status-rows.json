@@ -1,0 +1,48 @@
+{
+  "entry": "settings.record-page-with-status-rows",
+  "admin": "Settings > Locations > My Custom Location",
+  "path": "/settings/locations/69059182731",
+  "adminSteps": "Open the location from the list. Title badges and the More actions menu were not measured (title sits in a shadow root). Today the Shipping group shows a Shipping row (green On pill) with Pickup in store and Local delivery (grey Off pills), each with a chevron.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "pk",
+  "rootWidth": 784,
+  "locate": {
+    "pk": { "text": "^Pickup in store$", "closest": "[class*=_ListItem_]" },
+    "label": { "text": "^Pickup in store$" },
+    "lead-icon": { "sel": "s-internal-icon", "in": "pk" },
+    "pill": { "sel": ".badge", "in": "pk" },
+    "pill-text": { "sel": ".content", "in": "pk" },
+    "chevron": { "sel": "[class*=_rightIconWrap_]", "in": "pk" },
+    "on-row": { "text": "^Shipping$", "closest": "[class*=_ListItem_]" },
+    "on-pill": { "sel": ".badge", "in": "on-row" },
+    "switch": { "sel": "input[type=checkbox]", "nth": 0 }
+  },
+  "parts": {
+    "pk": { "h": 44, "bg": "#ffffff" },
+    "label": { "x": 48, "font": "13/20 400", "color": "#101010" },
+    "lead-icon": { "x": 16, "w": 20, "h": 20 },
+    "pill": {
+      "h": 20,
+      "bg": "#000000/5",
+      "color": "#4a4a4a",
+      "font": "12/18 500",
+      "pad": "1 6",
+      "radius": "8",
+      "right": 48
+    },
+    "pill-text": { "font": "12/18 500", "color": "#4a4a4a" },
+    "chevron": { "w": 20, "h": 20, "right": 16 },
+    "on-row": { "h": 48 },
+    "on-pill": {
+      "h": 20,
+      "bg": "#b3f782",
+      "color": "#214b03",
+      "font": "12/18 500",
+      "pad": "1 6",
+      "radius": "8",
+      "right": 48
+    },
+    "switch": { "w": 32, "h": 16, "bg": "#dddddd", "radius": "9999" }
+  }
+}

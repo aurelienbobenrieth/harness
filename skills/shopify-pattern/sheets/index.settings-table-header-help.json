@@ -1,0 +1,31 @@
+{
+  "entry": "index.settings-table-header-help",
+  "admin": "Settings > Customer events",
+  "path": "/settings/customer_events",
+  "adminSteps": "Open Settings > Customer events. Pixel table: heading 'Pixels' (sort button), Status and Data headings wrapped in a TooltipHeader span, row with Web sub-label, Data cell is a 'Data access settings' button, last cell 'Open row actions' icon button. No 'Search pixels' field and no sort icon button were found on this store (only the column heading sort buttons). The dotted underline on the help headings reads text-decoration none on the span, so it is not measured. Tooltip and hover not measured.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "table",
+  "rootWidth": 764,
+  "locate": {
+    "table": "div.Polaris-Table",
+    "head": { "sel": "div.Polaris-Table-TableHeadingCell", "nth": 1, "in": "table" },
+    "hname": { "sel": "button[class*=TableHeadingCell__]", "in": "table" },
+    "tip": { "sel": "span[class*=TooltipHeader]", "in": "table" },
+    "tip-data": { "sel": "span[class*=TooltipHeader]", "nth": 1, "in": "table" },
+    "name": { "sel": "a[class*=_Link_]", "in": "table" },
+    "cell": { "sel": "div.Polaris-Table-TableCell", "nth": 2, "in": "table" },
+    "data-button": { "sel": "button[class*=TableCell__Dia]", "in": "table" },
+    "actions": { "sel": "button", "text": "Open row actions", "in": "table" }
+  },
+  "parts": {
+    "head": { "h": 31, "bg": "#f7f7f7", "font": "12/18 500", "color": "#4a4a4a" },
+    "hname": { "h": 30, "pad": "6", "font": "12/18 500", "color": "#4a4a4a" },
+    "tip": { "h": 18, "w": 36, "font": "12/18 500", "color": "#4a4a4a" },
+    "tip-data": { "h": 18, "w": 26, "font": "12/18 500", "color": "#4a4a4a" },
+    "name": { "h": 20, "font": "13/20 400", "color": "#101010" },
+    "cell": { "h": 36, "bg": "#ffffff", "font": "13/20 400", "color": "#101010" },
+    "data-button": { "h": 36, "w": 137 },
+    "actions": { "w": 28, "h": 28, "radius": "9999", "right": 4 }
+  }
+}

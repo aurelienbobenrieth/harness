@@ -1,0 +1,30 @@
+{
+  "entry": "detail.banner-in-body",
+  "admin": "Orders > #1044 (test order, warning)",
+  "path": "/orders/6649667223691",
+  "adminSteps": "Open the order; the banner is the first block of the main column: 'Your payment gateway was in test mode when this order was created.' Heading is a 62px wide title (h2), body text in a block below. Icon is a 20px circle drawn with a radial-gradient (not compared).",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "banner",
+  "rootWidth": 760,
+  "locate": {
+    "banner": { "sel": "div.banner" },
+    "icon": { "sel": "div.icon", "in": "banner" },
+    "heading": { "sel": "h2.heading", "in": "banner" },
+    "text": { "sel": "[class*=\"_Content_lt6da\"]" }
+  },
+  "parts": {
+    "banner": { "w": 760, "h": 80, "radius": "20", "bg": "#fff5c5", "color": "#312500" },
+    "icon": { "x": 16, "w": 20, "h": 20 },
+    "heading": { "x": 42, "font": "13/20 500", "color": "#312500" },
+    "text": { "x": 16, "font": "13/20 400", "color": "#574100" }
+  },
+  "states": {
+    "success-with-url": {
+      "adminSteps": "Checkouts > open the first abandoned checkout (/checkouts/41664332365963); the banner is success tone with a read-only URL box and an action. Only the box was measured; inner parts not measured.",
+      "path": "/checkouts/41664332365963",
+      "locate": { "banner": { "sel": "div.banner" } },
+      "parts": { "banner": { "w": 760, "h": 138, "radius": "20", "bg": "#e8fcd9", "color": "#0f2400" } }
+    }
+  }
+}

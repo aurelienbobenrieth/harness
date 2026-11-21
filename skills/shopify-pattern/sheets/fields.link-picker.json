@@ -1,0 +1,26 @@
+{
+  "entry": "fields.link-picker",
+  "admin": "Content > Menus > Main menu > Edit Home (inline row), input 'Search or paste link'",
+  "path": "/content/menus/198064537739",
+  "adminSteps": "Open the path, click the button 'Edit Home' (aria-label), focus the input with placeholder 'Search or paste link' (element.focus()). The popover opens on focus with an empty input. Typed-search state (groups with counts) not reached: after typing 'a' the popover showed only a blank 42px row in 2 tries.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "pop",
+  "rootWidth": 308,
+  "locate": {
+    "pop": "[class*=\"Polaris-PositionedOverlay\"]",
+    "card": { "sel": "[class*=\"Popover__Pane\"]", "in": "pop" },
+    "input": { "sel": "input", "text": "Search or paste" }
+  },
+  "parts": {
+    "card": { "w": 308, "bg": "#ffffff" },
+    "input": { "w": 270, "h": 30, "font": "13/20 400", "pad": "5 12 5 0" }
+  },
+  "states": {
+    "empty-focused": {
+      "adminSteps": "Input focused, nothing typed: popover lists 'Online store' (heading 14/20 400 #4a4a4a), then 32px rows: Home page, Search, Collections, Products, Pages, Blogs, Blog posts, Policies; 'Customer accounts' heading, then Orders, Profile, Apps. Rows 291 wide, 36 pitch.",
+      "locate": {},
+      "parts": {}
+    }
+  }
+}

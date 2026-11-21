@@ -1,0 +1,26 @@
+{
+  "entry": "chrome.more-actions-menu",
+  "admin": "Orders > #1044 > More actions",
+  "path": "/orders/6649667223691",
+  "adminSteps": "Click More actions in the title bar (a real pointer click did not open it in the automated tab; element.click() on the button did). The popover is div.dialog in the top layer; measure after about 700 ms because it fades in (opacity 0 at first). Escape closes.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "popover",
+  "rootWidth": 187,
+  "locate": {
+    "popover": "div.dialog",
+    "search": { "sel": "input", "in": "popover" },
+    "heading": { "sel": ".section-heading", "in": "popover" },
+    "item": { "sel": "button.menu-item", "in": "popover" },
+    "item-text": { "sel": ".text", "in": "item" },
+    "item-icon": { "sel": "s-internal-icon", "in": "item" }
+  },
+  "parts": {
+    "popover": { "radius": "16", "bg": "#ffffff", "shadow": "yes" },
+    "search": { "x": 30, "font": "13/20 400" },
+    "heading": { "x": 4, "font": "12/18 400", "color": "#606060", "pad": "2 12 2 8" },
+    "item": { "x": 4, "h": 30, "radius": "12", "pad": "4 8 4 4" },
+    "item-text": { "font": "13/20 400", "color": "#101010" },
+    "item-icon": { "x": 8 }
+  }
+}

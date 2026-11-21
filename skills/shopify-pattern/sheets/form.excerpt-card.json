@@ -1,0 +1,35 @@
+{
+  "entry": "form.excerpt-card",
+  "admin": "Content > Blog posts > Add blog post > Excerpt",
+  "path": "/content/articles/new",
+  "adminSteps": "Open the page. The edit icon button (aria-label Add Excerpt) opens the editor in place.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "section",
+  "rootWidth": 760,
+  "locate": {
+    "section": { "sel": "h2", "text": "^Excerpt$", "closest": "section" },
+    "heading": { "sel": "h2", "text": "^Excerpt$" },
+    "edit-button": { "sel": "button", "in": "section" },
+    "edit-icon": { "sel": "svg", "in": "edit-button" },
+    "card": { "sel": ".card", "in": "section" }
+  },
+  "parts": {
+    "heading": { "x": 0, "font": "15/22 500", "color": "#101010" },
+    "edit-button": { "w": 28, "h": 28, "right": 0, "color": "#606060", "radius": "9999" },
+    "edit-icon": { "w": 16, "h": 16 },
+    "card": { "x": 0, "h": 52, "bg": "#ffffff", "radius": "20", "pad": "16", "shadow": "yes" }
+  },
+  "states": {
+    "editing": {
+      "adminSteps": "Click the edit icon button: the icon disappears and the card holds the placeholder sentence over a rich text editor (toolbar 36 tall, editor 186 tall, card 246 tall).",
+      "locate": {
+        "section": { "sel": "h2", "text": "^Excerpt$", "closest": "section" },
+        "card": { "sel": ".card", "in": "section" }
+      },
+      "parts": {
+        "card": { "h": 246, "bg": "#ffffff", "radius": "20" }
+      }
+    }
+  }
+}

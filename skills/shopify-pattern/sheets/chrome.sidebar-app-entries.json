@@ -1,0 +1,25 @@
+{
+  "entry": "chrome.sidebar-app-entries",
+  "admin": "Home, collapsed rail > Apps",
+  "path": "",
+  "adminSteps": "At 1281 wide the rail is collapsed. Click the Apps rail button: it opens a centred panel listing the installed apps (not a hover flyout); the current app row is selected. Expanded navigation with app sub-items not reached (rail stayed collapsed). Closing the panel by keyboard did not work, nothing was saved.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "panel",
+  "rootWidth": 607,
+  "locate": {
+    "panel": { "sel": "ul[class*=\"_Rows_\"]", "up": 3 },
+    "rows": "ul[class*=\"_Rows_\"]",
+    "row": { "sel": "a[class*=\"_BaseRow_\"]", "in": "rows", "nth": 1 },
+    "row-selected": { "sel": "a[class*=\"_BaseRow_\"][class*=\"_Selected\"]", "in": "rows" },
+    "row-icon": { "sel": "img,svg", "in": "row" },
+    "row-name": { "sel": "*", "text": "<app name>", "in": "rows" }
+  },
+  "parts": {
+    "rows": { "x": 12, "right": 12 },
+    "row": { "h": 38, "pad": "8", "radius": "8", "x": 12, "right": 12 },
+    "row-selected": { "h": 38, "bg": "#f7f7f7", "radius": "8" },
+    "row-icon": { "x": 19, "w": 23, "h": 23 },
+    "row-name": { "x": 50, "font": "13/20 400", "color": "#101010" }
+  }
+}

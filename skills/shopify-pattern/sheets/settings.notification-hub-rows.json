@@ -1,0 +1,29 @@
+{
+  "entry": "settings.notification-hub-rows",
+  "admin": "Settings > Notifications",
+  "path": "/settings/notifications",
+  "adminSteps": "Open the page; root is the card of Customer, Staff and Fulfillment request rows. The sender input and card chrome sit in shadow DOM and were measured only by position (input at 28 from the card edge, 20 high).",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "root",
+  "rootWidth": 784,
+  "locate": {
+    "root": { "sel": "span", "text": "^Customer notifications$", "up": 11 },
+    "row": { "sel": "[class*=\"_SettingsItem__wrapper_\"]", "in": "root" },
+    "row-next": { "sel": "[class*=\"_SettingsItem__wrapper_\"]", "in": "root", "nth": 1 },
+    "icon": { "sel": "s-internal-icon", "in": "root", "nth": 0 },
+    "title": { "sel": "span", "text": "^Customer notifications$" },
+    "help": { "sel": "[class*=\"_Subtitle_\"]", "in": "root" },
+    "chevron": { "sel": "s-internal-icon", "in": "root", "nth": 1 },
+    "divider": { "sel": "hr", "in": "root" }
+  },
+  "parts": {
+    "row": { "h": 68, "pad": "16 16 12" },
+    "row-next": { "h": 64, "pad": "12 16" },
+    "icon": { "x": 16, "w": 20, "h": 20 },
+    "title": { "x": 48, "font": "13/20 400", "color": "#101010" },
+    "help": { "x": 48, "font": "13/20 400", "color": "#4a4a4a" },
+    "chevron": { "w": 20, "h": 20, "right": 16 },
+    "divider": { "x": 48, "right": 16, "h": 1, "border": "1 #f2f2f2" }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "entry": "fields.search",
+  "admin": "Discounts > Create (Amount off products, code) > Applies to > Specific collections",
+  "path": "/discounts/new/amount-off-product?method=code",
+  "adminSteps": "Choose 'Specific collections' in the Applies to select; a search field with a 'Browse collections' button appears below it. Nothing typed or picked. Picked chips not measured.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "field",
+  "rootWidth": 654,
+  "locate": {
+    "field": { "sel": "input[placeholder='Search collections']", "closest": "div[class*=\"Polaris-TextField\"]" },
+    "back": { "sel": "[class*=\"TextField__Backdrop\"]", "in": "field" },
+    "icon": { "sel": "svg", "in": "field" },
+    "input": { "sel": "input[placeholder='Search collections']" },
+    "browse": { "sel": "button[aria-label='Browse collections']" }
+  },
+  "parts": {
+    "field": { "h": 30 },
+    "back": { "bg": "#ffffff", "radius": "12", "shadow": "yes" },
+    "icon": { "x": 10, "w": 16, "h": 16, "color": "#606060" },
+    "input": { "x": 32, "font": "13/20 400", "color": "#101010" },
+    "browse": { "x": 658, "w": 70, "h": 32, "bg": "#ebebeb", "radius": "9999", "font": "13/20 400", "color": "#101010" }
+  }
+}

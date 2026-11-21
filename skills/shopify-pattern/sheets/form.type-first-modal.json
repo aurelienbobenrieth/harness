@@ -1,0 +1,34 @@
+{
+  "entry": "form.type-first-modal",
+  "admin": "Discounts > Create discount (opens Select discount type)",
+  "path": "/discounts",
+  "adminSteps": "open the path, click the primary button 'Create discount' in the title bar (button.button, second one; the first is a secondary action). The modal 'Select discount type' opens at once. Rows are Polaris resource items in the modal's slotted light DOM, located by class. Rows 1 to 4 are Admin types, later groups are app types under app-name header rows (header rows not measured). Escape and Cancel behaviour, hover and the chevron colour on hover not measured. Row heights 68 or 69 (hairline between rows). The first row has no border, the next rows have a top 1px #dddddd.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "modal",
+  "rootWidth": 620,
+  "locate": {
+    "modal": { "sel": "dialog.modal" },
+    "heading": { "sel": "h2", "in": "modal" },
+    "row": { "sel": "li[class*=\"Polaris-ResourceItem\"]" },
+    "row-next": { "sel": "li[class*=\"Polaris-ResourceItem\"]", "nth": 1 },
+    "icon": { "sel": "s-internal-icon", "in": "row" },
+    "title": { "sel": "strong.text", "in": "row" },
+    "help": { "sel": "span.text", "in": "row", "nth": 1 },
+    "chevron": { "sel": "span[class*=\"_Chevron_\"]", "in": "row" },
+    "footer": { "sel": "div.footer", "in": "modal" },
+    "cancel": { "sel": "div.footer-actions", "in": "modal" }
+  },
+  "parts": {
+    "modal": { "w": 620, "bg": "#ffffff", "radius": "24" },
+    "heading": { "x": 20, "font": "15/22 500", "color": "#101010" },
+    "row": { "x": 0, "h": 68 },
+    "row-next": { "border": "1 #dddddd" },
+    "icon": { "x": 12, "w": 20, "h": 20 },
+    "title": { "x": 40, "font": "13/20 500", "color": "#101010" },
+    "help": { "x": 40, "font": "13/20 400", "color": "#4a4a4a" },
+    "chevron": { "w": 20, "h": 20 },
+    "footer": { "h": 56, "pad": "12 16 16" },
+    "cancel": { "w": 64, "h": 28, "right": 16 }
+  }
+}

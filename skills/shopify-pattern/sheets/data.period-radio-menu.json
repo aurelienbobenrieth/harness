@@ -1,0 +1,48 @@
+{
+  "entry": "data.period-radio-menu",
+  "admin": "Orders > metrics bar > period cell",
+  "path": "/orders",
+  "adminSteps": "Open Orders; the first cell of the metrics bar is the period control, label '7 days'. Click its 111x52 button (element.click()) to open the popover with a Date range choice list: Today, Last 7 days, Last 30 days (selected: Last 7 days). Popover frame (radius, padding, transition) sits on shadow wrappers and could not be resolved.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "dd",
+  "rootWidth": 128,
+  "locate": {
+    "bar": "s-metrics-bar",
+    "dd": { "sel": "div.dropdown-button", "in": "bar" },
+    "ddbtn": { "sel": "button.clickable", "in": "dd" },
+    "ddinner": { "sel": "div.dropdown-button-inner-wrapper", "in": "dd" },
+    "ddicon": { "sel": "s-icon", "in": "dd" },
+    "ddtext": { "sel": "span", "text": "days", "in": "dd" }
+  },
+  "parts": {
+    "dd": { "w": 128, "h": 68, "pad": "8" },
+    "ddbtn": { "x": 8, "w": 111, "h": 52, "radius": "4" },
+    "ddinner": { "radius": "8", "gap": "4", "w": 111, "h": 52 },
+    "ddicon": { "w": 16, "h": 16 },
+    "ddtext": { "font": "12/20 400", "text": "7 days" }
+  },
+  "states": {
+    "open": {
+      "adminSteps": "Click the period button; read the fieldset.choice-list in the popover (247x141).",
+      "locate": {
+        "set": "fieldset.choice-list",
+        "row": { "sel": "label.choice", "in": "set" },
+        "row2": { "sel": "label.choice", "in": "set", "nth": 1 },
+        "ctl": { "sel": "span.control", "in": "set" },
+        "radio": { "sel": "input.radio", "in": "set", "nth": 1 },
+        "radio1": { "sel": "input.radio", "in": "set" },
+        "desc": { "sel": "div.field-details", "in": "set" }
+      },
+      "parts": {
+        "set": { "w": 247 },
+        "row": { "h": 27, "pad": "4 0", "gap": "8", "font": "13/20 400" },
+        "row2": { "h": 27 },
+        "ctl": { "w": 15, "h": 19 },
+        "radio": { "w": 15, "h": 15, "bg": "#101010" },
+        "radio1": { "w": 13, "h": 13 },
+        "desc": { "x": 23, "h": 19, "font": "12/16 400", "color": "#4a4a4a", "pad": "0 0 4" }
+      }
+    }
+  }
+}

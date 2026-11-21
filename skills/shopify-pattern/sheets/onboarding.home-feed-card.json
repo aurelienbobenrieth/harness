@@ -1,0 +1,32 @@
+{
+  "entry": "onboarding.home-feed-card",
+  "admin": "Home > Home feed",
+  "path": "/",
+  "adminSteps": "Open Home and wait for the feed (a few seconds); the dev store shows one card, 'Get <store name> a matching domain'. Dismiss button is invisible until hover (opacity 0): hover not measured. Card shadow value is 'yes' only (probe prints no detail).",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "card",
+  "rootWidth": 300,
+  "locate": {
+    "feed": "ul[aria-label=\"Home feed\"]",
+    "card": { "sel": "div.card", "in": "feed" },
+    "media": { "sel": "[class*=\"_OnboardingMedia_\"]", "in": "feed" },
+    "content": { "sel": "[class*=\"_Content_1uakd\"]", "in": "feed" },
+    "title": { "sel": "h3", "in": "feed" },
+    "body": { "sel": "p", "in": "feed" },
+    "action": { "sel": "[class*=\"_Action_1uakd\"]", "in": "feed" },
+    "pill": { "sel": "button", "in": "feed" },
+    "pill-label": { "sel": "[class*=\"_PrimaryCtaLabel_\"]", "in": "feed" },
+    "dismiss": { "sel": "button", "in": "feed", "text": "ismiss" }
+  },
+  "parts": {
+    "card": { "w": 300, "h": 344, "bg": "#ffffff", "radius": "20", "shadow": "yes" },
+    "media": { "x": 7, "w": 286, "h": 140, "bg": "#f5f6f7", "radius": "12" },
+    "content": { "pad": "12 12 0", "gap": "6" },
+    "title": { "font": "15/18.8 500", "color": "#101010", "pad": "4 0 0 4" },
+    "body": { "font": "13/17.9 400", "color": "#707070" },
+    "action": { "pad": "0 12 12", "gap": "12" },
+    "pill": { "h": 28, "font": "12/16 500", "pad": "6 12", "radius": "9999" },
+    "dismiss": { "w": 24, "h": 24, "right": 16, "radius": "9999", "pad": "2", "bg": "#ffffff/80" }
+  }
+}

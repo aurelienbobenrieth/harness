@@ -1,0 +1,33 @@
+{
+  "entry": "settings.region-list",
+  "admin": "Settings > Taxes and duties > region table",
+  "path": "/settings/taxes",
+  "adminSteps": "Open Taxes and duties; the card with 'Search' and a sort button sits under the 'Where you collect and remit tax' line. Columns: a 53 px blank first column, Region (link to /settings/taxes/<code>, e.g. US), Collecting (hidden 'Not collecting' text then '—'). Region page (title bar, 'Collect in a new state', 'Add override') not measured. Sort menu and hover not measured.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "root",
+  "rootWidth": 784,
+  "locate": {
+    "root": "div[class*=_SettingsTable_]",
+    "filters": { "sel": "div.Polaris-Filters__Container", "in": "root" },
+    "search": { "sel": "div.Polaris-TextField", "in": "root" },
+    "sort": { "sel": "button", "text": "Sort the results", "in": "root" },
+    "table": { "sel": "div.Polaris-Table", "in": "root" },
+    "head-region": { "sel": "div[class*=TableHeadingCell]", "in": "table", "nth": 1 },
+    "head-collecting": { "sel": "div[class*=TableHeadingCell]", "in": "table", "nth": 2 },
+    "region-cell": { "sel": "div[class*=TableCell__TableCellContent]", "in": "table", "nth": 1 },
+    "region-link": { "sel": "a", "in": "table" },
+    "collecting-cell": { "sel": "div[class*=TableCell__TableCellContent]", "in": "table", "nth": 2 }
+  },
+  "parts": {
+    "filters": { "x": 0, "right": 0, "h": 44, "bg": "#ffffff", "radius": "10 10 0 0" },
+    "search": { "x": 8, "right": 56, "h": 28 },
+    "sort": { "right": 8, "w": 28, "h": 28, "bg": "#ebebeb", "radius": "9999", "pad": "4" },
+    "table": { "x": 10, "right": 10 },
+    "head-region": { "h": 31, "font": "12/18 500", "color": "#4a4a4a", "bg": "#f7f7f7", "pad": "6" },
+    "head-collecting": { "right": 10, "h": 31, "font": "12/18 500", "color": "#4a4a4a", "bg": "#f7f7f7", "pad": "6" },
+    "region-cell": { "h": 36, "pad": "6 8 6 6" },
+    "region-link": { "x": 69, "h": 20, "font": "13/20 400", "color": "#101010" },
+    "collecting-cell": { "right": 10, "h": 36, "pad": "6 8 6 6" }
+  }
+}

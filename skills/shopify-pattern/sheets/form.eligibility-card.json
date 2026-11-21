@@ -1,0 +1,40 @@
+{
+  "entry": "form.eligibility-card",
+  "admin": "Discounts > Create product discount > Minimum purchase requirements",
+  "path": "/discounts/new/amount-off-product",
+  "adminSteps": "Open the page; in Minimum purchase requirements click the radio Minimum purchase amount ($) to reveal the money field (form state only, nothing saved). Group error ('Select at least one') not reached.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "list",
+  "rootWidth": 728,
+  "locate": {
+    "list": { "sel": "fieldset.choice-list", "nth": -1 },
+    "choice": { "sel": "label.choice", "text": "No minimum requirements" },
+    "radio": { "sel": "input[type=radio]", "in": "choice" },
+    "slot": { "sel": "div.choice-slot-wrapper" },
+    "money": { "sel": "[class*=_PrerequisiteTextField]" },
+    "money-prefix": { "sel": "div.Polaris-TextField__Prefix", "in": "money" },
+    "help": { "sel": "span.text", "in": "hb" },
+    "hb": { "sel": "[class*=_PrerequisiteTextField]", "up": 1 }
+  },
+  "parts": {
+    "choice": { "h": 28, "gap": "8", "pad": "4 0", "font": "13/20 400", "color": "#101010" },
+    "radio": { "w": 14, "h": 14, "radius": "50%" },
+    "money": { "x": 0, "w": 150, "h": 30 },
+    "money-prefix": { "color": "#4a4a4a" },
+    "help": { "font": "13/20 400", "color": "#4a4a4a" }
+  },
+  "states": {
+    "picked": {
+      "adminSteps": "Click the Minimum purchase amount ($) choice; the field and help show indented 24 under it. x of money and slot is measured from the slot wrapper (indent 24 from the list).",
+      "locate": {
+        "choice": { "sel": "label.choice", "text": "Minimum purchase amount" },
+        "radio": { "sel": "input[type=radio]", "in": "choice" }
+      },
+      "parts": {
+        "radio": { "w": 16, "h": 16, "radius": "50%", "bg": "#101010" },
+        "slot": { "x": 24, "w": 704 }
+      }
+    }
+  }
+}

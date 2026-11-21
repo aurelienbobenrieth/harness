@@ -1,0 +1,34 @@
+{
+  "entry": "index.metrics-strip",
+  "admin": "Orders",
+  "path": "/orders",
+  "adminSteps": "Open Orders; the strip is the s-metrics-bar above the filter bar. Tile heading, period button and arrows read from its shadow DOM. Sparkline and tile value not measured. Hover or focus tooltip not measured.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "strip",
+  "rootWidth": 1182,
+  "locate": {
+    "strip": "s-metrics-bar",
+    "tile": { "sel": "div.hover-container", "in": "strip" },
+    "tile-next": { "sel": "div.hover-container", "nth": 1, "in": "strip" },
+    "heading": { "sel": "span", "text": "^Items ordered$", "in": "strip" },
+    "period": { "sel": "button", "text": "^$", "in": "strip" },
+    "period-label": { "sel": "span", "text": "days", "in": "strip" },
+    "arrow-prev": { "sel": "button", "text": "^Backward$", "in": "strip" }
+  },
+  "parts": {
+    "strip": { "h": 68 },
+    "tile": { "x": 136, "w": 209, "h": 52, "pad": "4 12", "radius": "8" },
+    "tile-next": { "x": 361, "w": 209, "h": 52, "pad": "4 12", "radius": "8" },
+    "heading": { "font": "13/16 600", "color": "#101010" },
+    "period-label": { "font": "12/20 400", "color": "#101010" },
+    "arrow-prev": {
+      "w": 28,
+      "h": 28,
+      "bg": "#000000/3",
+      "color": "#a6a6a6",
+      "font": "12/16 500",
+      "radius": "9999 0 0 9999"
+    }
+  }
+}

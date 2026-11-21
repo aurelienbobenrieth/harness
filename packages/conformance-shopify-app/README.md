@@ -2,10 +2,10 @@
 
 [![npm](https://img.shields.io/npm/v/@aurelienbbn/conformance-shopify-app)](https://www.npmjs.com/package/@aurelienbbn/conformance-shopify-app) [![downloads](https://img.shields.io/npm/dm/@aurelienbbn/conformance-shopify-app)](https://www.npmjs.com/package/@aurelienbbn/conformance-shopify-app) [![CI](https://github.com/aurelienbobenrieth/harness/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/aurelienbobenrieth/harness/actions/workflows/ci.yml) [![license](https://img.shields.io/npm/l/@aurelienbbn/conformance-shopify-app)](https://github.com/aurelienbobenrieth/harness/blob/main/packages/conformance-shopify-app/LICENSE) [![node](https://img.shields.io/node/v/@aurelienbbn/conformance-shopify-app)](https://github.com/aurelienbobenrieth/harness/blob/main/packages/conformance-shopify-app/package.json)
 
-**13 static checks for Shopify app repos, plus 4 evaluators for evidence you supply.**
+**14 static checks for Shopify app repos, plus 4 evaluators for evidence you supply.**
 
 ```text
- repo on disk ─────▶ shopifyAppChecks (11 default + 2 opt-in) ─▶ findings[]  Vitest or plain function
+ repo on disk ─────▶ shopifyAppChecks (12 default + 2 opt-in) ─▶ findings[]  Vitest or plain function
  Response / handler ▶ evaluateShopifyIframeProtection          ─▶ findings[]   called from your tests
                       probeShopifyWebhookHmac
  metrics JSON ──────▶ evaluateShopifyPerformance               ─▶ passed | failed | incomplete
@@ -15,7 +15,7 @@
 > [!WARNING]
 > **A static preflight, not Shopify approval.** Shopify's review and deployment systems stay authoritative.
 
-## One file, eleven tests
+## One file, twelve tests
 
 ```sh
 pnpm add -D @aurelienbbn/conformance-shopify-app vitest   # vitest >=4.1.11 <6.0.0 (optional peer)
@@ -55,23 +55,24 @@ appManifests: [shopify.app.toml]          (minimumApiVersion: "2025-10", message
 ⚠️ api-version-contract  app/shopify.server.ts  apiVersion: The app server requests Admin API 2025-10 while shopify.app.toml delivers webhooks at 2025-07…
 ```
 
-## Eleven checks run by default; two wait for opt-in
+## Twelve checks run by default; two wait for opt-in
 
-| Check                           | Missing evidence                                | Does not prove                      |
-| ------------------------------- | ----------------------------------------------- | ----------------------------------- |
-| `compliance-webhooks`           | ⚠️ no manifest · ❌ selected missing / bad TOML | delivery, legal compliance          |
-| `app-bridge-script`             | ⚠️ no document found · ❌ explicit one missing  | generated markup, route coverage    |
-| `functions-localization`        | ❌ 0 or 2+ default locales, bad JSON            | translation quality                 |
-| `checkout-bundle-size`          | ❌ no built JavaScript                          | compressed size, CLI acceptance     |
-| `app-url-security`              | ❌ missing / bad manifest                       | TLS certificates, reachability      |
-| `webhook-subscription-contract` | ❌ missing / bad manifest                       | cloud resources, signatures         |
-| `api-version-contract`          | ❌ explicit `serverEntries` match nothing       | current version availability        |
-| `built-for-shopify-extensions`  | silent when unset                               | functionality, category eligibility |
-| `polaris-cdn-track`             | silent without a CDN script or the types        | runtime-injected scripts            |
-| `flow-template-contract`        | silent without `flow_template` extensions       | workflow value, one-click safety    |
-| `extension-framework-contract`  | silent below `2025-10`                          | a complete Preact migration         |
-| `extension-capability-contract` | 🔒 opt-in, see below                            | runtime failure                     |
-| `listing-inputs`                | 🔒 opt-in, parked; `{}` proves nothing          | meaning, image quality              |
+| Check                           | Missing evidence                                            | Does not prove                      |
+| ------------------------------- | ----------------------------------------------------------- | ----------------------------------- |
+| `compliance-webhooks`           | ⚠️ no manifest · ❌ selected missing / bad TOML             | delivery, legal compliance          |
+| `app-bridge-script`             | ⚠️ no document found · ❌ explicit one missing              | generated markup, route coverage    |
+| `functions-localization`        | ❌ 0 or 2+ default locales, bad JSON                        | translation quality                 |
+| `checkout-bundle-size`          | ❌ no built JavaScript                                      | compressed size, CLI acceptance     |
+| `app-url-security`              | ❌ missing / bad manifest                                   | TLS certificates, reachability      |
+| `webhook-subscription-contract` | ❌ missing / bad manifest                                   | cloud resources, signatures         |
+| `api-version-contract`          | ❌ explicit `serverEntries` / `adminApiPaths` match nothing | current version availability        |
+| `built-for-shopify-extensions`  | silent when unset                                           | functionality, category eligibility |
+| `polaris-cdn-track`             | silent without a CDN script · ⚠️ types unresolved           | runtime-injected scripts            |
+| `flow-template-contract`        | silent without `flow_template` extensions                   | workflow value, one-click safety    |
+| `extension-framework-contract`  | silent below `2025-10`                                      | a complete Preact migration         |
+| `shopify-pattern-catalog`       | silent when unset · ❌ missing ledger or folder             | visual match with the admin         |
+| `extension-capability-contract` | 🔒 opt-in, see below                                        | runtime failure                     |
+| `listing-inputs`                | 🔒 opt-in, parked; `{}` proves nothing                      | meaning, image quality              |
 
 ```ts
 import { optionalShopifyAppChecks, shopifyAppChecks } from "@aurelienbbn/conformance-shopify-app";
@@ -101,16 +102,25 @@ Static JSX/HTML inspection cannot establish generated markup, script execution, 
 
 ### polaris-cdn-track
 
-Each document from the `app-bridge-script` discovery (or `documentEntries`) that loads `https://cdn.shopify.com/shopifycloud/polaris[-N[.M]][-rc].js` must load the major of the `@shopify/polaris-types` installed at the project root: Shopify [versions both in lockstep](https://shopify.dev/changelog/the-polaris-cdn-is-adopting-semantic-versioning). `polaris.js` never changes major on its own and reads as `1` ([served 1.1 on 2026-09-22](https://shopify.dev/changelog/polaris-cdn-1-1-is-now-stable)).
+Each document from the `app-bridge-script` discovery (or `documentEntries`) that loads `https://cdn.shopify.com/shopifycloud/polaris[-N[.M]][-rc].js` must match its `@shopify/polaris-types`: Shopify [versions both in lockstep](https://shopify.dev/changelog/the-polaris-cdn-is-adopting-semantic-versioning). `polaris.js` never changes major on its own and reads as `1` ([served 1.1 on 2026-09-22](https://shopify.dev/changelog/polaris-cdn-1-1-is-now-stable)).
 
-| Situation                                       | Result                                          |
-| ----------------------------------------------- | ----------------------------------------------- |
-| CDN major ≠ installed types major               | ❌ (fix names `polaris-N.M-rc.js` for RC types) |
-| any `-rc` channel, e.g. `polaris-2.0-rc.js`     | ⚠️ release candidates can change before stable  |
-| types declared in `package.json`, not installed | ⚠️                                              |
-| no CDN script, or no types                      | silent                                          |
+```text
+types for a document
+ ├─ node_modules/@shopify/polaris-types in its folder or a parent, up to the root ─▶ nearest wins
+ └─ none on that path ─▶ every workspace package up to 3 levels deep
+      ├─ one installed version ─▶ used
+      └─ none, or several ──────▶ ⚠️ cannot compare
+```
 
-Scripts a provider injects at run time (for example an `AppProvider`) are invisible: pin the major in the served document or compare by hand.
+| Situation                                                              | Result                                          |
+| ---------------------------------------------------------------------- | ----------------------------------------------- |
+| CDN major ≠ types major                                                | ❌ (fix names `polaris-N.M-rc.js` for RC types) |
+| `polarisCdnPin: "minor"` and the script ≠ `polaris-<major>.<minor>.js` | ❌ e.g. `polaris-2.js` with types 2.0.3         |
+| any `-rc` channel, e.g. `polaris-2.0-rc.js`                            | ⚠️ release candidates can change before stable  |
+| types unresolved                                                       | ⚠️ per document                                 |
+| no CDN script                                                          | silent                                          |
+
+`polarisCdnPin` defaults to `"major"`: `polaris-2.js` follows Shopify's releases. `"minor"` holds a Polaris release back until the types bump. Scripts a provider injects at run time (for example an `AppProvider`) are invisible: pin the version in the served document or compare by hand.
 
 ### functions-localization
 
@@ -167,6 +177,15 @@ Topic support, trigger paths, and query validity stay with `shopify app deploy`.
 - Webhook and versioned extension manifests: each extension's override applies over the root default; `ui_extension` / `function` entries must resolve to a version.
 - The literal `apiVersion` in the server module (`serverEntries`, default `shopify.server.*` at root, `app/`, `src/`) meets the same syntax and bounds. ⚠️ when it differs from a selected manifest's `[webhooks] api_version`: webhook payloads and Admin queries would follow different schemas.
 - `"2026-07"` and `ApiVersion.July26` read as `2026-07`; `"unstable"` / `ApiVersion.Unstable` as `unstable`; `LATEST_API_VERSION` and other dynamic values stay silent.
+- ❌ an extension whose resolved `api_version` differs from a selected manifest's `[webhooks] api_version`: one app, one schema.
+- Opt-in `adminApiPaths: { sources, constant? }`: every `/admin/api/<segment>/` in the selected script files (`*.test.*` and `*.spec.*` skipped) names the webhook version, or `${constant}` when `constant` is set. ❌ for another segment, a source pattern matching no file, sources without an Admin path, no webhook version to agree with, or a constant whose literal declaration in the sources is missing or differs.
+
+```ts
+shopifyAppConformance({
+  root: process.cwd(),
+  adminApiPaths: { sources: ["apps/**/*.ts", "packages/**/*.ts"], constant: "adminApiVersion" },
+});
+```
 
 ### built-for-shopify-extensions
 
@@ -203,6 +222,18 @@ Shopify's template review (3 business days) still owns workflow value, titles, s
 ### extension-framework-contract
 
 `ui_extension` entries whose effective `api_version` is `2025-10` or later (or `unstable`) must not declare `@shopify/ui-extensions-react` in the extension's `package.json` nor import it under `src/`. From `2025-10`, extensions [adopt Polaris web components with Preact](https://shopify.dev/docs/apps/build/checkout/migrate-to-web-components); the React package's newest line is `2025.7.x` (npm, 2026-09-24). Comments are ignored; wrappers and shared packages outside the extension are not followed.
+
+### shopify-pattern-catalog
+
+The project side of the [shopify-pattern skill](https://github.com/aurelienbobenrieth/harness/tree/main/skills/shopify-pattern). Silent until `shopifyPattern` is set; folders are project-relative, outside paths throw.
+
+| `shopifyPattern` field | Default                          | Holds                                                       |
+| ---------------------- | -------------------------------- | ----------------------------------------------------------- |
+| `skill`                | `.agents/skills/shopify-pattern` | the installed skill; its `catalog/<family>.md` entries      |
+| `project`              | required                         | `components.md`, and `catalog.md` for the project's entries |
+| `components`           | required                         | custom components, one per direct child                     |
+
+❌ when a `components.md` line names an entry neither catalog declares, a line's path does not exist, a direct child of `components` appears in no line's path, or the skill catalog, `components.md` or the components folder is missing. It proves each component is attached to a pattern, not that it looks like the admin: the skill's compare does that.
 
 ### extension-capability-contract (opt-in)
 
@@ -249,7 +280,7 @@ selected manifest
 
 </details>
 
-## Twelve options; `root` is the only required one
+## Fifteen options; `root` is the only required one
 
 | Option                                    | Default                                                            | Used by                        |
 | ----------------------------------------- | ------------------------------------------------------------------ | ------------------------------ |
@@ -260,6 +291,9 @@ selected manifest
 | `checkoutBundleLimitKb`                   | `64`                                                               | `checkout-bundle-size`         |
 | `minimumApiVersion` · `maximumApiVersion` | unset (syntax only)                                                | `api-version-contract`         |
 | `serverEntries`                           | `shopify.server.*`, `app/shopify.server.*`, `src/shopify.server.*` | `api-version-contract`         |
+| `adminApiPaths`                           | unset (source not scanned)                                         | `api-version-contract`         |
+| `polarisCdnPin`                           | `"major"`                                                          | `polaris-cdn-track`            |
+| `shopifyPattern`                          | unset                                                              | `shopify-pattern-catalog`      |
 | `builtForShopifyCategories`               | `[]`                                                               | `built-for-shopify-extensions` |
 | `nextGenerationEvents`                    | `false` (developer preview)                                        | webhook and compliance checks  |
 | `distribution`                            | `"public"`                                                         | `compliance-webhooks`          |
@@ -470,16 +504,18 @@ Weights from [Shopify's storefront performance guide](https://shopify.dev/docs/a
 
 </details>
 
-## Upgrading closes four silent passes
+## Upgrading closes six silent passes
 
-| Change                                                         | Migrate by                                                                                                    |
-| -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| topic without a subscription destination no longer passes      | move stray `compliance_topics` into `[[webhooks.subscriptions]]`, each with a nonempty `uri`                  |
-| topics not pooled across deployment manifests                  | select the deployment under review (`appManifest`) when local configs omit contracts                          |
-| backup-style manifest names ignored / rejected                 | rename to a CLI-compatible form, e.g. `shopify.app.production-eu.toml`                                        |
-| empty `documentEntries` / `platformMarkers`, invalid selectors | pass real values: they throw                                                                                  |
-| `listing-inputs` left the default checks                       | pass `optionalShopifyAppChecks` to keep it                                                                    |
-| 3 new default checks                                           | fix their findings; each stays silent without its trigger (Polaris CDN, Flow template, 2025-10+ UI extension) |
+| Change                                                                   | Migrate by                                                                                                    |
+| ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------- |
+| topic without a subscription destination no longer passes                | move stray `compliance_topics` into `[[webhooks.subscriptions]]`, each with a nonempty `uri`                  |
+| topics not pooled across deployment manifests                            | select the deployment under review (`appManifest`) when local configs omit contracts                          |
+| backup-style manifest names ignored / rejected                           | rename to a CLI-compatible form, e.g. `shopify.app.production-eu.toml`                                        |
+| empty `documentEntries` / `platformMarkers`, invalid selectors           | pass real values: they throw                                                                                  |
+| `listing-inputs` left the default checks                                 | pass `optionalShopifyAppChecks` to keep it                                                                    |
+| extensions on another API version than `[webhooks] api_version` now fail | move each extension to the app's version                                                                      |
+| `polaris-cdn-track` warns when no types resolve                          | install the types in the package that serves the document                                                     |
+| 3 new default checks                                                     | fix their findings; each stays silent without its trigger (Polaris CDN, Flow template, 2025-10+ UI extension) |
 
 ## The Shopify CLI is no offline preflight
 
@@ -495,21 +531,22 @@ Independent implementations of Shopify's [App Store requirements](https://shopif
 
 Generated from package exports by `pnpm catalog`. Rule-specific options and limitations are described above and in the source tests.
 
-| Rule/check                      | Trigger or review scope                                                                                                                                                                  |
-| ------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `api-version-contract`          | Webhook, app server, and versioned extension API versions must use quarterly version syntax, satisfy explicit version bounds, and agree between the app server and the webhook manifest. |
-| `app-bridge-script`             | Embedded apps must load the App Bridge script from the Shopify CDN in the document head.                                                                                                 |
-| `app-url-security`              | App and configured OAuth callback URLs must declare HTTPS transport without embedded credentials.                                                                                        |
-| `built-for-shopify-extensions`  | Explicit Built for Shopify categories require their declared extension types and insertion targets; presence is only a prerequisite.                                                     |
-| `checkout-bundle-size`          | Checkout and full-page customer account extension dist JavaScript totals stay within their raw-byte budgets; Shopify CLI remains the deployment authority.                               |
-| `compliance-webhooks`           | Public apps must subscribe to the three mandatory privacy compliance webhook topics.                                                                                                     |
-| `extension-capability-contract` | Checkout and customer account UI extension source that uses fetch, Storefront API queries, or buyer journey interception must declare the matching capability in its extension TOML.     |
-| `extension-framework-contract`  | UI extensions on API version 2025-10 or later must not depend on or import @shopify/ui-extensions-react; they use Polaris web components with Preact.                                    |
-| `flow-template-contract`        | Flow template extensions must declare a valid handle, documented categories, an existing workflow module, and default plus English locales resolving their t: keys.                      |
-| `functions-localization`        | Function extensions using t: translation keys must ship a complete locales/ contract.                                                                                                    |
-| `listing-inputs`                | Explicit listing metadata must fit documented lengths, image dimensions and screenshot counts, with alt text and no exact duplicate assets.                                              |
-| `polaris-cdn-track`             | App Home documents that load Polaris web components from the Shopify CDN must load the same major version as the installed @shopify/polaris-types.                                       |
-| `webhook-subscription-contract` | Declared webhook subscriptions, and opted-in Events subscriptions, must pair nonempty topics with a supported delivery URI.                                                              |
+| Rule/check                      | Trigger or review scope                                                                                                                                                                 |
+| ------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `api-version-contract`          | Webhook, app server, versioned extension, and opted-in Admin API path versions must use quarterly version syntax, satisfy explicit version bounds, and agree with the webhook manifest. |
+| `app-bridge-script`             | Embedded apps must load the App Bridge script from the Shopify CDN in the document head.                                                                                                |
+| `app-url-security`              | App and configured OAuth callback URLs must declare HTTPS transport without embedded credentials.                                                                                       |
+| `built-for-shopify-extensions`  | Explicit Built for Shopify categories require their declared extension types and insertion targets; presence is only a prerequisite.                                                    |
+| `checkout-bundle-size`          | Checkout and full-page customer account extension dist JavaScript totals stay within their raw-byte budgets; Shopify CLI remains the deployment authority.                              |
+| `compliance-webhooks`           | Public apps must subscribe to the three mandatory privacy compliance webhook topics.                                                                                                    |
+| `extension-capability-contract` | Checkout and customer account UI extension source that uses fetch, Storefront API queries, or buyer journey interception must declare the matching capability in its extension TOML.    |
+| `extension-framework-contract`  | UI extensions on API version 2025-10 or later must not depend on or import @shopify/ui-extensions-react; they use Polaris web components with Preact.                                   |
+| `flow-template-contract`        | Flow template extensions must declare a valid handle, documented categories, an existing workflow module, and default plus English locales resolving their t: keys.                     |
+| `functions-localization`        | Function extensions using t: translation keys must ship a complete locales/ contract.                                                                                                   |
+| `listing-inputs`                | Explicit listing metadata must fit documented lengths, image dimensions and screenshot counts, with alt text and no exact duplicate assets.                                             |
+| `polaris-cdn-track`             | App Home documents that load Polaris web components from the Shopify CDN must load the major, or with polarisCdnPin the minor, of the @shopify/polaris-types their package resolves.    |
+| `shopify-pattern-catalog`       | With shopifyPattern set, components.md attaches every custom component to an existing path and a catalogued shopify-pattern entry.                                                      |
+| `webhook-subscription-contract` | Declared webhook subscriptions, and opted-in Events subscriptions, must pair nonempty topics with a supported delivery URI.                                                             |
 
 ### Credited concepts
 
@@ -533,6 +570,7 @@ Generated from package exports by `pnpm catalog`. Rule-specific options and limi
 - https://shopify.dev/docs/apps/build/functions/localization-practices-shopify-functions (inspiration; independently implemented)
 - https://shopify.dev/docs/apps/build/online-store/theme-app-extensions/configuration (inspiration; independently implemented)
 - https://shopify.dev/docs/apps/build/privacy-law-compliance (inspiration; independently implemented)
+- https://shopify.dev/docs/apps/design (inspiration: admin-consistent app design; independently implemented)
 - https://shopify.dev/docs/apps/launch/built-for-shopify/requirements (inspiration; independently implemented)
 - https://shopify.dev/docs/apps/launch/shopify-app-store/app-store-requirements (inspiration; independently implemented)
 - https://shopify.dev/docs/apps/launch/shopify-app-store/best-practices (inspiration; independently implemented)
