@@ -1,5 +1,11 @@
 # @aurelienbbn/conformance-shopify-app
 
+## 0.4.0
+
+### Minor Changes
+
+- [#115](https://github.com/aurelienbobenrieth/harness/pull/115) [`45f5a22`](https://github.com/aurelienbobenrieth/harness/commit/45f5a22daa2b9d114d165ceaa8f2c0793251cb04) Thanks [@aurelienbobenrieth](https://github.com/aurelienbobenrieth)! - `checkout-bundle-size` measures the compressed size Shopify limits at deploy: each `.js` under `dist/` is brotli-compressed at quality 11, as Shopify CLI estimates its build output, and the sum is compared with 64 KB (128 KB for full-page customer account extensions). A bundle over 64 KB raw that compresses below the limit no longer fails; `checkoutBundleLimitKb` is now a compressed budget.
+
 ## 0.3.0
 
 ### Minor Changes
