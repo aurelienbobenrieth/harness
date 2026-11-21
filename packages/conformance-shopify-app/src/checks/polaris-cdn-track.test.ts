@@ -40,11 +40,20 @@ it("accepts a matching pinned major in a JSX root layout", async () => {
   expect(await polarisCdnTrack.run({ root })).toEqual([]);
 });
 
-it("stays silent without a CDN script or without the types package", async () => {
-  const noScript = await createFixture({ ...types("2.0.0"), "index.html": "<head></head>" });
-  expect(await polarisCdnTrack.run({ root: noScript })).toEqual([]);
-  const noTypes = await createFixture({ "index.html": document("polaris.js") });
-  expect(await polarisCdnTrack.run({ root: noTypes })).toEqual([]);
+it("stays silent without a CDN script", async () => {
+  const root = await createFixture({ ...types("2.0.0"), "index.html": "<head></head>" });
+  expect(await polarisCdnTrack.run({ root })).toEqual([]);
+});
+
+it("warns when no types package resolves for a document that loads the CDN script", async () => {
+  const root = await createFixture({ "index.html": document("polaris.js") });
+  expect(await polarisCdnTrack.run({ root })).toEqual([
+    expect.objectContaining({
+      severity: "warning",
+      path: expect.stringContaining("index.html"),
+      message: expect.stringContaining("cannot be compared"),
+    }),
+  ]);
 });
 
 it("ignores commented-out scripts", async () => {
@@ -55,14 +64,70 @@ it("ignores commented-out scripts", async () => {
   expect(await polarisCdnTrack.run({ root })).toEqual([]);
 });
 
-it("warns when the types package is declared but not installed", async () => {
+it("resolves the types installed in the package that serves the document", async () => {
   const root = await createFixture({
-    "package.json": JSON.stringify({ dependencies: { "@shopify/polaris-types": "^2.0.0" } }),
-    "index.html": document("polaris.js"),
+    "apps/admin/node_modules/@shopify/polaris-types/package.json": JSON.stringify({ version: "2.0.0" }),
+    "node_modules/@shopify/polaris-types/package.json": JSON.stringify({ version: "1.1.0" }),
+    "apps/admin/index.html": document("polaris-1.js"),
   });
   expect(await polarisCdnTrack.run({ root })).toEqual([
-    expect.objectContaining({ severity: "warning", path: "package.json" }),
+    expect.objectContaining({ severity: "error", message: expect.stringContaining("types 2.0.0") }),
   ]);
+});
+
+it("resolves the one types version a sibling workspace package installs", async () => {
+  const root = await createFixture({
+    "apps/admin/package.json": JSON.stringify({ dependencies: { "@app/ui": "workspace:*" } }),
+    "packages/ui/package.json": JSON.stringify({ dependencies: { "@shopify/polaris-types": "2.0.0" } }),
+    "packages/ui/node_modules/@shopify/polaris-types/package.json": JSON.stringify({ version: "2.0.0" }),
+    "apps/admin/index.html": document("polaris-1.js"),
+  });
+  expect(await polarisCdnTrack.run({ root })).toEqual([
+    expect.objectContaining({ severity: "error", message: expect.stringContaining("Loads Polaris 1.x") }),
+  ]);
+});
+
+it("warns when workspace packages install different types versions and none serves the document", async () => {
+  const root = await createFixture({
+    "packages/ui/package.json": "{}",
+    "packages/ui/node_modules/@shopify/polaris-types/package.json": JSON.stringify({ version: "2.0.0" }),
+    "packages/legacy/package.json": "{}",
+    "packages/legacy/node_modules/@shopify/polaris-types/package.json": JSON.stringify({ version: "1.1.0" }),
+    "apps/admin/index.html": document("polaris-2.js"),
+  });
+  expect(await polarisCdnTrack.run({ root })).toEqual([
+    expect.objectContaining({ severity: "warning", message: expect.stringContaining("1.1.0 and 2.0.0") }),
+  ]);
+});
+
+it("accepts the script pinned to the types minor when polarisCdnPin is minor", async () => {
+  const root = await createFixture({ ...types("2.0.3"), "index.html": document("polaris-2.0.js") });
+  expect(await polarisCdnTrack.run({ root, polarisCdnPin: "minor" })).toEqual([]);
+});
+
+it("reports a major channel that follows Shopify's releases when polarisCdnPin is minor", async () => {
+  const root = await createFixture({ ...types("2.0.3"), "index.html": document("polaris-2.js") });
+  expect(await polarisCdnTrack.run({ root, polarisCdnPin: "minor" })).toEqual([
+    expect.objectContaining({
+      severity: "error",
+      message: expect.stringContaining(
+        "Loads polaris-2.js while @shopify/polaris-types 2.0.3 pins Polaris 2.0. Load polaris-2.0.js",
+      ),
+    }),
+  ]);
+});
+
+it("reports a script pinned to another minor when polarisCdnPin is minor", async () => {
+  const root = await createFixture({ ...types("2.1.0"), "index.html": document("polaris-2.0.js") });
+  expect(await polarisCdnTrack.run({ root, polarisCdnPin: "minor" })).toEqual([
+    expect.objectContaining({ severity: "error", message: expect.stringContaining("Load polaris-2.1.js") }),
+  ]);
+});
+
+it("rejects an unknown polarisCdnPin", async () => {
+  const root = await createFixture({ ...types("2.0.0"), "index.html": document("polaris-2.js") });
+  // @ts-expect-error Pins are "major" or "minor".
+  await expect(polarisCdnTrack.run({ root, polarisCdnPin: "patch" })).rejects.toThrow("polarisCdnPin");
 });
 
 it("checks only the explicitly selected documents", async () => {

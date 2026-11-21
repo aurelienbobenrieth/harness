@@ -11,10 +11,18 @@ import { extensionCapabilityContract } from "./checks/extension-capability-contr
 import { polarisCdnTrack } from "./checks/polaris-cdn-track.js";
 import { flowTemplateContract } from "./checks/flow-template-contract.js";
 import { extensionFrameworkContract } from "./checks/extension-framework-contract.js";
+import { shopifyPatternCatalog } from "./checks/shopify-pattern-catalog.js";
 import type { ConformanceCheck, ConformanceFinding, ConformanceRunOptions } from "./finding.js";
 import { appManifests } from "./app-manifests.js";
 
-export type { ConformanceCheck, ConformanceFinding, ConformanceRunOptions, ConformanceSeverity } from "./finding.js";
+export type {
+  AdminApiPaths,
+  ConformanceCheck,
+  ConformanceFinding,
+  ConformanceRunOptions,
+  ConformanceSeverity,
+  ShopifyPatternFolders,
+} from "./finding.js";
 export { appBridgeScript } from "./checks/app-bridge-script.js";
 export { checkoutBundleSize } from "./checks/checkout-bundle-size.js";
 export { complianceWebhooks } from "./checks/compliance-webhooks.js";
@@ -27,6 +35,7 @@ export { extensionCapabilityContract } from "./checks/extension-capability-contr
 export { polarisCdnTrack } from "./checks/polaris-cdn-track.js";
 export { flowTemplateContract } from "./checks/flow-template-contract.js";
 export { extensionFrameworkContract } from "./checks/extension-framework-contract.js";
+export { shopifyPatternCatalog } from "./checks/shopify-pattern-catalog.js";
 export { listingInputs, type ShopifyAppListing, type ShopifyListingImage } from "./checks/listing-inputs.js";
 export type { BuiltForShopifyCategory } from "./finding.js";
 export {
@@ -57,6 +66,7 @@ export const shopifyAppChecks: readonly ConformanceCheck[] = [
   polarisCdnTrack,
   flowTemplateContract,
   extensionFrameworkContract,
+  shopifyPatternCatalog,
 ];
 
 /**

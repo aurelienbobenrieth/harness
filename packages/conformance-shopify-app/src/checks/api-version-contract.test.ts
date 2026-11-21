@@ -4,7 +4,7 @@ import { createFixture } from "./test-support.js";
 
 it("validates selected webhook and custom-directory extension versions against explicit bounds", async () => {
   const root = await createFixture({
-    "shopify.app.production.toml": 'extension_directories = ["features/*"]\n[webhooks]\napi_version = "2026-04"',
+    "shopify.app.production.toml": 'extension_directories = ["features/*"]\n[webhooks]\napi_version = "2026-07"',
     "shopify.app.local.toml": '[webhooks]\napi_version = "2020-01"',
     "features/checkout/shopify.extension.toml": 'api_version = "2026-07"\n[[extensions]]\ntype = "ui_extension"',
   });
@@ -22,9 +22,137 @@ it("validates selected webhook and custom-directory extension versions against e
       appManifest: "shopify.app.production.toml",
       maximumApiVersion: "2026-04",
     }),
-  ).toEqual([expect.objectContaining({ severity: "error", path: expect.stringContaining("checkout") })]);
+  ).toEqual([
+    expect.objectContaining({ severity: "error", path: "shopify.app.production.toml" }),
+    expect.objectContaining({ severity: "error", path: expect.stringContaining("checkout") }),
+  ]);
+});
+it("reports an extension whose API version drifts from the app's webhook version", async () => {
+  const root = await createFixture({
+    "shopify.app.toml": '[webhooks]\napi_version = "2026-10"',
+    "extensions/checkout/shopify.extension.toml": 'api_version = "2026-07"\n[[extensions]]\ntype = "ui_extension"',
+  });
+  expect(await apiVersionContract.run({ root })).toEqual([
+    {
+      check: "api-version-contract",
+      docs: expect.any(String),
+      path: expect.stringContaining("checkout"),
+      severity: "error",
+      message: expect.stringMatching(
+        /extensions\[0\]\.api_version: The extension uses API version 2026-07 while shopify\.app\.toml declares 2026-10/u,
+      ),
+    },
+  ]);
+});
+it("accepts extensions on the app's webhook version", async () => {
+  const root = await createFixture({
+    "shopify.app.toml": '[webhooks]\napi_version = "2026-10"',
+    "extensions/checkout/shopify.extension.toml": 'api_version = "2026-10"\n[[extensions]]\ntype = "ui_extension"',
+    "extensions/theme/shopify.extension.toml": 'type = "theme"',
+  });
+  expect(await apiVersionContract.run({ root })).toEqual([]);
 });
 
+const adminApp = (client: string) => ({
+  "shopify.app.toml": '[webhooks]\napi_version = "2026-10"',
+  "src/admin-api.ts": client,
+});
+it("leaves Admin API paths unscanned unless adminApiPaths is set", async () => {
+  const root = await createFixture(adminApp("fetch(`https://${shop}/admin/api/2025-01/graphql.json`);"));
+  expect(await apiVersionContract.run({ root })).toEqual([]);
+});
+
+it("accepts Admin API paths that name the app's version", async () => {
+  const root = await createFixture(adminApp("fetch(`https://${shop}/admin/api/2026-10/graphql.json`);"));
+  expect(await apiVersionContract.run({ root, adminApiPaths: { sources: ["src/**/*.ts"] } })).toEqual([]);
+});
+it("reports an Admin API path on another version than the app's", async () => {
+  const root = await createFixture(adminApp("fetch(`https://${shop}/admin/api/2025-01/graphql.json`);"));
+  expect(await apiVersionContract.run({ root, adminApiPaths: { sources: ["src/**/*.ts"] } })).toEqual([
+    expect.objectContaining({
+      severity: "error",
+      path: "src/admin-api.ts",
+      message: expect.stringMatching(/^\/admin\/api\/2025-01\/: .* declares 2026-10 .* Write 2026-10 /u),
+    }),
+  ]);
+});
+it("accepts Admin API paths written through a constant that holds the app's version", async () => {
+  const root = await createFixture(
+    adminApp(
+      'export const adminApiVersion = "2026-10";\nfetch(`https://${shop}/admin/api/${adminApiVersion}/graphql.json`);',
+    ),
+  );
+  expect(
+    await apiVersionContract.run({ root, adminApiPaths: { sources: ["src/**/*.ts"], constant: "adminApiVersion" } }),
+  ).toEqual([]);
+});
+it("reports a version constant that drifts from the app's version", async () => {
+  const root = await createFixture(
+    adminApp(
+      'export const adminApiVersion = "2026-07";\nfetch(`https://${shop}/admin/api/${adminApiVersion}/graphql.json`);',
+    ),
+  );
+  expect(
+    await apiVersionContract.run({ root, adminApiPaths: { sources: ["src/**/*.ts"], constant: "adminApiVersion" } }),
+  ).toEqual([
+    expect.objectContaining({
+      severity: "error",
+      path: "src/admin-api.ts",
+      message: expect.stringContaining(
+        "adminApiVersion: The constant holds 2026-07 while shopify.app.toml declares 2026-10",
+      ),
+    }),
+  ]);
+});
+it("reports a literal Admin API path that bypasses the version constant", async () => {
+  const root = await createFixture(
+    adminApp('export const adminApiVersion = "2026-10";\nfetch(`https://${shop}/admin/api/2026-07/graphql.json`);'),
+  );
+  expect(
+    await apiVersionContract.run({ root, adminApiPaths: { sources: ["src/**/*.ts"], constant: "adminApiVersion" } }),
+  ).toEqual([expect.objectContaining({ message: expect.stringContaining("Write ${adminApiVersion} ") })]);
+});
+it("reports a version constant that the selected sources never declare", async () => {
+  const root = await createFixture(adminApp("fetch(`https://${shop}/admin/api/${adminApiVersion}/graphql.json`);"));
+  expect(
+    await apiVersionContract.run({ root, adminApiPaths: { sources: ["src/**/*.ts"], constant: "adminApiVersion" } }),
+  ).toEqual([expect.objectContaining({ message: expect.stringContaining("has no literal API version declaration") })]);
+});
+it("skips test files when scanning Admin API paths", async () => {
+  const root = await createFixture({
+    ...adminApp("fetch(`https://${shop}/admin/api/2026-10/graphql.json`);"),
+    "src/admin-api.test.ts": "fetch(`https://${shop}/admin/api/2020-01/graphql.json`);",
+  });
+  expect(await apiVersionContract.run({ root, adminApiPaths: { sources: ["src/**/*.ts"] } })).toEqual([]);
+});
+
+it("reports Admin API sources that hold no Admin API path", async () => {
+  const root = await createFixture(adminApp('fetch("/graphql");'));
+  expect(await apiVersionContract.run({ root, adminApiPaths: { sources: ["src/**/*.ts"] } })).toEqual([
+    expect.objectContaining({ message: expect.stringContaining("contain no /admin/api/<version>/ path") }),
+  ]);
+});
+
+it("reports an Admin API source pattern that matches no file", async () => {
+  const root = await createFixture(adminApp("fetch(`https://${shop}/admin/api/2026-10/graphql.json`);"));
+  expect(
+    await apiVersionContract.run({ root, adminApiPaths: { sources: ["src/admin-api.ts", "lib/missing.ts"] } }),
+  ).toEqual([expect.objectContaining({ severity: "error", path: "lib/missing.ts" })]);
+});
+it("reports Admin API paths when no app manifest declares a webhook version", async () => {
+  const root = await createFixture({ "src/admin-api.ts": 'fetch("/admin/api/2026-10/graphql.json");' });
+  expect(await apiVersionContract.run({ root, adminApiPaths: { sources: ["src/**/*.ts"] } })).toEqual([
+    expect.objectContaining({ message: expect.stringContaining("No selected app manifest declares") }),
+  ]);
+});
+
+it("rejects empty Admin API sources and a constant that is no identifier", async () => {
+  const root = await createFixture(adminApp(""));
+  await expect(apiVersionContract.run({ root, adminApiPaths: { sources: [] } })).rejects.toThrow("sources");
+  await expect(
+    apiVersionContract.run({ root, adminApiPaths: { sources: ["src/admin-api.ts"], constant: "admin-version" } }),
+  ).rejects.toThrow("constant");
+});
 it.each(["2026-02", "latest", "2026-7", "", "2026-04-extra"])(
   "rejects malformed quarterly API version %s",
   async (version) => {
@@ -34,7 +162,6 @@ it.each(["2026-02", "latest", "2026-7", "", "2026-04-extra"])(
     expect(await apiVersionContract.run({ root })).toHaveLength(1);
   },
 );
-
 it("keeps unstable advisory unless the caller configures a stable deployment range", async () => {
   const root = await createFixture({ "shopify.app.toml": '[webhooks]\napi_version = "unstable"' });
   expect(await apiVersionContract.run({ root })).toEqual([expect.objectContaining({ severity: "warning" })]);
@@ -51,7 +178,6 @@ it("does not invent a support deadline or an API version for unversioned theme e
   expect(await apiVersionContract.run({ root })).toEqual([]);
   expect(await apiVersionContract.run({ root, minimumApiVersion: "2025-10" })).toHaveLength(1);
 });
-
 it("rejects missing versioned extension versions and invalid caller bounds", async () => {
   const root = await createFixture({
     "extensions/function/shopify.extension.toml": '[[extensions]]\ntype = "function"',
