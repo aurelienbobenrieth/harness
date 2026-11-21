@@ -1,6 +1,6 @@
 ---
 name: align
-description: Settle open requirements and domain language before building, by resolving decisions in dependency order and recording shared terms. Use when a request leaves several interdependent decisions open, a domain term is ambiguous or conflicts with the glossary, stated behavior contradicts the code, or the user asks to be questioned on a plan. Not for a single missing answer (ask it inline) or clear tasks (see build).
+description: Settle open requirements, domain language and fact ownership before building, by resolving decisions in dependency order and recording shared terms. Use when a request leaves several interdependent decisions open, a domain term is ambiguous or conflicts with the glossary, stated behavior contradicts the code, or the user asks to be questioned on a plan; also before building a feature that needs a fact another context owns, or adds a stored fact or a contract another module depends on. Not for a change inside one feature (see build) or a single missing answer (ask it inline).
 ---
 
 # Align
@@ -18,6 +18,12 @@ Slow = costly to reverse: stored data shape, contract another module/app depends
 
 1. User's hypothesis first (need, end-user view, data; 5 lines, their words). Yours only after.
 2. Challenge with facts: missed cases, code contradictions, duplicates. Then recommendation as a delta on it; record hypothesis + delta with the decision.
+
+## Model
+
+- Each fact has one owning context. Another context reads it through what the owner publishes (a narrow answer such as rights for a store, or an event), never through its aggregate's state or its ports; a missing published read is part of the plan, not a reason to read the state.
+- Read on demand by default. Keep a local copy fed by an event only when the owner's fact guards one of the consumer's own commands.
+- A fact that crosses a context gets a row in the summary table: fact, owner, how it is read.
 
 ## Language
 

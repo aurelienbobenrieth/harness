@@ -23,7 +23,7 @@ Discovery never authorizes an action: commits, pushes, and publishing still need
 | ----------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- | -------------- |
 | [communication](../skills/communication/SKILL.md)     | always on through `AGENTS.md`; the skill itself loads for READMEs, ADRs/PDRs, PR text                                  | all            |
 | [economy](../skills/economy/SKILL.md)                 | always on through `AGENTS.md` (reading, output, scoped checks); the skill loads to delegate, fan out, or run long work | none           |
-| [align](../skills/align/SKILL.md)                     | several open decisions, ambiguous domain terms, spec contradicts code                                                  | none           |
+| [align](../skills/align/SKILL.md)                     | several open decisions, ambiguous domain terms, spec contradicts code, feature crossing contexts                       | none           |
 | [build](../skills/build/SKILL.md)                     | writing or changing code and tests: least code, tests read as stories                                                  | none           |
 | [code-review](../skills/code-review/SKILL.md)         | reviewing a change for what gates miss, and drift from the request                                                     | none           |
 | [git](../skills/git/SKILL.md)                         | commits, history, PRs (short descriptions, no model credits)                                                           | communication  |
