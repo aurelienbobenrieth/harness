@@ -62,7 +62,7 @@ appManifests: [shopify.app.toml]          (minimumApiVersion: "2025-10", message
 | `compliance-webhooks`           | ⚠️ no manifest · ❌ selected missing / bad TOML             | delivery, legal compliance          |
 | `app-bridge-script`             | ⚠️ no document found · ❌ explicit one missing              | generated markup, route coverage    |
 | `functions-localization`        | ❌ 0 or 2+ default locales, bad JSON                        | translation quality                 |
-| `checkout-bundle-size`          | ❌ no built JavaScript                                      | compressed size, CLI acceptance     |
+| `checkout-bundle-size`          | ❌ no built JavaScript                                      | Shopify's own measure, deploy       |
 | `app-url-security`              | ❌ missing / bad manifest                                   | TLS certificates, reachability      |
 | `webhook-subscription-contract` | ❌ missing / bad manifest                                   | cloud resources, signatures         |
 | `api-version-contract`          | ❌ explicit `serverEntries` / `adminApiPaths` match nothing | current version availability        |
@@ -128,12 +128,12 @@ Function extensions whose actual `name` or effective `description` starts with `
 
 ### checkout-bundle-size
 
-**A fast CI mirror of the limit Shopify CLI enforces at deploy, not a contract of its own.** Sums every `.js` under the extension's `dist/`, recursively (≤ 10 levels): a conservative raw-byte total, not an entry graph or compressed transfer.
+**A fast CI mirror of the [compressed limit](https://shopify.dev/docs/apps/build/app-extensions/optimize-bundle-size) Shopify enforces per extension at deploy, not a contract of its own.** Brotli-compresses every `.js` under the extension's `dist/`, recursively (≤ 10 levels), at quality 11 as Shopify CLI estimates its build output, and sums the results. shopify.dev does not name the algorithm, so a bundle near the limit stays the deploy's call.
 
-| `ui_extension` targeting                                              | Budget                                                                                                      |
-| --------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| any `purchase.checkout.*`                                             | `checkoutBundleLimitKb`: default `64`, `> 0` and `≤ 64` (stricter only), else throws                        |
-| `customer-account.page.render` · `customer-account.order.page.render` | [128 KB full-page limit](https://shopify.dev/docs/api/customer-account-ui-extensions) (reviewed 2026-09-24) |
+| `ui_extension` targeting                                              | Budget                                                                               |
+| --------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| any `purchase.checkout.*`                                             | `checkoutBundleLimitKb`: default `64`, `> 0` and `≤ 64` (stricter only), else throws |
+| `customer-account.page.render` · `customer-account.order.page.render` | 128 KB compressed full-page limit (reviewed 2026-11-21)                              |
 
 ### app-url-security
 
@@ -288,7 +288,7 @@ selected manifest
 | `appManifest`                             | every CLI-compatible root manifest                                 | all manifest checks            |
 | `documentEntries`                         | discovered layouts                                                 | `app-bridge-script`            |
 | `platformMarkers`                         | `[]`                                                               | `app-bridge-script`            |
-| `checkoutBundleLimitKb`                   | `64`                                                               | `checkout-bundle-size`         |
+| `checkoutBundleLimitKb`                   | `64` (KB compressed)                                               | `checkout-bundle-size`         |
 | `minimumApiVersion` · `maximumApiVersion` | unset (syntax only)                                                | `api-version-contract`         |
 | `serverEntries`                           | `shopify.server.*`, `app/shopify.server.*`, `src/shopify.server.*` | `api-version-contract`         |
 | `adminApiPaths`                           | unset (source not scanned)                                         | `api-version-contract`         |
@@ -531,22 +531,22 @@ Independent implementations of Shopify's [App Store requirements](https://shopif
 
 Generated from package exports by `pnpm catalog`. Rule-specific options and limitations are described above and in the source tests.
 
-| Rule/check                      | Trigger or review scope                                                                                                                                                                 |
-| ------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `api-version-contract`          | Webhook, app server, versioned extension, and opted-in Admin API path versions must use quarterly version syntax, satisfy explicit version bounds, and agree with the webhook manifest. |
-| `app-bridge-script`             | Embedded apps must load the App Bridge script from the Shopify CDN in the document head.                                                                                                |
-| `app-url-security`              | App and configured OAuth callback URLs must declare HTTPS transport without embedded credentials.                                                                                       |
-| `built-for-shopify-extensions`  | Explicit Built for Shopify categories require their declared extension types and insertion targets; presence is only a prerequisite.                                                    |
-| `checkout-bundle-size`          | Checkout and full-page customer account extension dist JavaScript totals stay within their raw-byte budgets; Shopify CLI remains the deployment authority.                              |
-| `compliance-webhooks`           | Public apps must subscribe to the three mandatory privacy compliance webhook topics.                                                                                                    |
-| `extension-capability-contract` | Checkout and customer account UI extension source that uses fetch, Storefront API queries, or buyer journey interception must declare the matching capability in its extension TOML.    |
-| `extension-framework-contract`  | UI extensions on API version 2025-10 or later must not depend on or import @shopify/ui-extensions-react; they use Polaris web components with Preact.                                   |
-| `flow-template-contract`        | Flow template extensions must declare a valid handle, documented categories, an existing workflow module, and default plus English locales resolving their t: keys.                     |
-| `functions-localization`        | Function extensions using t: translation keys must ship a complete locales/ contract.                                                                                                   |
-| `listing-inputs`                | Explicit listing metadata must fit documented lengths, image dimensions and screenshot counts, with alt text and no exact duplicate assets.                                             |
-| `polaris-cdn-track`             | App Home documents that load Polaris web components from the Shopify CDN must load the major, or with polarisCdnPin the minor, of the @shopify/polaris-types their package resolves.    |
-| `shopify-pattern-catalog`       | With shopifyPattern set, components.md attaches every custom component to an existing path and a catalogued shopify-pattern entry.                                                      |
-| `webhook-subscription-contract` | Declared webhook subscriptions, and opted-in Events subscriptions, must pair nonempty topics with a supported delivery URI.                                                             |
+| Rule/check                      | Trigger or review scope                                                                                                                                                                           |
+| ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `api-version-contract`          | Webhook, app server, versioned extension, and opted-in Admin API path versions must use quarterly version syntax, satisfy explicit version bounds, and agree with the webhook manifest.           |
+| `app-bridge-script`             | Embedded apps must load the App Bridge script from the Shopify CDN in the document head.                                                                                                          |
+| `app-url-security`              | App and configured OAuth callback URLs must declare HTTPS transport without embedded credentials.                                                                                                 |
+| `built-for-shopify-extensions`  | Explicit Built for Shopify categories require their declared extension types and insertion targets; presence is only a prerequisite.                                                              |
+| `checkout-bundle-size`          | Checkout and full-page customer account extension dist JavaScript, brotli-compressed as Shopify CLI estimates it, stays within the compressed size limit; Shopify's deploy remains the authority. |
+| `compliance-webhooks`           | Public apps must subscribe to the three mandatory privacy compliance webhook topics.                                                                                                              |
+| `extension-capability-contract` | Checkout and customer account UI extension source that uses fetch, Storefront API queries, or buyer journey interception must declare the matching capability in its extension TOML.              |
+| `extension-framework-contract`  | UI extensions on API version 2025-10 or later must not depend on or import @shopify/ui-extensions-react; they use Polaris web components with Preact.                                             |
+| `flow-template-contract`        | Flow template extensions must declare a valid handle, documented categories, an existing workflow module, and default plus English locales resolving their t: keys.                               |
+| `functions-localization`        | Function extensions using t: translation keys must ship a complete locales/ contract.                                                                                                             |
+| `listing-inputs`                | Explicit listing metadata must fit documented lengths, image dimensions and screenshot counts, with alt text and no exact duplicate assets.                                                       |
+| `polaris-cdn-track`             | App Home documents that load Polaris web components from the Shopify CDN must load the major, or with polarisCdnPin the minor, of the @shopify/polaris-types their package resolves.              |
+| `shopify-pattern-catalog`       | With shopifyPattern set, components.md attaches every custom component to an existing path and a catalogued shopify-pattern entry.                                                                |
+| `webhook-subscription-contract` | Declared webhook subscriptions, and opted-in Events subscriptions, must pair nonempty topics with a supported delivery URI.                                                                       |
 
 ### Credited concepts
 
@@ -556,10 +556,9 @@ Generated from package exports by `pnpm catalog`. Rule-specific options and limi
 - https://shopify.dev/changelog/deprecating-the-usebuyerjourneyintercept-api-on-checkout-ui-extensions (inspiration; independently implemented)
 - https://shopify.dev/changelog/polaris-cdn-1-1-is-now-stable (inspiration; independently implemented)
 - https://shopify.dev/changelog/the-polaris-cdn-is-adopting-semantic-versioning (inspiration; independently implemented)
-- https://shopify.dev/docs/api/checkout-ui-extensions (inspiration; independently implemented)
-- https://shopify.dev/docs/api/customer-account-ui-extensions (inspiration; independently implemented)
 - https://shopify.dev/docs/api/events (inspiration; independently implemented)
 - https://shopify.dev/docs/api/usage/versioning (inspiration; independently implemented)
+- https://shopify.dev/docs/apps/build/app-extensions/optimize-bundle-size (inspiration; independently implemented)
 - https://shopify.dev/docs/apps/build/checkout/capabilities (inspiration; independently implemented)
 - https://shopify.dev/docs/apps/build/checkout/migrate-to-web-components (inspiration; independently implemented)
 - https://shopify.dev/docs/apps/build/cli-for-apps/app-configuration (inspiration; independently implemented)

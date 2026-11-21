@@ -20,7 +20,7 @@ description: Review a Shopify app against App Store, Built for Shopify, Polaris,
 
 ## Extensions
 
-Shopify rejects at deploy a checkout UI extension compiled over 64 KB, 128 KB for a full-page customer account extension ([checkout UI extensions](https://shopify.dev/docs/api/checkout-ui-extensions)). Built as the Shopify CLI builds it, a measured checkout extension was 130,747 B against the 65,536 B limit; 71,093 B without Effect, 60,751 B once plain TypeScript.
+Shopify rejects at deploy a UI extension over 64 KB compressed, 128 KB for a full-page customer account extension ([optimize bundle size](https://shopify.dev/docs/apps/build/app-extensions/optimize-bundle-size)). Built as the Shopify CLI builds it, a measured checkout extension was 130,747 B raw; 71,093 B without Effect, 60,751 B once plain TypeScript.
 
 - Vanilla TypeScript; no runtime library beyond Shopify's own. No Effect, no analytics SDK: send events (PostHog, for instance) through a plain `fetch`.
 - Imports that tree-shake: named imports from side-effect-free modules, never a namespace or barrel that pulls a whole library.

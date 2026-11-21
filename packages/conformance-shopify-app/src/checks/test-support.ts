@@ -3,7 +3,7 @@ import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 
-export async function createFixture(files: Record<string, string>): Promise<string> {
+export async function createFixture(files: Record<string, string | Uint8Array>): Promise<string> {
   const root = await mkdtemp(path.join(tmpdir(), "conformance-shopify-"));
   fixtureRoots.add(root);
   for (const [relativePath, content] of Object.entries(files)) {
