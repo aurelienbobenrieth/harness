@@ -1,0 +1,22 @@
+{
+  "entry": "settings.entry-row-button",
+  "admin": "Settings > Customer accounts",
+  "path": "/settings/customer_accounts",
+  "adminSteps": "Open Settings > Customer accounts. Rows: Branding (Customize), Sign in with Shop, Multipass, URL, Configurations (Customize), Order actions (Manage), Authentication (Manage), Store credit (switch, not measured). Row text starts 48px in from the card edge (leading icon not measured). Hover not measured.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "locate": {
+    "title": { "sel": "span", "text": "^Branding$" },
+    "line": { "sel": "span[class*=\"_SettingsItem_\"]", "text": "^Branding is customized" },
+    "button": { "sel": "a", "text": "^Customize$", "nth": 0 },
+    "button-label": { "sel": "span", "text": "^Customize$", "nth": 0 },
+    "manage": { "sel": "a", "text": "Manage order actions" }
+  },
+  "parts": {
+    "title": { "font": "13/20 400", "color": "#101010" },
+    "line": { "font": "13/20 400", "color": "#4a4a4a" },
+    "button": { "h": 24, "bg": "#ebebeb", "radius": "9999", "pad": "2 8" },
+    "button-label": { "font": "12/16 500", "color": "#101010" },
+    "manage": { "w": 62, "h": 24, "bg": "#ebebeb", "radius": "9999", "pad": "2 8" }
+  }
+}

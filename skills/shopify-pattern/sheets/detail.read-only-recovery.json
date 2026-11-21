@@ -1,0 +1,38 @@
+{
+  "entry": "detail.read-only-recovery",
+  "admin": "Orders > Abandoned checkouts > one checkout",
+  "path": "/checkouts/41664332365963",
+  "adminSteps": "Open /checkouts and click the only row (an abandoned checkout with status Not recovered and Email sent). The grey box holding the recovery URL, the Print button in the title bar, the Notes Save button and the aside cards' own backgrounds were not measured (the aside card wrapper has no fill of its own). Hover not measured.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "sub",
+  "rootWidth": 760,
+  "locate": {
+    "sub": "p.subheading",
+    "title": { "sel": "h1.heading", "nth": 1 },
+    "pill-status": { "sel": "div.badge" },
+    "pill-email": { "sel": "div.badge", "nth": 1 },
+    "banner": "div.banner",
+    "banner-heading": { "sel": "h2.heading", "in": "banner" },
+    "url-input": { "sel": "input" },
+    "details-heading": { "sel": "h2.heading", "nth": 1 },
+    "card": { "sel": "div.card", "nth": 1 },
+    "total": { "sel": "p._totalColumn_qlkqr_32" },
+    "notes-label": { "sel": "span.Polaris-Text--root", "text": "^Notes$" },
+    "aside-heading": { "sel": "h3.heading", "nth": 1 }
+  },
+  "parts": {
+    "title": { "x": 0, "font": "26/32 500", "color": "#101010" },
+    "pill-status": { "h": 20, "font": "12/18 500", "color": "#6f2e01", "bg": "#ffbf80", "radius": "8", "pad": "1 6" },
+    "pill-email": { "h": 20, "font": "12/18 500", "color": "#214b03", "bg": "#b3f782", "radius": "8", "pad": "1 6" },
+    "sub": { "x": 0, "font": "13/20 400", "color": "#4a4a4a" },
+    "banner": { "x": 0, "w": 760, "h": 138, "bg": "#e8fcd9", "color": "#0f2400", "radius": "20", "gap": "8" },
+    "banner-heading": { "x": 42, "font": "13/20 500", "color": "#0f2400" },
+    "url-input": { "x": 28, "h": 20, "font": "13/20 400", "color": "#4a4a4a" },
+    "details-heading": { "x": 0, "font": "15/22 500", "color": "#101010" },
+    "card": { "x": 0, "w": 760, "bg": "#ffffff", "radius": "20", "shadow": "yes", "pad": "16" },
+    "total": { "right": 29, "font": "13/20 400", "color": "#101010" },
+    "notes-label": { "x": 16, "font": "13/20 500", "color": "#101010" },
+    "aside-heading": { "font": "13/20 500", "color": "#101010" }
+  }
+}

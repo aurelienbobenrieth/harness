@@ -19,17 +19,18 @@ Discovery never authorizes an action: commits, pushes, and publishing still need
 
 ## The set
 
-| Skill                                                 | Use when                                                                                                               | Pairs with    |
-| ----------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- | ------------- |
-| [communication](../skills/communication/SKILL.md)     | always on through `AGENTS.md`; the skill itself loads for READMEs, ADRs/PDRs, PR text                                  | all           |
-| [economy](../skills/economy/SKILL.md)                 | always on through `AGENTS.md` (reading, output, scoped checks); the skill loads to delegate, fan out, or run long work | none          |
-| [align](../skills/align/SKILL.md)                     | several open decisions, ambiguous domain terms, spec contradicts code                                                  | none          |
-| [build](../skills/build/SKILL.md)                     | writing or changing code and tests: least code, tests read as stories                                                  | none          |
-| [code-review](../skills/code-review/SKILL.md)         | reviewing a change for what gates miss, and drift from the request                                                     | none          |
-| [git](../skills/git/SKILL.md)                         | commits, history, PRs (short descriptions, no model credits)                                                           | communication |
-| [retrospect](../skills/retrospect/SKILL.md)           | a correction repeats: route it to type, rule, check, test, script, or skill                                            | none          |
-| [install-harness](../skills/install-harness/SKILL.md) | adding Harness packages and skills to a project                                                                        | none          |
-| [shopify-review](../skills/shopify-review/SKILL.md)   | Shopify app readiness ([Shopify guide](shopify.md))                                                                    | code-review   |
+| Skill                                                 | Use when                                                                                                               | Pairs with     |
+| ----------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- | -------------- |
+| [communication](../skills/communication/SKILL.md)     | always on through `AGENTS.md`; the skill itself loads for READMEs, ADRs/PDRs, PR text                                  | all            |
+| [economy](../skills/economy/SKILL.md)                 | always on through `AGENTS.md` (reading, output, scoped checks); the skill loads to delegate, fan out, or run long work | none           |
+| [align](../skills/align/SKILL.md)                     | several open decisions, ambiguous domain terms, spec contradicts code                                                  | none           |
+| [build](../skills/build/SKILL.md)                     | writing or changing code and tests: least code, tests read as stories                                                  | none           |
+| [code-review](../skills/code-review/SKILL.md)         | reviewing a change for what gates miss, and drift from the request                                                     | none           |
+| [git](../skills/git/SKILL.md)                         | commits, history, PRs (short descriptions, no model credits)                                                           | communication  |
+| [retrospect](../skills/retrospect/SKILL.md)           | a correction repeats: route it to type, rule, check, test, script, or skill                                            | none           |
+| [install-harness](../skills/install-harness/SKILL.md) | adding Harness packages and skills to a project                                                                        | none           |
+| [shopify-review](../skills/shopify-review/SKILL.md)   | Shopify app readiness ([Shopify guide](shopify.md))                                                                    | code-review    |
+| [shopify-pattern](../skills/shopify-pattern/SKILL.md) | building, comparing or scoring embedded app UI against the admin's measured patterns                                   | shopify-review |
 
 ## Validation covers files, not behavior
 

@@ -1,0 +1,42 @@
+{
+  "entry": "form.organization-card",
+  "admin": "Products > Add product > aside Product organization",
+  "path": "/products/new",
+  "adminSteps": "Open the page; the aside lists Type, Vendor (selects showing None), Collections and Tags (bordered fields with an Add chip). Popover list not measured (opacity 0, content not found); heading with info icon not located.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "type-field",
+  "rootWidth": 280,
+  "locate": {
+    "type-field": { "sel": "div.field-container" },
+    "type-label": { "sel": "span.label", "text": "^Type$" },
+    "type-value": { "sel": "span.placeholder" },
+    "vendor-field": { "sel": "div.field-container", "nth": 1 },
+    "collections-label": { "sel": "span.small-text", "text": "^Collections$" },
+    "collections-edit": { "sel": "button", "text": "Edit collections" },
+    "collections-field": { "sel": "div.chip-container", "text": "^Collections$" },
+    "collections-chip": { "sel": "div.clickable-chip", "in": "collections-field" },
+    "tags-field": { "sel": "div.chip-container", "text": "^Tags$" },
+    "tags-chip": { "sel": "div.clickable-chip", "in": "tags-field" },
+    "tags-edit": { "sel": "button", "text": "Edit tags" }
+  },
+  "parts": {
+    "type-field": { "w": 280, "h": 32, "radius": "12", "shadow": "yes", "pad": "6 8 6 10" },
+    "vendor-field": { "w": 280, "h": 32, "radius": "12", "shadow": "yes" },
+    "type-value": { "color": "#4a4a4a", "font": "13/20 400" },
+    "collections-label": { "font": "13/20 500", "color": "#101010" },
+    "collections-edit": { "w": 20, "h": 20, "radius": "9999" },
+    "collections-field": { "w": 280, "h": 36, "radius": "12", "shadow": "yes", "pad": "8" },
+    "collections-chip": {
+      "w": 119,
+      "h": 20,
+      "radius": "8",
+      "bg": "#000000/5",
+      "font": "12/18 500",
+      "color": "#4a4a4a"
+    },
+    "tags-field": { "w": 280, "h": 36, "radius": "12", "shadow": "yes", "pad": "8" },
+    "tags-chip": { "w": 81, "h": 20, "radius": "8", "bg": "#000000/5" },
+    "tags-edit": { "w": 20, "h": 20, "radius": "9999" }
+  }
+}

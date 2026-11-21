@@ -1,0 +1,18 @@
+{
+  "entry": "index.pagination",
+  "admin": "Discounts",
+  "path": "/discounts",
+  "adminSteps": "Open Discounts, scroll to the pill at the bottom left. Previous is disabled on page one. Pill box and range label not located (hover not measured).",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "",
+  "rootWidth": 1281,
+  "locate": {
+    "prev": { "sel": "button", "text": "^Previous", "nth": 0 },
+    "next": { "sel": "button", "text": "^Next", "nth": 0 }
+  },
+  "parts": {
+    "prev": { "w": 28, "h": 28, "font": "12/16 500", "color": "#a6a6a6", "radius": "9999", "pad": "4" },
+    "next": { "w": 28, "h": 28, "font": "12/16 500", "color": "#606060", "radius": "9999", "pad": "4" }
+  }
+}

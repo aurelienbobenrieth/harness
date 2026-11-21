@@ -1,0 +1,28 @@
+{
+  "entry": "detail.payment-link-rows",
+  "admin": "Create order (draft), empty",
+  "path": "/draft_orders/new",
+  "adminSteps": "Open the new draft order with no product. Only the inert state was measured: link rows are grey (#a6a6a6), not blue; no product was added, so the blue active state, modals, popovers and the Edit order page are not measured. Rows read: Subtotal, Add discount, Add shipping or delivery, Estimated tax (Not calculated), Total ($0.00 USD). Info icon on Estimated tax not checked.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "locate": {
+    "host-d": { "sel": "s-internal-button", "text": "Add discount" },
+    "discount": { "sel": "button", "in": "host-d" },
+    "host-s": { "sel": "s-internal-button", "text": "Add shipping or delivery" },
+    "shipping": { "sel": "button", "in": "host-s" },
+    "tax-label": { "sel": "span.Polaris-Text--root", "text": "Estimated tax" },
+    "host-n": { "sel": "s-internal-text", "text": "Not calculated" },
+    "tax-value": { "sel": "span", "in": "host-n" },
+    "host-f": { "sel": "s-internal-text", "text": "Add a product to calculate" },
+    "foot-text": { "sel": "span", "in": "host-f" },
+    "strip": { "sel": "span", "in": "host-f", "up": 3 }
+  },
+  "parts": {
+    "discount": { "h": 20, "font": "13/20 400", "color": "#a6a6a6", "radius": "9999", "pad": "0 2" },
+    "shipping": { "h": 20, "font": "13/20 400", "color": "#a6a6a6", "radius": "9999", "pad": "0 2" },
+    "tax-label": { "font": "13/20 400", "color": "#a6a6a6", "text": "Estimated tax" },
+    "tax-value": { "font": "13/20 400", "color": "#4a4a4a", "text": "Not calculated" },
+    "foot-text": { "font": "13/20 400", "color": "#101010" },
+    "strip": { "w": 760, "h": 53, "bg": "#f7f7f7", "radius": "0 0 12 12" }
+  }
+}

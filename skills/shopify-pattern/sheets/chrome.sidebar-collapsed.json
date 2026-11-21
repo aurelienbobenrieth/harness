@@ -1,0 +1,24 @@
+{
+  "entry": "chrome.sidebar-collapsed",
+  "admin": "Home, navigation collapsed (the rail was already collapsed at 1281 wide)",
+  "path": "",
+  "adminSteps": "Open the store home at 1281 wide: the rail is 60 wide with icon items. Item parts are measured on the Settings link at the foot (the upper items sat 60px off-screen to the left, mid slide-in, in the background tab; their size and offsets match Settings). Hover flyout and hover pill not reached: no real pointer could land on an upper item, and Ctrl+B and ? key presses did not reach the page.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "rail",
+  "rootWidth": 60,
+  "locate": {
+    "rail": "nav[class*=\"_Navigation_\"]",
+    "item-box": { "sel": "[class*=\"_ItemInnerWrapper_\"]", "in": "rail", "nth": -1 },
+    "item-icon": { "sel": "[class*=\"_Icon_\"]", "in": "item-box" },
+    "bell": { "sel": "button", "text": "^Alerts Feed" },
+    "account": { "sel": "button", "text": "^Aur" }
+  },
+  "parts": {
+    "rail": { "w": 60 },
+    "item-box": { "x": 14, "w": 32, "h": 30, "radius": "12" },
+    "item-icon": { "x": 20, "w": 20, "h": 20, "opacity": "0.9", "color": "#dcdcdc" },
+    "bell": { "x": 14, "w": 32, "h": 30, "radius": "12", "color": "#dcdcdc" },
+    "account": { "x": 14, "w": 32, "h": 30, "radius": "12", "color": "#dcdcdc" }
+  }
+}

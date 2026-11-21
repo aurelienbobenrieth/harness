@@ -1,0 +1,49 @@
+{
+  "entry": "detail.status-card-header",
+  "admin": "Orders > #1044 > Unfulfilled and Paid cards",
+  "path": "/orders/6649667223691",
+  "adminSteps": "Open the order. The Unfulfilled section holds the header (icon tile, heading, More actions, split button, primary) above its card; the Paid section reuses the tile only. Refund and Edit order pages not measured. Menus not opened. Tile gradient on the primary button left out.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "section",
+  "rootWidth": 760,
+  "locate": {
+    "section": { "sel": "div.section-graphic", "nth": 0, "closest": "section.section" },
+    "tile": { "sel": "div.icon-only", "nth": 0 },
+    "tile-paid": { "sel": "div.icon-only", "nth": 1 },
+    "heading": { "sel": "h2.heading", "in": "section", "nth": 1 },
+    "more": { "sel": "button", "in": "section", "nth": 0 },
+    "split-main": { "sel": "button", "in": "section", "nth": 1 },
+    "split-caret": { "sel": "button", "in": "section", "nth": 2 },
+    "primary-host": { "sel": "s-internal-button", "text": "Create shipping label" },
+    "primary": { "sel": "button", "in": "primary-host" },
+    "card": { "sel": "div.card", "in": "section" }
+  },
+  "parts": {
+    "tile": { "w": 28, "h": 28, "radius": "8", "bg": "#ffe45c", "color": "#574100" },
+    "tile-paid": { "w": 28, "h": 28, "radius": "8", "bg": "#000000/5", "color": "#4a4a4a" },
+    "heading": { "x": 36, "font": "15/22 500", "color": "#101010" },
+    "more": { "w": 28, "h": 28, "radius": "9999", "color": "#606060", "bg": "none" },
+    "split-main": {
+      "w": 116,
+      "h": 28,
+      "font": "12/16 500",
+      "color": "#101010",
+      "bg": "#ebebeb",
+      "radius": "9999 0 0 9999",
+      "pad": "6 12"
+    },
+    "split-caret": { "w": 28, "h": 28, "bg": "#ebebeb", "radius": "0 9999 9999 0" },
+    "primary": {
+      "right": 0,
+      "w": 144,
+      "h": 28,
+      "font": "12/16 500",
+      "color": "#ffffff",
+      "bg": "#101010",
+      "radius": "9999",
+      "pad": "6 12"
+    },
+    "card": { "x": 0, "bg": "#ffffff", "radius": "20", "pad": "16", "shadow": "yes" }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "entry": "index.segment-query-bar",
+  "admin": "Customers",
+  "path": "/customers",
+  "adminSteps": "Open Customers and wait about 2 s. The bar is a Sidekick input with a rotating placeholder: 'Start a query' and 'Describe your segment' alternate. Focus and typing not measured.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "table",
+  "rootWidth": 1182,
+  "locate": {
+    "table": "div.Polaris-Table",
+    "placeholder": { "sel": "span[class*=\"_placeholder_\"]" },
+    "start": { "sel": "*", "text": "^Start a query$" },
+    "head": { "sel": "div.Polaris-Table-TableHeadingCell", "nth": 1, "in": "table" },
+    "last-head": { "sel": "div.Polaris-Table-TableHeadingCell", "text": "Amount spent", "in": "table" }
+  },
+  "parts": {
+    "placeholder": { "h": 40, "font": "13/20 400", "color": "#757575", "pad": "10 0 10 2" },
+    "start": { "font": "13/18.2 400", "color": "#888888" },
+    "head": { "h": 31, "font": "12/18 500", "color": "#4a4a4a", "bg": "#f7f7f7" },
+    "last-head": { "radius": "0 10 10 0", "bg": "#f7f7f7" }
+  }
+}

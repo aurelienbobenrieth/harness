@@ -1,0 +1,57 @@
+{
+  "entry": "form.schedule",
+  "admin": "Discounts > Create discount > Amount off products > Schedule",
+  "path": "/discounts/new/amount-off-product",
+  "adminSteps": "Open the path; the Schedule card is the last card. Hover arrow growth not measured.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "card",
+  "rootWidth": 760,
+  "locate": {
+    "card": { "sel": "div.card", "nth": -1 },
+    "start": { "sel": "button", "text": "Start date: " },
+    "zone": { "sel": "span", "text": "^(EST|EDT|PST|PDT|GMT|UTC|CET|CEST)$", "in": "start" },
+    "set-host": { "sel": "s-internal-button", "text": "Set end date" },
+    "set-end": { "sel": "button", "in": "set-host" }
+  },
+  "parts": {
+    "card": { "h": 60, "pad": "16", "radius": "20", "bg": "#ffffff" },
+    "start": {
+      "x": 16,
+      "w": 301,
+      "h": 28,
+      "radius": "12",
+      "pad": "0 12",
+      "gap": "8",
+      "font": "13/20 400",
+      "bg": "#ffffff"
+    },
+    "set-end": { "x": 325, "w": 111, "h": 28, "radius": "9999", "pad": "4 12 4 6", "font": "12/16 500" }
+  },
+  "states": {
+    "end-open": {
+      "adminSteps": "Click 'Set end date' (inner shadow button .click()): the start field shrinks to 346 and an End date field appears, with its popover open.",
+      "locate": {
+        "card": { "sel": "div.card", "nth": -1 },
+        "start": { "sel": "button", "text": "Start date: " },
+        "end": { "sel": "button", "text": "^End date$" },
+        "pop": { "sel": "[class*=\"_PopoverContent_\"]" },
+        "box": { "sel": ".Polaris-Box", "in": "pop" },
+        "calendar": { "sel": ".date-picker", "in": "pop" },
+        "weekday": { "sel": "th", "in": "pop" },
+        "day": { "sel": "button", "text": "^1[0-9]$", "in": "calendar" },
+        "date-wrap": { "sel": ".input-wrapper", "in": "pop", "nth": 0 }
+      },
+      "parts": {
+        "start": { "x": 16, "w": 346, "h": 28 },
+        "end": { "x": 398, "w": 346, "h": 28, "radius": "12", "pad": "0 12", "text": "End date" },
+        "pop": { "x": 398, "w": 272, "h": 338 },
+        "box": { "pad": "12" },
+        "calendar": { "x": 410, "w": 248, "h": 226 },
+        "weekday": { "w": 32, "h": 32, "font": "11/14 400", "color": "#4a4a4a" },
+        "day": { "w": 32, "h": 32, "radius": "10", "font": "13/20 400" },
+        "date-wrap": { "w": 248, "h": 30, "radius": "12", "pad": "0 12" }
+      }
+    }
+  }
+}

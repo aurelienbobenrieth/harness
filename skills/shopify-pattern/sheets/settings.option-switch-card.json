@@ -1,0 +1,27 @@
+{
+  "entry": "settings.option-switch-card",
+  "admin": "Settings > Custom data > Metaobjects > Add definition > Metaobject options",
+  "path": "/settings/custom_data/metaobjects/create",
+  "adminSteps": "Open the page. The heading text and info icon sit in a shadow root and were not measured; the locked (dimmed) switch state was not reached (no locked option on a new definition).",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "list",
+  "rootWidth": 784,
+  "locate": {
+    "list": { "sel": "div:has(> [class*=_ListItem_])" },
+    "row": { "sel": "[class*=_ListItem_]", "in": "list" },
+    "row-next": { "sel": "[class*=_ListItem_]", "nth": 1, "in": "list" },
+    "label": { "text": "^Active-draft status$", "in": "list" },
+    "divider": { "sel": "hr,[class*=Divider]", "in": "list" },
+    "switch": { "sel": "input", "nth": 0, "in": "row-next" },
+    "info": { "sel": "a", "text": "Learn more" }
+  },
+  "parts": {
+    "row": { "h": 52 },
+    "row-next": { "h": 48 },
+    "label": { "x": 16, "font": "13/20 400", "color": "#101010" },
+    "divider": { "h": 1, "pad": "0 16" },
+    "switch": { "w": 32, "h": 16, "right": 16, "bg": "#101010", "radius": "9999" },
+    "info": { "w": 20, "h": 20, "color": "#606060", "radius": "9999" }
+  }
+}

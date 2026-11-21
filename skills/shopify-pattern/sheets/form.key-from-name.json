@@ -1,0 +1,25 @@
+{
+  "entry": "form.key-from-name",
+  "admin": "Settings > Custom data > Add definition",
+  "path": "/settings/custom_data/metaobjects/create",
+  "adminSteps": "Open the page; type 'Cart upsell' in Name (native value setter plus input event); the line under it reads 'Type: cart_upsell'. The 'Add description' link sits below the card's first block. Hover not measured.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "page",
+  "rootWidth": 784,
+  "locate": {
+    "page": "section.section",
+    "name-card": { "sel": "div.card", "nth": 0 },
+    "name-label": { "sel": "span.Polaris-Text--root", "text": "^Name$" },
+    "name-input": { "sel": "input.Polaris-TextField__Input", "in": "name-card" },
+    "key-line": { "sel": "button[class*=\"_TypeButton_\"]" },
+    "key-line-text": { "sel": "span.text", "in": "key-line" }
+  },
+  "parts": {
+    "name-card": { "x": 0, "w": 784, "h": 154, "bg": "#ffffff", "radius": "20", "shadow": "yes" },
+    "name-label": { "x": 16, "font": "13/20 500", "color": "#101010" },
+    "name-input": { "x": 16, "w": 752, "h": 30, "pad": "5 12", "font": "13/20 400", "color": "#101010" },
+    "key-line": { "x": 16, "h": 26, "pad": "4 0", "radius": "8" },
+    "key-line-text": { "font": "12/18 400", "color": "#4a4a4a" }
+  }
+}

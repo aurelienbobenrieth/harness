@@ -1,0 +1,18 @@
+{
+  "entry": "index.page-frame",
+  "admin": "Orders",
+  "path": "/orders",
+  "adminSteps": "Open Orders. Viewport was 1281 wide (the preview cannot go to 1440). Title bar action buttons (Create order) were not found as visible nodes, so not measured; panel inset 4 not measured.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "panel",
+  "rootWidth": 1217,
+  "locate": {
+    "panel": "main",
+    "title": { "sel": "*", "text": "^Orders$", "nth": -1 }
+  },
+  "parts": {
+    "panel": { "radius": "16", "bg": "#ffffff" },
+    "title": { "font": "13/16 600", "color": "#101010" }
+  }
+}

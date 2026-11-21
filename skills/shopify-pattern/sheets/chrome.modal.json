@@ -1,0 +1,30 @@
+{
+  "entry": "chrome.modal",
+  "admin": "Orders > Export",
+  "path": "/orders",
+  "adminSteps": "Open Orders and click the Export button in the title bar (element.click() on the button; a pointer click did not register in the automated tab). The 'Export orders' dialog opens at base size; cancel with Escape. It is a Polaris modal (div.Polaris-Modal-Dialog__Modal inside a div[role=dialog]), not a native dialog. Entry/exit animation values and the 200 ms backdrop fade were not captured (hidden tab, backdrop read at opacity 0).",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "modal",
+  "rootWidth": 620,
+  "locate": {
+    "modal": ".Polaris-Modal-Dialog__Modal",
+    "title": { "sel": "h2", "in": "modal" },
+    "close": { "sel": "button", "text": "Close", "in": "modal" },
+    "close-icon": { "sel": "s-internal-icon", "in": "close" },
+    "body": { "sel": ".Polaris-Modal-Section", "in": "modal" },
+    "footer": { "sel": ".Polaris-Modal-Footer", "in": "modal" },
+    "cancel": { "sel": "button", "text": "Cancel", "in": "footer" },
+    "primary": { "sel": "button", "text": "Export transaction", "in": "footer" },
+    "backdrop": ".Polaris-Backdrop"
+  },
+  "parts": {
+    "modal": { "w": 620, "h": 384, "radius": "24", "bg": "#ffffff", "shadow": "yes" },
+    "title": { "x": 20, "font": "15/22 500", "color": "#101010" },
+    "close": { "w": 28, "h": 28, "right": 16, "radius": "9999", "bg": "#ffffff", "shadow": "yes" },
+    "close-icon": { "w": 20, "h": 20 },
+    "footer": { "h": 56 },
+    "cancel": { "h": 28, "pad": "6 12", "radius": "9999", "bg": "#ffffff", "shadow": "yes" },
+    "backdrop": { "bg": "#000000/50" }
+  }
+}

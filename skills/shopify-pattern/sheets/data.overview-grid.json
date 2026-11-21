@@ -1,0 +1,29 @@
+{
+  "entry": "data.overview-grid",
+  "admin": "Analytics overview",
+  "path": "/analytics",
+  "adminSteps": "Open Analytics; the banner is present. Positions are relative to the dashboard container (content width 1182 at viewport 1281, nav rail 60). Cards are painted by section.card inside each _Card_ wrapper; the trend card is the 5th _Card_, the breakdown card the 6th. Card shadow is none here.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "dash",
+  "rootWidth": 1182,
+  "locate": {
+    "dash": "[class*=\"_AnalyticsDashboardContainer_\"]",
+    "tile": { "sel": "[class*=\"_Card_\"]", "in": "dash" },
+    "tile-next": { "sel": "[class*=\"_Card_\"]", "nth": 1, "in": "dash" },
+    "tile-paint": { "sel": "section.card", "in": "dash" },
+    "trend": { "sel": "[class*=\"_Card_\"]", "nth": 4, "in": "dash" },
+    "breakdown": { "sel": "[class*=\"_Card_\"]", "nth": 5, "in": "dash" },
+    "tile-heading": { "sel": ".heading", "in": "tile" },
+    "tile-value": { "sel": ".metric-card-summary-value", "in": "tile" }
+  },
+  "parts": {
+    "tile": { "x": 0, "w": 283, "h": 74 },
+    "tile-next": { "x": 299, "w": 283, "h": 74 },
+    "tile-paint": { "bg": "#ffffff", "radius": "20", "pad": "16", "shadow": "none" },
+    "trend": { "x": 0, "w": 782, "h": 389 },
+    "breakdown": { "x": 798, "w": 383, "h": 389 },
+    "tile-heading": { "font": "13/16 600", "color": "#101010" },
+    "tile-value": { "font": "13/20 600", "color": "#101010" }
+  }
+}

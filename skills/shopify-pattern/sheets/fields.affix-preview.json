@@ -1,0 +1,23 @@
+{
+  "entry": "fields.affix-preview",
+  "admin": "Settings > General > Order ID format",
+  "path": "/settings/general",
+  "adminSteps": "Scroll to the 'Order ID format' card (below Store defaults). Heading and description text not measured. Save bar after an edit not reached.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "form",
+  "rootWidth": 772,
+  "locate": {
+    "form": { "sel": "span.label-content", "text": "Prefix", "closest": "div[class*=\"_FormLayout_\"]" },
+    "prefix-label": { "sel": "span.label-content", "text": "Prefix" },
+    "prefix-field": { "sel": "div.input-wrapper", "in": "form" },
+    "suffix-field": { "sel": "div.input-wrapper", "nth": 1, "in": "form" },
+    "preview": { "sel": "p.paragraph", "in": "form" }
+  },
+  "parts": {
+    "prefix-label": { "x": 20, "font": "13/20 500", "color": "#101010" },
+    "prefix-field": { "x": 20, "w": 366, "h": 30, "radius": "12", "bg": "#ffffff", "pad": "0 12" },
+    "suffix-field": { "x": 406, "w": 366, "h": 30, "radius": "12", "bg": "#ffffff", "pad": "0 12" },
+    "preview": { "x": 20, "y": 88, "font": "13/20 400", "color": "#101010" }
+  }
+}

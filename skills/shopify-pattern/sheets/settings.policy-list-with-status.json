@@ -1,0 +1,76 @@
+{
+  "entry": "settings.policy-list-with-status",
+  "admin": "Settings > Policies",
+  "path": "/settings/legal",
+  "adminSteps": "Open the path on a store with no policy written. The 'Return and cancellation rules' card and the 'Written policies' card are two sections; rows are links with a trailing chevron. The Required badge sits next to the name of Contact information and Purchase options cancellation policy. The ... menu (Get past policies) was not opened; hover not measured.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "root",
+  "rootWidth": 962,
+  "locate": {
+    "root": "[class*=\"_BodyMarkupContainer_\"]",
+    "rules-card": { "sel": "section.section", "nth": 1, "in": "root" },
+    "rules-heading": { "sel": "h2.heading", "in": "root" },
+    "rules-help": { "sel": "span.text", "in": "root" },
+    "add-rule": { "sel": "a.button", "in": "root" },
+    "rule-row": { "sel": "div[class*=\"_ListItem_\"]", "in": "root" },
+    "rule-name": { "sel": "a[class*=\"_SettingsItem__clickable\"]", "in": "root" },
+    "rule-status": { "sel": "div.badge", "in": "root" },
+    "rule-chevron": { "sel": "div[class*=\"_SettingsItem__rightIcon\"]", "in": "root" },
+    "policies-heading": { "sel": "h2.heading", "nth": 1, "in": "root" },
+    "policy-name": { "sel": "span[class*=\"_Name_\"]", "in": "root" },
+    "policy-status": { "sel": "div.badge", "nth": 1, "in": "root" },
+    "divider": { "sel": "hr", "in": "root" },
+    "note": { "sel": "p.paragraph", "in": "root" }
+  },
+  "parts": {
+    "rules-card": { "x": 89, "w": 784, "h": 52, "bg": "#ffffff", "radius": "20", "shadow": "yes" },
+    "rules-heading": { "x": 89, "font": "15/22 500", "color": "#101010" },
+    "rules-help": { "x": 89, "font": "13/20 400", "color": "#4a4a4a" },
+    "add-rule": {
+      "w": 65,
+      "h": 28,
+      "right": 89,
+      "font": "12/16 500",
+      "color": "#101010",
+      "bg": "none",
+      "radius": "9999",
+      "pad": "4 12 4 6",
+      "gap": "2"
+    },
+    "rule-row": { "x": 89, "w": 784, "h": 52, "bg": "#ffffff" },
+    "rule-name": { "x": 105, "w": 720, "h": 20, "font": "13/20 400", "color": "#101010" },
+    "rule-status": {
+      "w": 80,
+      "h": 20,
+      "font": "12/18 500",
+      "color": "#4a4a4a",
+      "bg": "#000000/5",
+      "radius": "8",
+      "pad": "1 6",
+      "gap": "4"
+    },
+    "rule-chevron": { "w": 20, "h": 20, "right": 105 },
+    "policies-heading": { "x": 89, "font": "15/22 500", "color": "#101010" },
+    "policy-name": { "x": 137, "h": 20, "font": "13/20 400", "color": "#101010" },
+    "policy-status": {
+      "w": 86,
+      "h": 20,
+      "font": "12/18 500",
+      "color": "#4a4a4a",
+      "bg": "#000000/5",
+      "radius": "8",
+      "pad": "1 6",
+      "gap": "4"
+    },
+    "divider": { "x": 137, "w": 720, "h": 1, "border": "1 #f2f2f2" },
+    "note": { "x": 89, "w": 784, "font": "13/20 400", "color": "#4a4a4a" }
+  },
+  "states": {
+    "required": {
+      "adminSteps": "Same page; the Required tag appears on Contact information and Purchase options cancellation policy rows only (orange badge, 62 x 20, bg #ffbf80, text #6f2e01). Located by walking s-internal-badge hosts, not by the probe.",
+      "locate": {},
+      "parts": {}
+    }
+  }
+}

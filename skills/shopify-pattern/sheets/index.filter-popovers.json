@@ -1,0 +1,27 @@
+{
+  "entry": "index.filter-popovers",
+  "admin": "Orders, search field key list",
+  "path": "/orders",
+  "adminSteps": "Click the search field, type Payment status; the key list opens under the field. Value popover and date list not reached. Viewport was 1281 wide. Border reads 0.7 because the preview runs at device ratio 1.37 (1 device pixel).",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "field",
+  "rootWidth": 1042,
+  "locate": {
+    "field": { "sel": "[aria-label=\"Search and filter\"]" },
+    "list": { "sel": "[role=listbox]" },
+    "row": { "sel": "[role=option]", "in": "list" },
+    "label": { "sel": "*", "text": "^Payment status$", "in": "row" },
+    "hint": { "sel": "*", "text": "^Enter$", "in": "row", "up": 2 },
+    "hint-text": { "sel": "*", "text": "^Enter$", "in": "row" },
+    "hint-icon": { "sel": "s-internal-icon", "in": "hint" }
+  },
+  "parts": {
+    "list": { "w": 200 },
+    "row": { "h": 28, "radius": "12" },
+    "label": { "font": "13/20 400", "color": "#101010" },
+    "hint": { "pad": "1 4", "bg": "#f2f2f2", "radius": "6", "border": "0.7 #dddddd" },
+    "hint-text": { "font": "12/16 400", "color": "#4a4a4a" },
+    "hint-icon": { "w": 16, "h": 16 }
+  }
+}

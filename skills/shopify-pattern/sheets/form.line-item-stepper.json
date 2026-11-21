@@ -1,0 +1,39 @@
+{
+  "entry": "form.line-item-stepper",
+  "admin": "Orders > #1044 > Refund",
+  "path": "/orders/6649667223691/refund",
+  "adminSteps": "Open the Refund page; the line card's first row is the stepper row. Input is the second text input on the page (first is the manual refund amount). Row text sits in slotted elements, so text locators miss it.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "qty",
+  "rootWidth": 65,
+  "locate": {
+    "qty": { "sel": "input.Polaris-TextField__Input", "nth": 1 },
+    "suffix": ".Polaris-TextField__Suffix",
+    "price": { "sel": "button.button", "text": "Add discount" },
+    "total": { "sel": "span.Polaris-Text--root", "text": "^[$]0[.]00$" }
+  },
+  "parts": {
+    "qty": { "w": 65, "h": 30, "font": "13/20 400", "color": "#101010", "pad": "5 0 5 12" },
+    "suffix": { "font": "13/20 400", "color": "#4a4a4a" },
+    "price": { "h": 20, "font": "13/20 400", "color": "#1650d0", "radius": "9999", "pad": "0 2" },
+    "total": { "font": "13/20 400", "color": "#101010" }
+  },
+  "states": {
+    "edit-order": {
+      "adminSteps": "At /orders/6649667223691/edit the input holds the current quantity (29 wide, pad 5 12, no suffix) and a 28 px remove icon button 'Remove item' follows the total.",
+      "path": "/orders/6649667223691/edit",
+      "locate": {
+        "qty": { "sel": "input", "nth": 0, "in": "row" },
+        "row": { "sel": "section", "nth": 1 },
+        "remove": { "sel": "button", "text": "Remove item", "in": "row" },
+        "price": { "sel": "button", "text": "Add discount", "in": "row" }
+      },
+      "parts": {
+        "qty": { "w": 29, "h": 30, "font": "13/20 400", "pad": "5 12" },
+        "remove": { "w": 28, "h": 28, "color": "#606060", "radius": "9999", "pad": "4", "font": "12/16 500" },
+        "price": { "h": 20, "w": 53, "font": "13/20 400", "color": "#1650d0", "radius": "9999", "pad": "0 2" }
+      }
+    }
+  }
+}

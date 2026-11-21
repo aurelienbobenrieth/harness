@@ -1,0 +1,26 @@
+{
+  "entry": "detail.stat-strip",
+  "admin": "Customers > any customer",
+  "path": "/customers/8906969383051",
+  "adminSteps": "Open a customer; the s-metrics-bar sits under the title. Four stats: Amount spent, Orders, Customer since, RFM group. Arrows are hidden (opacity 0) until the bar overflows or is hovered; hover and definition popover not measured. The label has a dotted bottom border.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "bar",
+  "rootWidth": 760,
+  "locate": {
+    "bar": "s-metrics-bar",
+    "item": { "sel": "div.item", "in": "bar" },
+    "label": { "sel": "span.heading", "in": "bar" },
+    "label-button": { "sel": "button.clickable", "in": "bar" },
+    "value": { "sel": "div.metric-card-summary-value", "in": "bar" },
+    "arrows": { "sel": "span.arrows-wrapper", "in": "bar" }
+  },
+  "parts": {
+    "bar": { "w": 760, "h": 68, "bg": "none", "shadow": "none" },
+    "item": { "x": 0, "w": 225, "h": 68 },
+    "label": { "x": 20, "font": "13/16 600", "color": "#101010", "border": "1 #dddddd" },
+    "label-button": { "x": 20, "h": 20, "radius": "16" },
+    "value": { "x": 20, "h": 20, "font": "13/20 600", "color": "#101010" },
+    "arrows": { "right": 0, "w": 71, "h": 68, "bg": "#ffffff", "pad": "0 16 0 0" }
+  }
+}

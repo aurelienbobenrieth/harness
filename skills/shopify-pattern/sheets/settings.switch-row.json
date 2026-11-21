@@ -1,0 +1,42 @@
+{
+  "entry": "settings.switch-row",
+  "admin": "Settings > Customer accounts \"Sign in with Shop\"",
+  "path": "/settings/customer_accounts",
+  "adminSteps": "Open the page; the card with Sign in with Shop (third row of the settings rows, on: bg #101010). Off switches (Show sign-in links, Multipass, Store credit) have bg #dddddd. Grid: icon 20 at x16 | text from x48 | switch label 32x24 at 16 from the right, gap 12. Switch transition: background-color .1s cubic-bezier(.42,0,.58,1). Hover not measured.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "row",
+  "rootWidth": 784,
+  "locate": {
+    "row": { "sel": "[class*=\"_SettingsItem__wrapper_\"]", "nth": 2 },
+    "row-next": { "sel": "[class*=\"_SettingsItem__wrapper_\"]", "nth": 3 },
+    "icon": { "sel": "img", "in": "row" },
+    "title": { "sel": "span.Polaris-Text--root", "in": "row" },
+    "subtitle": { "sel": "[class*=\"_SettingsItem__Subtitle_\"]", "in": "row" },
+    "switch-label": { "sel": "label", "in": "row" },
+    "switch-input": { "sel": "input", "in": "row" }
+  },
+  "parts": {
+    "row": { "x": 0, "w": 784, "h": 68, "pad": "16 16 12" },
+    "row-next": { "h": 64, "pad": "12 16" },
+    "icon": { "x": 16, "w": 20, "h": 20 },
+    "title": { "x": 48, "h": 20, "font": "13/20 400", "color": "#101010" },
+    "subtitle": { "x": 48, "font": "13/20 400", "color": "#4a4a4a" },
+    "switch-label": { "w": 32, "h": 24, "right": 16, "pad": "4 0" },
+    "switch-input": { "w": 32, "h": 16, "radius": "9999", "bg": "#101010", "right": 16 }
+  },
+  "states": {
+    "off": {
+      "adminSteps": "Same page, Multipass row (fourth row, switch off).",
+      "locate": {
+        "row": { "sel": "[class*=\"_SettingsItem__wrapper_\"]", "nth": 3 },
+        "switch-input": { "sel": "input", "in": "row" }
+      },
+      "root": "row",
+      "rootWidth": 784,
+      "parts": {
+        "switch-input": { "w": 32, "h": 16, "radius": "9999", "bg": "#dddddd", "right": 16 }
+      }
+    }
+  }
+}

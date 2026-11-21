@@ -1,0 +1,43 @@
+{
+  "entry": "settings.provider-card",
+  "admin": "Settings > Payments",
+  "path": "/settings/payments",
+  "adminSteps": "Open Settings > Payments on the dev store. Top warning banner (link text starts 'Activate the ...'), then the Test payment gateway row (a button row with a 37x24 card image at the end), then the Shopify Payments card: header with a disabled 'Complete setup' button, grey benefit panel with three checkmark lines, footer logo row (six 37x24 logos then a ': Apple Pay, Google Pay, and Amazon Pay' note). Price line and footer label text not measured. Hover not measured.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "card",
+  "rootWidth": 784,
+  "locate": {
+    "card": { "sel": "[class*=\"_CardHighlightWr\"]", "nth": 1 },
+    "complete-setup": { "sel": "button", "text": "Complete setup" },
+    "panel": { "sel": "p", "text": "^Tap into the 400", "up": 4 },
+    "benefit": { "sel": "p", "text": "^Tap into the 400" },
+    "logo": { "sel": "img", "text": "^$", "nth": 1 },
+    "banner-text": { "sel": "p", "text": "^Activate the" }
+  },
+  "parts": {
+    "card": { "w": 784 },
+    "panel": { "x": 16, "right": 16, "bg": "#f7f7f7", "radius": "8", "pad": "12" },
+    "benefit": { "x": 48, "font": "13/20 400", "color": "#101010" },
+    "banner-text": { "x": 16, "font": "13/20 400", "color": "#574100" }
+  },
+  "states": {
+    "disabled": {
+      "adminSteps": "Complete setup is disabled on a development store (white 12/16 500 label on a translucent black fill). Located inside the card.",
+      "locate": {
+        "card": { "sel": "[class*=\"_CardHighlightWr\"]", "nth": 1 },
+        "complete-setup": { "sel": "button", "text": "Complete setup" }
+      },
+      "parts": {
+        "complete-setup": {
+          "w": 113,
+          "h": 28,
+          "font": "12/16 500",
+          "color": "#ffffff",
+          "bg": "#000000/13",
+          "radius": "9999"
+        }
+      }
+    }
+  }
+}

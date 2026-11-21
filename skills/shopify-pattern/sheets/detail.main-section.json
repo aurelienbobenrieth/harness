@@ -1,0 +1,23 @@
+{
+  "entry": "detail.main-section",
+  "admin": "Orders > #1044 > Unfulfilled section",
+  "path": "/orders/6649667223691",
+  "adminSteps": "Open the order; the section is the 8th section on the page. Heading to card 15, card bottom to next heading 35. The footer panel is the timeline composer's bottom row (class _Actions_), not in the Unfulfilled card. The shadow is the 4-layer value of the entry.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "section",
+  "rootWidth": 760,
+  "locate": {
+    "section": { "sel": "section", "nth": 7 },
+    "heading": { "sel": "h2.heading", "in": "section", "nth": -1 },
+    "icon-tile": { "sel": ".badge.size-large" },
+    "card": { "sel": ".card", "in": "section" },
+    "footer": { "sel": "[class*=\"_Actions_\"]" }
+  },
+  "parts": {
+    "heading": { "x": 36, "h": 22, "font": "15/22 500", "color": "#101010" },
+    "icon-tile": { "x": 0, "w": 28, "h": 28, "radius": "8", "bg": "#ffe45c" },
+    "card": { "x": 0, "w": 760, "bg": "#ffffff", "radius": "20", "pad": "16", "shadow": "yes" },
+    "footer": { "bg": "#f7f7f7", "radius": "0 0 12 12", "pad": "12" }
+  }
+}

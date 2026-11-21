@@ -1,0 +1,44 @@
+{
+  "entry": "feedback.badge",
+  "admin": "Orders (list)",
+  "path": "/orders",
+  "adminSteps": "Open Orders; the Payment status and Fulfillment status columns show Paid (neutral) and Unfulfilled (attention). Badges are s-internal-badge hosts; parts sit in the shadow root. Success and critical tones not present. The icon box is 16 and holds a 12px svg.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "",
+  "rootWidth": 1281,
+  "locate": {
+    "attention": { "sel": "div.badge.tone-caution" },
+    "attention-icon": { "sel": "span.icon", "in": "attention" },
+    "attention-text": { "sel": "span.content", "in": "attention" },
+    "neutral": { "sel": "div.badge.tone-auto.with-icon" },
+    "neutral-icon": { "sel": "span.icon", "in": "neutral" },
+    "neutral-text": { "sel": "span.content", "in": "neutral" }
+  },
+  "parts": {
+    "attention": {
+      "h": 20,
+      "radius": "8",
+      "bg": "#ffe45c",
+      "color": "#574100",
+      "font": "12/18 500",
+      "pad": "1 6 1 4",
+      "gap": "4",
+      "shadow": "none"
+    },
+    "attention-icon": { "w": 16, "h": 16, "color": "#574100" },
+    "attention-text": { "font": "12/18 500", "color": "#574100" },
+    "neutral": {
+      "h": 20,
+      "radius": "8",
+      "bg": "#000000/5",
+      "color": "#4a4a4a",
+      "font": "12/18 500",
+      "pad": "1 6 1 4",
+      "gap": "4",
+      "shadow": "none"
+    },
+    "neutral-icon": { "w": 16, "h": 16, "color": "#4a4a4a" },
+    "neutral-text": { "font": "12/18 500", "color": "#4a4a4a" }
+  }
+}

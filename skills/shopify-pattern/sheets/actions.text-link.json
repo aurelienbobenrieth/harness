@@ -1,0 +1,20 @@
+{
+  "entry": "actions.text-link",
+  "admin": "Orders > #1044 (customer, email, product line item)",
+  "path": "/orders/6649667223691",
+  "adminSteps": "Open the order. Customer name is the second a.link.tone-auto; email is the button-link; the product name is a.link.tone-inherit. Table order-number link (Orders table): 13/20 400 #101010, no underline at rest. Hover underline could not be read (pointer hover did not land on the link).",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "customer",
+  "rootWidth": 134,
+  "locate": {
+    "customer": { "sel": "a.link.tone-auto", "nth": 1 },
+    "email": "button.button-link",
+    "product": "a.link.tone-inherit"
+  },
+  "parts": {
+    "customer": { "font": "13/20 400", "color": "#1650d0", "radius": "4" },
+    "email": { "h": 20, "font": "13/20 400", "color": "#1650d0", "radius": "4" },
+    "product": { "font": "13/20 500", "color": "#101010", "radius": "4" }
+  }
+}

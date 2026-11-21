@@ -1,0 +1,31 @@
+{
+  "entry": "detail.title-bar-view-as",
+  "admin": "Products > The Complete Snowboard title bar",
+  "path": "/products/7336542765195",
+  "adminSteps": "Open the product; the title bar sits at the top. Buttons View as, Preview (aria-label Preview on Online Store), Share, More actions, then previous and next arrows. All buttons are borderless and unfilled, no primary button. View as, Share and More actions have no own text node, so only Preview and the arrows are located; their values were read from the button list (x and width in viewport, bar starts at x 60).",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "bar",
+  "rootWidth": 1202,
+  "locate": {
+    "bar": "div.toolbar",
+    "preview": { "sel": "button", "text": "Preview on Online Store", "in": "bar" },
+    "previous": { "sel": "button", "text": "Go to previous page", "in": "bar" },
+    "next": { "sel": "button", "text": "Go to next page", "in": "bar" }
+  },
+  "parts": {
+    "preview": {
+      "x": 889,
+      "w": 69,
+      "h": 28,
+      "font": "12/16 500",
+      "color": "#101010",
+      "bg": "none",
+      "radius": "9999",
+      "pad": "6 12",
+      "shadow": "none"
+    },
+    "previous": { "right": 32, "w": 28, "h": 28, "radius": "9999", "color": "#101010", "bg": "none" },
+    "next": { "right": 4, "w": 28, "h": 28, "radius": "9999", "color": "#101010", "bg": "none" }
+  }
+}

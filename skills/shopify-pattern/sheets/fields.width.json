@@ -1,0 +1,22 @@
+{
+  "entry": "fields.width",
+  "admin": "Discounts > Create discount > Amount off products",
+  "path": "/discounts/new/amount-off-product",
+  "adminSteps": "Open the page with percentage discount value; widths read on the field boxes. Money (150) and nested number (150) not reached.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "text",
+  "rootWidth": 728,
+  "locate": {
+    "text": { "sel": "div.input-wrapper", "nth": 0 },
+    "number": { "sel": "div.input-wrapper", "nth": 1 },
+    "select": { "sel": "div.select", "nth": 1 },
+    "select-next": { "sel": "div.select", "nth": 2 }
+  },
+  "parts": {
+    "text": { "w": 728, "h": 30 },
+    "number": { "w": 239, "h": 32 },
+    "select": { "w": 360, "h": 30 },
+    "select-next": { "w": 360, "x": 368, "h": 30 }
+  }
+}

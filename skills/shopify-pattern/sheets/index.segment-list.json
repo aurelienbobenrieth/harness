@@ -1,0 +1,21 @@
+{
+  "entry": "index.segment-list",
+  "admin": "Customers > Segments",
+  "path": "/customers/segments",
+  "adminSteps": "Open Segments and wait about 2 s. 5 Shopify-made segments listed. Create segment button not measured.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "table",
+  "rootWidth": 1182,
+  "locate": {
+    "table": "div.Polaris-Table",
+    "head": { "sel": "div.Polaris-Table-TableHeadingCell", "nth": 1, "in": "table" },
+    "cell": { "sel": "div.Polaris-Table-TableCell", "nth": 1, "in": "table" },
+    "name": { "sel": "span[class*=\"_Wrapper_\"]", "text": ".", "in": "table" }
+  },
+  "parts": {
+    "head": { "h": 31, "font": "12/18 500", "color": "#4a4a4a", "bg": "#f7f7f7" },
+    "cell": { "h": 37 },
+    "name": { "x": 42, "font": "13/20 500", "color": "#101010" }
+  }
+}

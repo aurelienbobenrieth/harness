@@ -1,0 +1,27 @@
+{
+  "entry": "settings.select-card",
+  "admin": "Settings > General \"Store defaults\" card",
+  "path": "/settings/general",
+  "adminSteps": "Open the page; second group. The card starts with a row (Currency display) then a form layout: Unit system and Default weight unit side by side, Time zone full width with a help line; a sentence under the card links to account settings. No Backup Region select on this store today. Option popups not opened.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "form",
+  "rootWidth": 772,
+  "locate": {
+    "form": "[class*=\"_FormLayout_\"]",
+    "wide": { "sel": "[class*=\"_Item_\"]", "in": "form", "nth": 2 },
+    "label-wide": { "sel": "label", "in": "wide" },
+    "select-wide": { "sel": "div.select", "in": "wide" },
+    "value": { "sel": "span.value", "in": "wide" },
+    "caret": { "sel": "s-icon", "in": "wide" },
+    "details": { "sel": "div.field-details", "in": "wide" }
+  },
+  "parts": {
+    "wide": { "x": 20, "right": 0, "h": 86 },
+    "label-wide": { "x": 20, "h": 20, "font": "13/20 500", "color": "#101010" },
+    "select-wide": { "x": 20, "h": 30, "radius": "12", "bg": "#ffffff", "pad": "5 8 5 12", "shadow": "yes" },
+    "value": { "x": 32, "h": 20, "font": "13/20 400", "color": "#101010" },
+    "caret": { "w": 20, "h": 20 },
+    "details": { "x": 20, "h": 18, "font": "12/18 400", "color": "#4a4a4a" }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "entry": "overlay.actions-popover",
+  "admin": "Settings > Apps > row More actions for Flow",
+  "path": "/settings/apps",
+  "adminSteps": "Open Settings > Apps, click the 28x28 More actions button of the Flow row. Opened with element.click() in a hidden tab, so the open animation was frozen at scale .95 and opacity 0: transform and opacity were cleared before measuring. Popover sits 4 below the trigger with its right edge on the trigger's right edge (origin top right). Menu has no group labels in this menu; hover state not measured.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "popover",
+  "rootWidth": 97,
+  "locate": {
+    "popover": { "sel": "ul.menu", "text": "More actions for Flow", "closest": ".dialog" },
+    "menu": { "sel": "ul.menu", "text": "More actions for Flow" },
+    "item": { "sel": ".menu-item", "in": "menu" },
+    "item-text": { "sel": "span.text", "in": "item" },
+    "item-last": { "sel": ".menu-item", "nth": -1, "in": "menu" }
+  },
+  "parts": {
+    "popover": { "radius": "16", "bg": "#ffffff", "shadow": "yes" },
+    "menu": { "pad": "4" },
+    "item": { "x": 4, "h": 32, "radius": "12", "pad": "4 8", "font": "13/20 400", "color": "#101010" },
+    "item-text": { "font": "13/20 400", "color": "#101010" },
+    "item-last": { "h": 32, "radius": "12", "color": "#ce1f18" }
+  }
+}

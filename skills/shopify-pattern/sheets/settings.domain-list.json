@@ -1,0 +1,73 @@
+{
+  "entry": "settings.domain-list",
+  "admin": "Settings > Domains",
+  "path": "/settings/domains",
+  "adminSteps": "Open the path with one domain on the store. Header buttons: Connect existing and Transfer domain are ghost buttons in div.actions; the third, Buy new domain, sits at the right end of the page header (117 x 28) but its colours could not be probed (not measured). The row's action icons show tooltips (Preview domain, Change myshopify.com domain); hover not measured.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "section",
+  "rootWidth": 784,
+  "locate": {
+    "section": "div.Polaris-Layout__Section",
+    "actions": "div.actions",
+    "connect": { "sel": "button.button", "in": "actions" },
+    "transfer": { "sel": "button.button", "nth": 1, "in": "actions" },
+    "table": { "sel": "div.Polaris-Table", "in": "section" },
+    "head-domain": { "sel": "div", "text": "^Domain$", "in": "section" },
+    "head-status": { "sel": "div", "text": "^Status$", "in": "section" },
+    "row": { "sel": "div.Polaris-Table-TableCell", "in": "section" },
+    "icon-tile": { "sel": "[class*=\"_IconTile_\"]", "in": "section" },
+    "domain-name": { "sel": "a.Polaris-Link", "in": "section" },
+    "primary-badge": { "sel": "div.Polaris-Box", "nth": 1, "in": "section" },
+    "primary-badge-text": { "sel": "span.text", "text": "", "in": "primary-badge" },
+    "connected-badge": { "sel": "div.badge", "in": "section" },
+    "row-action": { "sel": "a.Polaris-Button", "in": "section" }
+  },
+  "parts": {
+    "connect": {
+      "w": 119,
+      "h": 28,
+      "font": "12/16 500",
+      "color": "#101010",
+      "bg": "none",
+      "radius": "9999",
+      "pad": "6 12"
+    },
+    "transfer": {
+      "w": 116,
+      "h": 28,
+      "font": "12/16 500",
+      "color": "#101010",
+      "bg": "none",
+      "radius": "9999",
+      "pad": "6 12"
+    },
+    "table": { "x": 10, "w": 764, "bg": "#ffffff" },
+    "head-domain": {
+      "x": 10,
+      "h": 31,
+      "font": "12/18 500",
+      "color": "#4a4a4a",
+      "bg": "#f7f7f7",
+      "radius": "10 0 0 10",
+      "pad": "6 6 6 8"
+    },
+    "head-status": { "x": 620, "w": 86, "h": 31, "font": "12/18 500", "color": "#4a4a4a", "bg": "#f7f7f7", "pad": "6" },
+    "row": { "h": 37, "bg": "#ffffff" },
+    "icon-tile": { "x": 18, "w": 24, "h": 24, "radius": "8", "pad": "4", "bg": "#ffffff" },
+    "domain-name": { "x": 50, "h": 15, "color": "#101010" },
+    "primary-badge": { "w": 61, "h": 25, "border": "1 #d0d0d0", "radius": "8", "pad": "2 8" },
+    "primary-badge-text": { "font": "12/18 400", "color": "#4a4a4a" },
+    "connected-badge": {
+      "w": 74,
+      "h": 20,
+      "font": "12/18 500",
+      "color": "#214b03",
+      "bg": "#b3f782",
+      "radius": "8",
+      "pad": "1 6",
+      "gap": "4"
+    },
+    "row-action": { "w": 28, "h": 28, "radius": "9999", "pad": "4", "right": 42 }
+  }
+}

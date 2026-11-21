@@ -1,0 +1,19 @@
+{
+  "entry": "chrome.top-bar",
+  "admin": "Home, top of the collapsed rail",
+  "path": "",
+  "adminSteps": "At 1281 wide there is no top bar: the rail head holds the logo (it is the Expand navigation button when collapsed) and a Search button. Values from the accessibility tree and probe; the probe read opacity 0 on both during an intro animation, so opacity is left out.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "rail",
+  "rootWidth": 60,
+  "locate": {
+    "rail": "nav[class*=\"_Navigation_\"]",
+    "logo": { "sel": "button", "text": "Expand navigation" },
+    "search": { "sel": "button", "text": "^Search$" }
+  },
+  "parts": {
+    "logo": { "x": 18, "w": 24, "h": 22 },
+    "search": { "x": 10, "w": 32, "h": 36, "color": "#a6a6a6" }
+  }
+}

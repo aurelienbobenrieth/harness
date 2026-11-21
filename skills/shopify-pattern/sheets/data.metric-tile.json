@@ -1,0 +1,27 @@
+{
+  "entry": "data.metric-tile",
+  "admin": "Analytics > overview",
+  "path": "/analytics",
+  "adminSteps": "Open Analytics; the overview grid shows metric tiles. Store has no sales: value empty and no sparkline drawn (vis box 80x20 only). Heading underline is dotted (measured 1.46px on a scaled screen, probe prints 1). Tile shadow computes to none on the section and its wrapper.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "tile",
+  "rootWidth": 283,
+  "locate": {
+    "row": "[class*=\"_MetricsGr\"]",
+    "tile": { "sel": "section.card", "in": "row" },
+    "tile2": { "sel": "section.card", "in": "row", "nth": 1 },
+    "heading": { "sel": "span.heading", "in": "tile" },
+    "summary": { "sel": "div.summary", "in": "tile" },
+    "spark": { "sel": "div.visualization-wrapper", "in": "tile" },
+    "link": { "sel": "div.small-card-link", "in": "tile" }
+  },
+  "parts": {
+    "tile": { "w": 283, "h": 74, "bg": "#ffffff", "radius": "20", "pad": "16" },
+    "tile2": { "x": 299, "w": 283 },
+    "link": { "w": 283, "h": 74 },
+    "heading": { "x": 16, "font": "13/16 600", "color": "#101010", "border": "1 #dddddd" },
+    "summary": { "x": 16, "h": 20, "font": "13/20 400" },
+    "spark": { "w": 80, "h": 20, "right": 16 }
+  }
+}

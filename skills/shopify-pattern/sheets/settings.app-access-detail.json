@@ -1,0 +1,26 @@
+{
+  "entry": "settings.app-access-detail",
+  "admin": "Settings > Apps > View details (Flow, a public app by Shopify)",
+  "path": "/settings/apps/app_installations/app/flow",
+  "adminSteps": "Open the app's View details page. This public app shows no Security section and no banner, and the table section is titled 'Activity and permissions'; the header actions (View activity, Uninstall app, Open app) were not found in the DOM and are not measured. Root is the first card (the permissions table). Privacy groups (Customers, Staff and contributors) are collapsible 44px headers; App history is the last card.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "card",
+  "rootWidth": 784,
+  "locate": {
+    "card": { "sel": "div.card", "nth": 0 },
+    "section-title": { "sel": "h2.heading", "nth": 0 },
+    "privacy-title": { "sel": "h2.heading", "nth": 1 },
+    "head-area": { "sel": "div.Polaris-Table-TableHeadingCell", "nth": 0 },
+    "head-view": { "sel": "div.Polaris-Table-TableHeadingCell", "nth": 1 },
+    "sub": { "sel": "p.subheading" }
+  },
+  "parts": {
+    "card": { "w": 784, "h": 112, "radius": "20", "bg": "#ffffff", "shadow": "yes" },
+    "section-title": { "x": 0, "font": "15/22 500", "color": "#101010" },
+    "privacy-title": { "x": 0, "font": "15/22 500", "color": "#101010" },
+    "head-area": { "x": 10, "h": 31, "bg": "#f7f7f7", "radius": "10 0 0 10", "font": "12/18 500", "color": "#4a4a4a" },
+    "head-view": { "w": 48, "h": 31, "bg": "#f7f7f7", "pad": "6", "font": "12/18 500", "color": "#4a4a4a" },
+    "sub": { "x": 0, "font": "13/20 400", "color": "#4a4a4a" }
+  }
+}

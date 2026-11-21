@@ -1,0 +1,24 @@
+{
+  "entry": "feedback.not-found",
+  "admin": "/store/<store>/doesnotexist",
+  "path": "/doesnotexist",
+  "adminSteps": "Open the admin store URL plus /doesnotexist and wait about 2 s past the blank first frame. The title and body are shadow-DOM h2 and p inside s-internal hosts. The panel is the illustration row, not the white page card.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "panel",
+  "rootWidth": 728,
+  "locate": {
+    "panel": { "sel": "[class*=\"_PageIllustration_\"]" },
+    "illustration": { "sel": "img", "in": "panel" },
+    "text-column": { "sel": "[class*=\"_TextContainer_\"]", "in": "panel" },
+    "title": { "sel": "h2", "in": "text-column" },
+    "body": { "sel": "p", "in": "text-column" }
+  },
+  "parts": {
+    "panel": { "pad": "20", "gap": "20" },
+    "illustration": { "x": 20, "w": 240, "h": 240 },
+    "text-column": { "x": 280, "w": 428 },
+    "title": { "font": "29/36 500", "color": "#101010" },
+    "body": { "font": "15/22 400", "color": "#4a4a4a" }
+  }
+}

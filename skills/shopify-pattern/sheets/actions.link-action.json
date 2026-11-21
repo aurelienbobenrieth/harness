@@ -1,0 +1,25 @@
+{
+  "entry": "actions.link-action",
+  "admin": "Orders > #1044 (View map)",
+  "path": "/orders/6649667223691",
+  "adminSteps": "Open one order; the View map plain link in the shipping address card. Hover, focus and pressed not reproducible in the preview tab.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "link",
+  "rootWidth": 63,
+  "locate": {
+    "link": {
+      "sel": ".button.variant-plain",
+      "nth": 0
+    }
+  },
+  "parts": {
+    "link": {
+      "h": 20,
+      "pad": "0 2",
+      "font": "13/20 400",
+      "color": "#1650d0",
+      "bg": "none"
+    }
+  }
+}

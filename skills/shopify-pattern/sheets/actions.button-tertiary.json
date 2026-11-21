@@ -1,0 +1,27 @@
+{
+  "entry": "actions.button-tertiary",
+  "admin": "Orders > #1044 (Add note)",
+  "path": "/orders/6649667223691",
+  "adminSteps": "Open one order; the Add note icon button in the notes card header. Hover and tooltip not reproducible in the preview tab.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "tertiary",
+  "rootWidth": 28,
+  "locate": {
+    "tertiary": {
+      "sel": ".button.variant-tertiary.icon-only",
+      "nth": 0
+    }
+  },
+  "parts": {
+    "tertiary": {
+      "w": 28,
+      "h": 28,
+      "pad": "4",
+      "radius": "9999",
+      "bg": "none",
+      "color": "#606060",
+      "font": "12/16 500"
+    }
+  }
+}

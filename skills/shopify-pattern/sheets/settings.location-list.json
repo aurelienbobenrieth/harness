@@ -1,0 +1,50 @@
+{
+  "entry": "settings.location-list",
+  "admin": "Settings > Locations",
+  "path": "/settings/locations",
+  "adminSteps": "Open the page. Default-location listbox not opened; hover not measured. Heading text of each group is slotted and was not read.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "layout",
+  "rootWidth": 784,
+  "locate": {
+    "layout": ".Polaris-Layout__Section",
+    "header": { "sel": ".header-wrapper", "in": "layout" },
+    "heading": { "sel": "h2", "in": "layout" },
+    "table-card": { "sel": ".card", "in": "layout" },
+    "viewbar": { "sel": ".Polaris-Box", "in": "layout" },
+    "th": { "sel": ".Polaris-Table-TableHeadingCell", "in": "layout" },
+    "row": { "sel": ".Polaris-Table-TableCell", "in": "layout" },
+    "name": { "sel": "a", "in": "row" },
+    "address": { "sel": "p", "in": "row" },
+    "badge": { "sel": ".badge", "in": "layout" },
+    "default-heading": { "sel": "h2", "nth": 1, "in": "layout" },
+    "default-card": { "sel": "section.section", "nth": 2, "in": "layout" },
+    "default-name": { "text": "^Shop location$", "nth": 1, "in": "layout" },
+    "app-row": { "sel": ".AppCardStyleProvider", "in": "layout" },
+    "app-open": { "sel": "button.Polaris-Button", "text": "Open", "in": "app-row" }
+  },
+  "parts": {
+    "header": { "h": 60, "gap": "8 16", "pad": "16 0 0" },
+    "heading": { "font": "15/22 500", "color": "#101010" },
+    "table-card": { "bg": "#ffffff", "radius": "20", "shadow": "yes" },
+    "viewbar": { "h": 40, "pad": "6 10" },
+    "th": { "h": 31, "bg": "#f7f7f7", "font": "12/18 500", "color": "#4a4a4a", "radius": "10 0 0 10" },
+    "row": { "h": 52, "bg": "#ffffff" },
+    "name": { "x": 18, "font": "13/20 400", "color": "#101010" },
+    "address": { "font": "13/20 400", "color": "#4a4a4a" },
+    "badge": { "h": 20, "bg": "#8ce1f8", "color": "#01596f", "font": "12/18 500", "pad": "1 6", "radius": "8" },
+    "default-heading": { "font": "15/22 500", "color": "#101010" },
+    "default-card": { "h": 72, "bg": "#ffffff", "radius": "20", "shadow": "yes" },
+    "default-name": { "x": 48, "font": "13/20 400", "color": "#101010" },
+    "app-open": {
+      "w": 55,
+      "h": 28,
+      "bg": "#ebebeb",
+      "radius": "9999",
+      "pad": "6 12",
+      "font": "13/20 400",
+      "color": "#101010"
+    }
+  }
+}

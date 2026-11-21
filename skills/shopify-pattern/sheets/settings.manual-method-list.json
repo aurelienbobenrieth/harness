@@ -1,0 +1,50 @@
+{
+  "entry": "settings.manual-method-list",
+  "admin": "Settings > Payments > Manual payment methods",
+  "path": "/settings/payments",
+  "adminSteps": "Open Payments; the section 'Manual payment methods' is the third s-query-container with a heading (after Shopify Payments, More ways to pay). Add button opens the modal via element.click(). Heading shows no description line on this store (the entry says one-line description). Empty-list dashed card not reached (the store has one method, 'Random payment method'). Row hover not measured.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "group",
+  "rootWidth": 784,
+  "locate": {
+    "group": { "sel": "s-query-container", "nth": 2 },
+    "heading": { "sel": "h2", "in": "group" },
+    "add": { "sel": "button.button", "text": "Add manual", "in": "group" },
+    "add-fill": { "sel": "span.fill", "in": "add" },
+    "card": { "sel": "div[class*=\"_SettingsList_\"]", "in": "group" },
+    "row": { "sel": "div[class*=\"_ListItem_\"]", "in": "card" },
+    "name": { "sel": "span", "text": "Random", "in": "row" },
+    "status": { "sel": "span.text", "in": "row", "nth": -1 },
+    "chevron": { "sel": "s-internal-icon", "in": "row", "nth": -1 }
+  },
+  "parts": {
+    "heading": { "x": 0, "font": "15/22 500", "color": "#101010" },
+    "add": { "right": 0, "h": 28, "font": "12/16 500", "radius": "9999", "pad": "4 12 4 6" },
+    "add-fill": { "bg": "#ebebeb", "radius": "9999px" },
+    "card": { "x": 0, "right": 0 },
+    "row": { "h": 52, "bg": "#ffffff" },
+    "name": { "x": 16, "font": "13/20 400", "color": "#101010" },
+    "status": { "font": "13/20 400", "color": "#4a4a4a" },
+    "chevron": { "right": 16, "w": 20, "h": 20 }
+  },
+  "states": {
+    "add-modal": {
+      "adminSteps": "Click 'Add manual payment method' with element.click(); Save is aria-disabled until a method is chosen. Cancel (or leaving the page) closes without saving.",
+      "locate": {
+        "modal": "div.Polaris-Modal-Dialog__Modal",
+        "title": { "sel": "h2", "in": "modal" },
+        "label": { "sel": "label.label", "in": "modal" },
+        "select": { "sel": "div.select", "in": "modal" },
+        "save": { "sel": "button.Polaris-Button", "in": "modal", "nth": -1 }
+      },
+      "parts": {
+        "modal": { "w": 620, "bg": "#ffffff", "radius": "24", "shadow": "yes" },
+        "title": { "x": 20, "font": "15/22 500", "color": "#101010" },
+        "label": { "x": 20, "font": "13/20 500", "color": "#101010" },
+        "select": { "x": 20, "right": 20, "h": 30, "bg": "#ffffff", "radius": "12", "pad": "5 8 5 12" },
+        "save": { "right": 16, "w": 52, "h": 28, "radius": "9999", "color": "#ffffff", "bg": "#000000/13" }
+      }
+    }
+  }
+}

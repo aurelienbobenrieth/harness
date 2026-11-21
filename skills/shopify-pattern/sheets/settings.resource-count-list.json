@@ -1,0 +1,51 @@
+{
+  "entry": "settings.resource-count-list",
+  "admin": "Settings > Metafields and metaobjects",
+  "path": "/settings/custom_data",
+  "adminSteps": "Open the path. The count is a bare text node of the row's inline stack (justify space-between), right-aligned at the link's right edge (x 825 from the root's left), not an element: the probe cannot locate it, so it is described in the entry-level numbers only (13/20 400, #101010). Table header cells are 31 high (bg #f7f7f7 as in other admin tables) but were not probed. Hover not measured.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "root",
+  "rootWidth": 962,
+  "locate": {
+    "root": "[class*=\"_BodyMarkupContainer_\"]",
+    "heading": { "sel": "h2.heading", "in": "root" },
+    "help": { "sel": "span.text", "in": "root" },
+    "row": { "sel": "div[class*=\"_ListItem_\"]", "in": "root" },
+    "row-next": { "sel": "div[class*=\"_ListItem_\"]", "nth": 1, "in": "root" },
+    "row-icon": { "sel": "div[class*=\"_SettingsItem__inert_\"]", "in": "root" },
+    "row-link": { "sel": "a[class*=\"_SettingsItem__clickable\"]", "in": "root" },
+    "chevron": { "sel": "div[class*=\"_SettingsItem__rightIcon\"]", "in": "root" },
+    "divider": { "sel": "hr", "in": "root" },
+    "definitions-heading": { "sel": "h2.heading", "nth": 1, "in": "root" },
+    "add-definition": { "sel": "a.button", "nth": 1, "in": "root" },
+    "search": { "sel": "div.Polaris-Filters__SearchField", "in": "root" },
+    "table-cell": { "sel": "div.Polaris-Table-TableCell", "in": "root" },
+    "definition-link": { "sel": "a[class*=\"_Link_\"]", "in": "root" }
+  },
+  "parts": {
+    "heading": { "x": 89, "font": "15/22 500", "color": "#101010" },
+    "help": { "x": 89, "font": "13/20 400", "color": "#4a4a4a" },
+    "row": { "x": 89, "w": 784, "h": 48, "bg": "#ffffff" },
+    "row-next": { "h": 44, "bg": "#ffffff" },
+    "row-icon": { "x": 105, "w": 20, "h": 20 },
+    "row-link": { "x": 137, "w": 688, "h": 20, "font": "13/20 400", "color": "#101010" },
+    "chevron": { "w": 20, "h": 20, "right": 105 },
+    "divider": { "x": 137, "w": 720, "h": 1, "border": "1 #f2f2f2" },
+    "definitions-heading": { "x": 89, "font": "15/22 500", "color": "#101010" },
+    "add-definition": {
+      "w": 103,
+      "h": 28,
+      "right": 89,
+      "font": "12/16 500",
+      "color": "#101010",
+      "bg": "none",
+      "radius": "9999",
+      "pad": "6 12",
+      "gap": "2"
+    },
+    "search": { "x": 97, "w": 720, "h": 28 },
+    "table-cell": { "x": 99, "w": 331, "h": 32, "bg": "#ffffff" },
+    "definition-link": { "x": 107, "h": 20, "font": "13/20 400", "color": "#101010" }
+  }
+}

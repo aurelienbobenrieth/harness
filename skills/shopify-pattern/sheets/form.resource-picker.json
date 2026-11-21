@@ -1,0 +1,25 @@
+{
+  "entry": "form.resource-picker",
+  "admin": "Discounts > Create product discount > Applies to",
+  "path": "/discounts/new/amount-off-product",
+  "adminSteps": "Open the page; Applies to defaults to Specific collections, which shows the search row. Picker modal and picked rows not measured (needs a write-free pick; modal not opened). Error state needs a save, not reached.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "grid",
+  "rootWidth": 728,
+  "locate": {
+    "grid": { "sel": "div.Polaris-InlineGrid", "nth": 1 },
+    "applies-select": { "sel": "div.select", "in": "grid" },
+    "purchase-select": { "sel": "div.select", "in": "grid", "nth": 1 },
+    "connected": { "sel": "button", "text": "Browse collections", "closest": "div.Polaris-Connected" },
+    "search": { "sel": "div.Polaris-TextField", "in": "connected" },
+    "browse": { "sel": "button", "text": "Browse collections" }
+  },
+  "parts": {
+    "applies-select": { "x": 0, "w": 360, "h": 30, "radius": "12" },
+    "purchase-select": { "x": 368, "w": 360, "h": 30, "radius": "12" },
+    "connected": { "gap": "4", "h": 32 },
+    "search": { "x": 0, "w": 654, "h": 30 },
+    "browse": { "w": 70, "h": 32, "bg": "#ebebeb", "radius": "9999", "pad": "6 12", "right": 0 }
+  }
+}

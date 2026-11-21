@@ -1,0 +1,24 @@
+{
+  "entry": "settings.collapsible-section",
+  "admin": "Settings > Shipping and delivery",
+  "path": "/settings/shipping",
+  "adminSteps": "Open Settings > Shipping and delivery. Measured the collapsed 'Delivery estimates' row (aria-expanded false). 'Shipping options' is open (aria-expanded true); opened-state body and the Packages data state not measured. Hover not measured. Title font comes from the button (13.3/normal 400), the visible weight was not resolved.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "item",
+  "rootWidth": 784,
+  "locate": {
+    "item": { "sel": "[class*=\"_ItemWrapper_\"]", "nth": 1 },
+    "header": { "sel": "[class*=\"_HeaderContent_\"]", "in": "item" },
+    "toggle": { "sel": "button[class*=\"_HeaderToggle_\"]", "in": "item" },
+    "description": { "sel": "[class*=\"_DescriptionContent_\"]", "in": "item" },
+    "chevron": { "sel": "[class*=\"_ChevronIcon_\"]", "in": "item" }
+  },
+  "parts": {
+    "item": { "w": 784, "pad": "0 16" },
+    "header": { "x": 16, "h": 41, "right": 16 },
+    "toggle": { "x": 16, "h": 20 },
+    "description": { "x": 16, "h": 20, "font": "13/20 400", "color": "#101010" },
+    "chevron": { "w": 20, "h": 20, "right": 16 }
+  }
+}

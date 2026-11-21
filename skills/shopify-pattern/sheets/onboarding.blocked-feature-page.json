@@ -1,0 +1,29 @@
+{
+  "entry": "onboarding.blocked-feature-page",
+  "admin": "Growth > Autopilot",
+  "path": "/growth/autopilot",
+  "adminSteps": "Open /growth/autopilot and wait for the load to finish (an early measure reads zero sizes). The store has a password, so the banner shows and lists \"remove your store password\" as the missing step. The banner text sits in a warning surface (div.banner); the action \"Set up with Sidekick\" is a text-link button, not a filled pill. Sections below the banner (Summary, Activity, Configuration) not measured except the summary lead.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "root",
+  "rootWidth": 966,
+  "locate": {
+    "root": "[class*=\"_SetupWarningBanner_\"]",
+    "surface": { "sel": "div.banner", "in": "root" },
+    "icon": { "sel": "div.icon", "in": "root" },
+    "title": { "sel": "h2.heading", "in": "root" },
+    "body": { "sel": "p.paragraph", "in": "root" },
+    "button": { "sel": "button.link", "in": "root" },
+    "summary": "[class*=\"_SummaryLead_\"]",
+    "summary-bold": "[class*=\"_OnboardingSummaryEmphasis_\"]"
+  },
+  "parts": {
+    "surface": { "h": 72, "bg": "#fff5c5", "radius": "20", "shadow": "none" },
+    "icon": { "x": 16, "w": 20, "h": 20 },
+    "title": { "x": 42, "font": "13/20 500", "color": "#312500" },
+    "body": { "x": 16, "font": "13/20 400", "color": "#574100" },
+    "button": { "h": 20, "font": "13/20 400", "color": "#574100", "bg": "none", "radius": "4", "pad": "0" },
+    "summary": { "x": 0, "font": "29/36 500", "color": "#101010" },
+    "summary-bold": { "font": "29/36 700" }
+  }
+}

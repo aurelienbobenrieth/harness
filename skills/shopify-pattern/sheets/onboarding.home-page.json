@@ -1,0 +1,34 @@
+{
+  "entry": "onboarding.home-page",
+  "admin": "Home",
+  "path": "/",
+  "adminSteps": "Open Home and wait for the feed. The 'Launch your online store' pill is an s-internal-button with a 0x0 box in the shadow tree: not measured. Store preview chip 'Private' reads opacity 0 (animates in or shows on hover): hover not measured.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "main",
+  "rootWidth": 1217,
+  "locate": {
+    "main": "main",
+    "feed": "ul[aria-label=\"Home feed\"]",
+    "title-line": { "sel": "[class*=\"_TitleLine_\"]" },
+    "prompt": { "sel": "label[class*=\"_SidekickInput_\"]" },
+    "prompt-field": { "sel": "textarea" },
+    "preview": { "sel": "[class*=\"_ThemeCardInner_\"]" },
+    "preview-chip": { "sel": "[class*=\"_ThemeBadge_\"]" },
+    "pill": { "sel": "[class*=\"_MainPill_\"]" },
+    "pill-label": { "sel": "[class*=\"_PillLabel_\"]" },
+    "pill-count": { "sel": "[class*=\"_NumberPill_\"]" }
+  },
+  "parts": {
+    "main": { "bg": "#ffffff", "radius": "16" },
+    "feed": { "w": 936, "gap": "16" },
+    "title-line": { "font": "28/33.6 500", "color": "#101010" },
+    "prompt": { "w": 596, "h": 56 },
+    "prompt-field": { "w": 596, "h": 60, "font": "13/20 400", "pad": "12 0 8 2" },
+    "preview": { "w": 320, "h": 183, "bg": "#ffffff", "radius": "20", "shadow": "yes" },
+    "preview-chip": { "w": 73, "h": 28, "font": "12/12 500", "color": "#ffffff", "radius": "10", "pad": "6 9 6 6" },
+    "pill": { "w": 138, "h": 36, "bg": "#ffffff", "radius": "999", "pad": "6 6 6 12" },
+    "pill-label": { "font": "13/20 550", "color": "#6f6f6f" },
+    "pill-count": { "w": 33, "h": 24, "bg": "#fafafa", "radius": "12" }
+  }
+}

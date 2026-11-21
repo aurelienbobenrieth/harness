@@ -1,0 +1,30 @@
+{
+  "entry": "form.create-page",
+  "admin": "Discounts > Create discount",
+  "path": "/discounts/new/amount-off-product?discountType=order&method=code",
+  "adminSteps": "open the path; the page opens clean. Root is the body h1 (main column left edge). Back circle sits left of the root in the title bar, so only its size is kept.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "title",
+  "rootWidth": 760,
+  "locate": {
+    "title": { "sel": "h1", "nth": -1 },
+    "back-fill": { "sel": "span.decoration", "in": "back" },
+    "back": { "sel": "span.breadcrumb-back-icon" },
+    "crumb-parent": { "sel": "span.breadcrumb-icon-label" },
+    "crumb": { "sel": "h1", "nth": 0 },
+    "heading": { "sel": "h2", "nth": 3 },
+    "card": { "sel": "div.card", "nth": 5 },
+    "heading-next": { "sel": "h2", "nth": 4 },
+    "card-next": { "sel": "div.card", "nth": 6 }
+  },
+  "parts": {
+    "back": { "w": 28, "h": 28 },
+    "crumb-parent": { "font": "13/20 500", "color": "#4a4a4a" },
+    "crumb": { "font": "13/28 500", "color": "#101010" },
+    "title": { "x": 0, "h": 32, "font": "26/32 500", "color": "#101010" },
+    "heading": { "x": 0, "font": "15/22 500", "color": "#101010" },
+    "card": { "x": 0, "w": 760, "bg": "#ffffff", "radius": "20", "pad": "16", "shadow": "yes" },
+    "card-next": { "x": 0, "w": 760, "bg": "#ffffff", "radius": "20", "pad": "16", "shadow": "yes" }
+  }
+}

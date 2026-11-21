@@ -1,0 +1,25 @@
+{
+  "entry": "detail.facts-list",
+  "admin": "Discounts > SPIKE-3 > aside Details",
+  "path": "/discounts/1732038688907",
+  "adminSteps": "Open the discount (first in the list). Root is the aside's first section (code). Details has 8 bullets (li, 20 high, step 24, x 16); the first bullet is the 18th visible li on the page, so the locator is by index and breaks if the nav changes. Type section heading 13/20 500.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "aside",
+  "rootWidth": 280,
+  "locate": {
+    "aside": { "sel": "section", "nth": 0 },
+    "type": { "sel": "section", "nth": 1 },
+    "type-heading": { "sel": "h2", "in": "type" },
+    "details": { "sel": "section", "nth": 2 },
+    "details-heading": { "sel": "h2", "in": "details" },
+    "bullet": { "sel": "li", "nth": 17 },
+    "bullet-next": { "sel": "li", "nth": 18 }
+  },
+  "parts": {
+    "type-heading": { "x": 0, "h": 20, "font": "13/20 500", "color": "#101010" },
+    "details-heading": { "x": 0, "h": 20, "font": "13/20 500", "color": "#101010" },
+    "bullet": { "x": 16, "h": 20, "font": "13/20 400", "color": "#101010" },
+    "bullet-next": { "x": 16, "h": 20, "font": "13/20 400", "color": "#101010" }
+  }
+}

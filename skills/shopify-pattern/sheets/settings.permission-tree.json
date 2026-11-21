@@ -1,0 +1,41 @@
+{
+  "entry": "settings.permission-tree",
+  "admin": "Settings > Users > Roles > a custom role (role in use)",
+  "path": "/settings/organization-account/roles/1054015884",
+  "adminSteps": "Roles list at /settings/organization-account/roles; open a '[Custom] ...' role. This role has 1 assigned user, so a banner reads '1 user is assigned this role...' with a 'View user' link, the Role category select is disabled and every permission checkbox is disabled (the entry's locked state). Areas are accordion headers (_Header_) with a granted count 'n/m' and are collapsed or open independently (Home, Drafts, Products open by default). The Name/Description counters card and the read-only user-page tree were not seen: this page shows no Name field. Permission row labels sit outside the StorePermissionSelector box in the DOM so they were not measured beyond the scoped-checkbox help line; a dependent permission ('Approve app charges') is indented 28 px from its parent (x 28 vs 0). Sub-headings and the ban icon not measured. Role-category select values are the disabled style.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "tree",
+  "rootWidth": 752,
+  "locate": {
+    "tree": "div.StorePermissionSelector",
+    "search": { "sel": "div.Polaris-TextField", "in": "tree" },
+    "header": { "sel": "div[class*=_Header_]", "in": "tree", "nth": 1 },
+    "area-icon": { "sel": "span[class*=_Icon_]", "in": "header" },
+    "area-title": { "sel": "p.paragraph", "in": "header" },
+    "area-count": { "sel": "strong.text", "in": "header" },
+    "scoped-help": { "sel": "div", "text": "^Orders, Drafts", "nth": 0 }
+  },
+  "parts": {
+    "tree": { "w": 752 },
+    "search": { "x": 9, "right": 9, "h": 32 },
+    "header": { "h": 45, "bg": "#f7f7f7", "border": "1 #f2f2f2" },
+    "area-icon": { "x": 13, "w": 20, "h": 20 },
+    "area-title": { "x": 41, "font": "13/20 500", "color": "#101010" },
+    "area-count": { "font": "13/20 500", "color": "#4a4a4a" }
+  },
+  "states": {
+    "locked-role": {
+      "adminSteps": "Same role page: the role has an assigned user, so the controls are disabled (muted text #a6a6a6).",
+      "locate": {
+        "tree": "div.StorePermissionSelector",
+        "category": { "sel": "button", "text": "Role category", "nth": 0 },
+        "scoped-help": { "sel": "div", "text": "^Orders, Drafts", "nth": 0 }
+      },
+      "parts": {
+        "category": { "right": 0, "h": 32, "bg": "#000000/3", "color": "#a6a6a6", "radius": "9999", "pad": "6 6 6 12" },
+        "scoped-help": { "x": 25, "font": "12/16 400", "color": "#a6a6a6", "pad": "0 0 0 24" }
+      }
+    }
+  }
+}

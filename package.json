@@ -34,6 +34,8 @@
     "shopify:sources": "node scripts/check-shopify-sources.mjs",
     "shopify:plan": "node scripts/shopify-plan.mjs",
     "test:shopify-policy": "node --test scripts/shopify-policy.test.mjs",
+    "shopify-pattern:index": "node scripts/shopify-pattern-index.mjs",
+    "test:shopify-pattern": "node --test scripts/shopify-pattern.test.mjs",
     "typecheck": "pnpm --recursive typecheck",
     "test:unit": "vp test",
     "test:coverage": "vitest run --coverage",

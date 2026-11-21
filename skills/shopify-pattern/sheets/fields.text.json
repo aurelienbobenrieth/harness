@@ -1,0 +1,25 @@
+{
+  "entry": "fields.text",
+  "admin": "Discounts > Create discount > Amount off products",
+  "path": "/discounts/new/amount-off-product",
+  "adminSteps": "Open the page; the Discount code field is first, with 'Generate random code' in the label row.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "stack",
+  "rootWidth": 728,
+  "locate": {
+    "stack": { "sel": "div.internal-text-field", "nth": 0, "up": 2, "closest": ".Polaris-BlockStack" },
+    "control": { "sel": "div.input-wrapper", "in": "stack" },
+    "help": { "sel": "div.field-details", "in": "stack" }
+  },
+  "parts": {
+    "control": { "w": 728, "h": 30, "bg": "#ffffff", "radius": "12", "pad": "0 12", "shadow": "yes" },
+    "help": {
+      "x": 0,
+      "h": 18,
+      "font": "12/18 400",
+      "color": "#4a4a4a",
+      "text": "Customers must enter this code at checkout."
+    }
+  }
+}

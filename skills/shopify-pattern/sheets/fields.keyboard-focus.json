@@ -1,0 +1,17 @@
+{
+  "entry": "fields.keyboard-focus",
+  "admin": "Discounts > Create (Amount off products, code)",
+  "path": "/discounts/new/amount-off-product?method=code",
+  "adminSteps": "Focus the 'Limit number of times this discount can be used in total' checkbox input (input.focus() in an expression; :focus-visible matches). The ring is an outline on the visual sibling div.checkbox, not on the input: solid 2px rgb(80,131,240) = #5083f0, offset 2 (computed outline-offset 1.46 on a 0.73 scaled page), unfocused outline none. The native input's own outline (rgb(229,151,0) auto) is not drawn. The probe does not print outline, so the ring is compared by eye or by reading getComputedStyle(div.checkbox).outline.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "choice",
+  "rootWidth": 357,
+  "locate": {
+    "choice": { "sel": "input[name=usageLimits]", "closest": "label" },
+    "box": { "sel": "div.checkbox", "in": "choice" }
+  },
+  "parts": {
+    "box": { "x": 0, "w": 16, "h": 16, "radius": "5", "shadow": "yes" }
+  }
+}

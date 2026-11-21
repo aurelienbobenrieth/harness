@@ -1,0 +1,22 @@
+{
+  "entry": "settings.inherited-overrides",
+  "admin": "Markets > one market",
+  "path": "/markets/34776449163",
+  "adminSteps": "Open a region market. Root is the first 'Inherited' row (li _InheritedSetting_): flat rows of icon, label, store default, value; rows are 736 wide, 40 high, no gap beyond padding. The Customized card, the plus/minus circles, the mini graph and the headings sit in shadow DOM or were not located; hover not measured. The aside 'More settings' link rows are a._RelatedSettingsItem, 280 wide, 51 high.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "row",
+  "rootWidth": 736,
+  "locate": {
+    "row": { "sel": "li[class*=\"_InheritedSetting_\"]", "nth": 0 },
+    "row-next": { "sel": "li[class*=\"_InheritedSetting_\"]", "nth": 1 },
+    "icon": { "sel": "s-internal-icon", "in": "row", "nth": 0 },
+    "related": { "sel": "a[class*=\"_RelatedSettingsItem\"]", "nth": 0 }
+  },
+  "parts": {
+    "row": { "w": 736, "h": 40, "pad": "4 0 4 4", "radius": "8", "gap": "4" },
+    "row-next": { "h": 40 },
+    "icon": { "x": 4, "w": 20, "h": 20 },
+    "related": { "w": 280, "h": 51, "pad": "6 12", "border": "1 #f2f2f2" }
+  }
+}

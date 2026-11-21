@@ -1,0 +1,76 @@
+{
+  "entry": "settings.installed-apps-table",
+  "admin": "Settings > Apps",
+  "path": "/settings/apps",
+  "adminSteps": "Open the page (Installed view). Root is the _SettingsTable_ block that holds the pill row and the table. Header actions (Develop apps, Shopify App Store) are in shadow DOM and were not measured. Row menu: element.click() on the first 'More actions for' button; Uninstall: element.click() on its menu-item button; the dialog was cancelled after measuring.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "root",
+  "rootWidth": 784,
+  "locate": {
+    "root": { "sel": "[class*=\"_SettingsTable_\"]" },
+    "tab": { "sel": "button.Polaris-Tabs__Tab" },
+    "search": { "sel": "button", "text": "Search and filter results" },
+    "sort": { "sel": "button", "text": "Sort the results" },
+    "head-band": { "sel": "div.Polaris-Table-TableHeadingCell", "nth": 0 },
+    "head-label": { "sel": "div.Polaris-Table-TableHeadingCell", "nth": 1 },
+    "row": { "sel": "div.Polaris-Table-TableCell", "in": "root", "nth": 3 },
+    "icon": { "sel": "div.thumbnail", "in": "root" },
+    "name": { "sel": "a.link", "in": "root" },
+    "by": { "sel": "span.text", "in": "root", "nth": 0 },
+    "activity": { "sel": "span.text", "in": "root", "nth": 1 },
+    "more": { "sel": "button", "text": "More actions for" }
+  },
+  "parts": {
+    "tab": { "x": 12, "w": 73, "h": 28, "pad": "4 12", "radius": "9999", "bg": "#000000/13", "color": "#101010" },
+    "search": { "w": 28, "h": 28, "right": 44, "radius": "9999" },
+    "sort": { "w": 28, "h": 28, "right": 8, "radius": "9999" },
+    "head-band": {
+      "h": 31,
+      "pad": "6 6 6 8",
+      "radius": "10 0 0 10",
+      "bg": "#f7f7f7",
+      "font": "12/18 500",
+      "color": "#4a4a4a"
+    },
+    "head-label": { "h": 31, "pad": "6", "bg": "#f7f7f7", "font": "12/18 500", "color": "#4a4a4a" },
+    "row": { "h": 53, "bg": "#ffffff", "border": "1 #f2f2f2" },
+    "icon": { "x": 18, "w": 24, "h": 24 },
+    "name": { "x": 54, "font": "13/20 400", "color": "#101010" },
+    "by": { "x": 54, "font": "13/20 400", "color": "#4a4a4a" },
+    "activity": { "font": "13/20 400", "color": "#4a4a4a" },
+    "more": { "w": 28, "h": 28, "right": 18, "radius": "9999", "pad": "4", "color": "#4a4a4a" }
+  },
+  "states": {
+    "menu": {
+      "adminSteps": "Click the first row's 'More actions for' button. Popover 92x103 for a public app: Open app, View details, Uninstall (3 items). Hover not measured.",
+      "locate": {
+        "popover": { "sel": "div.dialog", "nth": 0 },
+        "item": { "sel": "a.menu-item", "nth": 0 },
+        "uninstall": { "sel": "button.menu-item", "text": "Uninstall" }
+      },
+      "parts": {
+        "popover": { "w": 92, "h": 103, "radius": "16", "bg": "#ffffff", "shadow": "yes" },
+        "item": { "w": 85, "h": 30, "pad": "4 8", "radius": "12", "font": "13/20 400", "color": "#101010" },
+        "uninstall": { "w": 85, "h": 30, "pad": "4 8", "radius": "12", "color": "#ce1f18" }
+      }
+    },
+    "uninstall": {
+      "adminSteps": "Click Uninstall in the menu. A 620x436 dialog 'Uninstall <app>?' with warning paragraph, data-deletion paragraph, a 'Reason for uninstalling' select (580x28) and a 'Share feedback' text area, then Cancel and Uninstall; Uninstall is disabled until a reason is chosen. Cancel afterwards.",
+      "locate": {
+        "dialog": { "sel": "div.Polaris-Modal-Dialog__Modal" },
+        "title": { "sel": "h2", "text": "^Uninstall" },
+        "footer": { "sel": "div.Polaris-Modal-Footer" },
+        "cancel": { "sel": "button.Polaris-Button", "in": "footer", "nth": 0 },
+        "confirm": { "sel": "button.Polaris-Button", "in": "footer", "nth": 1 }
+      },
+      "parts": {
+        "dialog": { "w": 620, "h": 436, "radius": "24", "bg": "#ffffff", "shadow": "yes" },
+        "title": { "font": "15/22 500", "color": "#101010" },
+        "footer": { "h": 56 },
+        "cancel": { "w": 64, "h": 28, "pad": "6 12", "radius": "9999", "bg": "#ffffff" },
+        "confirm": { "w": 75, "h": 28, "pad": "6 12", "radius": "9999", "bg": "#000000/13", "color": "#ffffff" }
+      }
+    }
+  }
+}

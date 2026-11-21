@@ -1,0 +1,31 @@
+{
+  "entry": "settings.service-row",
+  "admin": "Settings > Taxes and duties > Tax service section",
+  "path": "/settings/taxes",
+  "adminSteps": "Open Taxes and duties; the first section (heading 'Tax service') has a 'Manage tax service' button (a link to /settings/taxes/services) at the right of its header and a card with one static row: 40 px logo image, 'Shopify Tax', subtitle 'Automatically calculates sales tax at checkout'. The row itself holds no link and no chevron; the button is the link.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "group",
+  "rootWidth": 784,
+  "locate": {
+    "group": "s-query-container",
+    "heading": { "sel": "h2", "in": "group" },
+    "manage": { "sel": "a.button", "in": "group" },
+    "manage-fill": { "sel": "span.fill", "in": "manage" },
+    "card": { "sel": "div.card", "in": "group" },
+    "row": { "sel": "div[class*=_ListItem_]", "in": "group" },
+    "logo": { "sel": "img", "in": "row" },
+    "name": { "sel": "span.Polaris-Text--root", "in": "row" },
+    "subtitle": { "sel": "span[class*=_Subtitle_]", "in": "row" }
+  },
+  "parts": {
+    "heading": { "x": 0, "font": "15/22 500", "color": "#101010" },
+    "manage": { "right": 0, "h": 28, "font": "12/16 500", "radius": "9999", "pad": "6 12" },
+    "manage-fill": { "bg": "#ebebeb", "radius": "9999" },
+    "card": { "x": 0, "right": 0, "h": 72, "radius": "20" },
+    "row": { "h": 72 },
+    "logo": { "x": 16, "w": 40, "h": 40 },
+    "name": { "x": 68, "font": "13/20 400", "color": "#101010" },
+    "subtitle": { "x": 68, "font": "13/20 400", "color": "#4a4a4a" }
+  }
+}

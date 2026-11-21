@@ -1,0 +1,22 @@
+{
+  "entry": "index.no-results",
+  "admin": "Orders",
+  "path": "/orders?query=zzqx",
+  "adminSteps": "Open /orders?query=zzqx: the filter bar keeps the token, the table is replaced by the block. The 'Clear search and filters' text is in the page but its element has no box, so it is not measured.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "block",
+  "rootWidth": 315,
+  "locate": {
+    "block": { "sel": "div.Polaris-LegacyStack", "text": "^$" },
+    "img": { "sel": "img", "in": "block" },
+    "title": { "sel": "p", "text": "^No orders found$" },
+    "body": { "sel": "p", "text": "^Try changing" }
+  },
+  "parts": {
+    "block": { "w": 315 },
+    "img": { "x": 127, "w": 60, "h": 60 },
+    "title": { "font": "22/28 500", "color": "#101010", "h": 28 },
+    "body": { "font": "13/20 400", "color": "#4a4a4a", "h": 20 }
+  }
+}

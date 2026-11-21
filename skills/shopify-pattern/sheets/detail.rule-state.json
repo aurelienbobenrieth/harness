@@ -1,0 +1,23 @@
+{
+  "entry": "detail.rule-state",
+  "admin": "Discounts > SPIKE-3 (code discount), aside sections",
+  "path": "/discounts/1732038688907",
+  "adminSteps": "Open the discount. Only the aside is measured: section headings (h2, 13/20 500), the title section h3 (15/22 500) and the link 'View the sales by discount report' in the Performance section. Line text colours and the On/Off badge and history table of the entry are not measured (lines sit in shadow text with no reachable box).",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "aside",
+  "rootWidth": 280,
+  "locate": {
+    "aside": "aside.aside",
+    "title": { "sel": "h3.heading", "in": "aside" },
+    "heading-type": { "sel": "h2.heading", "in": "aside", "nth": 0 },
+    "heading-performance": { "sel": "h2.heading", "in": "aside", "nth": 2 },
+    "link": { "sel": "a", "in": "aside", "nth": 0 }
+  },
+  "parts": {
+    "title": { "x": 0, "font": "15/22 500", "color": "#101010" },
+    "heading-type": { "x": 0, "font": "13/20 500", "color": "#101010" },
+    "heading-performance": { "x": 0, "font": "13/20 500", "color": "#101010" },
+    "link": { "x": 0, "h": 15, "font": "13/20 400", "color": "#1650d0" }
+  }
+}

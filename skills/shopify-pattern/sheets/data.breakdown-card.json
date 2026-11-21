@@ -1,0 +1,27 @@
+{
+  "entry": "data.breakdown-card",
+  "admin": "Analytics overview > Total sales breakdown card",
+  "path": "/analytics",
+  "adminSteps": "Open Analytics; the breakdown card is the 6th _Card_ in the dashboard. The store has no orders: rows read '$0.00' with a link label; no bar, logo or share column exists. Rows alternate bg #ffffff / #f7f7f7. The heading carries a 1px #dddddd dotted underline.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "card",
+  "rootWidth": 383,
+  "locate": {
+    "dash": "[class*=\"_AnalyticsDashboardContainer_\"]",
+    "card": { "sel": "[class*=\"_Card_\"]", "nth": 5, "in": "dash" },
+    "heading": { "sel": ".heading", "in": "card" },
+    "row": { "sel": "li.list-item", "in": "card" },
+    "row-next": { "sel": "li.list-item", "nth": 1, "in": "card" },
+    "label": { "sel": "a.link", "in": "row" },
+    "amount": { "sel": "strong", "in": "row" }
+  },
+  "parts": {
+    "card": { "w": 383, "h": 389 },
+    "heading": { "x": 16, "font": "13/16 600", "color": "#101010", "border": "1 #dddddd" },
+    "row": { "x": 16, "right": 16, "h": 41, "bg": "#ffffff", "radius": "8", "pad": "4 6", "gap": "12" },
+    "row-next": { "h": 41, "bg": "#f7f7f7", "radius": "8" },
+    "label": { "x": 22, "font": "13/20 400", "color": "#1650d0" },
+    "amount": { "right": 70, "font": "13/20 700", "color": "#101010" }
+  }
+}

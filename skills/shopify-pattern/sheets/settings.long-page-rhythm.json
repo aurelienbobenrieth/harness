@@ -1,0 +1,24 @@
+{
+  "entry": "settings.long-page-rhythm",
+  "admin": "Settings > Checkout",
+  "path": "/settings/checkout",
+  "adminSteps": "Open Settings > Checkout. Groups are section elements stacked 16px apart (heading, one description line, one card). Group titles today: Configurations, Customer contact method, Customer information, Marketing opt-in, Tipping, Abandoned checkout emails, Checkout language, Advanced preferences, Checkout rules. Info icon only on some headings.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "section",
+  "rootWidth": 784,
+  "locate": {
+    "section": { "sel": "section", "nth": 0 },
+    "heading": { "sel": "h2.heading", "in": "section" },
+    "info": { "sel": "a.button", "in": "section" },
+    "subheading": { "sel": "span.text", "nth": 0, "in": "section" },
+    "card": { "sel": "div.card", "in": "section" },
+    "section-next": { "sel": "section", "nth": 1 }
+  },
+  "parts": {
+    "heading": { "x": 0, "font": "15/22 500", "color": "#101010" },
+    "info": { "w": 20, "h": 20, "color": "#606060" },
+    "subheading": { "x": 0, "color": "#4a4a4a" },
+    "card": { "x": 0, "right": 0, "bg": "#ffffff", "radius": "20", "shadow": "yes" }
+  }
+}

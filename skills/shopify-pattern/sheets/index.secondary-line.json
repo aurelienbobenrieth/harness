@@ -1,0 +1,23 @@
+{
+  "entry": "index.secondary-line",
+  "admin": "Discounts",
+  "path": "/discounts",
+  "adminSteps": "Open Discounts. First data row: title SPIKE-3 with a summary line under it. Row height 52 on the first nine rows, 53 on later ones.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "table",
+  "rootWidth": 1235,
+  "locate": {
+    "table": "div.Polaris-Table",
+    "cell": { "sel": "div.Polaris-Table-TableCell", "nth": 1, "in": "table" },
+    "title": { "sel": "span", "text": "^SPIKE-3$", "in": "table" },
+    "summary": { "sel": "div", "text": "off one-time", "in": "cell" },
+    "badge": { "sel": "div", "text": "^Expired$|^Active$|^Scheduled$", "in": "table" }
+  },
+  "parts": {
+    "cell": { "h": 52 },
+    "title": { "font": "13/20 500", "color": "#101010" },
+    "summary": { "font": "13/20 400", "color": "#101010" },
+    "badge": { "h": 20, "font": "12/18 500", "radius": "8", "pad": "1 6" }
+  }
+}

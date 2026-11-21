@@ -1,0 +1,52 @@
+{
+  "entry": "form.task-page",
+  "admin": "Orders > #1044 > Refund",
+  "path": "/orders/6649667223691/refund",
+  "adminSteps": "Open Refund from the order's More actions, or go to the path. Nothing ticked: primary button disabled. Crumb 'Orders' is in the top bar (light text on the dark bar). Aside is the first section element; main sections are 760 wide.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "aside",
+  "rootWidth": 280,
+  "locate": {
+    "aside": { "sel": "section", "nth": 0 },
+    "main-card": { "sel": "section", "nth": 1 },
+    "title": { "sel": "h1.heading", "nth": 1 },
+    "primary": { "sel": "button", "nth": -1, "in": "aside" }
+  },
+  "parts": {
+    "aside": { "w": 280 },
+    "main-card": { "w": 760 },
+    "title": { "x": 0, "h": 32, "font": "26/32 500", "color": "#101010" },
+    "primary": {
+      "h": 28,
+      "w": 280,
+      "font": "12/16 500",
+      "color": "#ffffff",
+      "bg": "#000000/13",
+      "radius": "9999",
+      "pad": "6 12"
+    }
+  },
+  "states": {
+    "edit-order": {
+      "adminSteps": "Same shape at /orders/6649667223691/edit: aside 280 wide and 96 high at rest, primary 'Update order' disabled, taxes note 'Taxes are estimated until you update the order' under the payment card.",
+      "path": "/orders/6649667223691/edit",
+      "locate": {
+        "aside": { "sel": "section", "nth": 0 },
+        "primary": { "sel": "button", "nth": 0, "in": "aside" }
+      },
+      "parts": {
+        "aside": { "w": 280, "h": 96 },
+        "primary": {
+          "h": 28,
+          "w": 280,
+          "font": "12/16 500",
+          "color": "#ffffff",
+          "bg": "#000000/13",
+          "radius": "9999",
+          "pad": "6 12"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "entry": "form.save-bar",
+  "admin": "Discounts > Create discount, unsaved",
+  "path": "/discounts/new/amount-off-product?discountType=order&method=code",
+  "adminSteps": "open the path, focus the Discount code input and type 'ZZ' (execCommand insertText). The bar slides in at the top centre. Sizes are offsetWidth/offsetHeight: in a hidden tab the entrance animation stays at its start frame (rects read 208x27 at y -38), so w and h are not the probe's rect values; a visible tab reads them as written. y not kept.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "bar",
+  "rootWidth": 277,
+  "locate": {
+    "bar": { "sel": "div[class*=\"_Bar_\"]" },
+    "label": { "sel": "span", "text": "Unsaved discount", "in": "bar" },
+    "discard": { "sel": "button[class*=\"_ButtonDiscard_\"]", "in": "bar" },
+    "save": { "sel": "button[class*=\"_ButtonSave_\"]", "in": "bar" }
+  },
+  "parts": {
+    "bar": { "w": 277, "h": 36, "bg": "#0a0a0a", "radius": "9999", "pad": "4 4 4 12", "color": "#eeeeee" },
+    "label": { "text": "Unsaved discount", "color": "#eeeeee" },
+    "discard": {
+      "w": 73,
+      "h": 28,
+      "bg": "#ffffff/12",
+      "radius": "9999",
+      "color": "#eeeeee",
+      "font": "13.3/normal 500"
+    },
+    "save": { "w": 55, "h": 28, "bg": "#fcfcfc", "radius": "9999", "color": "#121212", "font": "13.3/normal 500" }
+  }
+}

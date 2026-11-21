@@ -1,0 +1,25 @@
+{
+  "entry": "index.inventory-table",
+  "admin": "Products > Inventory",
+  "path": "/products/inventory",
+  "adminSteps": "Open Inventory; the URL gains ?location_id=<id>. Edit and adjust popovers not opened. Location select, All tab and Save button not measured (location select has no box until opened).",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "table",
+  "rootWidth": 1284,
+  "locate": {
+    "table": "div.Polaris-Table",
+    "headcell": { "sel": "div.Polaris-Table-TableHeadingCell", "nth": 1, "in": "table" },
+    "cell": { "sel": "div.Polaris-Table-TableCell", "nth": 1, "in": "table" },
+    "image": { "sel": "div.thumbnail,img", "in": "table" },
+    "product": { "sel": "span[class*=\"_Wrapper_\"]", "text": "Selling", "in": "table" },
+    "sku": { "sel": "span[class*=\"_Wrapper_\"]", "text": "No SKU", "in": "table" }
+  },
+  "parts": {
+    "headcell": { "h": 31, "font": "12/18 500", "color": "#4a4a4a", "bg": "#f7f7f7" },
+    "cell": { "h": 53 },
+    "image": { "x": 42, "w": 36, "h": 36 },
+    "product": { "x": 90, "font": "13/20 500", "color": "#101010" },
+    "sku": { "x": 390, "font": "13/20 400", "color": "#4a4a4a" }
+  }
+}

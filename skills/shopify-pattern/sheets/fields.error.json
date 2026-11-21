@@ -1,0 +1,20 @@
+{
+  "entry": "fields.error",
+  "admin": "Discounts > Create discount > Amount off products",
+  "path": "/discounts/new/amount-off-product",
+  "adminSteps": "Open the page, press the Submit button with the code empty: the code field turns invalid with 'Discount code can't be blank'. Nothing is saved because the form is invalid. Select error not measured.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "control",
+  "rootWidth": 728,
+  "locate": {
+    "control": "div.input-wrapper",
+    "message": { "sel": "div.field-details", "text": "[a-z]" },
+    "icon": { "sel": "svg", "in": "message" }
+  },
+  "parts": {
+    "control": { "h": 30, "radius": "12", "bg": "#ffffff", "pad": "0 12", "shadow": "yes" },
+    "message": { "x": 0, "y": 36, "h": 18, "font": "12/18 400", "color": "#ce1f18" },
+    "icon": { "w": 12, "h": 12, "color": "#ce1f18" }
+  }
+}

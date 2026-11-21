@@ -1,0 +1,28 @@
+{
+  "entry": "actions.clickable-row",
+  "admin": "Orders table",
+  "path": "/orders",
+  "adminSteps": "Open Orders. Rows are div.Polaris-Table-TableRow with display: contents; cells carry the fill and the pointer cursor. Hover with the real pointer over a row cell. Settings > Notifications not measured.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "table",
+  "rootWidth": 1235,
+  "locate": {
+    "table": { "sel": "div.Polaris-Table" },
+    "cell": { "sel": "div.Polaris-Table-TableCell", "in": "table", "nth": 1 },
+    "link": { "sel": "a[href*='/orders/64']", "in": "table" },
+    "cell-button": { "sel": "button[class*=\"DialogActivator\"]", "in": "table" }
+  },
+  "parts": {
+    "cell": { "bg": "#ffffff" },
+    "link": { "font": "13/20 400", "color": "#101010", "h": 20 },
+    "cell-button": { "h": 32 }
+  },
+  "states": {
+    "hover": {
+      "adminSteps": "Hover the pointer over any cell of a row; every cell of that row takes the fill.",
+      "locate": { "hovered-cell": { "sel": "div.Polaris-Table-TableCell:hover", "in": "table" } },
+      "parts": { "hovered-cell": { "bg": "#f7f7f7" } }
+    }
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "entry": "data.compare-picker",
+  "admin": "Analytics > Compare to pill",
+  "path": "/analytics",
+  "adminSteps": "Open Analytics; the pill sits right of the date pill (period Today, label 'Compare to: Nov 15, 2026'). Pill width follows the label; the popover was not opened. The pill is painted by span.fill inside the button.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "controls",
+  "rootWidth": 228,
+  "locate": {
+    "controls": "[class*=\"_HeaderActions_\"]",
+    "date": { "sel": "button", "text": "^Date control", "in": "controls" },
+    "compare": { "sel": "button", "text": "^Comparison control", "in": "controls" },
+    "compare-fill": { "sel": ".fill", "in": "compare" },
+    "compare-label": { "sel": ".text-wrapper", "in": "compare" },
+    "compare-icon": { "sel": "s-icon", "in": "compare" }
+  },
+  "parts": {
+    "date": { "x": 0, "h": 28, "font": "12/16 500", "radius": "9999" },
+    "compare": {
+      "x": 99,
+      "w": 129,
+      "h": 28,
+      "font": "12/16 500",
+      "color": "#101010",
+      "radius": "9999",
+      "pad": "4 12 4 6",
+      "gap": "2"
+    },
+    "compare-fill": { "bg": "#ebebeb", "radius": "9999" },
+    "compare-icon": { "x": 105, "w": 20, "h": 20 }
+  }
+}

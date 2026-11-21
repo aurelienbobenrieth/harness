@@ -1,0 +1,30 @@
+{
+  "entry": "data.metrics-strip",
+  "admin": "Orders index > metrics bar",
+  "path": "/orders",
+  "adminSteps": "Open Orders; the s-metrics-bar sits above the list. Arrows and the gradient appear on bar hover (opacity 0 at rest). Sparkline box only (no series in the store). Divider after the period cell is 1px #f2f2f2 at the inline end.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "bar",
+  "rootWidth": 1182,
+  "locate": {
+    "bar": "s-metrics-bar",
+    "dd": { "sel": "div.dropdown-button", "in": "bar" },
+    "item": { "sel": "div.item", "in": "bar" },
+    "hover": { "sel": "div.hover-container", "in": "bar" },
+    "heading": { "sel": "span.heading", "in": "bar" },
+    "spark": { "sel": "div.visualization-wrapper", "in": "bar" },
+    "grad": { "sel": "span.overflow-gradient", "in": "bar" },
+    "arrows": { "sel": "span.arrows-wrapper", "in": "bar" }
+  },
+  "parts": {
+    "bar": { "h": 68 },
+    "dd": { "x": 0, "w": 128, "h": 68, "pad": "8" },
+    "item": { "x": 128, "w": 225, "h": 68 },
+    "hover": { "x": 136, "w": 209, "h": 52, "pad": "4 12", "radius": "8" },
+    "heading": { "font": "13/16 600", "color": "#101010", "border": "1 #dddddd" },
+    "spark": { "w": 80, "h": 20 },
+    "grad": { "w": 54, "right": 0 },
+    "arrows": { "w": 71, "right": 0, "bg": "#ffffff" }
+  }
+}

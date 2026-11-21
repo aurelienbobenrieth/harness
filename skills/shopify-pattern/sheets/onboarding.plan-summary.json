@@ -1,0 +1,51 @@
+{
+  "entry": "onboarding.plan-summary",
+  "admin": "Settings > Plan",
+  "path": "/settings/plan",
+  "adminSteps": "Open /settings/plan. The Billing page (amount card, tabs, bills table) was not measured: only the Plan page.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "page",
+  "rootWidth": 962,
+  "locate": {
+    "page": "div[class*=\"_Page_\"]",
+    "title": { "sel": "h1", "in": "page" },
+    "section-heading": { "sel": "h2.heading", "nth": 0, "in": "page" },
+    "plan-card": { "sel": "section.section", "nth": 1, "in": "page" },
+    "plan-row": { "sel": "div[class*=\"_ListItem_\"]", "nth": 0, "in": "page" },
+    "plan-name": { "sel": "h2.heading", "nth": 1, "in": "page" },
+    "plan-badge": { "sel": "div.badge", "in": "page" },
+    "app-section-heading": { "sel": "h2.heading", "nth": 2, "in": "page" },
+    "app-card": { "sel": "section.section", "nth": 3, "in": "page" },
+    "app-row": { "sel": "div[class*=\"_ListItem_\"]", "nth": -1, "in": "page" },
+    "app-icon": { "sel": "img", "in": "app-row" },
+    "app-name": { "sel": "*", "text": "^[a-z0-9-]+$", "nth": -1, "in": "app-row" },
+    "price-line": { "sel": "span[class*=\"_Subtitle_\"]", "in": "page" },
+    "footer": { "sel": "p[class*=\"_Terms_\"]", "in": "page" },
+    "footer-link": { "sel": "a[class*=\"_Link_\"]", "in": "footer" }
+  },
+  "parts": {
+    "title": { "x": 89, "w": 784, "h": 32, "font": "26/32 500", "color": "#101010" },
+    "section-heading": { "x": 89, "font": "15/22 500", "color": "#101010" },
+    "plan-card": { "x": 89, "w": 784, "h": 54, "bg": "#ffffff", "radius": "20", "shadow": "yes" },
+    "plan-row": { "h": 54 },
+    "plan-name": { "x": 105, "font": "15/22 500", "color": "#101010" },
+    "plan-badge": {
+      "h": 20,
+      "font": "12/18 500",
+      "color": "#4a4a4a",
+      "bg": "#000000/5",
+      "radius": "8",
+      "pad": "1 6",
+      "gap": "4"
+    },
+    "app-section-heading": { "x": 89, "font": "15/22 500", "color": "#101010" },
+    "app-card": { "x": 89, "w": 784, "h": 70, "bg": "#ffffff", "radius": "20", "shadow": "yes" },
+    "app-row": { "h": 70 },
+    "app-icon": { "x": 105, "w": 24, "h": 24 },
+    "app-name": { "x": 141, "font": "13/20 400", "color": "#101010" },
+    "price-line": { "x": 141, "font": "13/20 400", "color": "#4a4a4a" },
+    "footer": { "x": 89, "h": 18, "font": "12/18 400", "color": "#4a4a4a" },
+    "footer-link": { "font": "12/18 400", "color": "#4a4a4a" }
+  }
+}

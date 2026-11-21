@@ -1,0 +1,27 @@
+{
+  "entry": "fields.type-picker-categorized",
+  "admin": "Settings > Custom data > Product > Add definition > Type",
+  "path": "/settings/custom_data/product/metafields/create",
+  "adminSteps": "Open the path, click the button 'Select type' (use element.click()). A popover with a search box and a listbox 341 wide opens under it. Keyboard behaviour not measured.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "pop",
+  "rootWidth": 366,
+  "locate": {
+    "pop": "[class*=\"Polaris-PositionedOverlay\"]",
+    "card": { "sel": "[class*=\"Popover__Content\"],[class*=\"Popover__Pane\"]", "in": "pop" },
+    "search": { "sel": "input", "in": "pop" },
+    "list": { "sel": "[role=\"listbox\"]", "in": "pop" },
+    "group-heading": { "sel": "span", "text": "^Recommended$", "in": "list" },
+    "option": { "sel": "li[class*=\"Listbox-Option\"]", "in": "list" },
+    "option-row": { "sel": "[class*=\"Listbox-TextOption\"]", "in": "list" }
+  },
+  "parts": {
+    "card": { "x": 8, "w": 350, "bg": "#ffffff", "radius": "16" },
+    "search": { "h": 30, "font": "13/20 400" },
+    "list": { "w": 341 },
+    "group-heading": { "x": 16, "font": "13/20 500", "color": "#4a4a4a" },
+    "option": { "h": 32, "font": "13/20 400", "color": "#101010" },
+    "option-row": { "x": 8, "radius": "12", "pad": "6 12" }
+  }
+}

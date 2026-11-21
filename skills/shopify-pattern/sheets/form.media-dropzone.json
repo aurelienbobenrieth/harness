@@ -1,0 +1,23 @@
+{
+  "entry": "form.media-dropzone",
+  "admin": "Products > Add product > Media card",
+  "path": "/products/new",
+  "adminSteps": "Open the page; the Media card is empty. Dashed box is .container inside .drop-zone. Tile state with media not measured (needs an upload).",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "dz",
+  "rootWidth": 728,
+  "locate": {
+    "dz": ".drop-zone",
+    "container": { "sel": ".container", "in": "dz" },
+    "placeholder": "[class*=\"_DropZonePlaceholder_\"]",
+    "upload": "[class*=\"_Link_16s0z\"]",
+    "select": { "sel": "[class*=\"_Link_16s0z\"]", "nth": 1 }
+  },
+  "parts": {
+    "container": { "h": 121, "pad": "32", "radius": "12", "bg": "#ffffff", "border": "1 #8c8c8c" },
+    "placeholder": { "w": 216, "font": "13/20 400", "color": "#101010", "gap": "4" },
+    "upload": { "h": 34, "w": 92, "font": "12/20 600" },
+    "select": { "h": 34, "w": 88, "font": "12/20 600" }
+  }
+}

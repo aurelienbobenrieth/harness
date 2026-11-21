@@ -1,0 +1,26 @@
+{
+  "entry": "form.field-error",
+  "admin": "Discounts > Create discount, after Save",
+  "path": "/discounts/new/amount-off-product?discountType=order&method=code",
+  "adminSteps": "open the path, type 'ZZ' in Discount code, leave Discount value empty, click Save. Two kinds of error: the 'Discount value' number field (error line inside the field, 6 below the control) and the 'Specific collections' picker (custom line: 16px icon, gap 2, text, 7 below the control). The invalid control is the picker's field backdrop. The probe reads the shadow as 'yes'; the full value is rgb(235,0,20) 0 0 0 1px plus the three 0.04 drop shadows and rgba(224,61,80,.05) inset, as in the entry. Root is the picker error row.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "error-row",
+  "rootWidth": 728,
+  "locate": {
+    "error-text": { "sel": "p", "text": "Specific collections must" },
+    "error-row": { "sel": "p", "text": "Specific collections must", "up": 1 },
+    "error-icon": { "sel": "s-internal-icon", "in": "error-row" },
+    "control": { "sel": "div[class*=\"Polaris-TextField__Backdrop\"]", "nth": 1 },
+    "value-error": { "sel": "div.field-details", "text": "Discount value" },
+    "value-control": { "sel": "div.error" }
+  },
+  "parts": {
+    "error-row": { "gap": "2" },
+    "error-icon": { "x": 0, "w": 16, "h": 16, "color": "#ce1f18" },
+    "error-text": { "x": 18, "font": "12/18 400", "color": "#ce1f18" },
+    "control": { "radius": "12", "shadow": "yes" },
+    "value-error": { "font": "12/18 400", "color": "#ce1f18", "gap": "2" },
+    "value-control": { "radius": "12", "shadow": "yes" }
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "entry": "form.visibility-with-date",
+  "admin": "Content > Blog posts > Add blog post > aside Visibility",
+  "path": "/content/articles/new",
+  "adminSteps": "Open the page. The aside is a flat column. Visibility is its first section; Hidden is checked by default. Date reveal not measured: clicking the calendar button by script showed no Date field (only a Time input of size 0).",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "section",
+  "rootWidth": 280,
+  "locate": {
+    "section": { "sel": "h2", "text": "^Visibility$", "closest": "section" },
+    "heading": { "sel": "h2", "text": "^Visibility$" },
+    "date-button": { "sel": "button", "in": "section" },
+    "card": { "sel": ".card", "in": "section" },
+    "visible": { "sel": "label", "text": "^Visible$" },
+    "hidden": { "sel": "label", "text": "^Hidden$" },
+    "radio-hidden": { "sel": "input[type=radio]", "nth": 1, "in": "section" }
+  },
+  "parts": {
+    "heading": { "x": 0, "font": "13/20 500", "color": "#101010" },
+    "date-button": { "w": 28, "h": 28, "right": 0, "color": "#606060", "radius": "9999" },
+    "card": { "bg": "none", "shadow": "none" },
+    "visible": { "x": 0, "h": 28, "font": "13/20 400", "color": "#101010" },
+    "hidden": { "x": 0, "h": 28, "font": "13/20 400", "color": "#101010" }
+  }
+}

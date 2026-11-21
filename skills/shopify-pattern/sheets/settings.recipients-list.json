@@ -1,0 +1,48 @@
+{
+  "entry": "settings.recipients-list",
+  "admin": "Settings > Notifications > Staff notifications",
+  "path": "/settings/notifications/staff",
+  "adminSteps": "Open the page; scroll to the last group \"Recipients\" (empty on this store). Modal: click the pill \"Add recipient\" (opened by element.click()), measure, press Cancel. Pill background is painted by a wrapper not resolved by the probe (button itself transparent), so it is left out.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "column",
+  "rootWidth": 784,
+  "locate": {
+    "column": "div.page-content",
+    "hw": { "sel": "div.header-wrapper", "nth": -1 },
+    "h2": { "sel": "h2", "in": "hw" },
+    "btn": { "sel": "button", "in": "hw" },
+    "card": { "sel": "div.card", "nth": -1 },
+    "empty": { "sel": "*", "text": "created any order notifications" }
+  },
+  "parts": {
+    "hw": { "h": 44, "pad": "16 0 0" },
+    "h2": { "x": 0, "h": 22, "font": "15/22 500", "color": "#101010" },
+    "btn": { "right": 0, "h": 28, "font": "12/16 500", "radius": "9999", "pad": "4 12 4 6", "text": "Add recipient" },
+    "card": { "bg": "#ffffff", "radius": "20", "h": 52 },
+    "empty": { "x": 16, "right": 16, "h": 20, "font": "13/20 400", "color": "#101010" }
+  },
+  "states": {
+    "modal": {
+      "adminSteps": "Click \"Add recipient\". Primary is disabled while the email is empty (bg rgba(0,0,0,.13), white text). Cancel closes it.",
+      "locate": {
+        "modal": "[class*=\"Polaris-Modal-Dialog__Modal\"]",
+        "title": { "sel": "h2", "in": "modal" },
+        "input": { "sel": "input.Polaris-TextField__Input", "in": "modal" },
+        "label-select": { "sel": "label.label", "in": "modal" },
+        "select": { "sel": "div.select", "in": "modal" },
+        "footer": { "sel": "[class*=\"Polaris-Modal-Footer\"]", "in": "modal" }
+      },
+      "root": "modal",
+      "rootWidth": 620,
+      "parts": {
+        "modal": { "w": 620, "h": 288, "radius": "24", "bg": "#ffffff" },
+        "title": { "x": 20, "font": "15/22 500", "text": "Add recipient" },
+        "input": { "x": 20, "right": 20, "h": 30, "font": "13/20 400", "pad": "5 12" },
+        "label-select": { "x": 20, "h": 20, "font": "13/20 500", "text": "Receive notifications for" },
+        "select": { "x": 20, "right": 20, "h": 30, "radius": "12", "bg": "#ffffff", "pad": "5 8 5 12" },
+        "footer": { "h": 56 }
+      }
+    }
+  }
+}

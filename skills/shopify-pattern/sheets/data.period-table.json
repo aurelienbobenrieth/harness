@@ -1,0 +1,25 @@
+{
+  "entry": "data.period-table",
+  "admin": "Analytics > Reports > Orders over time",
+  "path": "/analytics/reports/orders_over_time",
+  "adminSteps": "Open the report. The store has 0 orders, so only the header and the totals block (current range line, comparison range line) are drawn; day rows and the density toggle were not present, not measured.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "table",
+  "rootWidth": 886,
+  "locate": {
+    "table": "div[class*=\"_TableWrapper_\"]",
+    "header": { "sel": "div[class*=\"_Header_\"]", "in": "table" },
+    "hlabel": { "sel": "span[class*=\"_Truncate_\"]", "text": "^Orders$", "in": "table" },
+    "summary": { "sel": "div[class*=\"_SummaryRow_\"]", "in": "table" },
+    "cur": { "sel": "span[class*=\"_Truncate_\"]", "text": "^Oct 17", "in": "summary" },
+    "cmp": { "sel": "span[class*=\"_Truncate_\"]", "text": "^Sep 16", "in": "summary" }
+  },
+  "parts": {
+    "header": { "h": 37, "bg": "#ffffff", "border": "1 #f2f2f2" },
+    "hlabel": { "font": "12/18 600", "color": "#101010" },
+    "summary": { "h": 57, "bg": "#f2f2f2" },
+    "cur": { "x": 12, "font": "12/18 600", "color": "#101010" },
+    "cmp": { "x": 12, "font": "12/18 600", "color": "#4a4a4a" }
+  }
+}

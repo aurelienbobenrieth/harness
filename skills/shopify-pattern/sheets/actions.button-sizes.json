@@ -1,0 +1,22 @@
+{
+  "entry": "actions.button-sizes",
+  "admin": "Orders > #1044",
+  "path": "/orders/6649667223691",
+  "adminSteps": "Open the order. Title bar: third header button. Card header: Add note icon button. 32: the risk evaluation button in the Analysis card. Link action: the email button-link. Not measured here: 24 (table bulk bar, rich-text toolbar; the rich-text toolbar buttons measured 21 high, trix-button).",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "title-bar",
+  "rootWidth": 109,
+  "locate": {
+    "title-bar": { "sel": "button.fill-layer", "nth": 2 },
+    "card-header": "button[aria-label='Add note']",
+    "table-cell": "button[aria-label^='Not available']",
+    "link-action": "button.button-link"
+  },
+  "parts": {
+    "title-bar": { "h": 28, "font": "12/16 500" },
+    "card-header": { "w": 28, "h": 28, "font": "12/16 500" },
+    "table-cell": { "h": 32, "font": "12/16 500" },
+    "link-action": { "h": 20, "font": "13/20 400" }
+  }
+}

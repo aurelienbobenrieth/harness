@@ -1,0 +1,29 @@
+{
+  "entry": "form.tags",
+  "admin": "Products > Add product > aside Tags (popover variant)",
+  "path": "/products/new",
+  "adminSteps": "Open the page; the Tags field in the aside holds an Add tags chip. Measured on the product aside, not the order or discount aside. Popover opened via the Edit tags button but its list was not reached (opacity 0, content not found), hover and remove button not measured. x measured from the Type field.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "type-field",
+  "rootWidth": 280,
+  "locate": {
+    "type-field": { "sel": "div.field-container" },
+    "tags-field": { "sel": "div.chip-container", "text": "^Tags$" },
+    "tags-chip": { "sel": "div.clickable-chip", "in": "tags-field" },
+    "tags-edit": { "sel": "button", "text": "Edit tags" }
+  },
+  "parts": {
+    "tags-field": { "w": 280, "h": 36, "radius": "12", "shadow": "yes", "pad": "8" },
+    "tags-chip": {
+      "h": 20,
+      "radius": "8",
+      "bg": "#000000/5",
+      "font": "12/18 500",
+      "color": "#4a4a4a",
+      "pad": "2 8 2 4",
+      "gap": "2"
+    },
+    "tags-edit": { "w": 20, "h": 20, "radius": "9999" }
+  }
+}

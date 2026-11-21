@@ -1,0 +1,30 @@
+{
+  "entry": "form.line-item-editor",
+  "admin": "Products > Purchase orders > Create purchase order",
+  "path": "/purchase_orders/new",
+  "adminSteps": "Open the page. Pickers are buttons by their text ('Select supplier', 'Select destination'). Added rows and steppers not opened. Transfer page not measured.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "search",
+  "rootWidth": 545,
+  "locate": {
+    "search": { "sel": "button", "text": "^Search products to add$" },
+    "supplier": { "sel": "button[class*=\"_Select_\"]", "text": "Select supplier" },
+    "destination": { "sel": "button[class*=\"_Select_\"]", "nth": 1 },
+    "summary-count": { "sel": "span", "text": "variants [(]" },
+    "summary-taxes": { "sel": "span", "text": "Taxes [(]" },
+    "terms": { "sel": "button[class*=\"_UnstyledButton_crzej\"]", "nth": 0 },
+    "currency": { "sel": "button[class*=\"_UnstyledButton_crzej\"]", "nth": 1 },
+    "note-label": { "sel": "span.label-content", "text": "Note to supplier" }
+  },
+  "parts": {
+    "supplier": { "h": 28, "w": 155, "font": "13/20 600", "bg": "#00000014", "radius": "8", "pad": "4 6" },
+    "destination": { "h": 28, "w": 174, "font": "13/20 600", "bg": "#00000014", "radius": "8", "pad": "4 6" },
+    "search": { "w": 545, "h": 36, "font": "13/20 400", "radius": "8", "pad": "8" },
+    "summary-count": { "font": "13/20 400", "color": "#101010" },
+    "summary-taxes": { "font": "13/20 400", "color": "#101010" },
+    "terms": { "h": 28, "w": 100, "font": "13/20 400", "pad": "4 8" },
+    "currency": { "h": 28, "w": 124, "font": "13/20 400", "pad": "4 8" },
+    "note-label": { "font": "13/20 500", "color": "#101010" }
+  }
+}

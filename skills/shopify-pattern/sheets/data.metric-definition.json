@@ -1,0 +1,25 @@
+{
+  "entry": "data.metric-definition",
+  "admin": "Analytics > overview tile heading",
+  "path": "/analytics",
+  "adminSteps": "Focus the 'Open definition for Gross sales' button in a tile (element.focus(); a synthetic pointer hover did not open it). The tooltip is a div.tooltip in the metric card's shadow tree; several copies exist at opacity 0, take the one at opacity 1. Title and body font not measured. Underline is dotted (1.46px on a scaled screen).",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "label",
+  "rootWidth": 72,
+  "locate": {
+    "label": { "sel": "span.heading", "text": "^Gross sales$" }
+  },
+  "parts": {
+    "label": { "font": "13/16 600", "border": "1 #dddddd" }
+  },
+  "states": {
+    "focus": {
+      "adminSteps": "Focus the definition button of the Gross sales tile; read the visible div.tooltip (opacity 1): 237x68, about 6 to 7px above the label.",
+      "locate": { "tip": { "sel": "div.tooltip", "nth": -1 } },
+      "parts": {
+        "tip": { "w": 237, "h": 68, "bg": "#1a1a1a", "color": "#eeeeee", "radius": "10", "pad": "4 8", "shadow": "yes" }
+      }
+    }
+  }
+}

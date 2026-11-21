@@ -1,0 +1,32 @@
+{
+  "entry": "form.inventory-by-location",
+  "admin": "Products > Add product > Inventory",
+  "path": "/products/new",
+  "adminSteps": "Open the page; the Inventory card shows a switch (on) and a bordered table with one location row. Dotted-underline term Quantity and card heading not measured (locator found no box). Footer chips are the form.chip-reveal-fields sheet. Switch-off state not measured.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "wrap",
+  "rootWidth": 728,
+  "locate": {
+    "wrap": "[class*=_TablePadding_]",
+    "box": { "sel": "div.Polaris-Box", "in": "wrap" },
+    "table": { "sel": "div.Polaris-Table", "in": "wrap" },
+    "head-cell": { "sel": "div.Polaris-Table-TableHeadingCell", "in": "table" },
+    "edit-button": { "sel": "button", "text": "Edit locations", "in": "table" },
+    "location-name": { "sel": "span.text", "in": "location-cell" },
+    "location-cell": { "sel": "div.Polaris-Table-TableCell", "in": "table" },
+    "qty-field": { "sel": "div.input-wrapper", "in": "table" },
+    "stepper": { "sel": "button.increment", "in": "table" },
+    "switch-input": { "sel": "input.admin-next-light" }
+  },
+  "parts": {
+    "box": { "w": 728, "radius": "12", "border": "1 #dddddd" },
+    "head-cell": { "bg": "#f7f7f7", "font": "12/18 500", "color": "#4a4a4a", "h": 41 },
+    "edit-button": { "w": 28, "h": 28, "radius": "8" },
+    "location-cell": { "h": 48 },
+    "location-name": { "font": "13/20 400", "color": "#101010" },
+    "qty-field": { "w": 125, "h": 32, "radius": "12", "shadow": "yes", "pad": "0 12", "right": 19 },
+    "stepper": { "w": 28, "h": 16 },
+    "switch-input": { "w": 32, "h": 16, "radius": "9999", "bg": "#101010" }
+  }
+}

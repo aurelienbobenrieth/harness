@@ -1,0 +1,65 @@
+{
+  "entry": "overlay.product-picker-search",
+  "admin": "Drafts > Create order > Product (Select products)",
+  "path": "/draft_orders/new",
+  "adminSteps": "Click the Product button (s-internal-button, click its inner button) in the Items card. Modal Select products opens. Footer Cancel and Add are Polaris buttons: measure through closest button of the text. Ticking the first product row ticks its 4 variants: count reads 4/500 and Add stays disabled-looking in the hidden tab (colour transition not settled): its enabled colour is not measured. Add filter popover, hover and Search by menu not measured.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "modal",
+  "rootWidth": 620,
+  "locate": {
+    "modal": ".Polaris-Modal-Dialog__Modal",
+    "title": { "sel": "h2", "in": "modal" },
+    "close": { "sel": "button", "text": "Close", "in": "modal" },
+    "search": { "sel": ".Polaris-TextField__Input", "in": "modal" },
+    "search-by": { "sel": "select.Polaris-Select__Input", "in": "modal" },
+    "add-filter": { "sel": "button.Polaris-Filters__AddFilter", "in": "modal" },
+    "table-head": { "sel": "li[class*=\"_Root_\"]", "in": "modal" },
+    "product-row": { "sel": "li[class*=\"_Root_\"]", "nth": 1, "in": "modal" },
+    "product-check": { "sel": "input[type=checkbox]", "in": "product-row" },
+    "variant-row": { "sel": "li[class*=\"_Root_\"]", "nth": 2, "in": "modal" },
+    "variant-check": { "sel": "input[type=checkbox]", "in": "variant-row" },
+    "count": { "text": "variants selected", "in": "modal" },
+    "cancel": { "text": "^Cancel$", "in": "modal", "closest": "button" },
+    "add": { "text": "^Add$", "in": "modal", "closest": "button" }
+  },
+  "parts": {
+    "modal": { "w": 620, "bg": "#ffffff", "radius": "24", "shadow": "yes" },
+    "title": { "x": 20, "font": "15/22 500", "color": "#101010" },
+    "close": { "w": 28, "h": 28, "right": 16, "bg": "#ffffff", "radius": "9999" },
+    "search": { "x": 46, "h": 28, "font": "13/20 400", "color": "#101010" },
+    "search-by": { "w": 189, "h": 28, "right": 14, "pad": "6 8 6 12" },
+    "add-filter": {
+      "x": 14,
+      "w": 84,
+      "h": 24,
+      "bg": "#ffffff",
+      "radius": "9999",
+      "pad": "0 6 0 8",
+      "border": "1 #dddddd"
+    },
+    "table-head": { "h": 31 },
+    "product-row": { "h": 57 },
+    "product-check": { "x": 17, "w": 16, "h": 16 },
+    "variant-row": { "h": 37 },
+    "variant-check": { "x": 49, "w": 16, "h": 16 },
+    "count": { "x": 28, "font": "12/16 500" },
+    "cancel": { "w": 64, "h": 28, "right": 71, "bg": "#ffffff", "radius": "9999", "pad": "6 12" },
+    "add": { "w": 47, "h": 28, "right": 16, "radius": "9999", "pad": "6 12" }
+  },
+  "states": {
+    "empty": {
+      "adminSteps": "Nothing ticked: count reads 0/500 variants selected in grey, Add is disabled (black at 13%, white text).",
+      "locate": {},
+      "parts": {
+        "count": { "color": "#a6a6a6" },
+        "add": { "color": "#ffffff", "bg": "#000000/13" }
+      }
+    },
+    "product-ticked": {
+      "adminSteps": "Tick the first product row (Gift Card, 3 variants plus the product row gives 4 here): count reads 4/500 variants selected.",
+      "locate": {},
+      "parts": { "count": { "color": "#101010" } }
+    }
+  }
+}

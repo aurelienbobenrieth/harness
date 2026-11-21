@@ -1,0 +1,21 @@
+{
+  "entry": "navigation.app-nav",
+  "admin": "Orders (left navigation of the admin frame)",
+  "path": "/orders",
+  "adminSteps": "Open Orders; the tab is 1281 wide and the admin shows the condensed (icon-only) navigation, 60 wide. The 220 expanded frame was not shown at this width, so it is not measured. Frame colour and the selected item fill resolve to transparent on the measured elements, so bg is left out. Hover not measured.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "nav",
+  "rootWidth": 60,
+  "locate": {
+    "nav": "ul[class*=\"_Section_\"]",
+    "item": { "sel": "a[class*=\"_Item_\"]", "in": "nav" },
+    "icon": { "sel": "[class*=\"_Icon_\"]", "in": "item" },
+    "item-selected": { "sel": "a[class*=\"_Item-selected_\"]", "in": "nav" }
+  },
+  "parts": {
+    "item": { "h": 30, "w": 32, "radius": "12", "pad": "1 0 1 6", "gap": "2", "font": "13/20 450", "color": "#dcdcdc" },
+    "icon": { "w": 20, "h": 20 },
+    "item-selected": { "h": 30, "w": 32, "radius": "12", "font": "13/20 450", "color": "#fcfcfc" }
+  }
+}

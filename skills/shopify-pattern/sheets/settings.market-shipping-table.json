@@ -1,0 +1,48 @@
+{
+  "entry": "settings.market-shipping-table",
+  "admin": "Settings > Shipping and delivery > Shipping options",
+  "path": "/settings/shipping",
+  "adminSteps": "Open Shipping and delivery; the table sits under 'Shipping options' with a 'Shipping has moved to Markets' banner and a 'Switch back' button. The Options cell shows pills (name plus muted '(N services)'), up to three, then a '+N more' pill; a market with no shipping shows plain 'Not shipping'. Hover not measured.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "table",
+  "rootWidth": 731,
+  "locate": {
+    "table": "div.Polaris-Table",
+    "head-market": { "sel": "div[class*=TableHeadingCell]", "text": "^Market$", "in": "table" },
+    "head-options": { "sel": "div[class*=TableHeadingCell]", "text": "^Options$", "in": "table" },
+    "cell": { "sel": "div.Polaris-Table-TableCell", "in": "table" },
+    "market-icon": { "sel": "s-internal-icon", "in": "table" },
+    "market-link": { "sel": "a[class*=_LinkBlock_]", "in": "table" },
+    "pill": { "sel": "div[class*=_BasePill_]", "in": "table" },
+    "pill-name": { "sel": "p", "in": "pill" },
+    "more-pill": { "sel": "div[class*=_BasePill_]", "text": "more", "in": "table" }
+  },
+  "parts": {
+    "head-market": {
+      "x": 0,
+      "w": 244,
+      "h": 31,
+      "font": "12/18 500",
+      "color": "#4a4a4a",
+      "bg": "#f7f7f7",
+      "radius": "10 0 0 10",
+      "pad": "6 6 6 8"
+    },
+    "head-options": {
+      "right": 0,
+      "h": 31,
+      "font": "12/18 500",
+      "color": "#4a4a4a",
+      "bg": "#f7f7f7",
+      "radius": "0 10 10 0",
+      "pad": "6 8 6 6"
+    },
+    "cell": { "x": 0, "w": 244 },
+    "market-icon": { "x": 8, "w": 20, "h": 20 },
+    "market-link": { "x": 36, "h": 20, "font": "13/20 600", "color": "#101010" },
+    "pill": { "x": 249, "h": 28, "bg": "#000000/8", "radius": "8", "pad": "4 8", "gap": "4" },
+    "pill-name": { "font": "13/20 500", "color": "#4a4a4a" },
+    "more-pill": { "h": 28, "w": 64, "bg": "#000000/8", "radius": "8", "pad": "4 8" }
+  }
+}

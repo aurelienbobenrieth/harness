@@ -1,0 +1,69 @@
+{
+  "entry": "onboarding.setup-modal-flow",
+  "admin": "Settings > Domains > Connect existing domain",
+  "path": "/settings/domains/connect",
+  "adminSteps": "Open the path on a dev store; the modal is mounted closed (dev store shows the Buy-a-domain modal logic), so open it with the Connect existing domain s-internal-modal showOverlay() inside an expression, then cancel. Page is scaled: the dialog measures 595 wide at viewport 1281 (entry says 620 at a wider capture). Footer buttons sit in the modal shadow and are not reachable by the probe: Cancel x463 y131 w61 h27, Next x531 w48 h27 (dialog-relative, from the outline). Backdrop colour, loading, result and validation states not measured (they need a domain lookup).",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "dialog",
+  "rootWidth": 595,
+  "locate": {
+    "dialog": "dialog.modal",
+    "heading": {
+      "sel": "h2",
+      "text": "^Connect existing domain$"
+    },
+    "close": {
+      "sel": "button",
+      "text": "Close",
+      "in": "dialog"
+    },
+    "label": {
+      "sel": "span.Polaris-Text--root",
+      "text": "^Domain$"
+    },
+    "field": "[class*=\"TextField__Backdrop\"]",
+    "footer": {
+      "sel": ".footer",
+      "in": "dialog"
+    }
+  },
+  "parts": {
+    "dialog": {
+      "w": 595,
+      "h": 173,
+      "bg": "#ffffff",
+      "radius": "24",
+      "pad": "0",
+      "shadow": "yes"
+    },
+    "heading": {
+      "x": 19,
+      "y": 18,
+      "font": "15/22 500",
+      "color": "#101010"
+    },
+    "close": {
+      "w": 27,
+      "h": 27,
+      "right": 15,
+      "radius": "9999"
+    },
+    "label": {
+      "x": 19,
+      "font": "13/20 500",
+      "color": "#101010"
+    },
+    "field": {
+      "x": 19,
+      "right": 19,
+      "h": 29,
+      "radius": "12",
+      "bg": "#ffffff"
+    },
+    "footer": {
+      "h": 54,
+      "pad": "12 16 16"
+    }
+  }
+}

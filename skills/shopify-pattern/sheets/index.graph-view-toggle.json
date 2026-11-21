@@ -1,0 +1,35 @@
+{
+  "entry": "index.graph-view-toggle",
+  "admin": "Markets",
+  "path": "/markets",
+  "adminSteps": "Open Markets. At 1281 px the page shows the graph tree on the left (Store default, Regions as tree buttons) and the market table on the right (x 777); no 'Graph view' button and no Markets/Store default/Regions tabs were found. 'View on graph' is the last column, a 28 px link per row. Hover not measured.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "table",
+  "rootWidth": 480,
+  "locate": {
+    "table": "table",
+    "title": "h1",
+    "tree": "button[class*=TreeItemButton]",
+    "filter": { "sel": "button", "text": "Filter markets" },
+    "sort": { "sel": "button", "text": "Sort results" },
+    "head": { "sel": "th", "in": "table" },
+    "hname": { "sel": "button[class*=TableHeading]", "in": "table" },
+    "row": { "sel": "tbody tr", "in": "table" },
+    "name": { "sel": "a", "in": "row" },
+    "chip": { "sel": "button[class*=ActivatorButton]", "in": "row" },
+    "vog": { "sel": "a[class*=ViewOnGraph]", "in": "row" }
+  },
+  "parts": {
+    "title": { "font": "13/28 500", "color": "#101010" },
+    "tree": { "h": 20, "font": "13/20 400", "color": "#101010", "gap": "4" },
+    "filter": { "w": 28, "h": 28, "bg": "#ebebeb", "radius": "9999" },
+    "sort": { "w": 28, "h": 28, "bg": "#ebebeb", "radius": "9999" },
+    "head": { "h": 36, "bg": "#f7f7f7", "font": "12/20 500", "color": "#4a4a4a", "pad": "8 6 8 12" },
+    "hname": { "h": 20, "font": "12/20 500", "color": "#4a4a4a" },
+    "row": { "h": 45, "bg": "#ffffff", "border": "1 #dddddd" },
+    "name": { "h": 20, "font": "13/20 400", "color": "#101010" },
+    "chip": { "h": 31, "radius": "8", "font": "13/20 400" },
+    "vog": { "w": 28, "h": 28, "radius": "8" }
+  }
+}

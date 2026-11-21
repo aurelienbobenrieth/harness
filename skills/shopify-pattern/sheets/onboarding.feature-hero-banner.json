@@ -1,0 +1,44 @@
+{
+  "entry": "onboarding.feature-hero-banner",
+  "admin": "Growth overview",
+  "path": "/growth",
+  "adminSteps": "Open /growth and wait for the page to finish loading (a measure taken too early reads zero sizes). The hero is the first block, aria-label \"Autopilot intro\". The banner box paints no background, border or shadow: only the right-hand image gives it a visible shape. Dismiss not clicked (it would hide the banner for the user).",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "banner",
+  "rootWidth": 1182,
+  "locate": {
+    "banner": "[class*=\"_Banner_\"]",
+    "heading": { "sel": "h2", "in": "banner" },
+    "body": { "sel": "span.text", "in": "banner" },
+    "primary": { "sel": "a.button", "in": "banner", "nth": 0 },
+    "secondary": { "sel": "a.button", "in": "banner", "nth": 1 },
+    "dismiss": { "sel": "button.button", "in": "banner", "text": "Dismiss" },
+    "image": { "sel": "img", "in": "banner" }
+  },
+  "parts": {
+    "banner": { "h": 150, "bg": "none", "radius": "0", "shadow": "none" },
+    "heading": { "x": 0, "font": "26/32 500", "color": "#101010" },
+    "body": { "x": 0, "font": "13/20 400", "color": "#4a4a4a" },
+    "primary": {
+      "x": 0,
+      "h": 28,
+      "font": "12/16 500",
+      "color": "#ffffff",
+      "bg": "#101010",
+      "radius": "9999",
+      "pad": "6 12"
+    },
+    "secondary": {
+      "x": 95,
+      "h": 28,
+      "font": "12/16 500",
+      "color": "#101010",
+      "bg": "none",
+      "radius": "9999",
+      "pad": "6 12"
+    },
+    "dismiss": { "right": 0, "w": 28, "h": 28, "color": "#606060", "bg": "none", "radius": "9999", "pad": "4" },
+    "image": { "x": 599, "w": 583, "h": 150 }
+  }
+}

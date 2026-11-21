@@ -1,0 +1,32 @@
+{
+  "entry": "detail.pinned-metafields",
+  "admin": "Customers > any customer > Metafields",
+  "path": "/customers/8906969383051",
+  "adminSteps": "Open a customer; the Metafields section is in the main column above Timeline. Empty state, no definition pinned. The empty text is a slotted s-internal-text and is not measured.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "card",
+  "rootWidth": 760,
+  "locate": {
+    "section": { "sel": "s-internal-section[heading=\"Metafields\"]" },
+    "card": { "sel": "div.card", "in": "section" },
+    "section-heading": { "sel": "h2", "in": "section" },
+    "view-all": { "sel": "a.button", "in": "section" },
+    "add-definition": { "sel": "button, a.button", "in": "section", "nth": 1 }
+  },
+  "parts": {
+    "card": { "w": 760, "h": 72, "bg": "#ffffff", "radius": "20", "shadow": "yes", "pad": "16" },
+    "section-heading": { "font": "15/22 500", "color": "#101010" },
+    "view-all": { "h": 28, "font": "12/16 500", "color": "#101010", "bg": "none", "radius": "9999", "pad": "6 12" },
+    "add-definition": {
+      "w": 103,
+      "h": 28,
+      "right": 0,
+      "font": "12/16 500",
+      "color": "#101010",
+      "bg": "none",
+      "radius": "9999",
+      "pad": "6 12"
+    }
+  }
+}

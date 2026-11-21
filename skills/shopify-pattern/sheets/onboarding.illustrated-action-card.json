@@ -1,0 +1,28 @@
+{
+  "entry": "onboarding.illustrated-action-card",
+  "admin": "Home > feed card \"Get ... a matching domain\" (the verification card hero strip was not found on this store)",
+  "path": "/",
+  "adminSteps": "Open the store home and scroll to the card grid below the Sidekick prompt; the card with a domain-search illustration. Card shell bg and shadow read transparent in the hidden tab (painted by a nested layer), so they are not recorded. Hover not measured. The verification card strip (784x172) was not measured.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "card",
+  "rootWidth": 300,
+  "locate": {
+    "card": "div[class*=\"_CardWrapper_\"]",
+    "media": { "sel": "div[class*=\"_OnboardingMedia_\"]", "in": "card" },
+    "content": { "sel": "div[class*=\"_Content_\"]", "in": "card" },
+    "title": { "sel": "h3[class*=\"_Title_\"]", "in": "card" },
+    "description": { "sel": "p", "in": "card" },
+    "actions": { "sel": "div[class*=\"_Action_\"]", "in": "card" },
+    "action": { "sel": "button.button", "in": "card" }
+  },
+  "parts": {
+    "card": { "w": 300, "h": 344, "radius": "20" },
+    "media": { "x": 7, "w": 286, "h": 140, "bg": "#f5f6f7", "radius": "12" },
+    "content": { "x": 7, "w": 286, "pad": "12 12 0", "gap": "6" },
+    "title": { "x": 15, "font": "15/18.8 500", "color": "#101010", "pad": "4 0 0 4" },
+    "description": { "x": 19, "font": "13/17.9 400", "color": "#707070" },
+    "actions": { "x": 7, "w": 286, "pad": "0 12 12", "gap": "12" },
+    "action": { "x": 19, "h": 28, "font": "12/16 500", "color": "#101010", "radius": "9999", "pad": "6 12" }
+  }
+}

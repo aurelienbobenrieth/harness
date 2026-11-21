@@ -1,0 +1,24 @@
+{
+  "entry": "form.choice-list-details",
+  "admin": "Discounts > Create discount > Amount off products > Minimum purchase requirements",
+  "path": "/discounts/new/amount-off-product",
+  "adminSteps": "Open the path; the radio list is in the Minimum purchase requirements card. Details lines (12/16 or 12/18 under a label), focus ring and disabled colour not measured: this list has no details. Settings > Checkout not visited.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "row1",
+  "rootWidth": 183,
+  "locate": {
+    "row1": { "sel": "label", "text": "^No minimum requirements" },
+    "row2": { "sel": "label", "text": "^Minimum purchase amount" },
+    "radio1": { "sel": "input", "in": "row1" },
+    "radio2": { "sel": "input", "in": "row2" },
+    "group-label": { "sel": "span", "text": "^Minimum purchase requirements$" }
+  },
+  "parts": {
+    "row1": { "h": 28, "font": "13/20 400", "color": "#101010", "pad": "4 0", "gap": "8" },
+    "row2": { "y": 28, "h": 28, "font": "13/20 400", "color": "#101010" },
+    "radio1": { "x": 0, "w": 16, "h": 16, "radius": "50%", "bg": "#101010" },
+    "radio2": { "x": 1, "w": 14, "h": 14, "radius": "50%" },
+    "group-label": { "font": "13/20 500", "color": "#101010" }
+  }
+}

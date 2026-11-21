@@ -1,0 +1,16 @@
+{
+  "entry": "feedback.help-text",
+  "admin": "Settings > General",
+  "path": "/settings/general",
+  "adminSteps": "Open /settings/general. The subdued line under a settings item title (for example under Metafields and metaobjects) is the help text. This page has no field with details under an input; the item subtitle is the closest section-level case. Measured with direct DOM reads, not the probe: the subtitle starts 20 below the item title with no gap, x 381 in a 688 wide item.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "subtitle",
+  "rootWidth": 331,
+  "locate": {
+    "subtitle": { "sel": "[class*=\"_SettingsItem__Subtitle_\"]", "text": "Available in themes" }
+  },
+  "parts": {
+    "subtitle": { "font": "13/20 400", "color": "#4a4a4a" }
+  }
+}

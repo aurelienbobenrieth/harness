@@ -1,0 +1,23 @@
+{
+  "entry": "settings.account-url-row",
+  "admin": "Settings > Customer accounts > URL",
+  "path": "/settings/customer_accounts",
+  "adminSteps": "Open Settings > Customer accounts. Two URL rows: new accounts (first, no Manage button shown; URL on the shop's myshopify domain) and legacy accounts (second, with a Manage button, URL shopify.com/<id>/account). The URL sits in a grey 36px box; Copy link is an icon-only 28px button (aria-label 'Copy link') inside it. Hover not measured.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "locate": {
+    "label": { "sel": "span", "text": "^URL$", "nth": 0 },
+    "help": { "sel": "span[class*=\"_SettingsItem_\"]", "text": "Use this URL anywhere", "nth": 0 },
+    "url": { "sel": "span", "text": "^https://", "nth": 0 },
+    "box": { "sel": "span", "text": "^https://", "nth": 0, "up": 1 },
+    "copy": { "sel": "button", "text": "^Copy link$", "nth": 0 },
+    "manage": { "sel": "a", "text": "^Manage$", "nth": 0 }
+  },
+  "parts": {
+    "label": { "font": "13/20 400", "color": "#101010" },
+    "help": { "font": "13/20 400", "color": "#4a4a4a" },
+    "url": { "font": "12/18 400", "color": "#4a4a4a" },
+    "box": { "h": 36, "bg": "#ebebeb", "radius": "8", "pad": "8" },
+    "copy": { "w": 28, "h": 28, "radius": "9999", "bg": "none", "pad": "4" }
+  }
+}

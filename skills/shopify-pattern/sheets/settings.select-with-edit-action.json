@@ -1,0 +1,23 @@
+{
+  "entry": "settings.select-with-edit-action",
+  "admin": "Settings > Checkout > Marketing opt-in",
+  "path": "/settings/checkout",
+  "adminSteps": "Open Settings > Checkout and scroll to Marketing opt-in. Three channel blocks (email, text, WhatsApp), each a 'Display location' select (label hidden, 371 wide) with an icon-only 28px button 'Edit checkbox label' at the row's right end; the email block also has an icon-only 'Edit regions' button. Select border sits on a wrapper (select itself is native 13px Arial, border 0.73px #767676); not compared. Modals and the save bar not opened.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "section",
+  "rootWidth": 784,
+  "locate": {
+    "section": { "sel": "select", "nth": 0, "closest": "section" },
+    "select": { "sel": "select", "nth": 0 },
+    "edit-label": { "sel": "button", "text": "^Edit checkbox label$", "nth": 0 },
+    "edit-regions": { "sel": "button", "text": "^Edit regions$" },
+    "select-text": { "sel": "span", "text": "^Checkout and sign-in$" }
+  },
+  "parts": {
+    "select": { "x": 16, "w": 371, "h": 30 },
+    "select-text": { "font": "13/20 400", "color": "#101010" },
+    "edit-label": { "w": 28, "h": 28, "color": "#606060" },
+    "edit-regions": { "w": 28, "h": 28, "color": "#606060" }
+  }
+}

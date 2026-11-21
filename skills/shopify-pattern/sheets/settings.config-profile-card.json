@@ -1,0 +1,31 @@
+{
+  "entry": "settings.config-profile-card",
+  "admin": "Settings > Checkout > Configurations",
+  "path": "/settings/checkout",
+  "adminSteps": "Open Settings > Checkout; the first group, Configurations. Card holds name + Active badge, a subdued line under, and at the end two secondary buttons and an icon-only button (aria-label 'More actions for Default Profile'). Button labels live in shadow slots so locators use position (card-relative x). Hover not measured.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "card",
+  "rootWidth": 784,
+  "locate": {
+    "section": { "sel": "section", "nth": 0 },
+    "card": { "sel": "div.card", "in": "section" },
+    "name": { "sel": "span", "text": "^Default Profile$" },
+    "badge": { "sel": "div.badge", "nth": 0 },
+    "more": { "sel": "button", "text": "More actions" }
+  },
+  "parts": {
+    "card": { "w": 784, "bg": "#ffffff", "radius": "20", "shadow": "yes" },
+    "name": { "x": 16, "font": "13/20 600", "color": "#101010" },
+    "badge": {
+      "x": 109,
+      "h": 20,
+      "font": "12/18 500",
+      "color": "#214b03",
+      "bg": "#b3f782",
+      "radius": "8",
+      "pad": "1 6"
+    },
+    "more": { "w": 28, "h": 28, "right": 16, "radius": "9999" }
+  }
+}

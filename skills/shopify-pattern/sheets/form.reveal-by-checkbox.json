@@ -1,0 +1,31 @@
+{
+  "entry": "form.reveal-by-checkbox",
+  "admin": "Discounts > Create discount > Amount off products > Maximum discount uses",
+  "path": "/discounts/new/amount-off-product",
+  "adminSteps": "Open the path; the checkbox 'Limit number of times this discount can be used in total' is in the Maximum discount uses card. Click its label to tick it (not saved).",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "label",
+  "rootWidth": 357,
+  "locate": {
+    "label": { "sel": "label", "text": "^Limit number of times" },
+    "box": { "sel": "input", "in": "label" }
+  },
+  "parts": {
+    "label": { "x": 0, "h": 28, "font": "13/20 400", "color": "#101010", "pad": "4 0", "gap": "8" }
+  },
+  "states": {
+    "checked": {
+      "adminSteps": "Click the label; a number field appears directly under it.",
+      "locate": {
+        "label": { "sel": "label", "text": "^Limit number of times" },
+        "field": { "sel": ".input-wrapper", "nth": -1 },
+        "input": { "sel": "input", "in": "field" }
+      },
+      "parts": {
+        "field": { "x": 24, "y": 28, "w": 150, "h": 32, "radius": "12", "pad": "0 12", "bg": "#ffffff" },
+        "input": { "font": "13/20 400", "color": "#101010" }
+      }
+    }
+  }
+}

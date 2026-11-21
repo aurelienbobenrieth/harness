@@ -1,0 +1,16 @@
+{
+  "entry": "overlay.row-menu",
+  "admin": "Settings > Apps > row More actions for Flow",
+  "path": "/settings/apps",
+  "adminSteps": "Open Settings > Apps; the trigger is the 28x28 button at the right end of an app row, aria-label 'More actions for <app name>'. Clicking it opens the actions popover (see overlay.actions-popover). Focus and hover states not measured.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "trigger",
+  "rootWidth": 28,
+  "locate": {
+    "trigger": { "sel": "button", "text": "More actions for Flow" }
+  },
+  "parts": {
+    "trigger": { "w": 28, "h": 28, "radius": "9999", "bg": "none", "color": "#4a4a4a", "pad": "4" }
+  }
+}

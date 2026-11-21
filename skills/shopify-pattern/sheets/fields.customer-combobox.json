@@ -1,0 +1,21 @@
+{
+  "entry": "fields.customer-combobox",
+  "admin": "Orders > Create order > Customer",
+  "path": "/draft_orders/new",
+  "adminSteps": "Open the page; the Customer card holds the search field. Popover rows (create row, name and email rows) not reached: the dev store has no customers, the popover opens 280x31 with only the live region '0 customers found and an option to create a new customer'. Placeholder 'Search or create a customer'.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "field",
+  "rootWidth": 280,
+  "locate": {
+    "field": { "sel": "div.Polaris-TextField", "nth": 0 },
+    "backdrop": { "sel": "div.Polaris-TextField__Backdrop", "in": "field" },
+    "icon": { "sel": "div.Polaris-TextField__Prefix", "in": "field" },
+    "input": { "sel": "input", "in": "field" }
+  },
+  "parts": {
+    "backdrop": { "h": 30, "radius": "12", "bg": "#ffffff" },
+    "icon": { "x": 8, "w": 20, "h": 20, "color": "#4a4a4a" },
+    "input": { "x": 32, "font": "13/20 400", "color": "#101010" }
+  }
+}

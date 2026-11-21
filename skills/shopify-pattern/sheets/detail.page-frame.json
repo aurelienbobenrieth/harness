@@ -1,0 +1,20 @@
+{
+  "entry": "detail.page-frame",
+  "admin": "Orders > #1044",
+  "path": "/orders/6649667223691",
+  "adminSteps": "Open the order. Nav collapsed, so the main column starts at x 117 (not 196 as at 1440). x of the aside is measured from the main column.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "main",
+  "rootWidth": 760,
+  "locate": {
+    "main": { "sel": "section", "nth": 7 },
+    "aside": { "sel": "section", "nth": 0 },
+    "card": { "sel": ".card", "in": "main" }
+  },
+  "parts": {
+    "main": { "x": 0, "w": 760 },
+    "aside": { "x": 808, "w": 280 },
+    "card": { "bg": "#ffffff", "radius": "20", "pad": "16" }
+  }
+}

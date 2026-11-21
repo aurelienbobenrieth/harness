@@ -1,0 +1,29 @@
+{
+  "entry": "fields.checkbox-dependent",
+  "admin": "Discounts > Create (Amount off products, code) > 'Limit number of times this discount can be used in total'",
+  "path": "/discounts/new/amount-off-product?method=code",
+  "adminSteps": "Scroll to 'Maximum discount uses' and tick the checkbox (element.click() on its input); a number field appears under it. State 'money': choose the 'Minimum purchase amount' radio under 'Minimum purchase requirements'; a money field appears under it. Nothing saved. Settings > Checkout abandoned-email radio groups not measured (they are plain headings and choice lists at the checkbox's own x, not indented).",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "choice",
+  "rootWidth": 357,
+  "locate": {
+    "choice": { "sel": "input[name=usageLimits]", "closest": "label" },
+    "field": { "sel": "[class*=\"TotalUsageLimitTextField\"]" }
+  },
+  "parts": {
+    "field": { "x": 24, "y": 28, "w": 150, "h": 32 }
+  },
+  "states": {
+    "money": {
+      "adminSteps": "Tick the 'Minimum purchase amount' radio; the money field sits under its label line, indented 24.",
+      "locate": {
+        "choice": { "sel": "label.choice", "text": "Minimum purchase amount" },
+        "field": { "sel": "input[id=discountPrerequisiteSubtotal]", "closest": "div[class*=\"Polaris-TextField\"]" }
+      },
+      "parts": {
+        "field": { "x": 24, "w": 150, "h": 30 }
+      }
+    }
+  }
+}

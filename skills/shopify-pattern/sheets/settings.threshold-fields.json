@@ -1,0 +1,29 @@
+{
+  "entry": "settings.threshold-fields",
+  "admin": "Settings > General \"Unit system / Default weight unit\"",
+  "path": "/settings/general",
+  "adminSteps": "Open the page; second group's form layout, first row of two selects. Measured gap between the columns is 20 (386 to 406), not 8; rows are 16 from the card's form top, stacked rows 16 apart.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "form",
+  "rootWidth": 772,
+  "locate": {
+    "form": "[class*=\"_FormLayout_\"]",
+    "pair": { "sel": "[class*=\"_grouped_\"]", "in": "form" },
+    "item-a": { "sel": "[class*=\"_Item_\"]", "in": "form", "nth": 0 },
+    "item-b": { "sel": "[class*=\"_Item_\"]", "in": "form", "nth": 1 },
+    "label-a": { "sel": "label", "in": "item-a" },
+    "label-b": { "sel": "label", "in": "item-b" },
+    "select-a": { "sel": "div.select", "in": "item-a" },
+    "select-b": { "sel": "div.select", "in": "item-b" }
+  },
+  "parts": {
+    "pair": { "x": 0, "right": 0, "h": 72 },
+    "item-a": { "x": 20, "w": 366, "h": 56 },
+    "item-b": { "x": 406, "w": 366, "h": 56, "right": 0 },
+    "label-a": { "h": 20, "font": "13/20 500", "color": "#101010", "text": "Unit system" },
+    "label-b": { "h": 20, "font": "13/20 500", "color": "#101010", "text": "Default weight unit" },
+    "select-a": { "h": 30, "radius": "12", "bg": "#ffffff", "pad": "5 8 5 12" },
+    "select-b": { "h": 30, "radius": "12", "bg": "#ffffff", "pad": "5 8 5 12" }
+  }
+}

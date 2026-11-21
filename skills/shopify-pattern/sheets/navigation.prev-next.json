@@ -1,0 +1,46 @@
+{
+  "entry": "navigation.prev-next",
+  "admin": "Orders > any order, title bar far right",
+  "path": "/orders/6458977910923",
+  "adminSteps": "Open /orders, click an order row (enabled state needs the list context: a direct URL load shows both buttons disabled). Positions from the viewport; hover and tooltip not measured.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "locate": {
+    "prev": { "sel": "button", "text": "Go to previous page" },
+    "next": { "sel": "button", "text": "Go to next page" },
+    "prev-icon": { "sel": "svg", "in": "prev" }
+  },
+  "parts": {
+    "prev": {
+      "w": 28,
+      "h": 28,
+      "right": 51,
+      "radius": "9999",
+      "pad": "4",
+      "shadow": "none",
+      "text": "Go to previous page"
+    },
+    "next": {
+      "w": 28,
+      "h": 28,
+      "right": 23,
+      "radius": "9999",
+      "pad": "4",
+      "shadow": "none",
+      "text": "Go to next page"
+    },
+    "prev-icon": { "w": 16, "h": 16 }
+  },
+  "states": {
+    "disabled": {
+      "adminSteps": "Load the order by its URL (no list context): both buttons are disabled.",
+      "locate": {},
+      "parts": { "prev": { "color": "#a6a6a6" }, "next": { "color": "#a6a6a6" } }
+    },
+    "enabled": {
+      "adminSteps": "Open the order from the Orders list.",
+      "locate": {},
+      "parts": { "prev": { "color": "#101010" }, "next": { "color": "#101010" } }
+    }
+  }
+}

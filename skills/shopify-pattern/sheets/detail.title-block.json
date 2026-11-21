@@ -1,0 +1,40 @@
+{
+  "entry": "detail.title-block",
+  "admin": "Orders > #1044",
+  "path": "/orders/6649667223691",
+  "adminSteps": "Open the order; the block is the page body's first row. Title bottom to meta 2, meta bottom to block bottom 12. Badge gap measured 3 to 4.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "header",
+  "rootWidth": 760,
+  "locate": {
+    "header": { "sel": "[class*=\"page-inline-header\"]" },
+    "title": { "sel": "h1.page-heading" },
+    "badge-paid": { "sel": ".badge", "nth": 0 },
+    "badge-unfulfilled": { "sel": ".badge", "nth": 1 },
+    "meta": { "sel": "p.subheading" }
+  },
+  "parts": {
+    "header": { "h": 66, "pad": "0 0 12" },
+    "title": { "x": 0, "h": 32, "font": "26/32 500", "color": "#101010" },
+    "badge-paid": {
+      "x": 88,
+      "h": 20,
+      "font": "12/18 500",
+      "color": "#4a4a4a",
+      "bg": "#000000/5",
+      "radius": "8",
+      "pad": "1 6 1 4"
+    },
+    "badge-unfulfilled": {
+      "x": 146,
+      "h": 20,
+      "font": "12/18 500",
+      "color": "#574100",
+      "bg": "#ffe45c",
+      "radius": "8",
+      "pad": "1 6 1 4"
+    },
+    "meta": { "x": 0, "h": 20, "font": "13/20 400", "color": "#4a4a4a" }
+  }
+}

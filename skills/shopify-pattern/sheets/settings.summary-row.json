@@ -1,0 +1,53 @@
+{
+  "entry": "settings.summary-row",
+  "admin": "Settings > General (first card), Settings > Customer accounts \"Branding\"",
+  "path": "/settings/general",
+  "adminSteps": "Open the page; the first card holds three rows (the store's name, Store address, Development store). Rows in cards that mix kinds (Customer accounts, /settings/customer_accounts) end in a pill instead of the chevron: Branding row \"Customize\" pill 24 tall bg #ebebeb radius 9999 pad 2 8, font 13/20 400, right 16. Chevron glyph colour rgb(96,96,96) (svg colour); its box is 20 at right 16. Hover not measured.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "list",
+  "rootWidth": 784,
+  "locate": {
+    "list": { "sel": "[class*=\"_SettingsList_\"]", "nth": 0 },
+    "row": { "sel": "[class*=\"_SettingsItem__wrapper_\"]", "nth": 0 },
+    "row-next": { "sel": "[class*=\"_SettingsItem__wrapper_\"]", "nth": 1 },
+    "row-last": { "sel": "[class*=\"_SettingsItem__wrapper_\"]", "nth": 2 },
+    "icon": { "sel": "s-internal-icon", "in": "row", "nth": 0 },
+    "title": { "sel": "a", "in": "row" },
+    "subtitle": { "sel": "[class*=\"_SettingsItem__Subtitle_\"]", "in": "row" },
+    "chevron": { "sel": "s-internal-icon", "in": "row", "nth": -1 }
+  },
+  "parts": {
+    "list": { "w": 784, "radius": "0" },
+    "row": { "x": 0, "w": 784, "h": 68, "pad": "16 16 12" },
+    "row-next": { "h": 64, "pad": "12 16" },
+    "row-last": { "h": 68, "pad": "12 16 16" },
+    "icon": { "x": 16, "w": 20, "h": 20, "color": "#101010" },
+    "title": { "x": 48, "h": 20, "font": "13/20 400", "color": "#101010" },
+    "subtitle": { "x": 48, "font": "13/20 400", "color": "#4a4a4a" },
+    "chevron": { "w": 20, "h": 20, "right": 16 }
+  },
+  "states": {
+    "pill-end": {
+      "adminSteps": "Settings > Customer accounts (/settings/customer_accounts), Branding row (second row of the first card).",
+      "locate": {
+        "row": { "sel": "[class*=\"_SettingsItem__wrapper_\"]", "nth": 1 },
+        "pill": { "sel": "a", "in": "row", "nth": -1 }
+      },
+      "root": "row",
+      "rootWidth": 784,
+      "parts": {
+        "row": { "h": 72, "pad": "16" },
+        "pill": {
+          "right": 16,
+          "h": 24,
+          "font": "13/20 400",
+          "color": "#101010",
+          "bg": "#ebebeb",
+          "radius": "9999",
+          "pad": "2 8"
+        }
+      }
+    }
+  }
+}

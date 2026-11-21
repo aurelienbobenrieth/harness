@@ -1,0 +1,35 @@
+{
+  "entry": "navigation.settings-link-list",
+  "admin": "Settings > General, first card (store summary rows)",
+  "path": "/settings/general",
+  "adminSteps": "Open Settings > General; the first card lists rows (store name, address, plan) with a leading icon, title, subdued line and trailing chevron. Row hover not measured. The row's own bg is white (the card bg reads none).",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "card",
+  "rootWidth": 784,
+  "locate": {
+    "card": "div.card",
+    "list": { "sel": "[class*=\"_SettingsList_\"]", "in": "card" },
+    "row": { "sel": "[class*=\"_ListItem_\"]", "in": "list" },
+    "row-next": { "sel": "[class*=\"_ListItem_\"]", "in": "list", "nth": 1 },
+    "wrap": { "sel": "[class*=\"_SettingsItem__wrapper_\"]", "in": "row" },
+    "icon": { "sel": "[class*=\"_SettingsItem__inert_\"]", "in": "row" },
+    "title": { "sel": "a[class*=\"_SettingsItem__clickableAction_\"]", "in": "row" },
+    "subtitle": { "sel": "span[class*=\"_SettingsItem__Subtitle_\"]", "in": "row" },
+    "chevron": { "sel": "div[class*=\"_SettingsItem__rightIconWrap_\"]", "in": "row" },
+    "divider": { "sel": "[class*=\"_ListDivider\"]", "in": "list" },
+    "pill": { "sel": "a", "text": "^View release notes$" }
+  },
+  "parts": {
+    "card": { "radius": "20", "pad": "0" },
+    "row": { "h": 68, "bg": "#ffffff" },
+    "row-next": { "h": 64 },
+    "wrap": { "pad": "16 16 12" },
+    "icon": { "x": 16, "w": 20, "h": 20 },
+    "title": { "x": 48, "font": "13/20 400", "color": "#101010" },
+    "subtitle": { "x": 48, "font": "13/20 400", "color": "#4a4a4a" },
+    "chevron": { "right": 16, "w": 20, "h": 20 },
+    "divider": { "h": 1, "pad": "0 16 0 48" },
+    "pill": { "w": 124, "h": 24, "radius": "9999", "bg": "#ebebeb", "pad": "2 8" }
+  }
+}

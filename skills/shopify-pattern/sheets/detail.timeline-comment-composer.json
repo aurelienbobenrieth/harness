@@ -1,0 +1,101 @@
+{
+  "entry": "detail.timeline-comment-composer",
+  "admin": "Orders > #1044",
+  "path": "/orders/6649667223691",
+  "measured": "2026-11-16",
+  "root": "card",
+  "rootWidth": 760,
+  "locate": {
+    "section": "[class*=\"_Timeline_\"]",
+    "card": {
+      "sel": "div.card",
+      "in": "section"
+    },
+    "composer": {
+      "sel": "[class*=\"_EditorContainer_\"]",
+      "nth": 1,
+      "in": "section"
+    },
+    "composer-top": {
+      "sel": "[class*=\"_Editor_\"]",
+      "in": "composer"
+    },
+    "avatar": {
+      "sel": "span.avatar",
+      "in": "composer"
+    },
+    "editor": {
+      "sel": "trix-editor",
+      "in": "composer"
+    },
+    "composer-foot": {
+      "sel": "[class*=\"_Actions_\"]",
+      "in": "composer"
+    },
+    "composer-tool": {
+      "sel": "button",
+      "text": "Add emoji",
+      "in": "composer"
+    },
+    "post": {
+      "sel": "button",
+      "nth": -1,
+      "in": "composer-foot"
+    },
+    "help": {
+      "sel": "p",
+      "in": "connector"
+    },
+    "connector": {
+      "sel": "[class*=\"_FeedConnector_\"]",
+      "in": "section"
+    }
+  },
+  "parts": {
+    "card": {
+      "h": 121,
+      "radius": "20",
+      "bg": "#ffffff",
+      "shadow": "yes"
+    },
+    "composer-top": {
+      "h": 64,
+      "pad": "12"
+    },
+    "avatar": {
+      "x": 12,
+      "w": 40,
+      "h": 40
+    },
+    "editor": {
+      "x": 64,
+      "font": "13/20 400"
+    },
+    "composer-foot": {
+      "h": 53,
+      "bg": "#f7f7f7",
+      "pad": "12"
+    },
+    "composer-tool": {
+      "x": 12,
+      "w": 28,
+      "h": 28
+    },
+    "post": {
+      "w": 49,
+      "h": 28,
+      "right": 12,
+      "radius": "9999",
+      "font": "12/16 500",
+      "bg": "#000000/13",
+      "color": "#ffffff",
+      "pad": "6 12"
+    },
+    "help": {
+      "right": 0,
+      "h": 18,
+      "font": "12/18 400",
+      "color": "#4a4a4a"
+    }
+  }
+}

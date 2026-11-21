@@ -1,0 +1,44 @@
+{
+  "entry": "actions.button-primary",
+  "admin": "Orders (Create order); one order (Post)",
+  "path": "/orders",
+  "adminSteps": "Open Orders; the Create order anchor at the far right of the title bar. Hover state not reproducible in the preview tab (pointer hover did not change bg), so no hover block.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "primary",
+  "rootWidth": 95,
+  "locate": {
+    "primary": "a.button.variant-primary"
+  },
+  "parts": {
+    "primary": {
+      "h": 28,
+      "radius": "9999",
+      "pad": "6 12",
+      "font": "12/16 500",
+      "color": "#ffffff",
+      "bg": "#101010",
+      "shadow": "yes"
+    }
+  },
+  "states": {
+    "disabled": {
+      "adminSteps": "Open one order (/orders/6649667223691); the Post button under the timeline composer is disabled while empty",
+      "path": "/orders/6649667223691",
+      "locate": {
+        "primary": ".button.variant-primary.disabled"
+      },
+      "parts": {
+        "primary": {
+          "h": 28,
+          "radius": "9999",
+          "pad": "6 12",
+          "font": "12/16 500",
+          "color": "#ffffff",
+          "bg": "#000000/13",
+          "shadow": "none"
+        }
+      }
+    }
+  }
+}

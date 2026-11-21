@@ -1,0 +1,28 @@
+{
+  "entry": "detail.more-actions",
+  "admin": "Orders > #1044 > More actions",
+  "path": "/orders/6649667223691",
+  "adminSteps": "Open the order; click the More actions button in the title bar with element.click() (the 109x28 button right of Edit). The popover is div.dialog in a shadow root. Popover opacity reads 0 while it animates in. Offset from the button not measured. Hover state not measured. This order's menu has 5 actions, a Print group of 3, and no Apps group.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "popover",
+  "rootWidth": 187,
+  "locate": {
+    "popover": { "sel": "div.dialog", "text": "" },
+    "search-container": { "sel": "div.search-field-container", "in": "popover" },
+    "search-input": { "sel": "input", "in": "popover" },
+    "list": { "sel": "ul.menu", "in": "popover" },
+    "item": { "sel": "button.menu-item", "in": "popover" },
+    "group-label": { "sel": "div.section-heading", "in": "popover" },
+    "group-item": { "sel": "button.menu-item", "nth": 5, "in": "popover" }
+  },
+  "parts": {
+    "popover": { "w": 187, "h": 419, "bg": "#ffffff", "radius": "16", "shadow": "yes" },
+    "search-container": { "h": 35, "pad": "4", "border": "1 #000000/6" },
+    "search-input": { "h": 19, "font": "13/20 400", "text": "Search actions" },
+    "list": { "x": 0, "pad": "3 4 4", "gap": "2" },
+    "item": { "x": 4, "w": 179, "h": 30, "pad": "4 8 4 4", "radius": "12", "color": "#101010" },
+    "group-label": { "x": 4, "font": "12/18 400", "color": "#606060", "pad": "2 12 2 8", "text": "Print" },
+    "group-item": { "x": 4, "w": 179, "h": 30, "pad": "4 8 4 4", "radius": "12" }
+  }
+}

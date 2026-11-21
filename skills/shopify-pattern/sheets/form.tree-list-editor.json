@@ -1,0 +1,55 @@
+{
+  "entry": "form.tree-list-editor",
+  "admin": "Content > Menus > main menu",
+  "path": "/content/menus/198064537739",
+  "adminSteps": "Open the menu. Rows show a drag handle and the label; hover icons (edit, delete) sit at the right of each row, hover not measured. Last row is the Add menu item button.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "form",
+  "rootWidth": 784,
+  "locate": {
+    "form": "s-internal-page > form",
+    "name-box": { "sel": ".Polaris-TextField__Backdrop", "in": "form" },
+    "handle-line": { "sel": "div[class*=\"_Handle_\"]", "in": "form" },
+    "edit-handle": { "sel": "button", "text": "Edit", "in": "handle-line" },
+    "heading": { "sel": "h2", "in": "form" },
+    "items-card": { "sel": ".card", "nth": 1, "in": "form" },
+    "row": { "sel": "li", "in": "form" },
+    "leaf": { "sel": "div[class*=\"_LeafNode_\"]", "in": "row" },
+    "drag-handle": { "sel": "button[class*=\"Online-Store-UI-DragHandle\"]", "in": "row" },
+    "label": { "sel": "span.text", "in": "row" },
+    "row-2": { "sel": "li", "nth": 1, "in": "form" },
+    "add-row": { "sel": "button[class*=\"_AddNode_\"]", "in": "form" }
+  },
+  "parts": {
+    "name-box": { "x": 16, "right": 16, "h": 30, "bg": "#ffffff", "radius": "12" },
+    "handle-line": { "x": 16, "h": 28 },
+    "edit-handle": { "w": 20, "h": 20, "color": "#606060", "radius": "9999" },
+    "heading": { "x": 0, "font": "15/22 500", "color": "#101010" },
+    "items-card": { "x": 0, "right": 0, "bg": "#ffffff", "radius": "20", "pad": "16", "shadow": "yes" },
+    "row": { "x": 16, "right": 16, "h": 49 },
+    "leaf": { "x": 16, "right": 16, "h": 45, "bg": "#ffffff", "radius": "8", "border": "1 #dddddd" },
+    "drag-handle": { "x": 25, "w": 20, "h": 16 },
+    "label": { "x": 53, "font": "13/20 400", "color": "#101010" },
+    "row-2": { "h": 49 },
+    "add-row": { "x": 16, "right": 16, "h": 45, "bg": "#ffffff", "radius": "8", "border": "1 #dddddd" }
+  },
+  "states": {
+    "adding": {
+      "adminSteps": "Click Add menu item: an inline row (85 tall) is inserted above the Add button. A row of two 308-wide inputs (placeholders 'e.g., About us' and 'Search or paste link', labels Label and Link above each) with the drag handle at the left and a Close menu item icon button at the right (no check button seen). Buttons beyond the Close one live in shadow roots and were not listed.",
+      "locate": {
+        "form": "s-internal-page > form",
+        "new-row": { "sel": "li", "nth": 3, "in": "form" },
+        "label-box": { "sel": ".Polaris-TextField__Backdrop", "in": "new-row" },
+        "link-box": { "sel": ".Polaris-TextField__Backdrop", "nth": 1, "in": "new-row" },
+        "close": { "sel": "button", "text": "Close menu item", "in": "new-row" }
+      },
+      "parts": {
+        "new-row": { "x": 16, "right": 16, "h": 85 },
+        "label-box": { "w": 308, "h": 30, "bg": "#ffffff", "radius": "12" },
+        "link-box": { "w": 308, "h": 30, "bg": "#ffffff", "radius": "12" },
+        "close": { "w": 28, "h": 28, "color": "#606060", "radius": "9999" }
+      }
+    }
+  }
+}

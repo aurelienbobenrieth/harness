@@ -1,0 +1,85 @@
+{
+  "entry": "detail.timeline",
+  "admin": "Orders > #1044",
+  "path": "/orders/6649667223691",
+  "measured": "2026-11-16",
+  "root": "section",
+  "rootWidth": 760,
+  "locate": {
+    "section": "[class*=\"_Timeline_\"]",
+    "day-row": {
+      "sel": "[class*=\"_Date_\"]",
+      "in": "section"
+    },
+    "day-row-next": {
+      "sel": "[class*=\"_Date_\"]",
+      "nth": 1,
+      "in": "section"
+    },
+    "day": {
+      "sel": "h3",
+      "in": "section"
+    },
+    "event": {
+      "sel": "li[class*=\"_EventWrapper_\"]",
+      "in": "section"
+    },
+    "marker": {
+      "sel": "[class*=\"_DefaultMarker_\"]",
+      "in": "event"
+    },
+    "marker-dot": {
+      "sel": "[class*=\"_DefaultMarker_\"]",
+      "in": "event",
+      "pseudo": "::before"
+    },
+    "message": {
+      "sel": "p[class*=\"_Message_\"]",
+      "in": "event"
+    },
+    "time": {
+      "sel": "p[class*=\"_Time_\"]",
+      "in": "event"
+    }
+  },
+  "parts": {
+    "day-row": {
+      "h": 50,
+      "pad": "16 0 16 68"
+    },
+    "day-row-next": {
+      "h": 58
+    },
+    "day": {
+      "font": "12/18 400",
+      "color": "#4a4a4a"
+    },
+    "event": {
+      "h": 36
+    },
+    "marker": {
+      "x": 28,
+      "w": 16,
+      "h": 16,
+      "radius": "4",
+      "bg": "#dddddd"
+    },
+    "marker-dot": {
+      "w": 8,
+      "h": 8,
+      "bg": "#101010",
+      "radius": "3"
+    },
+    "message": {
+      "x": 68,
+      "font": "13/20 400",
+      "color": "#101010"
+    },
+    "time": {
+      "right": 0,
+      "h": 16,
+      "font": "12/16 400",
+      "color": "#4a4a4a"
+    }
+  }
+}

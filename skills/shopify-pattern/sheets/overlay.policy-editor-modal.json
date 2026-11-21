@@ -1,0 +1,52 @@
+{
+  "entry": "overlay.policy-editor-modal",
+  "admin": "Settings > Policies > Privacy policy",
+  "path": "/settings/legal/privacy",
+  "adminSteps": "Open the page; the modal opens by itself over the list (automation on, dev store has a template policy). Wait ~2 s for the editor. State off: toggle the switch input with element.click() inside an expression, nothing saved. Hover not measured. Editor content text and the disclaimer panel not measured. Dialog is 620 wide, not a large modal.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "dialog",
+  "rootWidth": 620,
+  "locate": {
+    "dialog": ".Polaris-Modal-Dialog__Modal",
+    "title": { "sel": "h2", "in": "dialog" },
+    "close": { "sel": "button", "text": "Close", "in": "dialog" },
+    "card": { "sel": "[class*=\"_ListItem_\"]", "in": "dialog" },
+    "card-title": { "sel": "span", "text": "Use automated policy", "in": "card" },
+    "card-help": { "sel": "span,p", "text": "Keep policy content", "in": "card" },
+    "switch": { "sel": "input", "in": "card" },
+    "editor": { "sel": "[class*=\"_Editor_\"]", "in": "dialog" },
+    "toolbar": { "sel": "[class*=\"_Toolbar_\"]", "in": "editor" },
+    "tool-paragraph": { "sel": "button", "text": "Formatting", "in": "toolbar" },
+    "tool-bold": { "sel": "button", "text": "^Bold$", "in": "toolbar" },
+    "disclaimer": { "sel": "span", "text": "disclaimer", "up": 1, "in": "dialog" },
+    "cancel": { "sel": "span", "text": "^Cancel$", "up": 1, "in": "dialog" },
+    "save": { "sel": "span", "text": "^Save$", "up": 1, "in": "dialog" }
+  },
+  "parts": {
+    "dialog": { "w": 620, "radius": "24", "bg": "#ffffff", "shadow": "yes" },
+    "title": { "x": 20, "font": "15/22 500", "color": "#101010" },
+    "close": { "w": 28, "h": 28, "right": 16, "radius": "9999", "bg": "#ffffff" },
+    "card": { "x": 17, "h": 72 },
+    "card-title": { "x": 33, "font": "13/20 400", "color": "#101010" },
+    "card-help": { "x": 33, "font": "13/20 400", "color": "#4a4a4a" },
+    "switch": { "w": 32, "h": 16, "right": 33, "radius": "9999" },
+    "editor": { "x": 16, "w": 588, "h": 336, "radius": "12", "shadow": "yes" },
+    "toolbar": { "x": 16, "w": 588, "h": 36, "pad": "6 8", "bg": "#f7f7f7", "radius": "12 12 0 0" },
+    "tool-paragraph": { "h": 24, "radius": "9999", "pad": "2 2 2 8", "font": "12/12 500" },
+    "tool-bold": { "w": 24, "h": 24, "radius": "9999", "pad": "2", "font": "12/12 500", "color": "#a6a6a6" },
+    "disclaimer": { "h": 32, "x": 4, "color": "#1650d0", "radius": "9999", "pad": "6 12" },
+    "cancel": { "w": 64, "h": 28, "radius": "9999", "bg": "#ffffff", "color": "#101010", "right": 76 },
+    "save": { "w": 52, "h": 28, "radius": "9999", "bg": "#000000/13", "color": "#ffffff", "right": 16 }
+  },
+  "states": {
+    "automation-off": {
+      "adminSteps": "Click the switch (element.click() on its input) without saving; the editor unlocks: toolbar buttons turn dark, editor gets a border shadow.",
+      "locate": {},
+      "parts": {
+        "tool-bold": { "color": "#101010" },
+        "editor": { "shadow": "yes" }
+      }
+    }
+  }
+}

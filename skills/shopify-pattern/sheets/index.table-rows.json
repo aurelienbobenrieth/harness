@@ -1,0 +1,23 @@
+{
+  "entry": "index.table-rows",
+  "admin": "Orders",
+  "path": "/orders",
+  "adminSteps": "Open Orders. Row hover not measured (hover not measured). Badge inside a cell is measured on the Discounts sheet (index.secondary-line).",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "table",
+  "rootWidth": 1235,
+  "locate": {
+    "table": "div.Polaris-Table",
+    "head": { "sel": "div.Polaris-Table-TableHeadingCell", "in": "table" },
+    "head-label": { "sel": "button", "text": "^Order$", "in": "table" },
+    "cell": { "sel": "div.Polaris-Table-TableCell", "nth": 1, "in": "table" },
+    "cell-date": { "sel": "span", "text": "^Jul 22 at", "in": "table" }
+  },
+  "parts": {
+    "head": { "h": 31, "bg": "#f7f7f7", "font": "12/18 500", "color": "#4a4a4a" },
+    "head-label": { "font": "12/18 500", "color": "#4a4a4a" },
+    "cell": { "h": 32, "font": "13/20 400", "color": "#101010" },
+    "cell-date": { "font": "13/20 400", "color": "#101010" }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "entry": "feedback.copy-confirmation",
+  "admin": "Discounts > SPIKE-3 (discount code copy button)",
+  "path": "/discounts/1732038688907",
+  "adminSteps": "Open the discount; the Copy button sits beside the code. Click it: no toast appears and the aria-label stays 'Copy SPIKE-3 discount code' at 250 ms and after 2 s. The inner icon swap (20px check) was not read: the svg is not reachable by selector. DNS records table on a domain page not reached (the only domain, the myshopify one, has no records).",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "",
+  "rootWidth": 1281,
+  "locate": {
+    "copy": { "sel": "button", "text": "^Copy .* discount code$" }
+  },
+  "parts": {
+    "copy": { "w": 28, "h": 28, "pad": "4", "radius": "9999", "bg": "none", "text": "Copy SPIKE-3 discount code" }
+  },
+  "states": {}
+}

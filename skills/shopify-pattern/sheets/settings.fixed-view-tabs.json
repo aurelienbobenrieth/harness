@@ -1,0 +1,24 @@
+{
+  "entry": "settings.fixed-view-tabs",
+  "admin": "Settings > Billing > bills",
+  "path": "/settings/organization-billing",
+  "adminSteps": "Open Settings > Billing (redirects to /settings/organization-billing); the bills card has tabs All, Paid, Open, Failed, Processing, Refunded, Canceled with All selected. More-views overflow menu not reached at this width.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "tabs",
+  "rootWidth": 660,
+  "locate": {
+    "tabs": { "sel": "ul[role=tablist]" },
+    "tab-selected": { "sel": "button[role=tab]", "nth": 0 },
+    "tab": { "sel": "button[role=tab]", "nth": 1 },
+    "label-selected": { "sel": "span", "in": "tab-selected" },
+    "label": { "sel": "span", "in": "tab" }
+  },
+  "parts": {
+    "tabs": { "pad": "0 4", "gap": "4" },
+    "tab-selected": { "h": 28, "pad": "4 12", "radius": "9999", "bg": "#000000/13" },
+    "tab": { "h": 28, "pad": "4 12", "radius": "9999", "bg": "none" },
+    "label-selected": { "font": "12/18 500", "color": "#101010" },
+    "label": { "font": "12/18 500", "color": "#4a4a4a" }
+  }
+}

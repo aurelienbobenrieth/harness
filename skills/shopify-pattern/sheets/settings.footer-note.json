@@ -1,0 +1,21 @@
+{
+  "entry": "settings.footer-note",
+  "admin": "Settings > Plan footer",
+  "path": "/settings/plan",
+  "adminSteps": "Open Settings > Plan and read the line under the last card: \"View terms of service and privacy policy\". The General footer (text link list) was not measured.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "root",
+  "rootWidth": 784,
+  "locate": {
+    "root": "[class*='_SettingsList_']",
+    "line": { "sel": "p", "text": "View", "nth": 0 },
+    "link": { "sel": "a", "text": "terms of service" },
+    "link-privacy": { "sel": "a", "text": "privacy" }
+  },
+  "parts": {
+    "line": { "x": 0, "right": 0, "h": 18, "font": "12/18 400", "color": "#4a4a4a" },
+    "link": { "h": 15, "font": "12/18 400", "color": "#4a4a4a" },
+    "link-privacy": { "h": 15, "font": "12/18 400", "color": "#4a4a4a" }
+  }
+}

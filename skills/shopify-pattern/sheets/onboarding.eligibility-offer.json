@@ -1,0 +1,38 @@
+{
+  "entry": "onboarding.eligibility-offer",
+  "admin": "Finance > Credit",
+  "path": "/credit",
+  "adminSteps": "Open /credit and wait for the load to finish. The card is a white box (24 padding) holding a two-column grid. The probe root is the card, found as the Polaris-Box that is the ancestor 6 levels above the Join waitlist button; the card's outer radius and shadow are painted by a wrapper (s-internal-section, display contents) and read 0 here, so they are left out. The credit card illustration is a stack of SVG images (front, back, animated) with the cardholder name; its colours were not read (images). Footnote and legal line below the card not measured. Join waitlist not clicked.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "card",
+  "rootWidth": 736,
+  "locate": {
+    "card": "[class*=\"_gridContainer_\"]",
+    "headline": { "sel": "h2", "in": "card" },
+    "paragraph": { "sel": "p.paragraph", "in": "card", "nth": 0 },
+    "footnote-marker": { "sel": "sup", "in": "card" },
+    "inset": { "sel": "[class*=\"_gridCard_\"]", "in": "card" },
+    "inset-card": { "sel": "div.Polaris-Box", "in": "inset" },
+    "inset-text": { "sel": "p.paragraph", "in": "inset" },
+    "button": { "sel": "button.button", "in": "inset" },
+    "illustration": { "sel": "[class*=\"_gridAnimatedCard_\"]", "in": "card" }
+  },
+  "parts": {
+    "headline": { "x": 0, "font": "22/28 500", "color": "#101010" },
+    "paragraph": { "x": 0, "font": "13/20 400", "color": "#101010" },
+    "footnote-marker": { "font": "9/9 400" },
+    "inset-card": {
+      "x": 0,
+      "h": 169,
+      "bg": "none",
+      "border": "1 #dddddd",
+      "radius": "8",
+      "pad": "24",
+      "shadow": "yes"
+    },
+    "inset-text": { "font": "13/20 400", "color": "#101010" },
+    "button": { "h": 28, "font": "12/16 500", "color": "#ffffff", "bg": "#101010", "radius": "9999", "pad": "6 12" },
+    "illustration": { "w": 205 }
+  }
+}

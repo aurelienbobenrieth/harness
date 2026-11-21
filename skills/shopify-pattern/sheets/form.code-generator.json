@@ -1,0 +1,30 @@
+{
+  "entry": "form.code-generator",
+  "admin": "Discounts > Create discount > Amount off products > Discount code",
+  "path": "/discounts/new/amount-off-product",
+  "adminSteps": "Open the path; the Discount code field is in the first card, under the Method toggle. Nothing to click.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "field",
+  "rootWidth": 728,
+  "locate": {
+    "field": "div.input-wrapper",
+    "label": { "sel": "label", "text": "^$", "nth": 0 },
+    "generate-host": { "sel": "s-internal-button", "text": "Generate random" },
+    "generate": { "sel": "button", "in": "generate-host" },
+    "generate-text": { "sel": "span.text-wrapper", "in": "generate-host" },
+    "help": ".field-details"
+  },
+  "parts": {
+    "field": { "w": 728, "h": 30, "radius": "12", "pad": "0 12", "bg": "#ffffff" },
+    "generate": { "h": 20, "font": "13/20 400", "color": "#1650d0", "pad": "0 2", "radius": "9999" },
+    "generate-text": { "text": "Generate random code" },
+    "help": {
+      "x": 0,
+      "y": 36,
+      "font": "12/18 400",
+      "color": "#4a4a4a",
+      "text": "Customers must enter this code at checkout."
+    }
+  }
+}

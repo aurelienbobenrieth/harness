@@ -1,0 +1,26 @@
+{
+  "entry": "settings.page-frame",
+  "admin": "Settings > General",
+  "path": "/settings/general",
+  "adminSteps": "Open the page. The content column is div.page-content; its groups are slotted, so group parts are located without `in`. Gaps measured by hand: title block bottom to first heading box 32; groups 16 apart (257-tall group at y1, next at y274); heading box top to card top 56 (header 44 + 12). The settings section list sits left of the column (page starts at x 300 at this viewport).",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "column",
+  "rootWidth": 784,
+  "locate": {
+    "column": "div.page-content",
+    "title-block": "div.page-inline-header",
+    "title": { "sel": "h1", "in": "title-block" },
+    "group": "[class*=\"_CardHighlightWrapper_\"]",
+    "group-next": { "sel": "[class*=\"_CardHighlightWrapper_\"]", "nth": 1 },
+    "heading": { "sel": "h2", "nth": 0 },
+    "card": { "sel": "div.card", "nth": 0 }
+  },
+  "parts": {
+    "title-block": { "x": 0, "w": 784, "h": 44, "pad": "0 0 12" },
+    "title": { "x": 0, "h": 32, "font": "26/32 500", "color": "#101010" },
+    "group": { "x": 0, "w": 784 },
+    "heading": { "x": 0, "h": 22, "font": "15/22 500", "color": "#101010" },
+    "card": { "w": 784, "radius": "20" }
+  }
+}

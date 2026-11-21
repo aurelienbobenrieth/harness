@@ -1,0 +1,21 @@
+{
+  "entry": "detail.summary-values",
+  "admin": "Discounts > SPIKE-3 > aside Performance",
+  "path": "/discounts/1732038688907",
+  "adminSteps": "Open the discount. Performance is the 4th aside section. This store's discount shows a bulleted value '0 used' (the 26th visible li, x 16, y 477 from the aside top) then a plain 13/20 line 'View the sales by discount report' (a link); no subdued definition and no tooltip seen. The section has no card (bg none, no shadow). Hover definition not measured.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "aside",
+  "rootWidth": 280,
+  "locate": {
+    "aside": { "sel": "section", "nth": 0 },
+    "perf": { "sel": "section", "nth": 3 },
+    "perf-heading": { "sel": "h2", "in": "perf" },
+    "perf-value": { "sel": "li", "nth": 25 }
+  },
+  "parts": {
+    "perf": { "x": 0, "w": 280, "bg": "none", "radius": "0", "shadow": "none" },
+    "perf-heading": { "x": 0, "h": 20, "font": "13/20 500", "color": "#101010" },
+    "perf-value": { "x": 16, "h": 20, "font": "13/20 400", "color": "#101010" }
+  }
+}

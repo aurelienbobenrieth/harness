@@ -1,0 +1,24 @@
+{
+  "entry": "fields.money",
+  "admin": "Discounts > Create discount > Amount off products > Minimum purchase requirements",
+  "path": "/discounts/new/amount-off-product",
+  "adminSteps": "Open the page, click the radio 'Minimum purchase amount ($)'; the money field shows under it. The Fixed amount value field (select set to Fixed amount) is another money field, 239x30 beside the select, not indented.",
+  "measured": "2026-11-16",
+  "viewport": 1281,
+  "root": "group",
+  "rootWidth": 728,
+  "locate": {
+    "group": { "sel": "fieldset.choice-list", "nth": 0 },
+    "mf": { "sel": "div[class*=\"_PrerequisiteTextField_\"]" },
+    "prefix": { "sel": ".Polaris-TextField__Prefix", "in": "mf" },
+    "money-input": { "sel": "input", "in": "mf" },
+    "stack": { "sel": "div[class*=\"_PrerequisiteTextField_\"]", "up": 1 },
+    "help": { "sel": "span.text", "in": "stack" }
+  },
+  "parts": {
+    "mf": { "x": 24, "w": 150, "h": 30 },
+    "prefix": { "font": "13/20 400", "color": "#4a4a4a", "text": "$" },
+    "money-input": { "pad": "5 12 5 0", "font": "13/20 400", "color": "#101010" },
+    "help": { "x": 24, "font": "13/20 400", "color": "#4a4a4a" }
+  }
+}
