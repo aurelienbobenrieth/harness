@@ -1,5 +1,11 @@
 # @aurelienbbn/oxlint-plugin-effect
 
+## 0.10.0
+
+### Minor Changes
+
+- [#112](https://github.com/aurelienbobenrieth/harness/pull/112) [`000f16a`](https://github.com/aurelienbobenrieth/harness/commit/000f16a56e94505446f82efe8a93cc6c212a685c) Thanks [@aurelienbobenrieth](https://github.com/aurelienbobenrieth)! - `core/no-ambient-nondeterminism-in-tests` takes `allFiles: true` to check test doubles and in-memory hosts outside `*.test.*` files. New `effect/no-live-clock-in-tests` reports `Clock.Clock.defaultValue()` and `DateTime.nowUnsafe()`, which read the machine's clock past the TestClock that `it.effect` provides.
+
 ## 0.9.4
 
 ### Patch Changes
