@@ -82,11 +82,11 @@ export const noTestSleeps: Rule = {
     },
     messages: {
       timeoutPromise:
-        "This promise only waits for a timer, so the test sleeps on the wall clock: slow when the machine is fast, flaky when it is slow. Await the condition with vi.waitFor or expect.poll, or control time with vi.useFakeTimers and vi.advanceTimersByTime.",
+        "This promise only waits for a timer, so the test sleeps on the wall clock: slow when the machine is fast, flaky when it is slow. Await the operation or a signal it emits, or control time with vi.useFakeTimers and vi.advanceTimersByTime; poll with vi.waitFor or expect.poll only for observable state, never a spy or a call count.",
       timersPromisesImport:
-        'Importing "{{name}}" from "{{source}}" brings a wall-clock sleep into this test file. Await the condition with vi.waitFor or expect.poll, or control time with vi.useFakeTimers and vi.advanceTimersByTime.',
+        'Importing "{{name}}" from "{{source}}" brings a wall-clock sleep into this test file. Await the operation or a signal it emits, or control time with vi.useFakeTimers and vi.advanceTimersByTime; poll with vi.waitFor or expect.poll only for observable state, never a spy or a call count.',
       sleepHelper:
-        "This awaited fixed-duration sleep makes the test depend on wall-clock timing. Await the condition with vi.waitFor or expect.poll, or control time with vi.useFakeTimers and vi.advanceTimersByTime.",
+        "This awaited fixed-duration sleep makes the test depend on wall-clock timing. Await the operation or a signal it emits, or control time with vi.useFakeTimers and vi.advanceTimersByTime; poll with vi.waitFor or expect.poll only for observable state, never a spy or a call count.",
     },
   },
   create(context) {

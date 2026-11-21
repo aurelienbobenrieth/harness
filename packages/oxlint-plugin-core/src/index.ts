@@ -10,8 +10,10 @@ import { noLet } from "./rules/no-let/rule.js";
 import { noMultiPositionalParameters } from "./rules/no-multi-positional-parameters/rule.js";
 import { noMutableExportedState } from "./rules/no-mutable-exported-state/rule.js";
 import { noReexportOnlyModules } from "./rules/no-reexport-only-modules/rule.js";
+import { noTestFlakeMasking } from "./rules/no-test-flake-masking/rule.js";
 import { noTestLogicInProduction } from "./rules/no-test-logic-in-production/rule.js";
 import { noTestSleeps } from "./rules/no-test-sleeps/rule.js";
+import { noUnsignaledTestPoll } from "./rules/no-unsignaled-test-poll/rule.js";
 import { noVitestInSource } from "./rules/no-vitest-in-source/rule.js";
 import { noVitestMocking } from "./rules/no-vitest-mocking/rule.js";
 import { noWeakTestAssertions } from "./rules/no-weak-test-assertions/rule.js";
@@ -41,8 +43,10 @@ export default eslintCompatPlugin({
     "no-multi-positional-parameters": noMultiPositionalParameters,
     "no-mutable-exported-state": noMutableExportedState,
     "no-reexport-only-modules": noReexportOnlyModules,
+    "no-test-flake-masking": noTestFlakeMasking,
     "no-test-logic-in-production": noTestLogicInProduction,
     "no-test-sleeps": noTestSleeps,
+    "no-unsignaled-test-poll": noUnsignaledTestPoll,
     "no-vitest-in-source": noVitestInSource,
     "no-vitest-mocking": noVitestMocking,
     "no-weak-test-assertions": noWeakTestAssertions,
