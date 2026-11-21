@@ -42,4 +42,4 @@ pnpm test:skills    # those behaviors on isolated fixtures
 
 Neither scores the writing or proves routing picks the right skill. Sources behind the skills: [CREDITS](../CREDITS.md).
 
-The always-on communication block carries the evaluated YAML v1 policy directly in `AGENTS.md`. It needs no skill load for ordinary replies. The communication skill adds guidance only for long documents. Its word targets apply to explanations, never code, tests, names, validation, or design.
+The always-on communication block carries its policy directly in `AGENTS.md`. It needs no skill load for ordinary replies. The communication skill adds guidance only for long documents. Its word targets apply to explanations, never code, tests, names, validation, or design.

@@ -75,3 +75,10 @@ it("ignores non-test files", async () => {
     filename: "src/invoice.ts",
   });
 });
+
+it("checks an in-memory host outside test files once allFiles is set", async () => {
+  await assertRuleReports(ruleName, "export const stamp = () => ({ at: Date.now() });", {
+    filename: "src/hosting/in-memory.ts",
+    ruleOptions: { allFiles: true },
+  });
+});
