@@ -27,14 +27,6 @@ async function isDirectory(entryPath: string): Promise<boolean> {
   }
 }
 
-export async function fileSize(filePath: string): Promise<number> {
-  try {
-    return (await stat(filePath)).size;
-  } catch {
-    return 0;
-  }
-}
-
 export type WalkOptions = {
   readonly extensions: readonly string[];
   readonly maxDepth: number;

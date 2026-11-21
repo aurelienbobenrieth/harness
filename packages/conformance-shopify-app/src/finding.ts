@@ -22,8 +22,8 @@ export type ConformanceRunOptions = {
   /** Markers that prove a platform injects the App Bridge script at serve time. */
   readonly platformMarkers?: readonly string[];
   /**
-   * Bundle budget for UI extensions in kilobytes. Defaults to Shopify's hard
-   * 64 KB deployment limit; set a lower number to enforce a stricter budget.
+   * Compressed bundle budget for checkout UI extensions in kilobytes. Defaults to Shopify's hard
+   * 64 KB compressed deployment limit; set a lower number to enforce a stricter budget.
    */
   readonly checkoutBundleLimitKb?: number;
   /** Explicit reviewed API version bounds; no support deadline is guessed from the system clock. */
