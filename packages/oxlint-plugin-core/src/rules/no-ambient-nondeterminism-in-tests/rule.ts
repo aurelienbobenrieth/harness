@@ -52,6 +52,7 @@ export const noAmbientNondeterminismInTests: Rule = {
         type: "object",
         properties: {
           allowClock: { type: "boolean" },
+          allFiles: { type: "boolean" },
         },
         additionalProperties: false,
       },
@@ -66,9 +67,9 @@ export const noAmbientNondeterminismInTests: Rule = {
     },
   },
   create(context) {
-    if (!isTestFile(context as RuleContextWithFilename)) return {};
+    const options = context.options[0] as { readonly allowClock?: boolean; readonly allFiles?: boolean } | undefined;
+    if (options?.allFiles !== true && !isTestFile(context as RuleContextWithFilename)) return {};
 
-    const options = context.options[0] as { readonly allowClock?: boolean } | undefined;
     const allowClock = options?.allowClock === true;
     const clockReads: ClockReport[] = [];
     let controlsClock = false;

@@ -11,6 +11,7 @@ import { noDynamicSpanName } from "./rules/no-dynamic-span-name/rule.js";
 import { noEffectOrDie } from "./rules/no-effect-ordie/rule.js";
 import { noNativeFailure } from "./rules/no-native-failure/rule.js";
 import { noFakeTimersInEffectTests } from "./rules/no-fake-timers-in-effect-tests/rule.js";
+import { noLiveClockInTests } from "./rules/no-live-clock-in-tests/rule.js";
 import { noManagedRuntimePerCall } from "./rules/no-managed-runtime-per-call/rule.js";
 import { noRunPromiseInRuntime } from "./rules/no-run-promise-in-runtime/rule.js";
 import { noServiceConstructorImports } from "./rules/no-service-constructor-imports/rule.js";
@@ -70,6 +71,7 @@ export default eslintCompatPlugin({
     "no-dynamic-span-name": noDynamicSpanName,
     "no-effect-ordie": noEffectOrDie,
     "no-fake-timers-in-effect-tests": noFakeTimersInEffectTests,
+    "no-live-clock-in-tests": noLiveClockInTests,
     "no-managed-runtime-per-call": noManagedRuntimePerCall,
     "no-native-failure": noNativeFailure,
     "no-run-promise-in-runtime": noRunPromiseInRuntime,

@@ -40,6 +40,7 @@ pnpm add -D @aurelienbbn/oxlint-plugin-core oxlint   # oxlint >=1.82.0 <2.0.0
 |                                      | `reasonMarker`                                                           | `"REASON"`                                  |
 |                                      | `includeTestFiles`                                                       | `false` (test files exempt)                 |
 | `no-ambient-nondeterminism-in-tests` | `allowClock`                                                             | `false`; `true` waives clock reads only     |
+|                                      | `allFiles` (test doubles and in-memory hosts outside `*.test.*`)         | `false`; `true` checks every enabled file   |
 | `no-weak-test-assertions`            | `assertionHelpers`                                                       | `[]`                                        |
 | `no-vitest-mocking`                  | `forbidSpies`                                                            | `false` (`vi.fn`, `vi.spyOn` allowed)       |
 | `no-reexport-only-modules`           | `allow`                                                                  | `index.*` (every JS/TS extension), `mod.ts` |
