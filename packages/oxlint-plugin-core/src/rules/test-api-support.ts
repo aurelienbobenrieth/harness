@@ -1,5 +1,19 @@
 import type { Context, ESTree, Scope } from "@oxlint/plugins";
 
+/** Names Vitest exposes as globals when `test.globals` is on. */
+const testGlobals = new Set([
+  "it",
+  "test",
+  "describe",
+  "suite",
+  "expect",
+  "vi",
+  "beforeAll",
+  "beforeEach",
+  "afterAll",
+  "afterEach",
+]);
+
 /** Resolves Vitest and fast-check imports and unshadowed configured test globals. */
 export function testApi(context: Context, node: ESTree.Node): string | undefined {
   if (node.type === "MemberExpression" && !node.computed && node.property.type === "Identifier") {
@@ -32,7 +46,7 @@ export function testApi(context: Context, node: ESTree.Node): string | undefined
     }
     scope = scope.upper;
   }
-  if (["it", "test", "expect", "vi"].includes(node.name)) return node.name;
+  if (testGlobals.has(node.name)) return node.name;
   return node.name === "fc" ? "fast-check" : undefined;
 }
 

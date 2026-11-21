@@ -2,7 +2,7 @@
 
 [![npm](https://img.shields.io/npm/v/@aurelienbbn/oxlint-plugin-core)](https://www.npmjs.com/package/@aurelienbbn/oxlint-plugin-core) [![downloads](https://img.shields.io/npm/dm/@aurelienbbn/oxlint-plugin-core)](https://www.npmjs.com/package/@aurelienbbn/oxlint-plugin-core) [![CI](https://github.com/aurelienbobenrieth/harness/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/aurelienbobenrieth/harness/actions/workflows/ci.yml) [![license](https://img.shields.io/npm/l/@aurelienbbn/oxlint-plugin-core)](https://github.com/aurelienbobenrieth/harness/blob/main/packages/oxlint-plugin-core/LICENSE) [![node](https://img.shields.io/node/v/@aurelienbbn/oxlint-plugin-core)](https://github.com/aurelienbobenrieth/harness/blob/main/packages/oxlint-plugin-core/package.json)
 
-**19 oxlint rules for any TypeScript codebase: swallowed errors, flaky or hollow tests, test code in production, anonymous public contracts, workspace members and modules that leak into each other, cramped statements.**
+**21 oxlint rules for any TypeScript codebase: swallowed errors, flaky or hollow tests, test code in production, anonymous public contracts, workspace members and modules that leak into each other, cramped statements.**
 
 ```sh
 pnpm add -D @aurelienbbn/oxlint-plugin-core oxlint   # oxlint >=1.82.0 <2.0.0
@@ -24,15 +24,15 @@ pnpm add -D @aurelienbbn/oxlint-plugin-core oxlint   # oxlint >=1.82.0 <2.0.0
 <details>
 <summary>Rules by job, options, and the decision each fix needs</summary>
 
-| Job          | Rules                                                                                                                                                        |
-| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| 🧯 errors    | `no-discarded-caught-error`, `no-error-message-matching`                                                                                                     |
-| 🧪 tests     | `no-weak-test-assertions`, `no-test-sleeps`, `no-ambient-nondeterminism-in-tests`, `no-vitest-mocking`, `no-vitest-in-source`, `no-test-logic-in-production` |
-| 📜 contracts | `no-exported-anonymous-object-return`, `no-multi-positional-parameters`, `no-mutable-exported-state`, `no-reexport-only-modules`, `no-let`                   |
-| 🧱 workspace | `workspace-boundaries`, `module-boundaries` (autofix)                                                                                                        |
-| 🌐 network   | `require-fetch-abort-signal`                                                                                                                                 |
-| 💬 comments  | `no-dead-comments`                                                                                                                                           |
-| ↕️ layout    | `padding-line-between-statements` (autofix)                                                                                                                  |
+| Job          | Rules                                                                                                                                                                                                            |
+| ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 🧯 errors    | `no-discarded-caught-error`, `no-error-message-matching`                                                                                                                                                         |
+| 🧪 tests     | `no-weak-test-assertions`, `no-test-sleeps`, `no-unsignaled-test-poll`, `no-test-flake-masking`, `no-ambient-nondeterminism-in-tests`, `no-vitest-mocking`, `no-vitest-in-source`, `no-test-logic-in-production` |
+| 📜 contracts | `no-exported-anonymous-object-return`, `no-multi-positional-parameters`, `no-mutable-exported-state`, `no-reexport-only-modules`, `no-let`                                                                       |
+| 🧱 workspace | `workspace-boundaries`, `module-boundaries` (autofix)                                                                                                                                                            |
+| 🌐 network   | `require-fetch-abort-signal`                                                                                                                                                                                     |
+| 💬 comments  | `no-dead-comments`                                                                                                                                                                                               |
+| ↕️ layout    | `padding-line-between-statements` (autofix)                                                                                                                                                                      |
 
 | Rule                                 | Option                                                                   | Default                                     |
 | ------------------------------------ | ------------------------------------------------------------------------ | ------------------------------------------- |
@@ -69,8 +69,10 @@ pnpm add -D @aurelienbbn/oxlint-plugin-core oxlint   # oxlint >=1.82.0 <2.0.0
 | `no-multi-positional-parameters`      | update callers, pick property names                                     |
 | `no-mutable-exported-state`           | a factory, an immutable contract, or a dependency boundary              |
 | `no-reexport-only-modules`            | reroute every consumer to the owning module                             |
+| `no-test-flake-masking`               | the event the test waits on, or a suite-wide budget in the config       |
 | `no-test-logic-in-production`         | an injected dependency or a public contract                             |
-| `no-test-sleeps`                      | a condition to poll or a fake-timer schedule                            |
+| `no-test-sleeps`                      | the signal to await or a fake-timer schedule                            |
+| `no-unsignaled-test-poll`             | where the call is recorded, so it can resolve a deferred                |
 | `no-vitest-in-source`                 | the right test utility or dependency seam                               |
 | `no-vitest-mocking`                   | the dependency boundary and the fake                                    |
 | `no-weak-test-assertions`             | which observable outcome each test asserts                              |
@@ -157,7 +159,9 @@ try {
 
 ```ts
 await new Promise((r) => setTimeout(r, 500)); // ❌ no-test-sleeps
-await vi.waitFor(() => expect(state()).toBe("done")); // ✅ poll the condition
+await vi.waitFor(() => expect(state()).toBe("done")); // ✅ poll observable state
+await vi.waitFor(() => expect(post).toHaveBeenCalled()); // ❌ no-unsignaled-test-poll: await a signal
+it("syncs", async () => {}, { retry: 2, timeout: 60_000 }); // ❌ no-test-flake-masking
 
 export const send = (mail) => (process.env.NODE_ENV === "test" ? undefined : deliver(mail)); // ❌ no-test-logic-in-production
 ```
@@ -191,6 +195,29 @@ await sleep(250); // ❌ sleep / delay / wait / pause + numeric literal
 ```
 
 Files calling `vi.useFakeTimers()` skip the first and last shape: their timers aren't wall-clock.
+
+**Unsignaled polls** (`*.test.*` / `*.spec.*`)
+
+```ts
+await expect.poll(() => requests.length).toBe(1); // ❌ length or size of a collection on an object
+await expect.poll(() => sent).toHaveLength(1); // ❌ toHaveLength or a spy matcher on a call-free path
+await vi.waitFor(() => expect(onSave.mock.calls).toHaveLength(1)); // ❌ a spy's mock state
+await vi.waitFor(() => expect(screen.getAllByRole("row")).toHaveLength(3)); // ✅ read through a call
+await expect.poll(() => result.current.items.length).toBe(2); // ✅ a rendered hook's current value
+```
+
+Callbacks with more than one statement stay silent.
+
+**Flake masking**
+
+```ts
+it("syncs", { retry: 2 }, fn); // ❌ also after the body, on describe / suite, extensions like it.effect
+test.each(rows)("adds %i", fn, 20_000); // ❌ positional timeout; also { timeout } and hook timeouts
+vi.setConfig({ retry: 1, testTimeout: 45_000 }); // ❌ anywhere
+defineConfig({ test: { retry: process.env.CI ? 3 : 0 } }); // ❌ vite / vitest config files
+defineConfig({ test: { testTimeout: 30_000 } }); // ✅ a suite-wide budget sizes the run to the machine
+it("syncs", { retry: 0, repeats: 20 }, fn); // ✅ retries off; repeats surface the flake
+```
 
 **Ambient nondeterminism** (concept: "Eradicating Non-Determinism in Tests", Martin Fowler)
 
@@ -442,8 +469,10 @@ Generated from package exports by `pnpm catalog`. Rule-specific options and limi
 | `no-multi-positional-parameters`      | Require object inputs instead of multiple positional parameters for functions you design; externally imposed signatures only: callbacks and objects handed to an imported or builtin callee, bindings typed by an imported or global type, and overrides of an imported or global class are exempt. |
 | `no-mutable-exported-state`           | Disallow exporting mutable module state.                                                                                                                                                                                                                                                            |
 | `no-reexport-only-modules`            | Disallow modules that only re-export other modules, except allowed entrypoint barrels.                                                                                                                                                                                                              |
+| `no-test-flake-masking`               | Disallow masking flaky tests: retries on tests, suites, vi.setConfig and the Vitest config, and timeouts raised on a single test, suite or hook.                                                                                                                                                    |
 | `no-test-logic-in-production`         | Disallow production files from branching on a test runner or test mode and from exporting members named or commented as existing only for tests.                                                                                                                                                    |
 | `no-test-sleeps`                      | Disallow wall-clock sleeps in test files: setTimeout-backed promises, node:timers/promises sleeps, and awaited sleep helpers with a fixed duration.                                                                                                                                                 |
+| `no-unsignaled-test-poll`             | Disallow expect.poll and vi.waitFor in test files that wait on a spy or on the length or size of a recorded collection instead of a signal.                                                                                                                                                         |
 | `no-vitest-in-source`                 | Disallow importing vitest from non-test source files.                                                                                                                                                                                                                                               |
 | `no-vitest-mocking`                   | Disallow Vitest mocking APIs in favor of deterministic test doubles.                                                                                                                                                                                                                                |
 | `no-weak-test-assertions`             | Disallow individual tests whose only assertions check existence, a bare call, a `typeof` or `Object` instance, wildcard-only matcher arguments, a value against itself or a literal against a literal, or a local mock's own return value.                                                          |
@@ -459,5 +488,6 @@ Generated from package exports by `pnpm catalog`. Rule-specific options and limi
 - code-slop by asyrafhussin (MIT, concept re-implemented)
 - code-slop by asyrafhussin (MIT, concept re-implemented) — closing-brace labels and placeholder
 - https://eslint.org/docs/latest/rules/padding-line-between-statements (MIT; option schema and statement types, independently implemented)
+- landmines by Interfere (MIT, concept re-implemented)
 
 <!-- harness-catalog:end -->
